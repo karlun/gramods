@@ -55,12 +55,24 @@ namespace touchlib {
      * A single (potentially smoothed) touch point.
      */
     struct TouchPoint {
-
+      
+      /// Constructs a positioned touch point with id.
+      TouchPoint(TouchPointId id, float x, float y);
+      
+      /// Constructs an empty touch point.
+      TouchPoint();
+      
       /// x position in (sub) pixels from left edge.
       float x;
 
       /// y position in (sub) pixels from top edge.
       float y;
+
+      /// smoothed version of the x position.
+      float sx;
+
+      /// smoothed version of the y position.
+      float sy;
 
       /// internal id of the touch point.
       TouchPointId id;

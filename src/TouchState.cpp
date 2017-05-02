@@ -208,9 +208,9 @@ bool TouchState::getTouchLines(TouchLines &current) const {
   for (auto pt : cur_pts) {
     
     utm50_utils::Vector4f nearPoint =
-      (current_WPV_inv * utm50_utils::Vector4f(pt.x, current_height - pt.y, 0.f)).renormalized();
+      (current_WPV_inv * utm50_utils::Vector4f(pt.sx, current_height - pt.sy, 0.f)).renormalized();
     utm50_utils::Vector4f farPoint =
-      (current_WPV_inv * utm50_utils::Vector4f(pt.x, current_height - pt.y, 1.f)).renormalized();
+      (current_WPV_inv * utm50_utils::Vector4f(pt.sx, current_height - pt.sy, 1.f)).renormalized();
 
     TouchLine tl = { nearPoint,
                      utm50_utils::Vector3f(farPoint - nearPoint).normalized(),
@@ -237,9 +237,9 @@ bool TouchState::getTouchLines(TouchLines &current, TouchLines &previous) const 
   for (auto pt : cur_pts) {
     
     utm50_utils::Vector4f nearPoint =
-      (current_WPV_inv * utm50_utils::Vector4f(pt.x, current_height - pt.y, 0.f)).renormalized();
+      (current_WPV_inv * utm50_utils::Vector4f(pt.sx, current_height - pt.sy, 0.f)).renormalized();
     utm50_utils::Vector4f farPoint =
-      (current_WPV_inv * utm50_utils::Vector4f(pt.x, current_height - pt.y, 1.f)).renormalized();
+      (current_WPV_inv * utm50_utils::Vector4f(pt.sx, current_height - pt.sy, 1.f)).renormalized();
     
     TouchLine tl = { nearPoint,
                      utm50_utils::Vector3f(farPoint - nearPoint).normalized(),
@@ -252,9 +252,9 @@ bool TouchState::getTouchLines(TouchLines &current, TouchLines &previous) const 
   for (auto pt : pre_pts) {
     
     utm50_utils::Vector4f nearPoint =
-      (previous_WPV_inv * utm50_utils::Vector4f(pt.x, previous_height - pt.y, 0.f)).renormalized();
+      (previous_WPV_inv * utm50_utils::Vector4f(pt.sx, previous_height - pt.sy, 0.f)).renormalized();
     utm50_utils::Vector4f farPoint =
-      (previous_WPV_inv * utm50_utils::Vector4f(pt.x, previous_height - pt.y, 1.f)).renormalized();
+      (previous_WPV_inv * utm50_utils::Vector4f(pt.sx, previous_height - pt.sy, 1.f)).renormalized();
      
     TouchLine tl = { nearPoint,
                      utm50_utils::Vector3f(farPoint - nearPoint).normalized(),
@@ -282,9 +282,9 @@ bool TouchState::getTouchLines(std::map<void*, TouchLines> &current) const {
     for (auto pt : it.second) {
       
       utm50_utils::Vector4f nearPoint =
-        (current_WPV_inv * utm50_utils::Vector4f(pt.x, current_height - pt.y, 0.f)).renormalized();
+        (current_WPV_inv * utm50_utils::Vector4f(pt.sx, current_height - pt.sy, 0.f)).renormalized();
       utm50_utils::Vector4f farPoint =
-        (current_WPV_inv * utm50_utils::Vector4f(pt.x, current_height - pt.y, 1.f)).renormalized();
+        (current_WPV_inv * utm50_utils::Vector4f(pt.sx, current_height - pt.sy, 1.f)).renormalized();
       
       TouchLine tl = { nearPoint,
                        utm50_utils::Vector3f(farPoint - nearPoint).normalized(),
@@ -319,9 +319,9 @@ bool TouchState::getTouchLines(std::map<void*, TouchLines> &current,
     for (auto pt : it.second) {
 
       utm50_utils::Vector4f nearPoint =
-        (current_WPV_inv * utm50_utils::Vector4f(pt.x, current_height - pt.y, 0.f)).renormalized();
+        (current_WPV_inv * utm50_utils::Vector4f(pt.sx, current_height - pt.sy, 0.f)).renormalized();
       utm50_utils::Vector4f farPoint =
-        (current_WPV_inv * utm50_utils::Vector4f(pt.x, current_height - pt.y, 1.f)).renormalized();
+        (current_WPV_inv * utm50_utils::Vector4f(pt.sx, current_height - pt.sy, 1.f)).renormalized();
 
       TouchLine tl = { nearPoint,
                        utm50_utils::Vector3f(farPoint - nearPoint).normalized(),
@@ -340,9 +340,9 @@ bool TouchState::getTouchLines(std::map<void*, TouchLines> &current,
     for (auto pt : it.second) {
       
       utm50_utils::Vector4f nearPoint =
-        (current_WPV_inv * utm50_utils::Vector4f(pt.x, current_height - pt.y, 0.f)).renormalized();
+        (current_WPV_inv * utm50_utils::Vector4f(pt.sx, current_height - pt.sy, 0.f)).renormalized();
       utm50_utils::Vector4f farPoint =
-        (current_WPV_inv * utm50_utils::Vector4f(pt.x, current_height - pt.y, 1.f)).renormalized();
+        (current_WPV_inv * utm50_utils::Vector4f(pt.sx, current_height - pt.sy, 1.f)).renormalized();
       
       TouchLine tl = { nearPoint,
                        utm50_utils::Vector3f(farPoint - nearPoint).normalized(),
@@ -456,9 +456,9 @@ void TouchState::handleEvent(const SDL_Event& event) {
   case SDL_MOUSEBUTTONDOWN: {
     mouse_down = true;
     if (!use_mouse) return;
-    TouchPoint p = {float(event.motion.x),
-                    float(event.motion.y),
-                    event.motion.which, 0};
+    TouchPoint p(event.motion.which,
+                 float(event.motion.x),
+                 float(event.motion.y));
     current_state[event.motion.which] = p;
     return;
   }
@@ -485,7 +485,7 @@ void TouchState::handleEvent(const SDL_Event& event) {
     float x = event.tfinger.x * current_width;
     float y = event.tfinger.y * current_height;
 #endif
-    TouchPoint p = {x, y, event.tfinger.fingerId, 0};
+    TouchPoint p(event.tfinger.fingerId, x, y);
     current_state[event.tfinger.fingerId] = p;
     return;
   }
@@ -540,9 +540,9 @@ void TouchState::eventsDone() {
       
       assert(previous_state.find(pt.first) != previous_state.end());
       TouchPoint old_pt = previous_state.find(pt.first)->second;
-      
-      pt.second.x = smoothing * old_pt.x + (1 - smoothing) * pt.second.x;
-      pt.second.y = smoothing * old_pt.y + (1 - smoothing) * pt.second.y;
+
+      pt.second.sx = smoothing * old_pt.sx + (1 - smoothing) * pt.second.x;
+      pt.second.sy = smoothing * old_pt.sy + (1 - smoothing) * pt.second.y;
     }
     
     if (! (pt.second.state & State::RELEASE)) {
@@ -559,6 +559,13 @@ void TouchState::eventsDone() {
   
   state = 0;
 }
+
+TouchState::TouchPoint::TouchPoint()
+  : x(0), y(0), sx(0), sy(0), id(0), state(0) {}
+
+TouchState::TouchPoint::TouchPoint(TouchPointId id, float x, float y)
+  : x(x), y(y), sx(x), sy(y), id(id), state(0) {}
+
 
 void TouchState::check_drag(HistoryState hist, TouchPoint &new_pt) {
   assert(hist.point.id == new_pt.id);
