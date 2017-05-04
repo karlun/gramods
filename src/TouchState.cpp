@@ -13,7 +13,9 @@ TouchState::TouchState()
     mouse_down(false),
     smoothing(0.f),
     drag_magnitude(10),
-    hold_time(std::chrono::seconds(2)) {}
+    hold_time(std::chrono::seconds(2)),
+    current_WPV_inv_valid(false), 
+    previous_WPV_inv_valid(false) {}
 
 int TouchState::getTouchPoints(TouchPoints &current) const {
   assert(state == 0);
