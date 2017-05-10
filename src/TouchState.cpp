@@ -11,6 +11,7 @@ TouchState::TouchState()
   : state(0),
     use_mouse(true),
     mouse_down(false),
+    remove_mouse_upon_touch(true),
     smoothing(0.f),
     drag_magnitude(10),
     hold_time(std::chrono::seconds(2)),
@@ -421,6 +422,8 @@ float TouchState::getDragMagnitude() {
 void TouchState::eventsInit(int width, int height) {
   assert(state == 0);
   state = 1;
+
+  state_accumulation.clear();
   
   previous_state = current_state;
   
@@ -443,35 +446,13 @@ void TouchState::handleEvent(const SDL_Event& event) {
   switch (event.type) {
     
   case SDL_MOUSEMOTION:
-    if (!use_mouse) return;
-
-    mouse_point_x = event.motion.x;
-    mouse_point_y = event.motion.y;
-    
-    if (current_state.find(event.motion.which) == current_state.end()) return;
-    
-    current_state[event.motion.which].x = (float)(event.motion.x);
-    current_state[event.motion.which].y = (float)(event.motion.y);
-    
-    return;
-    
   case SDL_MOUSEBUTTONDOWN: {
-    mouse_down = true;
-    if (!use_mouse) return;
-    TouchPoint p(event.motion.which,
-                 float(event.motion.x),
-                 float(event.motion.y));
-    current_state[event.motion.which] = p;
+    addState(event.motion.which, event.motion.x, event.motion.y, true);
     return;
   }
     
   case SDL_MOUSEBUTTONUP:
-    mouse_down = false;
-    if (!use_mouse) return;
-    if (current_state.find(event.motion.which) == current_state.end()) return;
-    current_state[event.motion.which].x = (float)(event.motion.x);
-    current_state[event.motion.which].y = (float)(event.motion.y);
-    current_state[event.motion.which].state |= State::RELEASE;
+    removeState(event.motion.which, event.motion.x, event.motion.y, true);
     return;
     
   case SDL_MOUSEWHEEL:
@@ -479,7 +460,6 @@ void TouchState::handleEvent(const SDL_Event& event) {
     return;
     
   case SDL_FINGERDOWN: {
-    if (use_mouse && remove_mouse_upon_touch) use_mouse = false;
 #ifdef __linux__
     float x = event.tfinger.x;
     float y = event.tfinger.y;
@@ -487,8 +467,7 @@ void TouchState::handleEvent(const SDL_Event& event) {
     float x = event.tfinger.x * current_width;
     float y = event.tfinger.y * current_height;
 #endif
-    TouchPoint p(event.tfinger.fingerId, x, y);
-    current_state[event.tfinger.fingerId] = p;
+    addState(event.tfinger.fingerId, x, y);
     return;
   }
     
@@ -500,8 +479,7 @@ void TouchState::handleEvent(const SDL_Event& event) {
     float x = event.tfinger.x * current_width;
     float y = event.tfinger.y * current_height;
 #endif
-    current_state[event.tfinger.fingerId].x = x;
-    current_state[event.tfinger.fingerId].y = y;
+    addState(event.tfinger.fingerId, x, y);
     return;
   }
     
@@ -513,17 +491,71 @@ void TouchState::handleEvent(const SDL_Event& event) {
     float x = event.tfinger.x * current_width;
     float y = event.tfinger.y * current_height;
 #endif
-    current_state[event.tfinger.fingerId].x = x;
-    current_state[event.tfinger.fingerId].y = y;
-    current_state[event.tfinger.fingerId].state |= State::RELEASE;
+    removeState(event.tfinger.fingerId, x, y);
     return;
   }
 }
 #endif
 
+void TouchState::addState(TouchPointId id, float x, float y, bool mouse) {
+  assert(state == 1);
+
+  if (mouse) {
+    if (!use_mouse) return;
+    
+    mouse_down = true;
+    
+    mouse_point_x = x;
+    mouse_point_y = y;
+    
+  } else {
+    if (use_mouse && remove_mouse_upon_touch) use_mouse = false;
+  }
+
+  if (state_accumulation.find(id) == state_accumulation.end()) {
+    StateAccumulation sa = { id, 0, 0, 0 };
+    state_accumulation.insert(std::make_pair(id, sa));
+  }
+  
+  state_accumulation[id].x += x;
+  state_accumulation[id].y += y;
+  ++state_accumulation[id].sample_count;
+  
+  if (current_state.find(id) == current_state.end()) {
+    TouchPoint p(id, x, y);
+    current_state.insert(std::make_pair(id, p));
+  }
+  
+  current_state[id].x = x;
+  current_state[id].y = y;
+}
+
+void TouchState::removeState(TouchPointId id, float x, float y, bool mouse) {
+  assert(state == 1);
+
+  if (mouse) {
+    mouse_down = false;
+    
+    mouse_point_x = x;
+    mouse_point_y = y;
+  }
+  
+  if (current_state.find(id) == current_state.end()) return;
+  
+  current_state[id].x = x;
+  current_state[id].y = y;
+  
+  current_state[id].state |= State::RELEASE;
+}
+
 void TouchState::eventsDone() {
   assert(state == 1);
 
+  for (auto &pt : state_accumulation) {
+    current_state[pt.first].x = pt.second.x / pt.second.sample_count;
+    current_state[pt.first].y = pt.second.y / pt.second.sample_count;
+  }
+  
   // Copy associations and history
   std::map<TouchPointId, void*> new_association;
   std::map<TouchPointId, HistoryState> new_history;

@@ -408,6 +408,18 @@ namespace touchlib {
       TouchPoint point;
       clock::time_point time;
     };
+
+    struct StateAccumulation {
+      TouchPointId id;
+      float x;
+      float y;
+      size_t sample_count;
+    };
+
+    std::map<TouchPointId, StateAccumulation> state_accumulation;
+
+    void addState(TouchPointId id, float x, float y, bool mouse = false);
+    void removeState(TouchPointId id, float x, float y, bool mouse = false);
     
     float smoothing;
     float drag_magnitude;
