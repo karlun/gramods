@@ -113,9 +113,14 @@ int TouchState::getTouchPoints(std::map<void*, TouchPoints> &current,
         break;
     }
   }
-  for (; tp_it != current_state.end(); ++tp_it)
-    current[nullptr].push_back(tp_it->second);
+  for (; tp_it != current_state.end(); ++tp_it) {
+    if (previous_state.find(tp_it->second.id) != previous_state.end()) {
+      current[nullptr].push_back(tp_it->second);
+      previous[nullptr].push_back(previous_state.find(tp_it->second.id)->second);
+    }
+  }
   
+  assert(current.size() == previous.size());
   return current.size();
 }
 
