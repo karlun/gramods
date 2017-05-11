@@ -548,9 +548,6 @@ void TouchState::removeState(TouchPointId id, float x, float y, bool mouse) {
   
   if (current_state.find(id) == current_state.end()) return;
   
-  current_state[id].x = x;
-  current_state[id].y = y;
-  
   current_state[id].state |= State::RELEASE;
 }
 
@@ -570,11 +567,13 @@ void TouchState::eventsDone() {
     pt.second.x = pos[0];
     pt.second.y = pos[1];
     
-    
     if (history.find(pt.first) == history.end()) {
       // This is a new point, that has no history
       HistoryState hs = { pt.second, clock::now() };
       history[pt.first] = hs;
+      
+      pt.second.sx = pt.second.x;
+      pt.second.sy = pt.second.y;
     } else {
       // This is an old point, so check what is happening to it
       check_drag(history[pt.first], pt.second);
