@@ -7,16 +7,25 @@
 
 using namespace touchlib;
 
+#define DEFAULT_DRAG_MAGNITUDE 10
+#define DEFAULT_DRAG_HISTORY_LENGTH 10
+#define DEFAULT_DRAG_HISTORY_DURATION 2.0
+#define DEFAULT_DRAG_ERROR 5.0
+
 TouchState::TouchState()
   : state(0),
     use_mouse(true),
     mouse_down(false),
     remove_mouse_upon_touch(true),
     smoothing(0.f),
-    drag_magnitude(10),
+    drag_magnitude(DEFAULT_DRAG_MAGNITUDE),
     hold_time(std::chrono::seconds(2)),
     current_WPV_inv_valid(false), 
-    previous_WPV_inv_valid(false) {}
+    previous_WPV_inv_valid(false) {
+  
+  velocityEstimator.setHistoryLength(DEFAULT_DRAG_HISTORY_LENGTH);
+  velocityEstimator.setHistoryDuration(DEFAULT_DRAG_HISTORY_DURATION);
+}
 
 int TouchState::getTouchPoints(TouchPoints &current) const {
   assert(state == 0);
@@ -423,8 +432,6 @@ void TouchState::eventsInit(int width, int height) {
   assert(state == 0);
   state = 1;
 
-  state_accumulation.clear();
-  
   previous_state = current_state;
   
   previous_width = current_width;
@@ -447,7 +454,8 @@ void TouchState::handleEvent(const SDL_Event& event) {
     
   case SDL_MOUSEMOTION:
   case SDL_MOUSEBUTTONDOWN: {
-    addState(event.motion.which, event.motion.x, event.motion.y, true);
+    addState(event.motion.which, event.motion.x, event.motion.y,
+             1e-3 * event.motion.timestamp, true);
     return;
   }
     
@@ -467,7 +475,8 @@ void TouchState::handleEvent(const SDL_Event& event) {
     float x = event.tfinger.x * current_width;
     float y = event.tfinger.y * current_height;
 #endif
-    addState(event.tfinger.fingerId, x, y);
+    addState(event.tfinger.fingerId, x, y,
+             1e-3 * event.tfinger.timestamp);
     return;
   }
     
@@ -479,7 +488,7 @@ void TouchState::handleEvent(const SDL_Event& event) {
     float x = event.tfinger.x * current_width;
     float y = event.tfinger.y * current_height;
 #endif
-    addState(event.tfinger.fingerId, x, y);
+    addState(event.tfinger.fingerId, x, y, 1e-3 * event.tfinger.timestamp);
     return;
   }
     
@@ -497,7 +506,7 @@ void TouchState::handleEvent(const SDL_Event& event) {
 }
 #endif
 
-void TouchState::addState(TouchPointId id, float x, float y, bool mouse) {
+void TouchState::addState(TouchPointId id, float x, float y, double time, bool mouse) {
   assert(state == 1);
 
   if (mouse) {
@@ -511,23 +520,13 @@ void TouchState::addState(TouchPointId id, float x, float y, bool mouse) {
   } else {
     if (use_mouse && remove_mouse_upon_touch) use_mouse = false;
   }
-
-  if (state_accumulation.find(id) == state_accumulation.end()) {
-    StateAccumulation sa = { id, 0, 0, 0 };
-    state_accumulation.insert(std::make_pair(id, sa));
-  }
-  
-  state_accumulation[id].x += x;
-  state_accumulation[id].y += y;
-  ++state_accumulation[id].sample_count;
   
   if (current_state.find(id) == current_state.end()) {
-    TouchPoint p(id, x, y);
+    TouchPoint p(id, 0, 0);
     current_state.insert(std::make_pair(id, p));
   }
   
-  current_state[id].x = x;
-  current_state[id].y = y;
+  velocityEstimator.addSample(id, utm50_utils::Vector3f(x, y, 0), time);
 }
 
 void TouchState::removeState(TouchPointId id, float x, float y, bool mouse) {
@@ -550,11 +549,6 @@ void TouchState::removeState(TouchPointId id, float x, float y, bool mouse) {
 
 void TouchState::eventsDone() {
   assert(state == 1);
-
-  for (auto &pt : state_accumulation) {
-    current_state[pt.first].x = pt.second.x / pt.second.sample_count;
-    current_state[pt.first].y = pt.second.y / pt.second.sample_count;
-  }
   
   // Copy associations and history
   std::map<TouchPointId, void*> new_association;
@@ -562,7 +556,14 @@ void TouchState::eventsDone() {
   std::map<TouchPointId, TouchPoint> new_current;
   
   for (auto &pt : current_state) {
-
+    
+    size_t samples;
+    double last_time = velocityEstimator.getLastSampleTime(pt.first);
+    utm50_utils::Vector3f pos = velocityEstimator.estimatePosition(pt.first, DEFAULT_DRAG_ERROR, last_time, &samples);
+    pt.second.x = pos[0];
+    pt.second.y = pos[1];
+    
+    
     if (history.find(pt.first) == history.end()) {
       // This is a new point, that has no history
       HistoryState hs = { pt.second, clock::now() };
@@ -590,6 +591,8 @@ void TouchState::eventsDone() {
   association.swap(new_association);
   history.swap(new_history);
   current_state.swap(new_current);
+  
+  velocityEstimator.cleanup();
   
   state = 0;
 }

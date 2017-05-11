@@ -45,7 +45,18 @@ namespace touchlib {
         velocity. */
     double getHistoryDuration() const {
       return history_duration; }
-      
+    
+    /**
+       Returns the time associated with the last sample associated
+       with the specified id, or -1 if there is no last sample
+       available.
+    */
+    double getLastSampleTime(size_t id) {
+      if (history.find(id) == history.end() || history[id].first.size() < 1)
+        return -1;
+      return history[id].first[0];
+    }
+    
     /**
        Add a position sample. Each sample is associated to an id
        and a time.
@@ -92,9 +103,9 @@ namespace touchlib {
        addSample, to avoid too much unnecessary memory usage.
          
        @param time The current time, to use when estimating if
-       samples are too old.
+       samples are too old, or -1 to use the samples' time.
     */
-    void cleanup(double time);
+    void cleanup(double time = -1);
       
   private:
       
@@ -198,32 +209,55 @@ VEC touchlib::EFFOAW<VEC>::estimatePosition(size_t id, TYPE error_threshold, dou
 
   typename std::map< size_t, time_position_t >::const_iterator hist = history.find(id);
   if( hist == history.end() ){
-    return VEC(0); }
+    if (ret_samples != nullptr)
+      *ret_samples = 0;
+    return VEC(0);
+  }
   
   const time_list_t & time_list = hist->second.first;
   const position_list_t & position_list = hist->second.second;
   
+  if (position_list.size() == 0) {
+    if (ret_samples != nullptr)
+      *ret_samples = 0;
+    return VEC(0);
+  }
+  
   size_t samples;
   VEC velocity = estimateVelocity(id, error_threshold, &samples);
-
-  double sum_dtime = 0.0;
+  
+  if (samples < 2) {
+    if (ret_samples != nullptr)
+      *ret_samples = 1;
+    return position_list[0];
+  }
+  
+  if (ret_samples != nullptr)
+    *ret_samples = samples;
+  
+  double sum_time = 0.0;
   VEC sum_position(0);
   for (int idx = 0; idx < samples; ++idx) {
-    sum_dtime += time_list[idx] - time_list[0];
+    sum_time += time_list[idx];
     sum_position += position_list[idx];
   }
 
-  double avg_dtime = sum_dtime / samples;
+  double avg_time = sum_time / samples;
   VEC avg_position = sum_position * (1.f/samples);
 
   if (ret_samples != nullptr)
     *ret_samples = samples;
   
-  return avg_position + (time - time_list[0] - avg_dtime) * velocity;
+  return avg_position + (time - avg_time) * velocity;
 }
 
 template<class VEC>
 void touchlib::EFFOAW<VEC>::cleanup(double time){
+
+  if (time < 0)
+    for (auto it : history)
+      if (it.second.first.size() > 0 && it.second.first[0] > time)
+        time = it.second.first[0];
   
   for( typename std::map< size_t, time_position_t >::iterator it = history.begin() ;
        it != history.end() ; ){

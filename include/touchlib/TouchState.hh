@@ -12,6 +12,8 @@
 #include <SDL.h>
 #endif
 
+#include <touchlib/EFFOAW.hh>
+
 #include <utm50_utils/linearalgebra.hh>
 
 #include <vector>
@@ -409,16 +411,9 @@ namespace touchlib {
       clock::time_point time;
     };
 
-    struct StateAccumulation {
-      TouchPointId id;
-      float x;
-      float y;
-      size_t sample_count;
-    };
-
-    std::map<TouchPointId, StateAccumulation> state_accumulation;
-
-    void addState(TouchPointId id, float x, float y, bool mouse = false);
+    EFFOAW<utm50_utils::Vector3f> velocityEstimator;
+    
+    void addState(TouchPointId id, float x, float y, double time, bool mouse = false);
     void removeState(TouchPointId id, float x, float y, bool mouse = false);
     
     float smoothing;
