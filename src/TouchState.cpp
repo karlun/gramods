@@ -348,9 +348,9 @@ bool TouchState::getTouchLines(std::map<void*, TouchLines> &current,
     for (auto pt : it.second) {
       
       utm50_utils::Vector4f nearPoint =
-        (current_WPV_inv * utm50_utils::Vector4f(pt.sx, current_height - pt.sy, 0.f)).renormalized();
+        (previous_WPV_inv * utm50_utils::Vector4f(pt.sx, previous_height - pt.sy, 0.f)).renormalized();
       utm50_utils::Vector4f farPoint =
-        (current_WPV_inv * utm50_utils::Vector4f(pt.sx, current_height - pt.sy, 1.f)).renormalized();
+        (previous_WPV_inv * utm50_utils::Vector4f(pt.sx, previous_height - pt.sy, 1.f)).renormalized();
       
       TouchLine tl = { nearPoint,
                        utm50_utils::Vector3f(farPoint - nearPoint).normalized(),
