@@ -453,6 +453,8 @@ void TouchState::handleEvent(const SDL_Event& event) {
   switch (event.type) {
     
   case SDL_MOUSEMOTION:
+    if (!mouse_down) return;
+    
   case SDL_MOUSEBUTTONDOWN: {
     addState(event.motion.which, event.motion.x, event.motion.y,
              1e-3 * event.motion.timestamp, true);
