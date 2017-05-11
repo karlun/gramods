@@ -10,6 +10,7 @@
 #include <deque>
 #include <map>
 #include <cstddef>
+#include <limits>
 
 namespace touchlib {
   
@@ -58,8 +59,10 @@ namespace touchlib {
     }
     
     /**
-       Add a position sample. Each sample is associated to an id
-       and a time.
+       Add a position sample. Each sample is associated to an id and a
+       time. If a new sample is provided with the same id and time as
+       a previously added sample, this new sample will replace the
+       old.
          
        @param[in] id The id to add position sample to.
        @param[in] position The position value to use as sample.
@@ -140,7 +143,13 @@ void touchlib::EFFOAW<VEC>::addSample(size_t id, VEC position, double time){
   
   time_list_t &time_list = history[id].first;
   position_list_t &position_list = history[id].second;
-  
+
+  // Remove old samples that have the same time (override old sample)
+  while (! time_list.empty() && fabs(time - time_list.front()) < std::numeric_limits<double>::epsilon()) {
+    position_list.pop_front();
+    time_list.pop_front();
+  }
+
   position_list.push_front(position);
   time_list.push_front(time);
   
