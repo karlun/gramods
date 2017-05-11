@@ -234,8 +234,10 @@ VEC touchlib::EFFOAW<VEC>::estimatePosition(size_t id, TYPE error_threshold, dou
   
   size_t samples;
   VEC velocity = estimateVelocity(id, error_threshold, &samples);
-  
-  if (samples < 2) {
+
+  // Two samples should give position identical to p0, minus floating
+  // point errors
+  if (samples <= 2) {
     if (ret_samples != nullptr)
       *ret_samples = 1;
     return position_list[0];
