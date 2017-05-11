@@ -122,9 +122,14 @@ int TouchState::getTouchPoints(std::map<void*, TouchPoints> &current,
         break;
     }
   }
-  for (; tp_it != current_state.end(); ++tp_it)
-    current[nullptr].push_back(tp_it->second);
+  for (; tp_it != current_state.end(); ++tp_it) {
+    if (previous_state.find(tp_it->second.id) != previous_state.end()) {
+      current[nullptr].push_back(tp_it->second);
+      previous[nullptr].push_back(previous_state.find(tp_it->second.id)->second);
+    }
+  }
   
+  assert(current.size() == previous.size());
   return current.size();
 }
 
@@ -352,9 +357,9 @@ bool TouchState::getTouchLines(std::map<void*, TouchLines> &current,
     for (auto pt : it.second) {
       
       utm50_utils::Vector4f nearPoint =
-        (current_WPV_inv * utm50_utils::Vector4f(pt.sx, current_height - pt.sy, 0.f)).renormalized();
+        (previous_WPV_inv * utm50_utils::Vector4f(pt.sx, previous_height - pt.sy, 0.f)).renormalized();
       utm50_utils::Vector4f farPoint =
-        (current_WPV_inv * utm50_utils::Vector4f(pt.sx, current_height - pt.sy, 1.f)).renormalized();
+        (previous_WPV_inv * utm50_utils::Vector4f(pt.sx, previous_height - pt.sy, 1.f)).renormalized();
       
       TouchLine tl = { nearPoint,
                        utm50_utils::Vector3f(farPoint - nearPoint).normalized(),
@@ -512,12 +517,12 @@ void TouchState::addState(TouchPointId id, float x, float y, double time, bool m
   assert(state == 1);
 
   if (mouse) {
-    if (!use_mouse) return;
-    
     mouse_down = true;
     
     mouse_point_x = x;
     mouse_point_y = y;
+    
+    if (!use_mouse) return;
     
   } else {
     if (use_mouse && remove_mouse_upon_touch) use_mouse = false;
