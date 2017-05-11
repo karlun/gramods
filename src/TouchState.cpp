@@ -508,12 +508,12 @@ void TouchState::addState(TouchPointId id, float x, float y, bool mouse) {
   assert(state == 1);
 
   if (mouse) {
-    if (!use_mouse) return;
-    
     mouse_down = true;
     
     mouse_point_x = x;
     mouse_point_y = y;
+    
+    if (!use_mouse) return;
     
   } else {
     if (use_mouse && remove_mouse_upon_touch) use_mouse = false;
