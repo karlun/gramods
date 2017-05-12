@@ -7,6 +7,7 @@
 
 using namespace touchlib;
 
+#define DEFAULT_SMOOTHING 0.2f
 #define DEFAULT_DRAG_MAGNITUDE 10
 #define DEFAULT_DRAG_HISTORY_LENGTH 10
 #define DEFAULT_DRAG_HISTORY_DURATION 2.0
@@ -17,7 +18,7 @@ TouchState::TouchState()
     use_mouse(true),
     mouse_down(false),
     remove_mouse_upon_touch(true),
-    smoothing(0.f),
+    smoothing(DEFAULT_SMOOTHING),
     drag_magnitude(DEFAULT_DRAG_MAGNITUDE),
     hold_time(std::chrono::seconds(2)),
     current_WPV_inv_valid(false), 
