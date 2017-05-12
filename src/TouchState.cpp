@@ -561,11 +561,14 @@ void TouchState::eventsDone() {
   
   for (auto &pt : current_state) {
     
-    size_t samples;
     double last_time = velocityEstimator.getLastSampleTime(pt.first);
-    utm50_utils::Vector3f pos = velocityEstimator.estimatePosition(pt.first, DEFAULT_DRAG_ERROR, last_time, &samples);
+    utm50_utils::Vector3f vel = velocityEstimator.estimateVelocity(pt.first, DEFAULT_DRAG_ERROR);
+    utm50_utils::Vector3f pos = velocityEstimator.estimatePosition(pt.first, DEFAULT_DRAG_ERROR, last_time);
+
     pt.second.x = pos[0];
     pt.second.y = pos[1];
+    pt.second.vx = vel[0];
+    pt.second.vy = vel[1];
     
     if (history.find(pt.first) == history.end()) {
       // This is a new point, that has no history
@@ -604,10 +607,10 @@ void TouchState::eventsDone() {
 }
 
 TouchState::TouchPoint::TouchPoint()
-  : x(0), y(0), sx(0), sy(0), id(0), state(0) {}
+  : x(0), y(0), vx(0), vy(0), sx(0), sy(0), id(0), state(0) {}
 
 TouchState::TouchPoint::TouchPoint(TouchPointId id, float x, float y)
-  : x(x), y(y), sx(x), sy(y), id(id), state(0) {}
+  : x(x), y(y), vx(0), vy(0), sx(x), sy(y), id(id), state(0) {}
 
 
 void TouchState::check_drag(HistoryState hist, TouchPoint &new_pt) {

@@ -70,6 +70,12 @@ namespace touchlib {
       /// y position in (sub) pixels from top edge.
       float y;
 
+      /// x velocity in pixels per second from left edge.
+      float vx;
+      
+      /// x velocity in pixels per second from left edge.
+      float vy;
+
       /// smoothed version of the x position.
       float sx;
 
