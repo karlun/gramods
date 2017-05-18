@@ -3,7 +3,6 @@
 
 #include <stdexcept>
 #include <limits>
-#include <assert.h>
 
 using namespace touchlib;
 
@@ -434,6 +433,16 @@ float TouchState::getDragMagnitude() {
   return drag_magnitude;
 }
 
+void TouchState::EventAdaptor::addState(TouchPointId id, float x, float y, double time, bool mouse) {
+  assert(owner);
+  owner->addState(id, x, y, time, mouse);
+}
+
+void TouchState::EventAdaptor::removeState(TouchPointId id, float x, float y, bool mouse) {
+  assert(owner);
+  owner->removeState(id, x, y, mouse);
+}
+
 void TouchState::eventsInit(int width, int height) {
   assert(state == 0);
   state = 1;
@@ -442,77 +451,17 @@ void TouchState::eventsInit(int width, int height) {
   
   previous_width = current_width;
   previous_height = current_height;
+  current_width = width;
+  current_height = height;
 
   previous_WPV_inv = current_WPV_inv;
   previous_WPV_inv_valid = current_WPV_inv_valid;
   
-  current_width = width;
-  current_height = height;
-
+  for (auto it : event_adaptors)
+    it.second->init(width, height);
+  
   mouse_wheel = 0.f;
 }
-
-#ifdef TOUCHLIB_ENABLE_SDL2
-void TouchState::handleEvent(const SDL_Event& event) {
-  assert(state == 1);
-  
-  switch (event.type) {
-    
-  case SDL_MOUSEMOTION:
-    if (!mouse_down) return;
-    
-  case SDL_MOUSEBUTTONDOWN: {
-    addState(event.motion.which, event.motion.x, event.motion.y,
-             1e-3 * event.motion.timestamp, true);
-    return;
-  }
-    
-  case SDL_MOUSEBUTTONUP:
-    removeState(event.motion.which, event.motion.x, event.motion.y, true);
-    return;
-    
-  case SDL_MOUSEWHEEL:
-    mouse_wheel = event.wheel.y;
-    return;
-    
-  case SDL_FINGERDOWN: {
-#ifdef __linux__
-    float x = event.tfinger.x;
-    float y = event.tfinger.y;
-#else
-    float x = event.tfinger.x * current_width;
-    float y = event.tfinger.y * current_height;
-#endif
-    addState(event.tfinger.fingerId, x, y,
-             1e-3 * event.tfinger.timestamp);
-    return;
-  }
-    
-  case SDL_FINGERMOTION: {
-#ifdef __linux__
-    float x = event.tfinger.x;
-    float y = event.tfinger.y;
-#else
-    float x = event.tfinger.x * current_width;
-    float y = event.tfinger.y * current_height;
-#endif
-    addState(event.tfinger.fingerId, x, y, 1e-3 * event.tfinger.timestamp);
-    return;
-  }
-    
-  case SDL_FINGERUP:
-#ifdef __linux__
-    float x = event.tfinger.x;
-    float y = event.tfinger.y;
-#else
-    float x = event.tfinger.x * current_width;
-    float y = event.tfinger.y * current_height;
-#endif
-    removeState(event.tfinger.fingerId, x, y);
-    return;
-  }
-}
-#endif
 
 void TouchState::addState(TouchPointId id, float x, float y, double time, bool mouse) {
   assert(state == 1);
@@ -554,6 +503,9 @@ void TouchState::removeState(TouchPointId id, float x, float y, bool mouse) {
 
 void TouchState::eventsDone() {
   assert(state == 1);
+  
+  for (auto it : event_adaptors)
+    it.second->done();
   
   // Copy associations and history
   std::map<TouchPointId, void*> new_association;

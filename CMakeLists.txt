@@ -33,7 +33,8 @@ CONFIGURE_FILE(
 
 
 ADD_LIBRARY(touchlib
-  src/TouchState.cpp)
+  src/TouchState.cpp
+  src/SDLEventAdaptor.cpp)
 
 TARGET_INCLUDE_DIRECTORIES(touchlib PUBLIC ${TOUCHLIB_INCLUDE_DIRS})
 TARGET_LINK_LIBRARIES(touchlib ${TOUCHLIB_LIBS})
