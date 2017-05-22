@@ -8,10 +8,6 @@
 #include <osg/Camera>
 #endif
 
-#ifdef TOUCHLIB_ENABLE_SDL2
-#include <SDL.h>
-#endif
-
 #include <touchlib/EFFOAW.hh>
 
 #include <utm50_utils/linearalgebra.hh>
@@ -19,6 +15,11 @@
 #include <vector>
 #include <chrono>
 #include <map>
+#include <typeindex>
+#include <typeinfo>
+#include <unordered_map>
+
+#include <assert.h>
 
 namespace touchlib {
 
@@ -383,6 +384,62 @@ namespace touchlib {
      * Methods used to fill and update the set of states.
      */
     ///@{
+    
+    /**
+     * Base type for event adaptors providing means to input events
+     * from different platforms and window libraries.
+     * 
+     * Get the platform/library dependent adaptor by calling
+     * getEventAdaptor.
+     */
+    struct EventAdaptor {
+
+      /**
+       * Called by the owner (TouchState) when eventsInit is called.
+       */
+      virtual void init(int width, int height) {}
+
+      /**
+       * Called by the owner (TouchState) when eventsDone is called.
+       */
+      virtual void done() {}
+
+    protected:
+
+      /**
+       * Adds a touch point sample
+       * @param id The id of the touch point
+       * @param x position in (sub) pixels from left edge.
+       * @param y position in (sub) pixels from top edge.
+       * @param time the time of the event in seconds.
+       */
+      void addTouchState(TouchPointId id, float x, float y, double time);
+      
+      /**
+       * Removes the touch point with the specified id.
+       */
+      void removeTouchState(TouchPointId id, float x, float y);
+
+      /**
+       * Add the specified mouse state. This will also add and remove
+       * simulated touch states.
+       */
+      void addMouseState(TouchPointId id, float x, float y, double time, bool mouse_down);
+      
+    private:
+      
+      TouchState *owner;
+      friend TouchState;
+    };
+    friend EventAdaptor;
+    
+    /**
+     * Returns a reference to the internal event adaptor for the
+     * specified type. The adaptor is instantiated upon the first call
+     * to this method and deleted when the TouchState is destroyed.
+     */
+    template<class T>
+    T & getEventAdaptor();
 
     /**
      * Initializes the event handling. Call this before calling
@@ -393,15 +450,6 @@ namespace touchlib {
      */
     void eventsInit(int width, int height);
     
-#ifdef TOUCHLIB_ENABLE_SDL2
-    /**
-     * Updates the internal touch states based on the provided
-     * event. Call this once for each incoming event and finish with a
-     * call to eventsDone.
-     */
-    void handleEvent(const SDL_Event& event);
-#endif
-
     /**
      * Flags the internal touch states as complete. Call this after
      * calling handleEvent with all currently available events.
@@ -419,15 +467,30 @@ namespace touchlib {
 
     EFFOAW<utm50_utils::Vector3f> velocityEstimator;
     
+    /**
+     * Adds a touch point sample
+     * @param id The id of the touch point
+     * @param x position in (sub) pixels from left edge.
+     * @param y position in (sub) pixels from top edge.
+     * @param time the time of the event in seconds.
+     */
     void addTouchState(TouchPointId id, float x, float y, double time);
+    
+    /**
+     * Removes the touch point with the specified id.
+     */
     void removeTouchState(TouchPointId id, float x, float y);
-    void addState(TouchPointId id, float x, float y, double time);
-
+    
     /**
      * Add the specified mouse state. This will also add and remove
      * simulated touch states.
      */
     void addMouseState(TouchPointId id, float x, float y, double time, bool mouse_down);
+    
+    /**
+     * Internal
+     */
+    void addState(TouchPointId id, float x, float y, double time);
     
     float smoothing;
     float drag_magnitude;
@@ -477,7 +540,20 @@ namespace touchlib {
     bool mouse_down;
     int mouse_point_x;
     int mouse_point_y;
+
+    std::unordered_map<std::type_index, EventAdaptor*> event_adaptors;
   };
+
+  
+  template<class T>
+  T & TouchState::getEventAdaptor() {
+    if (event_adaptors.find(typeid(T)) == event_adaptors.end()) {
+      event_adaptors[typeid(T)] = new T;
+      event_adaptors[typeid(T)]->owner = this;
+    }
+    assert(dynamic_cast<T*>(event_adaptors[typeid(T)]));
+    return *dynamic_cast<T*>(event_adaptors[typeid(T)]);
+  }
 }
 
 #endif
