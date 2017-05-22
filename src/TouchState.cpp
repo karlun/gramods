@@ -459,17 +459,12 @@ void TouchState::handleEvent(const SDL_Event& event) {
   switch (event.type) {
     
   case SDL_MOUSEMOTION:
-    if (!mouse_down) return;
-    
+  case SDL_MOUSEBUTTONUP:
   case SDL_MOUSEBUTTONDOWN: {
-    addState(event.motion.which, event.motion.x, event.motion.y,
-             1e-3 * event.motion.timestamp, true);
+    addMouseState(event.motion.which, event.motion.x, event.motion.y,
+                  1e-3 * event.motion.timestamp, event.motion.state);
     return;
   }
-    
-  case SDL_MOUSEBUTTONUP:
-    removeState(event.motion.which, event.motion.x, event.motion.y, true);
-    return;
     
   case SDL_MOUSEWHEEL:
     mouse_wheel = event.wheel.y;
@@ -496,7 +491,7 @@ void TouchState::handleEvent(const SDL_Event& event) {
     float x = event.tfinger.x * current_width;
     float y = event.tfinger.y * current_height;
 #endif
-    addState(event.tfinger.fingerId, x, y, 1e-3 * event.tfinger.timestamp);
+    addTouchState(event.tfinger.fingerId, x, y, 1e-3 * event.tfinger.timestamp);
     return;
   }
     
@@ -508,27 +503,21 @@ void TouchState::handleEvent(const SDL_Event& event) {
     float x = event.tfinger.x * current_width;
     float y = event.tfinger.y * current_height;
 #endif
-    removeState(event.tfinger.fingerId, x, y);
+    removeTouchState(event.tfinger.fingerId, x, y);
     return;
   }
 }
 #endif
 
-void TouchState::addState(TouchPointId id, float x, float y, double time, bool mouse) {
+void TouchState::addTouchState(TouchPointId id, float x, float y, double time) {
   assert(state == 1);
 
-  if (mouse) {
-    mouse_down = true;
-    
-    mouse_point_x = x;
-    mouse_point_y = y;
-    
-    if (!use_mouse) return;
-    
-  } else {
-    if (use_mouse && remove_mouse_upon_touch) use_mouse = false;
-  }
-  
+  if (use_mouse && remove_mouse_upon_touch) use_mouse = false;
+
+  addState(id, x, y, time);
+}
+
+void TouchState::addState(TouchPointId id, float x, float y, double time) {
   if (current_state.find(id) == current_state.end()) {
     TouchPoint p(id, 0, 0);
     current_state.insert(std::make_pair(id, p));
@@ -537,19 +526,29 @@ void TouchState::addState(TouchPointId id, float x, float y, double time, bool m
   velocityEstimator.addSample(id, utm50_utils::Vector3f(x, y, 0), time);
 }
 
-void TouchState::removeState(TouchPointId id, float x, float y, bool mouse) {
+void TouchState::removeTouchState(TouchPointId id, float x, float y) {
   assert(state == 1);
-
-  if (mouse) {
-    mouse_down = false;
-    
-    mouse_point_x = x;
-    mouse_point_y = y;
-  }
   
   if (current_state.find(id) == current_state.end()) return;
   
   current_state[id].state |= State::RELEASE;
+}
+
+void TouchState::addMouseState(TouchPointId id, float x, float y, double time, bool down) {
+  assert(state == 1);
+  
+  mouse_down = down;
+
+  mouse_point_x = x;
+  mouse_point_y = y;
+
+  if (down) {
+    if (!use_mouse) return;
+    addState(id, x, y, time);
+  } else {
+    if (current_state.find(id) == current_state.end()) return;
+    removeTouchState(id, x, y);
+  }
 }
 
 void TouchState::eventsDone() {

@@ -419,8 +419,15 @@ namespace touchlib {
 
     EFFOAW<utm50_utils::Vector3f> velocityEstimator;
     
-    void addState(TouchPointId id, float x, float y, double time, bool mouse = false);
-    void removeState(TouchPointId id, float x, float y, bool mouse = false);
+    void addTouchState(TouchPointId id, float x, float y, double time);
+    void removeTouchState(TouchPointId id, float x, float y);
+    void addState(TouchPointId id, float x, float y, double time);
+
+    /**
+     * Add the specified mouse state. This will also add and remove
+     * simulated touch states.
+     */
+    void addMouseState(TouchPointId id, float x, float y, double time, bool mouse_down);
     
     float smoothing;
     float drag_magnitude;
