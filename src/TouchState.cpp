@@ -375,7 +375,7 @@ bool TouchState::getTouchLines(std::map<void*, TouchLines> &current,
 }
 
 
-float TouchState::getMouseScroll() const {
+float TouchState::getMouseWheel() const {
   return mouse_wheel;
 }
 
@@ -448,6 +448,11 @@ void TouchState::EventAdaptor::addMouseState(TouchPointId id, float x, float y, 
   owner->addMouseState(id, x, y, time, down);
 }
 
+void TouchState::EventAdaptor::addMouseWheel(float s) {
+  assert(owner);
+  owner->addMouseWheel(s);
+}
+
 void TouchState::eventsInit(int width, int height) {
   assert(state == 0);
   state = 1;
@@ -508,6 +513,10 @@ void TouchState::addMouseState(TouchPointId id, float x, float y, double time, b
     if (current_state.find(id) == current_state.end()) return;
     removeTouchState(id, x, y);
   }
+}
+
+void TouchState::addMouseWheel(float s) {
+  mouse_wheel = s;
 }
 
 void TouchState::eventsDone() {

@@ -15,6 +15,10 @@ void SDLEventAdaptor::done() {}
 void SDLEventAdaptor::handleEvent(const SDL_Event& event) {
   switch (event.type) {
     
+  case SDL_MOUSEWHEEL:
+    addMouseWheel(event.wheel.y);
+    return;
+    
   case SDL_MOUSEMOTION:
   case SDL_MOUSEBUTTONUP:
   case SDL_MOUSEBUTTONDOWN: {

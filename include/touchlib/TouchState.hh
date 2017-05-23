@@ -295,9 +295,9 @@ namespace touchlib {
     ///@{
 
     /**
-     * Returns the scroll value, positive up and negative down.
+     * Returns the mouse wheel value, positive up and negative down.
      */
-    float getMouseScroll() const;
+    float getMouseWheel() const;
 
     /**
      * Returns true if the mouse button is down, false otherwise.
@@ -426,6 +426,11 @@ namespace touchlib {
        */
       void addMouseState(TouchPointId id, float x, float y, double time, bool mouse_down);
       
+      /**
+       * Sets the wheel value, positive up and negative down.
+       */
+      void addMouseWheel(float s);
+      
     private:
       
       TouchState *owner;
@@ -486,6 +491,11 @@ namespace touchlib {
      * simulated touch states.
      */
     void addMouseState(TouchPointId id, float x, float y, double time, bool mouse_down);
+    
+    /**
+     * Sets the wheel value, positive up and negative down.
+     */
+    void addMouseWheel(float s);
     
     /**
      * Internal
