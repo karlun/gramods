@@ -16,7 +16,9 @@ namespace touchlib {
   
   /**
      This is an end-fitting first-order adaptive window estimator of
-     velocity from samples allowing jittering.
+     velocity from samples allowing jittering. Units of both length
+     and time can be arbitrarily chosen and the velocity will be
+     estimated as distance over time.
   */
   template<class VEC>
   class EFFOAW {
