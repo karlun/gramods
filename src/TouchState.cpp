@@ -476,6 +476,8 @@ void TouchState::eventsInit(int width, int height) {
     it.second->init(width, height);
   
   mouse_wheel = 0.f;
+
+  clearReleasedStates();
 }
 
 void TouchState::addTouchState(TouchPointId id, float x, float y, double time) {
@@ -530,10 +532,6 @@ void TouchState::eventsDone() {
   for (auto it : event_adaptors)
     it.second->done();
   
-  // Copy associations and history
-  std::map<TouchPointId, void*> new_association;
-  std::map<TouchPointId, HistoryState> new_history;
-  std::map<TouchPointId, TouchPoint> new_current;
   
   for (auto &pt : current_state) {
     
@@ -564,7 +562,20 @@ void TouchState::eventsDone() {
       pt.second.sx = smoothing * old_pt.sx + (1 - smoothing) * pt.second.x;
       pt.second.sy = smoothing * old_pt.sy + (1 - smoothing) * pt.second.y;
     }
-    
+  }
+
+  velocityEstimator.cleanup();
+  
+  state = 0;
+}
+
+void TouchState::clearReleasedStates() {
+  // Copy associations and history
+  std::map<TouchPointId, void*> new_association;
+  std::map<TouchPointId, HistoryState> new_history;
+  std::map<TouchPointId, TouchPoint> new_current;
+
+  for (auto &pt : current_state) {
     if (! (pt.second.state & State::RELEASE)) {
       if (association.find(pt.first) != association.end())
         new_association[pt.first] = association[pt.first];
@@ -572,14 +583,10 @@ void TouchState::eventsDone() {
       new_current[pt.first] = pt.second;
     }
   }
-
+  
   association.swap(new_association);
   history.swap(new_history);
   current_state.swap(new_current);
-  
-  velocityEstimator.cleanup();
-  
-  state = 0;
 }
 
 TouchState::TouchPoint::TouchPoint()

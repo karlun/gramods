@@ -535,7 +535,13 @@ namespace touchlib {
      * @param[in,out] The touch point to check and update
      */
     void check_hold(HistoryState hist, TouchPoint &new_pt);
-    
+
+    /**
+     * Removes states that were previously released (has state
+     * RELEASE). This is called from eventsInit().
+     */
+    void clearReleasedStates();
+
     int state;
 
     utm50_utils::Matrix4f current_WPV_inv;
