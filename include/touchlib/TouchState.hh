@@ -33,6 +33,9 @@ namespace touchlib {
     /// Creates an empty TouchState instance.
     TouchState();
     
+    /// Destroys the TouchState instance.
+    ~TouchState();
+    
     /// The clock used in this class.
     typedef std::chrono::steady_clock clock;
     

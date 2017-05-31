@@ -27,6 +27,11 @@ TouchState::TouchState()
   velocityEstimator.setHistoryDuration(DEFAULT_DRAG_HISTORY_DURATION);
 }
 
+TouchState::~TouchState() {
+  for (auto it : event_adaptors)
+    delete it.second;
+}
+
 int TouchState::getTouchPoints(TouchPoints &current) const {
   assert(state == 0);
   
