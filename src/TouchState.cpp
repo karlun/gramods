@@ -593,7 +593,8 @@ void TouchState::check_drag(HistoryState hist, TouchPoint &new_pt) {
   assert(hist.point.id == new_pt.id);
   if (new_pt.state & State::DRAG) return;
   if ((hist.point.x - new_pt.x) * (hist.point.x - new_pt.x) +
-      (hist.point.y - new_pt.y) * (hist.point.y - new_pt.y) < drag_magnitude)
+      (hist.point.y - new_pt.y) * (hist.point.y - new_pt.y)
+      < drag_magnitude * drag_magnitude)
     return;
   
   new_pt.state |= State::DRAG;
