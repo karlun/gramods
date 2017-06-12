@@ -57,8 +57,8 @@ void SDLEventAdaptor::handleEvent(const SDL_Event& event) {
     float x = event.tfinger.x;
     float y = event.tfinger.y;
 #else
-    float x = event.tfinger.x * current_width;
-    float y = event.tfinger.y * current_height;
+    float x = event.tfinger.x * width;
+    float y = event.tfinger.y * height;
 #endif
     removeTouchState(event.tfinger.fingerId, x, y);
     return;
