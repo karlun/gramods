@@ -70,20 +70,17 @@ int TouchState::getTouchPoints(std::map<void*, TouchPoints> &current) const {
   std::map<TouchPointId, TouchPoint>::const_iterator tp_it = current_state.begin();
   std::map<TouchPointId, void*>::const_iterator ass_it = association.begin();
 
-  while (true)
+  while (tp_it != current_state.end() && ass_it != association.end())
     if (tp_it->first < ass_it->first) {
       current[nullptr].push_back(tp_it->second);
-      if (++tp_it == current_state.end())
-        break;
+      ++tp_it;
     } else if (tp_it->first > ass_it->first) {
       assert(0);
-      if (++ass_it == association.end())
-        break;
+      ++ass_it;
     } else {
       current[ass_it->second].push_back(tp_it->second);
-      if (++tp_it == current_state.end() ||
-          ++ass_it == association.end())
-        break;
+      ++tp_it;
+      ++ass_it;
     }
   for (; tp_it != current_state.end(); ++tp_it)
     current[nullptr].push_back(tp_it->second);
@@ -104,34 +101,33 @@ int TouchState::getTouchPoints(std::map<void*, TouchPoints> &current,
   while (tp_it != current_state.end() && ass_it != association.end()) {
     if (tp_it->first < ass_it->first) {
       
-      if (previous_state.find(tp_it->second.id) != previous_state.end()) {
-        current[nullptr].push_back(tp_it->second);
-        previous[nullptr].push_back(previous_state.find(tp_it->second.id)->second);
-      }
+      if (previous_state.find(tp_it->second.id) == previous_state.end())
+        continue;
       
-      if (++tp_it == current_state.end())
-        break;
+      current[nullptr].push_back(tp_it->second);
+      previous[nullptr].push_back(previous_state.find(tp_it->second.id)->second);
+      
+      ++tp_it;
     } else if (tp_it->first > ass_it->first) {
       assert(0);
-      if (++ass_it == association.end())
-        break;
+      ++ass_it;
     } else {
 
-      if (previous_state.find(tp_it->second.id) != previous_state.end()) {
-        current[ass_it->second].push_back(tp_it->second);
-        previous[ass_it->second].push_back(previous_state.find(tp_it->second.id)->second);
-      }
+      if (previous_state.find(tp_it->second.id) == previous_state.end())
+        continue;
       
-      if (++tp_it == current_state.end() ||
-          ++ass_it == association.end())
-        break;
+      current[ass_it->second].push_back(tp_it->second);
+      previous[ass_it->second].push_back(previous_state.find(tp_it->second.id)->second);
+      
+      ++tp_it;
+      ++ass_it;
     }
   }
   for (; tp_it != current_state.end(); ++tp_it) {
-    if (previous_state.find(tp_it->second.id) != previous_state.end()) {
-      current[nullptr].push_back(tp_it->second);
-      previous[nullptr].push_back(previous_state.find(tp_it->second.id)->second);
-    }
+    if (previous_state.find(tp_it->second.id) == previous_state.end())
+      continue;
+    current[nullptr].push_back(tp_it->second);
+    previous[nullptr].push_back(previous_state.find(tp_it->second.id)->second);
   }
   
   assert(current.size() == previous.size());
