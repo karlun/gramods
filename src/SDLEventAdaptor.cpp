@@ -20,12 +20,15 @@ void SDLEventAdaptor::handleEvent(const SDL_Event& event) {
     return;
     
   case SDL_MOUSEMOTION:
-  case SDL_MOUSEBUTTONUP:
-  case SDL_MOUSEBUTTONDOWN: {
     addMouseState(event.motion.which, event.motion.x, event.motion.y,
                   1e-3 * event.motion.timestamp, event.motion.state);
     return;
-  }
+    
+  case SDL_MOUSEBUTTONUP:
+  case SDL_MOUSEBUTTONDOWN:
+    addMouseState(event.button.which, event.button.x, event.button.y,
+                  1e-3 * event.button.timestamp, event.button.state);
+    return;
     
   case SDL_FINGERDOWN: {
 #ifdef __linux__
