@@ -7,10 +7,12 @@
 using namespace touchlib;
 
 #define DEFAULT_SMOOTHING 0.2f
-#define DEFAULT_DRAG_MAGNITUDE 10
-#define DEFAULT_DRAG_HISTORY_LENGTH 10
-#define DEFAULT_DRAG_HISTORY_DURATION 2.0
-#define DEFAULT_DRAG_ERROR 5.0
+#define DEFAULT_MOVE_MAGNITUDE 10
+#define DEFAULT_MOVE_HISTORY_LENGTH 10
+#define DEFAULT_MOVE_HISTORY_DURATION 2.0
+#define DEFAULT_MOVE_ERROR 5.0
+#define DEFAULT_HOLD_DELAY_MS 2000
+#define DEFAULT_MULTI_DELAY_MS 500
 
 TouchState::TouchState()
   : state(0),
@@ -18,13 +20,14 @@ TouchState::TouchState()
     mouse_down(false),
     remove_mouse_upon_touch(true),
     smoothing(DEFAULT_SMOOTHING),
-    drag_magnitude(DEFAULT_DRAG_MAGNITUDE),
-    hold_time(std::chrono::seconds(2)),
+    move_magnitude(DEFAULT_MOVE_MAGNITUDE),
+    hold_time(std::chrono::milliseconds(DEFAULT_HOLD_DELAY_MS)),
+    multi_time(std::chrono::milliseconds(DEFAULT_MULTI_DELAY_MS)),
     current_WPV_inv_valid(false), 
     previous_WPV_inv_valid(false) {
   
-  velocityEstimator.setHistoryLength(DEFAULT_DRAG_HISTORY_LENGTH);
-  velocityEstimator.setHistoryDuration(DEFAULT_DRAG_HISTORY_DURATION);
+  velocityEstimator.setHistoryLength(DEFAULT_MOVE_HISTORY_LENGTH);
+  velocityEstimator.setHistoryDuration(DEFAULT_MOVE_HISTORY_DURATION);
 }
 
 TouchState::~TouchState() {
@@ -426,12 +429,28 @@ bool TouchState::getRemoveMouseUponTouch() {
   return remove_mouse_upon_touch;
 }
 
-void TouchState::setDragMagnitude(float dist) {
-  drag_magnitude = dist;
+void TouchState::setMoveMagnitude(float dist) {
+  move_magnitude = dist;
 }
 
-float TouchState::getDragMagnitude() {
-  return drag_magnitude;
+float TouchState::getMoveMagnitude() {
+  return move_magnitude;
+}
+
+void TouchState::setHoldTime(clock::duration time) {
+  hold_time = time;
+}
+
+TouchState::clock::duration TouchState::getHoldTime() {
+  return hold_time;
+}
+
+void TouchState::setMultiClickTime(clock::duration time) {
+  multi_time = time;
+}
+
+TouchState::clock::duration TouchState::getMultiClickTime() {
+  return multi_time;
 }
 
 void TouchState::EventAdaptor::addTouchState(TouchPointId id, float x, float y, double time) {
@@ -532,16 +551,18 @@ void TouchState::eventsDone() {
   for (auto &pt : current_state) {
     
     double last_time = velocityEstimator.getLastSampleTime(pt.first);
-    utm50_utils::Vector3f vel = velocityEstimator.estimateVelocity(pt.first, DEFAULT_DRAG_ERROR);
-    utm50_utils::Vector3f pos = velocityEstimator.estimatePosition(pt.first, DEFAULT_DRAG_ERROR, last_time);
+    utm50_utils::Vector3f vel = velocityEstimator.estimateVelocity(pt.first, DEFAULT_MOVE_ERROR);
+    utm50_utils::Vector3f pos = velocityEstimator.estimatePosition(pt.first, DEFAULT_MOVE_ERROR, last_time);
 
     pt.second.x = pos[0];
     pt.second.y = pos[1];
     pt.second.vx = vel[0];
     pt.second.vy = vel[1];
-    
-    if (history.find(pt.first) == history.end()) {
+
+    if (history.find(pt.first) == history.end() ||
+        history[pt.first].point.state & State::RELEASE) {
       // This is a new point, that has no history
+      check_multi(pt.second);
       HistoryState hs = { pt.second, clock::now() };
       history[pt.first] = hs;
       
@@ -572,12 +593,21 @@ void TouchState::clearReleasedStates() {
   std::map<TouchPointId, TouchPoint> new_current;
 
   for (auto &pt : current_state) {
-    if (! (pt.second.state & State::RELEASE)) {
-      if (association.find(pt.first) != association.end())
-        new_association[pt.first] = association[pt.first];
-      new_history[pt.first] = history[pt.first];
-      new_current[pt.first] = pt.second;
+    if (pt.second.state & State::RELEASE) {
+      history[pt.first].point.state |= State::RELEASE;
+      continue;
     }
+
+    new_current[pt.first] = pt.second;
+  }
+  
+  for (auto &pt : history) {
+    if (pt.second.point.state & State::RELEASE &&
+        clock::now() - pt.second.time > multi_time) continue;
+    
+    if (association.find(pt.first) != association.end())
+      new_association[pt.first] = association[pt.first];
+    new_history[pt.first] = history[pt.first];
   }
   
   association.swap(new_association);
@@ -586,18 +616,56 @@ void TouchState::clearReleasedStates() {
 }
 
 TouchState::TouchPoint::TouchPoint()
-  : x(0), y(0), vx(0), vy(0), sx(0), sy(0), id(0), state(0) {}
+  : x(0), y(0), vx(0), vy(0), sx(0), sy(0), id(0), state(0), clicks(1) {}
 
 TouchState::TouchPoint::TouchPoint(TouchPointId id, float x, float y)
-  : x(x), y(y), vx(0), vy(0), sx(x), sy(y), id(id), state(0) {}
+  : x(x), y(y), vx(0), vy(0), sx(x), sy(y), id(id), state(0), clicks(1) {}
 
+
+void TouchState::check_multi(TouchPoint &new_pt) {
+  std::map<TouchPointId, void*> new_association;
+  std::map<TouchPointId, HistoryState> new_history;
+
+  for (auto &pt : history) {
+    auto &point = pt.second.point;
+
+    // Not a release, therefore an active finger, not multi
+    if (! (point.state & State::RELEASE)) {
+      if (association.find(pt.first) != association.end())
+        new_association[pt.first] = association[pt.first];
+      new_history[pt.first] = history[pt.first];
+      continue;
+    }
+
+    // Too far away, therefore not multi, but might become in the future
+    if ((point.x - new_pt.x) * (point.x - new_pt.x) +
+        (point.y - new_pt.y) * (point.y - new_pt.y)
+        > move_magnitude * move_magnitude) {
+      if (association.find(pt.first) != association.end())
+        new_association[pt.first] = association[pt.first];
+      new_history[pt.first] = history[pt.first];
+      continue;
+    }
+
+    // Copy old association to this new (multi) touch point
+    if (association.find(pt.first) != association.end())
+      new_association[new_pt.id] = association[pt.first];
+    new_pt.clicks = point.clicks + 1;
+    new_pt.state |= State::MULTI;
+    
+    break;
+  }
+
+  association.swap(new_association);
+  history.swap(new_history);
+}
 
 void TouchState::check_drag(HistoryState hist, TouchPoint &new_pt) {
   assert(hist.point.id == new_pt.id);
   if (new_pt.state & State::DRAG) return;
   if ((hist.point.x - new_pt.x) * (hist.point.x - new_pt.x) +
       (hist.point.y - new_pt.y) * (hist.point.y - new_pt.y)
-      < drag_magnitude * drag_magnitude)
+      < move_magnitude * move_magnitude)
     return;
   
   new_pt.state |= State::DRAG;

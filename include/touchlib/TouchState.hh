@@ -24,7 +24,15 @@
 namespace touchlib {
 
   /**
-   * Internal states during touch interaction.
+   * The TouchState class represent the internal states during touch
+   * interaction. It supports association of touch points with
+   * objects, "multi click" (double click and more), and provides
+   * states to differentiate between dragging and held touch
+   * points. For example, a user may tripple click, hold and then
+   * drag, which is then reflected by the internal states of the touch
+   * point. For example, an object may choose to associate a touch
+   * point to itself only if it represents a tripple
+   * click-and-hold-then-drag.
    */
   class TouchState {
 
@@ -52,9 +60,21 @@ namespace touchlib {
      */
     struct State {
       static const unsigned char NONE = 0;
+
+      /// Touch point has previosly been moved while down.
       static const unsigned char DRAG = 0x01 << 0;
+
+      /// Touch point was held still while first pressed.
       static const unsigned char HOLD = 0x01 << 1;
-      static const unsigned char RELEASE = 0x01 << 2;
+
+      /**
+       * Touch point is a "double" click, or more.
+       * \see TouchState::TouchPoint::clicks
+       */
+      static const unsigned char MULTI = 0x01 << 2;
+
+      /// Touch point was released.
+      static const unsigned char RELEASE = 0x01 << 3;
     };
     
     /**
@@ -95,6 +115,12 @@ namespace touchlib {
        * \see State
        */ 
       unsigned char state;
+      
+      /**
+       * The number of times this position was clicked in succession,
+       * for example two (2) for a double click.
+       */
+      unsigned int clicks;
     };
     
     /**
@@ -356,30 +382,45 @@ namespace touchlib {
     /**
      * Sets the magnitude of movement (Euclidean distance in pixels,
      * default 10) that is allowed before the touch point state DRAG
-     * is applied. A negative value turns this feature off, meaning
-     * that DRAG is never applied.
+     * is applied. This is also the distance allowed between two or
+     * more clicks for them to be considered a multi click. A negative
+     * value turns this feature off, meaning that DRAG or MULTI are
+     * never applied.
      *
      * @param[in] dist Euclidean distance in pixels
      */
-    void setDragMagnitude(float dist);
+    void setMoveMagnitude(float dist);
     
     /**
-     * Gets the DRAG state distance.
-     * \see setDragMagnitude
+     * Gets the distance.
+     * \see setMoveMagnitude
      */
-    float getDragMagnitude();
+    float getMoveMagnitude();
 
     /**
      * Sets the time that a touch point must be held without being
-     * dragged before its state get the HOLD flag, default 3 seconds.
+     * dragged before its state get the HOLD flag, default 2 seconds.
      */
     void setHoldTime(clock::duration time);
     
     /**
-     * Gets the HOLD time.
-     * \see setHoldTime.
+     * Gets the hold time.
+     * \see setHoldTime
      */
     clock::duration getHoldTime();
+
+    /**
+     * Sets the maximum amount of time (default 500 ms) between two
+     * touches at the same point that is considered a multi click of
+     * the same touch point.
+     */
+    void setMultiClickTime(clock::duration time);
+
+    /**
+     * Gets the multi click time.
+     * \see setMultiClickTime
+     */
+    clock::duration getMultiClickTime();
     
     ///!@}
     
@@ -506,8 +547,9 @@ namespace touchlib {
     void addState(TouchPointId id, float x, float y, double time);
     
     float smoothing;
-    float drag_magnitude;
+    float move_magnitude;
     clock::duration hold_time;
+    clock::duration multi_time;
     
     bool remove_mouse_upon_touch;
     bool use_mouse;
@@ -517,7 +559,13 @@ namespace touchlib {
     
     std::map<TouchPointId, void*> association;
     std::map<TouchPointId, HistoryState> history;
-    
+
+    /**
+     * Checks if this new touch point is really a multi click, based
+     * on historical information.
+     */
+    void check_multi(TouchPoint &new_pt);
+
     /**
      * Checks if the hist/new_pt pair represents a drag motion, and
      * sets the corresponding flag in new_pt.
