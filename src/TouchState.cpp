@@ -137,35 +137,6 @@ int TouchState::getTouchPoints(std::map<void*, TouchPoints> &current,
   return current.size();
 }
 
-int TouchState::getUnassociatedTouchPoints(TouchPoints &current) const {
-  assert(state == 0);
-  
-  current.clear();
-  current.reserve(current_state.size() - association.size());
-
-  std::map<TouchPointId, TouchPoint>::const_iterator tp_it = current_state.begin();
-  std::map<TouchPointId, void*>::const_iterator ass_it = association.begin();
-
-  while (true)
-    if (tp_it->first < ass_it->first) {
-      current.push_back(tp_it->second);
-      if (++tp_it == current_state.end())
-        break;
-    } else if (tp_it->first > ass_it->first) {
-      assert(0);
-      if (++ass_it == association.end())
-        break;
-    } else {
-      if (++tp_it == current_state.end() ||
-          ++ass_it == association.end())
-        break;
-    }
-  for (; tp_it != current_state.end(); ++tp_it)
-    current.push_back(tp_it->second);
-  
-  return current.size();
-}
-
 
 bool TouchState::setAssociation(TouchPointId id, void* pt) {
   assert(state == 0);
@@ -180,16 +151,6 @@ bool TouchState::getAssociation(TouchPointId id, void* pt) const {
   if (association.find(id) == association.end()) return false;
   pt = association.find(id)->second;
   return true;
-}
-
-bool TouchState::getAssociation(void* pt, TouchPointId &id) const {
-  assert(state == 0);
-  for (auto ass : association)
-    if (ass.second == pt) {
-      id = ass.first;
-      return true;
-    }
-  return false;
 }
 
 

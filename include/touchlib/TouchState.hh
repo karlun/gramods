@@ -194,13 +194,7 @@ namespace touchlib {
                        std::map<void*, TouchPoints> &previous) const;
 
     /**
-     * Gets a list of only the current touch points that are not
-     * associated with any object.
-     */
-    int getUnassociatedTouchPoints(TouchPoints &current) const;
-
-    /**
-     * Assocates a touch point id with an object.
+     * Associates an unassociated touch point id with an object. 
      * 
      * @param[in] id The touch point id that should be associated.
      * @param[in] pt A void pointer to the object to associate with.
@@ -217,15 +211,6 @@ namespace touchlib {
      */
     bool getAssociation(TouchPointId id, void* pt) const;
 
-    /**
-     * Gets the touch point id associated with a specified object.
-     *
-     * @param[in] pt A void pointer to the object that is associated with.
-     * @param[out] id The id of the touch point that is associated.
-     * @return True iff an association was found.
-     */
-    bool getAssociation(void* pt, TouchPointId &id) const;
-    
     ///!@}
     
     /** @name 3D projection methods
