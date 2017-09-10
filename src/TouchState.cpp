@@ -65,6 +65,23 @@ int TouchState::getTouchPoints(TouchPoints &current, TouchPoints &previous) cons
   return current.size();
 }
 
+int TouchState::getTouchPoints(void *ass, TouchPoints &current) const {
+  std::map<void*, TouchPoints> curr;
+  getTouchPoints(curr);
+  current.swap(curr[ass]);
+  return current.size();
+}
+
+int TouchState::getTouchPoints(void *ass, TouchPoints &current, TouchPoints &previous) const {
+  std::map<void*, TouchPoints> curr;
+  std::map<void*, TouchPoints> prev;
+  getTouchPoints(curr, prev);
+  current.swap(curr[ass]);
+  previous.swap(prev[ass]);
+  return current.size();
+  
+}
+
 int TouchState::getTouchPoints(std::map<void*, TouchPoints> &current) const {
   assert(state == 0);
 

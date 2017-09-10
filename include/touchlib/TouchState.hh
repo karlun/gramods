@@ -33,6 +33,33 @@ namespace touchlib {
    * point. For example, an object may choose to associate a touch
    * point to itself only if it represents a tripple
    * click-and-hold-then-drag.
+   * 
+   * Typical usage:
+   * \code{.cpp}
+   * touchState.eventsInit(width, height);
+   * touchState.setCurrentProjection(camera);
+   *
+   * SDL_Event event;
+   * while(SDL_PollEvent(&event)) {
+   *   touchState.getEventAdaptor<touchlib::SDLEventAdaptor>().handleEvent(event);
+   * }
+   * touchState.eventsDone();
+   * 
+   * TouchPoints touchPoints;
+   * if (touchState.getTouchPoints(this, touchPoints) < REQUIRED_POINTS) {
+   *   TouchPoints candidates;
+   *   touchState.getTouchPoints(nullptr, candidates);
+   *   for (auto& pt : candidates)
+   *     if (isInside(pt.x, pt.y)) // Checks if the point hits this object
+   *       touchState.setAssociation(pt.id, this);
+   * }
+   * 
+   * TouchPoints previousTouchPoints;
+   * if (touchState.getTouchPoints(this, touchPoints, previousTouchPoints) < REQUIRED_POINTS)
+   *   return;
+   * 
+   * // Use touch points here
+   * \endcode
    */
   class TouchState {
 
@@ -162,6 +189,9 @@ namespace touchlib {
     
     /**
      * Gets the current touch points, and returns the point count.
+     * 
+     * @param[out] current The resulting touch points.
+     * @return The number of touch points extracted.
      */
     int getTouchPoints(TouchPoints &current) const;
     
@@ -169,8 +199,44 @@ namespace touchlib {
      * Gets the current touch points and their corresponding previous
      * positions, and returns the point count. This will only provide
      * touch points with both current and previous states available.
+     * 
+     * @param[out] current The most current touch points.
+     * @param[out] previous The touch points from the previous time frame.
+     * @return The number of touch points extracted.
      */
     int getTouchPoints(TouchPoints &current, TouchPoints &previous) const;
+
+    /**
+     * Gets the current touch points associated to the specified
+     * pointer, and returns the point count. Unassociated touch points
+     * can be extraced with nullptr as first argument.
+     * 
+     * @param[in] ass The association to extract touch points for, or
+     * nullptr for unassociated points.
+     * 
+     * @param[out] current The resulting touch points.
+     * 
+     * @return The number of touch points extracted.
+     */
+    int getTouchPoints(void *ass, TouchPoints &current) const;
+    
+    /**
+     * Gets the current touch points associated to the specified
+     * pointer, and their corresponding previous positions, and
+     * returns the point count. This will only provide touch points
+     * with both current and previous states available. Unassociated
+     * touch points can be extraced with nullptr as first argument.
+     * 
+     * @param[in] ass The association to extract touch points for, or
+     * nullptr for unassociated points.
+     * 
+     * @param[out] current The resulting touch points.
+     * 
+     * @param[out] previous The touch points from the previous time frame.
+     * 
+     * @return The number of touch points extracted.
+     */
+    int getTouchPoints(void *ass, TouchPoints &current, TouchPoints &previous) const;
 
     /**
      * Gets the current touch points as an association
@@ -277,6 +343,29 @@ namespace touchlib {
      * @return True if both current and previous lines could be extracted.
      */
     bool getTouchLines(TouchLines &current, TouchLines &previous) const;
+
+    /**
+     * Gets the current touch lines and returns true, if lines can be
+     * extracted from the current touch points. False is returned
+     * otherwise.
+     * 
+     * @param[in] ass
+     * @param[out] current The resulting 3D lines, originating at the near plane.
+     * @return True if current lines could be extracted.
+     */
+    bool getTouchLines(void *ass, TouchLines &current) const;
+
+    /**
+     * Gets the current and previous touch lines and returns true, if
+     * lines can be extracted from the current and previous touch
+     * points. False is returned otherwise.
+     * 
+     * @param[in] ass 
+     * @param[out] current The current 3D lines, originating at the near plane.
+     * @param[out] previous The previous 3D lines, originating at the near plane.
+     * @return True if both current and previous lines could be extracted.
+     */
+    bool getTouchLines(void *ass, TouchLines &current, TouchLines &previous) const;
 
     /**
      * Gets the current touch lines as an association
