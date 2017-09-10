@@ -13,7 +13,22 @@
 namespace touchlib {
   
   /**
+   * Event adaptor for SDL2, providing means to input events into
+   * TouchState.
+   * 
+   * Typical use:
+   * \code{.cpp}
+   * int width, height;
+   * SDL_GetWindowSize(sdl_window, &width, &height);
+   * 
+   * touchState.eventsInit(width, height);
    *
+   * SDL_Event event;
+   * while(SDL_PollEvent(&event)) {
+   *   touchState.getEventAdaptor<touchlib::SDLEventAdaptor>().handleEvent(event);
+   * }
+   * touchState.eventsDone();
+   * \endcode
    */
   class SDLEventAdaptor
     : public TouchState::EventAdaptor {
