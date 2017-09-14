@@ -121,11 +121,10 @@ int TouchState::getTouchPoints(std::map<void*, TouchPoints> &current,
   while (tp_it != current_state.end() && ass_it != association.end()) {
     if (tp_it->first < ass_it->first) {
       
-      if (previous_state.find(tp_it->second.id) == previous_state.end())
-        continue;
-      
-      current[nullptr].push_back(tp_it->second);
-      previous[nullptr].push_back(previous_state.find(tp_it->second.id)->second);
+      if (previous_state.find(tp_it->second.id) != previous_state.end()) {
+        current[nullptr].push_back(tp_it->second);
+        previous[nullptr].push_back(previous_state.find(tp_it->second.id)->second);
+      }
       
       ++tp_it;
     } else if (tp_it->first > ass_it->first) {
@@ -133,11 +132,10 @@ int TouchState::getTouchPoints(std::map<void*, TouchPoints> &current,
       ++ass_it;
     } else {
 
-      if (previous_state.find(tp_it->second.id) == previous_state.end())
-        continue;
-      
-      current[ass_it->second].push_back(tp_it->second);
-      previous[ass_it->second].push_back(previous_state.find(tp_it->second.id)->second);
+      if (previous_state.find(tp_it->second.id) != previous_state.end()) {
+        current[ass_it->second].push_back(tp_it->second);
+        previous[ass_it->second].push_back(previous_state.find(tp_it->second.id)->second);
+      }
       
       ++tp_it;
       ++ass_it;
