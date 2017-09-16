@@ -36,6 +36,7 @@ namespace touchlib {
    * 
    * Typical usage:
    * \code{.cpp}
+   * // Copy event data into TouchState object (in SDL window handler) ---
    * touchState.eventsInit(width, height);
    * touchState.setCurrentProjection(camera);
    *
@@ -45,6 +46,9 @@ namespace touchlib {
    * }
    * touchState.eventsDone();
    * 
+   * ...
+   * 
+   * // Associate touch points with this object (in interaction object class) ---
    * TouchPoints touchPoints;
    * if (touchState.getTouchPoints(this, touchPoints) < REQUIRED_POINTS) {
    *   TouchPoints candidates;
@@ -54,8 +58,8 @@ namespace touchlib {
    *       touchState.setAssociation(pt.id, this);
    * }
    * 
-   * TouchPoints previousTouchPoints;
-   * if (touchState.getTouchPoints(this, touchPoints, previousTouchPoints) < REQUIRED_POINTS)
+   * TouchPoints currentTouchPoints, previousTouchPoints;
+   * if (touchState.getTouchPoints(this, currentTouchPoints, previousTouchPoints) < REQUIRED_POINTS)
    *   return;
    * 
    * // Use touch points here
