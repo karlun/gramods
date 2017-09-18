@@ -459,18 +459,19 @@ namespace touchlib {
 
     /**
      * Sets the magnitude of movement (Euclidean distance in pixels,
-     * default 10) that is allowed before the touch point state DRAG
-     * is applied. This is also the distance allowed between two or
-     * more clicks for them to be considered a multi click. A negative
-     * value turns this feature off, meaning that DRAG or MULTI are
-     * never applied.
+     * default 10) that is allowed before the touch point is
+     * considered to be moved.
+     * 
+     * This affects when the states State::DRAG and State::MULTI are
+     * applied. Also, velocity estimation uses this value as a measure
+     * of touch noise.
      *
      * @param[in] dist Euclidean distance in pixels
      */
     void setMoveMagnitude(float dist);
     
     /**
-     * Gets the distance.
+     * Gets the movement magnitude that is considered a touch movement.
      * \see setMoveMagnitude
      */
     float getMoveMagnitude();

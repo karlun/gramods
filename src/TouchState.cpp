@@ -10,7 +10,6 @@ using namespace touchlib;
 #define DEFAULT_MOVE_MAGNITUDE 10
 #define DEFAULT_MOVE_HISTORY_LENGTH 10
 #define DEFAULT_MOVE_HISTORY_DURATION 2.0
-#define DEFAULT_MOVE_ERROR 5.0
 #define DEFAULT_HOLD_DELAY_MS 2000
 #define DEFAULT_MULTI_DELAY_MS 500
 
@@ -484,7 +483,7 @@ void TouchState::addState(TouchPointId id, float x, float y, double time) {
     TouchPoint p(id, 0, 0);
     current_state.insert(std::make_pair(id, p));
   }
-  
+
   velocityEstimator.addSample(id, utm50_utils::Vector3f(x, y, 0), time);
 }
 
@@ -527,8 +526,8 @@ void TouchState::eventsDone() {
   for (auto &pt : current_state) {
     
     double last_time = velocityEstimator.getLastSampleTime(pt.first);
-    utm50_utils::Vector3f vel = velocityEstimator.estimateVelocity(pt.first, DEFAULT_MOVE_ERROR);
-    utm50_utils::Vector3f pos = velocityEstimator.estimatePosition(pt.first, DEFAULT_MOVE_ERROR, last_time);
+    utm50_utils::Vector3f vel = velocityEstimator.estimateVelocity(pt.first, move_magnitude);
+    utm50_utils::Vector3f pos = velocityEstimator.estimatePosition(pt.first, move_magnitude, last_time);
 
     pt.second.x = pos[0];
     pt.second.y = pos[1];
