@@ -190,6 +190,11 @@ namespace touchlib {
      * Methods used to extract current touch points the their states.
      */
     ///@{
+
+    /**
+     * Checks whether the TouchState is empty of touch points.
+     */
+    bool empty() const { return current_state.empty(); }
     
     /**
      * Gets the current touch points, and returns the point count.
