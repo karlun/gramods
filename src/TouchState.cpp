@@ -94,7 +94,6 @@ int TouchState::getTouchPoints(std::map<void*, TouchPoints> &current) const {
       current[nullptr].push_back(tp_it->second);
       ++tp_it;
     } else if (tp_it->first > ass_it->first) {
-      assert(0);
       ++ass_it;
     } else {
       current[ass_it->second].push_back(tp_it->second);
@@ -127,7 +126,6 @@ int TouchState::getTouchPoints(std::map<void*, TouchPoints> &current,
       
       ++tp_it;
     } else if (tp_it->first > ass_it->first) {
-      assert(0);
       ++ass_it;
     } else {
 
