@@ -179,6 +179,12 @@ namespace touchlib {
        * \see State
        */ 
       unsigned char state;
+
+      /**
+       * The number of times this position was clicked in succession,
+       * for example two (2) for a double click.
+       */
+      unsigned int clicks;
     };
 
     /**

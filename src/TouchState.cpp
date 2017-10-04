@@ -211,7 +211,8 @@ bool TouchState::getTouchLines(TouchLines &current) const {
     TouchLine tl = { nearPoint,
                      utm50_utils::Vector3f(farPoint - nearPoint).normalized(),
                      pt.id,
-                     pt.state };
+                     pt.state,
+                     pt.clicks };
     current.push_back(tl);
   }
 
@@ -240,7 +241,8 @@ bool TouchState::getTouchLines(TouchLines &current, TouchLines &previous) const 
     TouchLine tl = { nearPoint,
                      utm50_utils::Vector3f(farPoint - nearPoint).normalized(),
                      pt.id,
-                     pt.state };
+                     pt.state,
+                     pt.clicks };
     current.push_back(tl);
   }
 
@@ -255,7 +257,8 @@ bool TouchState::getTouchLines(TouchLines &current, TouchLines &previous) const 
     TouchLine tl = { nearPoint,
                      utm50_utils::Vector3f(farPoint - nearPoint).normalized(),
                      pt.id,
-                     pt.state };
+                     pt.state,
+                     pt.clicks };
     previous.push_back(tl);
   }
   
@@ -285,7 +288,8 @@ bool TouchState::getTouchLines(std::map<void*, TouchLines> &current) const {
       TouchLine tl = { nearPoint,
                        utm50_utils::Vector3f(farPoint - nearPoint).normalized(),
                        pt.id,
-                       pt.state };
+                       pt.state,
+                       pt.clicks };
       lines.push_back(tl);
     }
 
@@ -322,7 +326,8 @@ bool TouchState::getTouchLines(std::map<void*, TouchLines> &current,
       TouchLine tl = { nearPoint,
                        utm50_utils::Vector3f(farPoint - nearPoint).normalized(),
                        pt.id,
-                       pt.state };
+                       pt.state,
+                       pt.clicks };
       lines.push_back(tl);
     }
 
@@ -343,7 +348,8 @@ bool TouchState::getTouchLines(std::map<void*, TouchLines> &current,
       TouchLine tl = { nearPoint,
                        utm50_utils::Vector3f(farPoint - nearPoint).normalized(),
                        pt.id,
-                       pt.state };
+                       pt.state,
+                       pt.clicks };
       lines.push_back(tl);
     }
 
