@@ -179,6 +179,12 @@ namespace touchlib {
        * \see State
        */ 
       unsigned char state;
+
+      /**
+       * The number of times this position was clicked in succession,
+       * for example two (2) for a double click.
+       */
+      unsigned int clicks;
     };
 
     /**
@@ -190,6 +196,11 @@ namespace touchlib {
      * Methods used to extract current touch points the their states.
      */
     ///@{
+
+    /**
+     * Checks whether the TouchState is empty of touch points.
+     */
+    bool empty() const { return current_state.empty(); }
     
     /**
      * Gets the current touch points, and returns the point count.
