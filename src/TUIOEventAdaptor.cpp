@@ -81,9 +81,9 @@ void TUIOEventAdaptor::done() {
 
   for (auto item : cursor_data)
     if (item.add)
-      addTouchState(item.id, item.x, item.y, item.time);
+      addTouchState(item.id, item.x * width, item.y * height, item.time);
     else
-      removeTouchState(item.id, item.x, item.y);
+      removeTouchState(item.id, item.x * width, item.y * height);
 
   cursor_data.clear();
 }
