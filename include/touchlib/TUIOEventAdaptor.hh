@@ -37,16 +37,17 @@ namespace touchlib {
   public:
 
     /**
-     * Connects the TUIO client with TCP to the specified address and
-     * port.
+     * Connects the TUIO client with TCP to the specified address
+     * (localhost if not specified) and port (3333 if not
+     * specified).
      */
-    void connect(std::string address, int port);
+    void connect(std::string address = "localhost", int port = 3333);
 
     /**
      * Opens the TUIO client to listen to UDP packages on the
-     * specified port.
+     * specified port (3333 if not specified).
      */
-    void open(int port);
+    void open(int port = 3333);
 
     /**
      * Called by the owner (TouchState) when eventsInit is called.
