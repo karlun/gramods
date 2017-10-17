@@ -39,10 +39,17 @@ void TUIOEventAdaptor::init(int width, int height) {
   this->height = height;
 }
 
+double t0 = std::chrono::duration_cast<std::chrono::duration<double>>(TouchState::clock::now().time_since_epoch()).count();
+
 void TUIOEventAdaptor::addTuioCursor(TUIO::TuioCursor *tcur) {
   std::unique_lock<std::mutex> lck(cursor_data_lock);
-  double seconds = TouchState::clock::now().time_since_epoch().count();
-  std::cerr << seconds << std::endl;
+  double seconds = std::chrono::duration_cast<std::chrono::duration<double>>(TouchState::clock::now().time_since_epoch()).count();
+  std::cerr << "ADD "
+            << tcur->getCursorID() << " @ "
+            << tcur->getX() << ", "
+            << tcur->getY()
+            << " (" << (seconds - t0) << ")"
+            << std::endl;
   cursor_data.push_back(Cursor{
       tcur->getCursorID(),
         tcur->getX(),
@@ -54,8 +61,13 @@ void TUIOEventAdaptor::addTuioCursor(TUIO::TuioCursor *tcur) {
 
 void TUIOEventAdaptor::updateTuioCursor(TUIO::TuioCursor *tcur) {
   std::unique_lock<std::mutex> lck(cursor_data_lock);
-  double seconds = TouchState::clock::now().time_since_epoch().count();
-  std::cerr << seconds << std::endl;
+  double seconds = std::chrono::duration_cast<std::chrono::duration<double>>(TouchState::clock::now().time_since_epoch()).count();
+  std::cerr << "UPDATE "
+            << tcur->getCursorID() << " @ "
+            << tcur->getX() << ", "
+            << tcur->getY()
+            << " (" << (seconds - t0) << ")"
+            << std::endl;
   cursor_data.push_back(Cursor {
       tcur->getCursorID(),
         tcur->getX(),
@@ -67,6 +79,11 @@ void TUIOEventAdaptor::updateTuioCursor(TUIO::TuioCursor *tcur) {
 
 void TUIOEventAdaptor::removeTuioCursor(TUIO::TuioCursor *tcur) {
   std::unique_lock<std::mutex> lck(cursor_data_lock);
+  std::cerr << "REMOVE "
+            << tcur->getCursorID() << " @ "
+            << tcur->getX() << ", "
+            << tcur->getY()
+            << std::endl;
   cursor_data.push_back(Cursor {
       tcur->getCursorID(),
         tcur->getX(),
