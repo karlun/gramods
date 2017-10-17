@@ -10,7 +10,7 @@ using namespace touchlib;
 
 void TUIOEventAdaptor::connect(std::string address, int port) {
   if (tuio_client)
-    tuio_client->connect(false);
+    tuio_client->disconnect();
   
   if (address == "incoming")
     osc_receiver.reset(new TUIO::TcpReceiver(port));
@@ -19,18 +19,18 @@ void TUIOEventAdaptor::connect(std::string address, int port) {
   tuio_client.reset(new TUIO::TuioClient(osc_receiver.get()));
 
   tuio_client->addTuioListener(this);
-  tuio_client->connect(true);
+  tuio_client->connect();
 }
 
 void TUIOEventAdaptor::open(int port) {
   if (tuio_client)
-    tuio_client->connect(false);
+    tuio_client->disconnect();
 
   osc_receiver.reset(new TUIO::UdpReceiver(port));
   tuio_client.reset(new TUIO::TuioClient(osc_receiver.get()));
 
   tuio_client->addTuioListener(this);
-  tuio_client->connect(true);
+  tuio_client->connect();
 }
 
 
