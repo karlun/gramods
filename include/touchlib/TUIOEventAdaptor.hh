@@ -74,6 +74,14 @@ namespace touchlib {
      */
 		void removeTuioCursor(TUIO::TuioCursor *tcur);
 
+		void addTuioObject(TUIO::TuioObject *tobj) {}
+		void updateTuioObject(TUIO::TuioObject *tobj) {}
+		void removeTuioObject(TUIO::TuioObject *tobj) {}
+		void addTuioBlob(TUIO::TuioBlob *tblb) {}
+		void updateTuioBlob(TUIO::TuioBlob *tblb) {}
+		void removeTuioBlob(TUIO::TuioBlob *tblb) {}
+
+		void refresh(TUIO::TuioTime frameTime) {}
 
   private:
 
