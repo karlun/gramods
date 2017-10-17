@@ -13,5 +13,10 @@
 #cmakedefine TOUCHLIB_ENABLE_SDL2
 #endif
 
+#cmakedefine TUIO_FOUND
+#ifdef TUIO_FOUND
+#cmakedefine TOUCHLIB_ENABLE_TUIO
+#endif
+
 
 #endif
