@@ -158,6 +158,14 @@ bool TouchState::setAssociation(TouchPointId id, void* pt) {
   return true;
 }
 
+bool TouchState::unsetAssociation(TouchPointId id, void* pt) {
+  assert(state == 0);
+  if (association.count(id) != 1) return false;
+  if (association[id] != pt) return false;
+  association.erase(id);
+  return true;
+}
+
 bool TouchState::getAssociation(TouchPointId id, void* pt) const {
   assert(state == 0);
   if (association.find(id) == association.end()) return false;

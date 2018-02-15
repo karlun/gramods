@@ -284,6 +284,16 @@ namespace touchlib {
     bool setAssociation(TouchPointId id, void* pt);
 
     /**
+     * Removes the association of the specified touch point id with
+     * the specified object.
+     * 
+     * @param[in] id The touch point id that should be unassociated.
+     * @param[in] pt A void pointer to the currently associated object.
+     * @return True iff an association was successfully removed.
+     */
+    bool unsetAssociation(TouchPointId id, void* pt);
+
+    /**
      * Gets the touch point id associated with a specified object.
      *
      * @param[in] id The id of the touch point that is associated.
