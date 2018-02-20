@@ -1,21 +1,26 @@
 
 #include <gmConfig/ImportLibrary.hh>
 
+#include <gmConfig/OFactoryNode.hh>
+
 USING_NAMESPACE_GMCONFIG;
+
+BEGIN_NAMESPACE_GMCONFIG
+namespace ImportLibraryInternals {
+  OFactory::OFactoryInformation<ImportLibrary> OFI("ImportLibrary");
+}
+END_NAMESPACE_GMCONFIG
 
 ImportLibrary::ImportLibrary()
   : library_loaded(false) {}
 
 ImportLibrary::~ImportLibrary(){}
 
-ImportLibrary::OFactoryInformation<ImportLibrary> ImportLibrary::node_information("ImportLibrary");
-
-/** Configures this class. */
-void ImportLibrary::configure(const Configuration &config){
-
-  std::string file;
-  if (!config.getParam("file", file))
-    return;
-
+void ImportLibrary::setFile(std::string file) {
+  this->file = file;
   library_loaded = true;
+}
+
+std::string ImportLibrary::getFile() {
+  return file;
 }

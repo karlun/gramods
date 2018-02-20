@@ -17,14 +17,14 @@ namespace tinyxml2 {
 
 BEGIN_NAMESPACE_GMCONFIG
 
-class OFactoryNode;
+class Object;
 
 /**
    A wrapper for the XML parser that also creates and configures the
    system objects and holds temporary references to them for easy
    retrieval. This unit will build an internal tree structure of
-   OFactoryNode objects that can be easily retrieved by name or by
-   type, and lists of parameters for each object.
+   objects that can be easily retrieved by name or by type, and lists
+   of parameters for each object.
 
    Typical usage:
 
@@ -130,7 +130,7 @@ public:
   /**
      Retrieve all objects of a specified type. This function will
      append the retrieved objects to the specified list. Use
-     OFactoryNode as type to retrieve all objects.
+     Object as type to retrieve all objects.
 
      @param[out] value a vector of pointer to fill with objects
      @return the number of objects added to the list.
@@ -151,7 +151,7 @@ private:
 
   typedef std::map<std::string, parameter_t> parameter_list;
 
-  std::multimap<std::string, std::shared_ptr<OFactoryNode>> child_objects;
+  std::multimap<std::string, std::shared_ptr<Object>> child_objects;
   parameter_list parameters;
 
   void parse_param(tinyxml2::XMLElement *element);
@@ -166,7 +166,7 @@ int Configuration::getAllObjects(std::vector<std::shared_ptr<T>> &value) const {
 
   int original_size = value.size();
 
-  for( std::map<std::string, std::shared_ptr<OFactoryNode>>::iterator it
+  for( std::map<std::string, std::shared_ptr<Object>>::iterator it
          = _this->child_objects.begin() ;
        it != _this->child_objects.end() ; ++it ){
 
@@ -185,7 +185,7 @@ bool Configuration::getObject(const std::string &name, std::shared_ptr<T> &ptr) 
   if( child_objects.count(name) == 0 ){
     return false; }
 
-  std::multimap<std::string, OFactoryNode*>::iterator it
+  std::multimap<std::string, Object*>::iterator it
     = const_cast<Configuration*>(this)->child_objects.find(name);
   T *_value = dynamic_cast<T*>(it->second);
 
@@ -201,7 +201,7 @@ bool Configuration::getObject(std::shared_ptr<T> &ptr) const {
 
   Configuration *_this = const_cast<Configuration*>(this);
 
-  for( std::multimap<std::string, std::shared_ptr<OFactoryNode>>::iterator
+  for( std::multimap<std::string, std::shared_ptr<Object>>::iterator
          it = _this->child_objects.begin() ;
        it != _this->child_objects.end() ; ++it ){
 
@@ -218,7 +218,7 @@ bool Configuration::getObject(std::shared_ptr<T> &ptr) const {
 
 template<class T>
 void Configuration::setObject(const std::string &name, std::shared_ptr<T> ptr) {
-  child_objects.insert(std::pair<std::string, std::shared_ptr<OFactoryNode>>(name, ptr));
+  child_objects.insert(std::pair<std::string, std::shared_ptr<Object>>(name, ptr));
 }
 
 template<class T>

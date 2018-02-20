@@ -58,13 +58,13 @@ void Configuration::load(tinyxml2::XMLNode *node) {
     std::string name = name_attribute != NULL
       ? std::string(name_attribute) : type;
     
-    std::shared_ptr<OFactoryNode> nn(OFactoryNode::createObject(type));
+    std::shared_ptr<Object> nn(OFactory::createObject(type));
     if (nn == NULL){
       GRAMODS_DEBUG_LOG_E("Could not create object of type '" << type << "'");
       continue;
     }
     
-    nn->configure(Configuration(node_it));
+    //nn->configure(Configuration(node_it));
     
     setObject(name, nn);
   }

@@ -6,6 +6,7 @@
 #include <string>
 
 #include <gmConfig/config.hh>
+#include <gmConfig/Object.hh>
 #include <gmConfig/Configuration.hh>
 #include <gmConfig/Debug.hh>
 
@@ -19,10 +20,10 @@ BEGIN_NAMESPACE_GMCONFIG
    provide a means to configure its data, and create a static instance
    of OFactoryInformation with itself as template argument, and that
    will register the class with the factory.  */
-class OFactoryNode {
+class OFactory {
 
   struct OFactoryInformationBase {
-    virtual OFactoryNode * create() = 0;
+    virtual Object * create() = 0;
   };
 
 public:
@@ -37,19 +38,17 @@ public:
     /** Registers the template argument class with the object factory
         and associates it with the provided name. */
     OFactoryInformation(std::string name) : name(name) {
-      OFactoryNode::registerOFI(name, this);
-      std::cerr << name << " registered" << std::endl;
+      OFactory::registerOFI(name, this);
     }
 
     /** Unregisters the template argument class. */
     ~OFactoryInformation(){
-      OFactoryNode::unregisterOFI(name);
-      std::cerr << name << " unregistered" << std::endl;
+      OFactory::unregisterOFI(name);
     }
 
     /** Creates and returns an instance of the template argument
         class. */
-    OFactoryNode * create(){ return new Node; }
+    Object * create(){ return new Node; }
 
     const std::string name;
 
@@ -59,7 +58,7 @@ public:
 
   /** Creates and returns an instance of the class associated with the
       provided name, or NULL if no such name exists in the database. */
-  static OFactoryNode * createObject(std::string name);
+  static Object * createObject(std::string name);
 
   /** Configure the object using the provided XML DOM tree. This
       function must be implemented by a concrete class. */

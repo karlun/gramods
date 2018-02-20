@@ -1,5 +1,6 @@
 
 #include <gmConfig/ImportLibrary.hh>
+#include <gmConfig/Configuration.hh>
 
 #include <memory>
 #include <string>

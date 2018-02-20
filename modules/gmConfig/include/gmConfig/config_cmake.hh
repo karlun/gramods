@@ -7,8 +7,8 @@
 
 #define UTM50_MOTION_LAG ${UTM50_MOTION_LAG}
 
-#define BEGIN_NAMESPACE_GMCONFIG namespace gramods { namespace gmConfig {
-#define END_NAMESPACE_GMCONFIG }}
-#define USING_NAMESPACE_GMCONFIG using namespace gramods::gmConfig
+#define BEGIN_NAMESPACE_GMCONFIG namespace gramods { namespace gmConfig {//
+#define END_NAMESPACE_GMCONFIG }}//
+#define USING_NAMESPACE_GMCONFIG using namespace gramods::gmConfig;//
 
 #endif
