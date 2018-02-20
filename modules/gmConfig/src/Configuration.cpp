@@ -89,7 +89,8 @@ void Configuration::load(tinyxml2::XMLNode *node) {
       bool good = node_conf.getObject(child_name, ptr);
       assert(good);
       good = OFactory::getOFI(type)->setPointerValue(nn.get(), child_name, ptr);
-      assert(good);
+      if (!good)
+        GRAMODS_THROW(std::invalid_argument, "no pointer " << child_name << " available in " << type);
     }
 
     nn->initialize();
