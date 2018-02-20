@@ -85,6 +85,8 @@ void Configuration::load(tinyxml2::XMLNode *node) {
       // Set child object
     }
 
+    nn->initialize();
+
     setObject(name, nn);
   }
 }
