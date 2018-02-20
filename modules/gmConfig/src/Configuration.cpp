@@ -63,9 +63,28 @@ void Configuration::load(tinyxml2::XMLNode *node) {
       GRAMODS_DEBUG_LOG_E("Could not create object of type '" << type << "'");
       continue;
     }
-    
-    //nn->configure(Configuration(node_it));
-    
+
+    Configuration node_conf(node_it);
+
+    std::vector<std::string> param_names;
+    node_conf.getAllParamNames(param_names);
+
+    for (auto param_name : param_names) {
+      std::string value;
+      bool good = node_conf.getParamAsString(param_name, value);
+      assert(good);
+      good = OFactory::getOFI(name)->setFieldValueFromString(nn.get(), param_name, value);
+      if (!good)
+        GRAMODS_THROW(std::invalid_argument, "no parameter " << param_name << " available in " << name);
+    }
+
+    std::vector<std::string> child_names;
+    node_conf.getAllChildNames(child_names);
+
+    for (auto child_name : child_names) {
+      // Set child object
+    }
+
     setObject(name, nn);
   }
 }
@@ -79,6 +98,22 @@ Configuration::~Configuration(){
                        << "has not been used!");
     }
   }
+}
+
+bool Configuration::hasParam(const std::string &name) {
+  return parameters.count(name) > 0;
+}
+
+size_t Configuration::getAllParamNames(std::vector<std::string> &name) {
+  for (auto param : parameters)
+    name.push_back(param.first);
+  return parameters.size();
+}
+
+size_t Configuration::getAllChildNames(std::vector<std::string> &name) {
+  for (auto child : child_objects)
+    name.push_back(child.first);
+  return child_objects.size();
 }
 
 void Configuration::parse_param(tinyxml2::XMLElement *element){

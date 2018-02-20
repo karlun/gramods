@@ -97,4 +97,7 @@ namespace gramods {
   gramods::DebugStream("EE   ",std::cerr)                               \
     << s << std::endl
 
+# define GRAMODS_THROW(exception, X)                                    \
+  throw (exception)(static_cast<std::stringstream&>(std::stringstream() << X).str())
+
 #endif

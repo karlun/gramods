@@ -64,6 +64,18 @@ public:
   bool hasParam(const std::string &name);
 
   /**
+     Fills the specified vector with all currently available parameter
+     names and returns the count.
+   */
+  size_t getAllParamNames(std::vector<std::string> &name);
+
+  /**
+     Fills the specified vector with all currently available child
+     names and returns the count.
+   */
+  size_t getAllChildNames(std::vector<std::string> &name);
+
+  /**
      Retrieve a specified parameter of a specified type. This function
      will use stringstream to parse most types but will need
      specializations to parse non-standard types. If the parameter is
