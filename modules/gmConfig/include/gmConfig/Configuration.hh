@@ -197,11 +197,11 @@ bool Configuration::getObject(const std::string &name, std::shared_ptr<T> &ptr) 
   if( child_objects.count(name) == 0 ){
     return false; }
 
-  std::multimap<std::string, Object*>::iterator it
+  std::multimap<std::string, std::shared_ptr<Object>>::iterator it
     = const_cast<Configuration*>(this)->child_objects.find(name);
-  T *_value = dynamic_cast<T*>(it->second);
+  std::shared_ptr<T> _value = std::dynamic_pointer_cast<T>(it->second);
 
-  if (_value == NULL) {
+  if (!_value) {
     return false; }
 
   ptr = _value;

@@ -6,7 +6,8 @@
 BEGIN_NAMESPACE_GMCONFIG
 namespace ImportLibraryInternals {
   OFactory::OFactoryInformation<ImportLibrary> OFI("ImportLibrary");
-  OFI_SETTER(OFI, file, std::string, ImportLibrary::setFile);
+  OFI_PARAM(OFI, file, std::string, ImportLibrary::setFile);
+  OFI_POINTER(OFI, child, ImportLibrary, ImportLibrary::setChild);
 }
 END_NAMESPACE_GMCONFIG
 
@@ -24,4 +25,12 @@ void ImportLibrary::setFile(std::string file) {
 
 std::string ImportLibrary::getFile() {
   return file;
+}
+
+void ImportLibrary::setChild(std::shared_ptr<ImportLibrary> ptr) {
+  child = ptr;
+}
+
+std::shared_ptr<ImportLibrary> ImportLibrary::getChild() {
+  return child;
 }

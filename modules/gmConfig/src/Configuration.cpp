@@ -32,6 +32,8 @@ void Configuration::load(tinyxml2::XMLNode *node) {
     for( const tinyxml2::XMLAttribute *attr_it = node->ToElement()->FirstAttribute() ;
          attr_it != NULL ; attr_it = attr_it->Next()) {
       std::string name = attr_it->Name();
+      if (name == "type" || name == "name")
+        continue;
       std::string value = attr_it->Value();
       setParam(name,value);
     }
@@ -73,16 +75,21 @@ void Configuration::load(tinyxml2::XMLNode *node) {
       std::string value;
       bool good = node_conf.getParamAsString(param_name, value);
       assert(good);
-      good = OFactory::getOFI(name)->setFieldValueFromString(nn.get(), param_name, value);
+      GRAMODS_DEBUG_LOG_I(name << " -> " << type << "::" << param_name << " = " << value);
+      good = OFactory::getOFI(type)->setParamValueFromString(nn.get(), param_name, value);
       if (!good)
-        GRAMODS_THROW(std::invalid_argument, "no parameter " << param_name << " available in " << name);
+        GRAMODS_THROW(std::invalid_argument, "no parameter " << param_name << " available in " << type);
     }
 
     std::vector<std::string> child_names;
     node_conf.getAllChildNames(child_names);
 
     for (auto child_name : child_names) {
-      // Set child object
+      std::shared_ptr<Object> ptr;
+      bool good = node_conf.getObject(child_name, ptr);
+      assert(good);
+      good = OFactory::getOFI(type)->setPointerValue(nn.get(), child_name, ptr);
+      assert(good);
     }
 
     nn->initialize();
