@@ -1,5 +1,5 @@
 
-#include <gmConfig/OFactoryNode.hh>
+#include <gmConfig/OFactory.hh>
 
 #include <gmConfig/Debug.hh>
 

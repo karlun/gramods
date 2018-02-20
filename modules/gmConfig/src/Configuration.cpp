@@ -1,7 +1,7 @@
 
 #include <gmConfig/Configuration.hh>
 
-#include <gmConfig/OFactoryNode.hh>
+#include <gmConfig/OFactory.hh>
 
 #include <tinyxml2.h>
 

@@ -1,7 +1,7 @@
 
 #include <gmConfig/ImportLibrary.hh>
 
-#include <gmConfig/OFactoryNode.hh>
+#include <gmConfig/OFactory.hh>
 
 USING_NAMESPACE_GMCONFIG;
 

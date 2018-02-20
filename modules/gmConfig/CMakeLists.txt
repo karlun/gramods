@@ -21,7 +21,7 @@ CONFIGURE_FILE(
 ADD_LIBRARY(gmConfig SHARED
   src/ImportLibrary.cpp
   src/Configuration.cpp
-  src/OFactoryNode.cpp
+  src/OFactory.cpp
   )
 
 TARGET_INCLUDE_DIRECTORIES(gmConfig PUBLIC ${MODULE_INCLUDE_DIRS})
