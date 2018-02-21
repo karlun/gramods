@@ -15,6 +15,36 @@
 
 BEGIN_NAMESPACE_GMCONFIG
 
+/**\def OFI_CREATE(OFI, NAME)
+   Macro for registering a class to a OFactoryInformation node.
+
+   @param OFI A name to use for the registration instance.
+
+   @param NAME The name of the class, which will also be the
+   registered association string that refers to this class in the
+   object factory.
+*/
+#define OFI_CREATE(OFI, NAME)                                         \
+  gramods::gmConfig::OFactory::OFactoryInformation<NAME> OFI(#NAME);
+
+/**\def OFI_CREATE_SUB(OFI, NAME, BASE_OFI)
+   Macro for registering a class to a OFactoryInformation node that
+   links to the OFactoryInformation node of a base class. This makes
+   it possible to set base class parameters when creating the sub
+   class instance.
+
+   @param OFI A name to use for the registration instance.
+
+   @param NAME The name of the class, which will also be the
+   registered association string that refers to this class in the
+   object factory.
+
+   @param BASE_OFI A pointer to the OFactoryInformation instance of
+   the base class.
+*/
+#define OFI_CREATE_SUB(OFI, NAME, BASE_OFI)                             \
+  gramods::gmConfig::OFactory::OFactoryInformation<NAME> OFI(#NAME, BASE_OFI);
+
 /**\def OFI_PARAM(OFI, CLASS, NAME, TYPE, FUNC)
    Macro for registering a parameter setter to a OFactoryInformation
    node.
@@ -151,9 +181,15 @@ public:
       void (Node::*method)(std::shared_ptr<T> ptr);
     };
 
-    /** Registers the template argument class with the object factory
-        and associates it with the provided name. */
-    OFactoryInformation(std::string name) : name(name) {
+    /**
+       Registers the template argument class with the object factory
+       and associates it with the provided name. The optional base
+       parameter specifies the base class for inheritance of setters.
+    */
+    OFactoryInformation(std::string name,
+                        OFactoryInformationBase *base = nullptr)
+      : name(name),
+        base(base) {
       OFactory::registerOFI(name, this);
     }
 
@@ -167,18 +203,27 @@ public:
     Object * create(){ return new Node; }
 
     bool setParamValueFromString(Object *node, std::string name, std::string value) {
-      if (param_setters.count(name) == 0) return false;
+      if (param_setters.count(name) == 0)
+        if (base == nullptr)
+          return false;
+        else
+          return base->setParamValueFromString(node, name, value);
       param_setters[name]->setValueFromString(node, value);
       return true;
     }
 
     bool setPointerValue(Object *node, std::string name, std::shared_ptr<Object> ptr) {
-      if (pointer_setters.count(name) == 0) return false;
+      if (pointer_setters.count(name) == 0)
+        if (base == nullptr)
+          return false;
+        else
+          return base->setPointerValue(node, name, ptr);
       pointer_setters[name]->setPointer(node, ptr);
       return true;
     }
 
     const std::string name;
+    OFactoryInformationBase * const base;
 
   private:
     OFactoryInformation();
