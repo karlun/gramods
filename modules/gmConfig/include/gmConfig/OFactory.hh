@@ -15,57 +15,57 @@
 
 BEGIN_NAMESPACE_GMCONFIG
 
-/** \def OFI_PARAM(OFI, NAME, TYPE, FUNC)
-    Macro for registering a parameter setter to a OFactoryInformation
-    node.
+/**\def OFI_PARAM(OFI, CLASS, NAME, TYPE, FUNC)
+   Macro for registering a parameter setter to a OFactoryInformation
+   node.
 
-    BEGIN_NAMESPACE_GMCONFIG
-    namespace ImportLibraryInternals {
-    OFactory::OFactoryInformation<ImportLibrary> OFI("ImportLibrary");
-    OFI_SETTER(OFI, file, std::string, ImportLibrary::setFile);
-    }
-    END_NAMESPACE_GMCONFIG
+   namespace MyClassInternals {
+     OFI_CREATE(OFI, MyClass);
+     OFI_SETTER(OFI, MyClass, file, std::string, MyClass::setFile);
+   }
 
-    @param OFI The statically instantiated OFactoryInformation of the
-    Object for which to register setters.
+   @param OFI The statically instantiated OFactoryInformation of the
+   Object for which to register setters.
 
-    @param NAME The name to associate to the setter method, without
-    quotes.
+   @param CLASS The type of the class in which this setter resides.
 
-    @param TYPE The type of the variable set by this setter.
+   @param NAME The name to associate to the setter method, without
+   quotes.
 
-    @param FUNC The setter method.
+   @param TYPE The type of the variable set by this setter.
+
+   @param FUNC The setter method.
 */
-#define OFI_PARAM(OFI, NAME, TYPE, FUNC)                           \
-  OFactory::ParamSetterInsert OFI##NAME \
-  (&OFI, #NAME, new OFactory::OFactoryInformation<ImportLibrary>::ParamSetter<TYPE>(&FUNC));
+#define OFI_PARAM(OFI, CLASS, NAME, TYPE, FUNC)                         \
+  gramods::gmConfig::OFactory::ParamSetterInsert OFI##NAME              \
+  (&OFI, #NAME, new gramods::gmConfig::OFactory::OFactoryInformation<CLASS>::ParamSetter<TYPE>(&FUNC));
 
-/** \def OFI_POINTER(OFI, NAME, TYPE, FUNC)
-    Macro for registering a shared object setter to a
-    OFactoryInformation node.
+/**\def OFI_POINTER(OFI, CLASS, NAME, TYPE, FUNC)
+   Macro for registering a shared object setter to a
+   OFactoryInformation node.
 
-    BEGIN_NAMESPACE_GMCONFIG
-    namespace ImportLibraryInternals {
-    OFactory::OFactoryInformation<ImportLibrary> OFI("ImportLibrary");
-    OFI_SETTER(OFI, file, std::string, ImportLibrary::setFile);
-    }
-    END_NAMESPACE_GMCONFIG
+   namespace MyClassInternals {
+     OFI_CREATE(OFI, MyClass);
+     OFI_SETTER(OFI, MyClass, file, std::string, MyClass::setFile);
+   }
 
-    @param OFI The statically instantiated OFactoryInformation of the
-    Object for which to register setters.
+   @param OFI The statically instantiated OFactoryInformation of the
+   Object for which to register setters.
 
-    @param NAME The name to associate to the setter method, without
-    quotes.
+   @param CLASS The type of the class in which this setter resides.
 
-    @param TYPE The class of the shared object. The type of the setter
-    method is std::shared_ptr<TYPE>.
+   @param NAME The name to associate to the setter method, without
+   quotes.
 
-    @param FUNC The setter method, with signature
-    void FUNC(std::shared_ptr<TYPE>)
+   @param TYPE The class of the shared object. The type of the setter
+   method is std::shared_ptr<TYPE>.
+
+   @param FUNC The setter method, with signature
+   void FUNC(std::shared_ptr<TYPE>)
 */
-#define OFI_POINTER(OFI, NAME, TYPE, FUNC)                              \
-  OFactory::PointerSetterInsert OFI##NAME                               \
-  (&OFI, #NAME, new OFactory::OFactoryInformation<ImportLibrary>::PointerSetter<TYPE>(&FUNC));
+#define OFI_POINTER(OFI, CLASS, NAME, TYPE, FUNC)                       \
+  gramods::gmConfig::OFactory::PointerSetterInsert OFI##NAME            \
+  (&OFI, #NAME, new gramods::gmConfig::OFactory::OFactoryInformation<CLASS>::PointerSetter<TYPE>(&FUNC));
 
 /**
    This is an object factory for classes with Object as base type,

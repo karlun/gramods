@@ -6,8 +6,8 @@
 BEGIN_NAMESPACE_GMCONFIG
 namespace ImportLibraryInternals {
   OFactory::OFactoryInformation<ImportLibrary> OFI("ImportLibrary");
-  OFI_PARAM(OFI, file, std::string, ImportLibrary::setFile);
-  OFI_POINTER(OFI, child, ImportLibrary, ImportLibrary::setChild);
+  OFI_PARAM(OFI, ImportLibrary, file, std::string, ImportLibrary::setFile);
+  OFI_POINTER(OFI, ImportLibrary, child, ImportLibrary, ImportLibrary::setChild);
 }
 END_NAMESPACE_GMCONFIG
 
