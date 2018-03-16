@@ -88,6 +88,7 @@ void Configuration::load(tinyxml2::XMLNode *node) {
       std::shared_ptr<Object> ptr;
       bool good = node_conf.getObject(child_name, ptr);
       assert(good);
+      GRAMODS_DEBUG_LOG_I(name << " -> " << type << "::" << child_name << " = ptr");
       good = OFactory::getOFI(type)->setPointerValue(nn.get(), child_name, ptr);
       if (!good)
         GRAMODS_THROW(std::invalid_argument, "no pointer " << child_name << " available in " << type);
