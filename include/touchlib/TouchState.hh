@@ -106,6 +106,10 @@ namespace touchlib {
 
       /// Touch point was released.
       static const unsigned char RELEASE = 0x01 << 3;
+
+      /// Touch point was a short click - pressed and depressed at the
+      /// same spot within a short period of time.
+      static const unsigned char CLICK = 0x01 << 4;
     };
     
     /**
