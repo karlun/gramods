@@ -682,6 +682,7 @@ void TouchState::check_hold(HistoryState hist, TouchPoint &new_pt) {
 void TouchState::check_click(HistoryState hist, TouchPoint &new_pt) {
   assert(hist.point.id == new_pt.id);
   if (new_pt.state & State::CLICK) return;
+  if (new_pt.state & State::DRAG) return;
   if (! (new_pt.state & State::RELEASE)) return;
   if ((clock::now() - hist.time) > click_time)
     return;
