@@ -514,6 +514,18 @@ namespace touchlib {
     clock::duration getHoldTime();
 
     /**
+     * Sets the time that a touch point can be held before release to
+     * get a CLICK flag, default 500 ms.
+     */
+    void setClickTime(clock::duration time);
+    
+    /**
+     * Gets the click time.
+     * \see setClickTime
+     */
+    clock::duration getClickTime();
+
+    /**
      * Sets the maximum amount of time (default 500 ms) between two
      * touches at the same point that is considered a multi click of
      * the same touch point.
@@ -653,6 +665,7 @@ namespace touchlib {
     float smoothing;
     float move_magnitude;
     clock::duration hold_time;
+    clock::duration click_time;
     clock::duration multi_time;
     
     bool remove_mouse_upon_touch;
@@ -687,6 +700,15 @@ namespace touchlib {
      * @param[in,out] The touch point to check and update
      */
     void check_hold(HistoryState hist, TouchPoint &new_pt);
+
+    /**
+     * Checks if the hist/new_pt pair represents a click action, and
+     * sets the corresponding flag in new_pt.
+     * 
+     * @param[in] hist The history data of the touch point to check
+     * @param[in,out] The touch point to check and update
+     */
+    void check_click(HistoryState hist, TouchPoint &new_pt);
 
     /**
      * Removes states that were previously released (has state

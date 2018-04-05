@@ -11,6 +11,7 @@ using namespace touchlib;
 #define DEFAULT_MOVE_HISTORY_LENGTH 10
 #define DEFAULT_MOVE_HISTORY_DURATION 2.0
 #define DEFAULT_HOLD_DELAY_MS 2000
+#define DEFAULT_CLICK_DELAY_MS 500
 #define DEFAULT_MULTI_DELAY_MS 500
 
 TouchState::TouchState()
@@ -21,6 +22,7 @@ TouchState::TouchState()
     smoothing(DEFAULT_SMOOTHING),
     move_magnitude(DEFAULT_MOVE_MAGNITUDE),
     hold_time(std::chrono::milliseconds(DEFAULT_HOLD_DELAY_MS)),
+    click_time(std::chrono::milliseconds(DEFAULT_CLICK_DELAY_MS)),
     multi_time(std::chrono::milliseconds(DEFAULT_MULTI_DELAY_MS)),
     current_WPV_inv_valid(false), 
     previous_WPV_inv_valid(false) {
@@ -432,6 +434,14 @@ TouchState::clock::duration TouchState::getHoldTime() {
   return hold_time;
 }
 
+void TouchState::setClickTime(clock::duration time) {
+  click_time = time;
+}
+
+TouchState::clock::duration TouchState::getClickTime() {
+  return click_time;
+}
+
 void TouchState::setMultiClickTime(clock::duration time) {
   multi_time = time;
 }
@@ -559,6 +569,7 @@ void TouchState::eventsDone() {
       // This is an old point, so check what is happening to it
       check_drag(history[pt.first], pt.second);
       check_hold(history[pt.first], pt.second);
+      check_click(history[pt.first], pt.second);
       
       assert(previous_state.find(pt.first) != previous_state.end());
       TouchPoint old_pt = previous_state.find(pt.first)->second;
@@ -666,4 +677,14 @@ void TouchState::check_hold(HistoryState hist, TouchPoint &new_pt) {
     return;
   
   new_pt.state |= State::HOLD;
+}
+
+void TouchState::check_click(HistoryState hist, TouchPoint &new_pt) {
+  assert(hist.point.id == new_pt.id);
+  if (new_pt.state & State::CLICK) return;
+  if (! (new_pt.state & State::RELEASE)) return;
+  if ((clock::now() - hist.time) > click_time)
+    return;
+  
+  new_pt.state |= State::CLICK;
 }
