@@ -8,11 +8,20 @@ The repository divides the software into modules and apps where the modules prov
 
 The CMakeLists.txt file will automatically generate a list of modules based on the folders found in the modules/ folder. CMake will make sure that all targets are compiled and linked in the right order, as long as dependencies are specified correctly. If new modules or apps are added after the initialization of the cmake cache, by a git pull or manually, this must be manually added to its list.
 
-## Exampel
+## Purpose
+
+The purpose of the Gramods library is to simplify loading of platform dependent configurations into a pre-compiled application, while also simplifying the implementation of such applications. The aim is to be able to implement an application in a way similar to this example code:
 
 ```c++
 int main(int argc, char *argv[]) {
+
   gmConfig::Configuration config(argc, argv);
+
+  std::shared_ptr<gmUtils::Console> console;
+  if (! config.getObject(console)) {
+    ERROR("Cannot run without output console!");
+    return -1;
+  }
 
   std::shared_ptr<gmNetSync::SyncNode> cluster_sync;
   if (! config.getObject(cluster_sync)) {
@@ -26,14 +35,15 @@ int main(int argc, char *argv[]) {
     return -1;
   }
 
+  console.info << "Configuration loaded" << std::endl;
+
   std::shared_ptr<gmTracking::Tracker> head_tracker;
   config.getObject("head tracker", head_tracker);
+  console.info << "Head tracker: " << head_tracker << std::endl;
 
   std::shared_ptr<gmTracking::Tracker> wand_primary;
   config.getObject("primary controller", wand_primary);
-
-  std::shared_ptr<gmTracking::Tracker> wand_secondary;
-  config.getObject("secondary controller", wand_secondary);
+  console.info << "Primary controller: " << head_tracker << std::endl;
 
   ...
 
