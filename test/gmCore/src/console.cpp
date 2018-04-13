@@ -21,6 +21,8 @@ std::string removePath(std::string data) {
 
 TEST(gmCoreConsole, OStreamMessageSink_sstream) {
 
+  gmCore::Console::setDefaultSink(nullptr);
+
   std::stringstream ss;
 
   std::shared_ptr<gmCore::OStreamMessageSink> osms =
@@ -66,17 +68,21 @@ private:
 
 TEST(gmCoreConsole, OStreamMessageSink_stdcout) {
 
+  gmCore::Console::setDefaultSink(nullptr);
 
   std::string xml = ""
     "<config>"
     "  <OStreamMessageSink stream=\"out\"/>"
     "</config>";
 
-  gmCore::Configuration config(xml);
-
   std::stringstream ss;
   {
     ScopedRedirect redirect(std::cout, ss);
+
+    gmCore::Configuration config(xml);
+
+    ss.clear();
+
     GM_INF("a", "A");
   }
 
