@@ -58,7 +58,7 @@
 
 #endif // if NDEBUG else endif
 
-BEGIN_NAMESPACE_GMCORE
+BEGIN_NAMESPACE_GMCORE;
 
 /**
    Console for easier handling of runtime and debugging informatCoren.
@@ -105,6 +105,6 @@ private:
   ConsoleBuffer buffer;
 };
 
-END_NAMESPACE_GMCORE
+END_NAMESPACE_GMCORE;
 
 #endif

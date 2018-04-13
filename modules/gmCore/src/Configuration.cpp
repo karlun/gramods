@@ -5,7 +5,7 @@
 
 #include <tinyxml2.h>
 
-USING_NAMESPACE_GMCORE;
+BEGIN_NAMESPACE_GMCORE;
 
 Configuration::Configuration() {}
 
@@ -161,3 +161,5 @@ bool Configuration::getParamAsString(const std::string &name, std::string &value
   GM_INF("Configuration", "Read " << name << " = " << value);
   return true;
 }
+
+END_NAMESPACE_GMCORE;

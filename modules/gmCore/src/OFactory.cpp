@@ -3,7 +3,7 @@
 
 #include <assert.h>
 
-USING_NAMESPACE_GMCORE;
+BEGIN_NAMESPACE_GMCORE;
 
 Object * OFactory::createObject(std::string name){
   if( getOFI(name) == NULL ){
@@ -35,3 +35,4 @@ OFactory::OFactoryInformationBase* OFactory::getOFI(std::string name){
   return getOFIByNameMap()[name];
 }
 
+END_NAMESPACE_GMCORE;

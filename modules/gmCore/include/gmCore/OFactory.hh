@@ -13,7 +13,7 @@
 
 #include <assert.h>
 
-BEGIN_NAMESPACE_GMCORE
+BEGIN_NAMESPACE_GMCORE;
 
 /**\def OFI_CREATE(OFI, NAME)
    Macro for registering a class to a OFactoryInformation node.
@@ -285,6 +285,6 @@ void OFactory::OFactoryInformation<Node>::PointerSetter<T>::setPointer(Object *n
   (node->*method)(_ptr);
 }
 
-END_NAMESPACE_GMCORE
+END_NAMESPACE_GMCORE;
 
 #endif

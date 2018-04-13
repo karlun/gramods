@@ -2,7 +2,7 @@
 #ifndef GRAMODS_CORE_CONSOLELEVEL
 #define GRAMODS_CORE_CONSOLELEVEL
 
-BEGIN_NAMESPACE_GMCORE
+BEGIN_NAMESPACE_GMCORE;
 
 /**
    The level of importance, used by Console and MessageSink.
@@ -45,6 +45,6 @@ enum struct ConsoleLevel {
   VERY_VERBOSE_INFORMATION = 4
 };
 
-END_NAMESPACE_GMCORE
+END_NAMESPACE_GMCORE;
 
 #endif

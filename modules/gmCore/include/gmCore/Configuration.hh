@@ -16,7 +16,7 @@ namespace tinyxml2 {
   struct XMLElement;
 }
 
-BEGIN_NAMESPACE_GMCORE
+BEGIN_NAMESPACE_GMCORE;
 
 class Object;
 
@@ -289,7 +289,7 @@ void Configuration::setParam(const std::string &name, const T &value){
   parameters[name] = parameter_t(ss_value.str());
 }
 
-END_NAMESPACE_GMCORE
+END_NAMESPACE_GMCORE;
 
 #endif
 

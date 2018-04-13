@@ -3,15 +3,13 @@
 
 #include <gmCore/OFactory.hh>
 
-BEGIN_NAMESPACE_GMCORE
+BEGIN_NAMESPACE_GMCORE;
+
 namespace ImportLibraryInternals {
   OFactory::OFactoryInformation<ImportLibrary> OFI("ImportLibrary");
   OFI_PARAM(OFI, ImportLibrary, file, std::string, ImportLibrary::setFile);
   OFI_POINTER(OFI, ImportLibrary, child, ImportLibrary, ImportLibrary::setChild);
 }
-END_NAMESPACE_GMCORE
-
-USING_NAMESPACE_GMCORE;
 
 ImportLibrary::ImportLibrary()
   : library_loaded(false) {}
@@ -34,3 +32,5 @@ void ImportLibrary::setChild(std::shared_ptr<ImportLibrary> ptr) {
 std::shared_ptr<ImportLibrary> ImportLibrary::getChild() {
   return child;
 }
+
+END_NAMESPACE_GMCORE;

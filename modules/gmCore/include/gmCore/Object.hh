@@ -6,7 +6,7 @@
 
 #include <memory>
 
-BEGIN_NAMESPACE_GMCORE
+BEGIN_NAMESPACE_GMCORE;
 
 /**
    Base type for objects in the Gramods package, for easier handling
@@ -33,6 +33,6 @@ struct Object
   virtual void initialize() {}
 };
 
-END_NAMESPACE_GMCORE
+END_NAMESPACE_GMCORE;
 
 #endif

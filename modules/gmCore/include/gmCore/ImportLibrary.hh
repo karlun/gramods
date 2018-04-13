@@ -8,7 +8,7 @@
 #include <string>
 #include <memory>
 
-BEGIN_NAMESPACE_GMCORE
+BEGIN_NAMESPACE_GMCORE;
 
 /**
    
@@ -43,6 +43,6 @@ private:
   std::shared_ptr<ImportLibrary> child;
 };
 
-END_NAMESPACE_GMCORE
+END_NAMESPACE_GMCORE;
 
 #endif
