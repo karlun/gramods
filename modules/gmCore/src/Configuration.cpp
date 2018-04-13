@@ -77,8 +77,10 @@ void Configuration::load(tinyxml2::XMLNode *node) {
       assert(good);
       GM_INF("Configuration", name << " -> " << type << "::" << param_name << " = " << value);
       good = OFactory::getOFI(type)->setParamValueFromString(nn.get(), param_name, value);
-      if (!good)
+      if (!good) {
         GM_ERR("Configuration", "no parameter " << param_name << " available in " << type);
+        throw std::invalid_argument("not parameter to match xml attribute");
+      }
     }
 
     std::vector<std::string> child_names;
@@ -90,8 +92,10 @@ void Configuration::load(tinyxml2::XMLNode *node) {
       assert(good);
       GM_INF("Configuration", name << " -> " << type << "::" << child_name << " = ptr");
       good = OFactory::getOFI(type)->setPointerValue(nn.get(), child_name, ptr);
-      if (!good)
+      if (!good) {
         GM_ERR("Configuration", "no pointer " << child_name << " available in " << type);
+        throw std::invalid_argument("not parameter to match xml attribute");
+      }
     }
 
     nn->initialize();
