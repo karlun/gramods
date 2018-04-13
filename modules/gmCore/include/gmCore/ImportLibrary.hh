@@ -1,14 +1,14 @@
 
-#ifndef GRAMODS_CONFIG_IMPORTLIBRARY
-#define GRAMODS_CONFIG_IMPORTLIBRARY
+#ifndef GRAMODS_CORE_IMPORTLIBRARY
+#define GRAMODS_CORE_IMPORTLIBRARY
 
-#include <gmConfig/config.hh>
-#include <gmConfig/Object.hh>
+#include <gmCore/config.hh>
+#include <gmCore/Object.hh>
 
 #include <string>
 #include <memory>
 
-BEGIN_NAMESPACE_GMCONFIG
+BEGIN_NAMESPACE_GMCORE
 
 /**
    
@@ -43,6 +43,6 @@ private:
   std::shared_ptr<ImportLibrary> child;
 };
 
-END_NAMESPACE_GMCONFIG
+END_NAMESPACE_GMCORE
 
 #endif

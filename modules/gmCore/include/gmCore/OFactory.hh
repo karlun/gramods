@@ -1,11 +1,11 @@
 
-#ifndef GRAMODS_CONFIG_OFACTORYNODE
-#define GRAMODS_CONFIG_OFACTORYNODE
+#ifndef GRAMODS_CORE_OFACTORYNODE
+#define GRAMODS_CORE_OFACTORYNODE
 
-#include <gmConfig/config.hh>
-#include <gmConfig/Object.hh>
-#include <gmConfig/Configuration.hh>
-#include <gmConfig/Debug.hh>
+#include <gmCore/config.hh>
+#include <gmCore/Object.hh>
+#include <gmCore/Configuration.hh>
+#include <gmCore/Debug.hh>
 
 #include <map>
 #include <string>
@@ -13,7 +13,7 @@
 
 #include <assert.h>
 
-BEGIN_NAMESPACE_GMCONFIG
+BEGIN_NAMESPACE_GMCORE
 
 /**\def OFI_CREATE(OFI, NAME)
    Macro for registering a class to a OFactoryInformation node.
@@ -25,7 +25,7 @@ BEGIN_NAMESPACE_GMCONFIG
    object factory.
 */
 #define OFI_CREATE(OFI, NAME)                                         \
-  gramods::gmConfig::OFactory::OFactoryInformation<NAME> OFI(#NAME);
+  gramods::gmCore::OFactory::OFactoryInformation<NAME> OFI(#NAME);
 
 /**\def OFI_CREATE_SUB(OFI, NAME, BASE_OFI)
    Macro for registering a class to a OFactoryInformation node that
@@ -43,7 +43,7 @@ BEGIN_NAMESPACE_GMCONFIG
    the base class.
 */
 #define OFI_CREATE_SUB(OFI, NAME, BASE_OFI)                             \
-  gramods::gmConfig::OFactory::OFactoryInformation<NAME> OFI(#NAME, BASE_OFI);
+  gramods::gmCore::OFactory::OFactoryInformation<NAME> OFI(#NAME, BASE_OFI);
 
 /**\def OFI_PARAM(OFI, CLASS, NAME, TYPE, FUNC)
    Macro for registering a parameter setter to a OFactoryInformation
@@ -67,8 +67,8 @@ BEGIN_NAMESPACE_GMCONFIG
    @param FUNC The setter method.
 */
 #define OFI_PARAM(OFI, CLASS, NAME, TYPE, FUNC)                         \
-  gramods::gmConfig::OFactory::ParamSetterInsert OFI##NAME              \
-  (&OFI, #NAME, new gramods::gmConfig::OFactory::OFactoryInformation<CLASS>::ParamSetter<TYPE>(&FUNC));
+  gramods::gmCore::OFactory::ParamSetterInsert OFI##NAME              \
+  (&OFI, #NAME, new gramods::gmCore::OFactory::OFactoryInformation<CLASS>::ParamSetter<TYPE>(&FUNC));
 
 /**\def OFI_POINTER(OFI, CLASS, NAME, TYPE, FUNC)
    Macro for registering a shared object setter to a
@@ -94,8 +94,8 @@ BEGIN_NAMESPACE_GMCONFIG
    void FUNC(std::shared_ptr<TYPE>)
 */
 #define OFI_POINTER(OFI, CLASS, NAME, TYPE, FUNC)                       \
-  gramods::gmConfig::OFactory::PointerSetterInsert OFI##NAME            \
-  (&OFI, #NAME, new gramods::gmConfig::OFactory::OFactoryInformation<CLASS>::PointerSetter<TYPE>(&FUNC));
+  gramods::gmCore::OFactory::PointerSetterInsert OFI##NAME            \
+  (&OFI, #NAME, new gramods::gmCore::OFactory::OFactoryInformation<CLASS>::PointerSetter<TYPE>(&FUNC));
 
 /**
    This is an object factory for classes with Object as base type,
@@ -281,6 +281,6 @@ void OFactory::OFactoryInformation<Node>::PointerSetter<T>::setPointer(Object *n
   (node->*method)(_ptr);
 }
 
-END_NAMESPACE_GMCONFIG
+END_NAMESPACE_GMCORE
 
 #endif

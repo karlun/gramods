@@ -1,12 +1,12 @@
 
-#include <gmIO/OStreamMessageSink.hh>
+#include <gmCore/OStreamMessageSink.hh>
 
-#include <gmConfig/OFactory.hh>
+#include <gmCore/OFactory.hh>
 
 #include <iostream>
 #include <assert.h>
 
-BEGIN_NAMESPACE_GMIO;
+BEGIN_NAMESPACE_GMCORE;
 
 OFI_CREATE(OStreamMessageSinkOFI, OStreamMessageSink);
 OFI_PARAM(OStreamMessageSinkOFI, OStreamMessageSink, stream, std::string, OStreamMessageSink::setStream);
@@ -62,4 +62,4 @@ void OStreamMessageSink::setStream(std::string name) {
   }
 }
 
-END_NAMESPACE_GMIO;
+END_NAMESPACE_GMCORE;

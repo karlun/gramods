@@ -1,12 +1,12 @@
 
-#include <gmIO/MessageSink.hh>
+#include <gmCore/MessageSink.hh>
 
-#include <gmIO/Console.hh>
+#include <gmCore/Console.hh>
 
-BEGIN_NAMESPACE_GMIO;
+BEGIN_NAMESPACE_GMCORE;
 
 void MessageSink::initialize() {
   Console::setDefaultSink(std::static_pointer_cast<MessageSink>(this->shared_from_this()));
 }
 
-END_NAMESPACE_GMIO;
+END_NAMESPACE_GMCORE;

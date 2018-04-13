@@ -1,14 +1,14 @@
 
-#include <gmConfig/OFactory.hh>
-#include <gmConfig/ImportLibrary.hh>
-#include <gmConfig/Configuration.hh>
+#include <gmCore/OFactory.hh>
+#include <gmCore/ImportLibrary.hh>
+#include <gmCore/Configuration.hh>
 
 #include <memory>
 #include <string>
 
 using namespace gramods;
 
-struct Base : gmConfig::Object {
+struct Base : gmCore::Object {
   int a;
   void setA(int v) { a = v; }
 };
@@ -35,9 +35,9 @@ std::string xml = ""
   "  </Sub>"
   "</config>";
 
-TEST(gmConfigBaseFunctionality, Inheritance) {
+TEST(gmCoreBaseFunctionality, Inheritance) {
   
-  gmConfig::Configuration config(xml);
+  gmCore::Configuration config(xml);
 
   std::shared_ptr<Base> base;
   EXPECT_TRUE(config.getObject(base));
@@ -58,9 +58,9 @@ TEST(gmConfigBaseFunctionality, Inheritance) {
   }
 }
 
-TEST(gmConfigBaseFunctionality, Tree) {
+TEST(gmCoreBaseFunctionality, Tree) {
   
-  gmConfig::Configuration config(xml);
+  gmCore::Configuration config(xml);
 
   std::shared_ptr<Sub> sub;
   EXPECT_TRUE(config.getObject(sub));

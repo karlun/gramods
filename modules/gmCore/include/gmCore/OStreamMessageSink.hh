@@ -1,10 +1,10 @@
 
-#ifndef GRAMODS_IO_OSTREAMMESSAGESINK
-#define GRAMODS_IO_OSTREAMMESSAGESINK
+#ifndef GRAMODS_CORE_OSTREAMMESSAGESINK
+#define GRAMODS_CORE_OSTREAMMESSAGESINK
 
-#include <gmIO/MessageSink.hh>
+#include <gmCore/MessageSink.hh>
 
-BEGIN_NAMESPACE_GMIO;
+BEGIN_NAMESPACE_GMCORE;
 
 /**
 */
@@ -52,6 +52,6 @@ private:
   std::shared_ptr<std::ostream> sp_out;
 };
 
-END_NAMESPACE_GMIO;
+END_NAMESPACE_GMCORE;
 
 #endif

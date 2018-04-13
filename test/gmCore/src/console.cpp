@@ -1,8 +1,7 @@
 
-#include <gmIO/Console.hh>
-#include <gmIO/OStreamMessageSink.hh>
-
-#include <gmConfig/Configuration.hh>
+#include <gmCore/Console.hh>
+#include <gmCore/OStreamMessageSink.hh>
+#include <gmCore/Configuration.hh>
 
 #include <memory>
 #include <string>
@@ -12,7 +11,7 @@
 using namespace gramods;
 
 std::string removePath(std::string data) {
-  std::regex expr("\\s([^ ]*)(.test.gmIO.src.)(console\\.cpp)");
+  std::regex expr("\\s([^ ]*)(.test.gmCore.src.)(console\\.cpp)");
   std::string result;
   std::regex_replace (std::back_inserter(result),
                       data.begin(), data.end(),
@@ -20,12 +19,12 @@ std::string removePath(std::string data) {
   return result;
 }
 
-TEST(gmIOConsole, OStreamMessageSink_sstream) {
+TEST(gmCoreConsole, OStreamMessageSink_sstream) {
 
   std::stringstream ss;
 
-  std::shared_ptr<gmIO::OStreamMessageSink> osms =
-    std::make_shared<gmIO::OStreamMessageSink>();
+  std::shared_ptr<gmCore::OStreamMessageSink> osms =
+    std::make_shared<gmCore::OStreamMessageSink>();
   osms->setStream(&ss);
   osms->initialize();
 
@@ -65,7 +64,7 @@ private:
   std::streambuf * mOldBuffer;
 };
 
-TEST(gmIOConsole, OStreamMessageSink_stdcout) {
+TEST(gmCoreConsole, OStreamMessageSink_stdcout) {
 
 
   std::string xml = ""
@@ -73,7 +72,7 @@ TEST(gmIOConsole, OStreamMessageSink_stdcout) {
     "  <OStreamMessageSink stream=\"out\"/>"
     "</config>";
 
-  gmConfig::Configuration config(xml);
+  gmCore::Configuration config(xml);
 
   std::stringstream ss;
   {

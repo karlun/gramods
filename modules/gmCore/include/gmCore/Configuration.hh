@@ -1,9 +1,9 @@
 
-#ifndef GRAMODS_CONFIG_CONFIGURATION
-#define GRAMODS_CONFIG_CONFIGURATION
+#ifndef GRAMODS_CORE_CONFIGURATION
+#define GRAMODS_CORE_CONFIGURATION
 
-#include <gmConfig/config.hh>
-#include <gmConfig/Debug.hh>
+#include <gmCore/config.hh>
+#include <gmCore/Debug.hh>
 
 #include <vector>
 #include <string>
@@ -15,7 +15,7 @@ namespace tinyxml2 {
   struct XMLElement;
 }
 
-BEGIN_NAMESPACE_GMCONFIG
+BEGIN_NAMESPACE_GMCORE
 
 class Object;
 
@@ -288,7 +288,7 @@ void Configuration::setParam(const std::string &name, const T &value){
   parameters[name] = parameter_t(ss_value.str());
 }
 
-END_NAMESPACE_GMCONFIG
+END_NAMESPACE_GMCORE
 
 #endif
 

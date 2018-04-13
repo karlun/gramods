@@ -1,21 +1,21 @@
 
-#include <gmConfig/ImportLibrary.hh>
-#include <gmConfig/Configuration.hh>
+#include <gmCore/ImportLibrary.hh>
+#include <gmCore/Configuration.hh>
 
 #include <memory>
 #include <string>
 
 using namespace gramods;
 
-TEST(gmConfigLoadLib, SimpleLoad) {
+TEST(gmCoreLoadLib, SimpleLoad) {
   
-  gmConfig::Configuration config1("<config param=\"5\"><ImportLibrary file=\"test-lib\"><ImportLibrary name=\"child\" file=\"test-lib\"/></ImportLibrary></config>");
+  gmCore::Configuration config1("<config param=\"5\"><ImportLibrary file=\"test-lib\"><ImportLibrary name=\"child\" file=\"test-lib\"/></ImportLibrary></config>");
 
   int param;
   EXPECT_TRUE(config1.getParam("param", param));
   EXPECT_EQ(5, param);
   
-  std::vector<std::shared_ptr<gmConfig::ImportLibrary>> importers;
+  std::vector<std::shared_ptr<gmCore::ImportLibrary>> importers;
   EXPECT_EQ(1, config1.getAllObjects(importers));
   for (auto importer : importers)
     EXPECT_TRUE(importer->isLoaded());
@@ -26,6 +26,6 @@ TEST(gmConfigLoadLib, SimpleLoad) {
       EXPECT_FALSE(importers.front()->getChild()->getChild());
   }
   
-  ASSERT_THROW(gmConfig::Configuration config2("<config param=\"5\"><ImportLibrary fileblob=\"test-lib\"/></config>"),
+  ASSERT_THROW(gmCore::Configuration config2("<config param=\"5\"><ImportLibrary fileblob=\"test-lib\"/></config>"),
                std::invalid_argument);
 }

@@ -1,11 +1,11 @@
 
-#include <gmConfig/OFactory.hh>
+#include <gmCore/OFactory.hh>
 
-#include <gmConfig/Debug.hh>
+#include <gmCore/Debug.hh>
 
 #include <assert.h>
 
-USING_NAMESPACE_GMCONFIG;
+USING_NAMESPACE_GMCORE;
 
 Object * OFactory::createObject(std::string name){
   if( getOFI(name) == NULL ){

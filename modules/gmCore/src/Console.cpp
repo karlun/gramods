@@ -1,7 +1,7 @@
 
-#include <gmIO/Console.hh>
+#include <gmCore/Console.hh>
 
-BEGIN_NAMESPACE_GMIO;
+BEGIN_NAMESPACE_GMCORE;
 
 std::shared_ptr<MessageSink> Console::default_message_sink;
 
@@ -31,4 +31,4 @@ Console::ConsoleBuffer Console::getBuffer
                        MessageSink::Message(level, tag, "", file, line, function));
 }
 
-END_NAMESPACE_GMIO;
+END_NAMESPACE_GMCORE;

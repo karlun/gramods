@@ -5,63 +5,63 @@
 */
 
 
-#ifndef GRAMODS_IO_CONSOLE
-#define GRAMODS_IO_CONSOLE
+#ifndef GRAMODS_CORE_CONSOLE
+#define GRAMODS_CORE_CONSOLE
 
-#include <gmIO/config.hh>
+#include <gmCore/config.hh>
 
-#include <gmIO/ConsoleLevel.hh>
-#include <gmIO/MessageSink.hh>
+#include <gmCore/ConsoleLevel.hh>
+#include <gmCore/MessageSink.hh>
 #include <memory>
 #include <sstream>
 
 #ifdef NDEBUG
 
 # define GM_ERR(TAG, MSG)                                              \
-  gramods::gmIO::Console(gramods::gmIO::ConsoleLevel::ERROR,           \
+  gramods::gmCore::Console(gramods::gmCore::ConsoleLevel::ERROR,           \
                          TAG) << MSG << std::endl
 # define GM_WRN(TAG, MSG)                                              \
-  gramods::gmIO::Console(gramods::gmIO::ConsoleLevel::WARNING,        \
+  gramods::gmCore::Console(gramods::gmCore::ConsoleLevel::WARNING,        \
                          TAG) << MSG << std::endl
 # define GM_INF(TAG, MSG)                                            \
-  gramods::gmIO::Console(gramods::gmIO::ConsoleLevel::INFORMATION,  \
+  gramods::gmCore::Console(gramods::gmCore::ConsoleLevel::INFORMATCOREN,  \
                          TAG) << MSG << std::endl
 # define GM_VINF(TAG, MSG)                                              \
-  gramods::gmIO::Console(gramods::gmIO::ConsoleLevel::VERBOSE_INFORMATION, \
+  gramods::gmCore::Console(gramods::gmCore::ConsoleLevel::VERBOSE_INFORMATCOREN, \
                          TAG) << MSG << std::endl
 # define GM_VVINF(TAG, MSG)                                             \
-  gramods::gmIO::Console(gramods::gmIO::ConsoleLevel::VERY_VERBOSE_INFORMATION, \
+  gramods::gmCore::Console(gramods::gmCore::ConsoleLevel::VERY_VERBOSE_INFORMATCOREN, \
                          TAG) << MSG << std::endl
 
 #else // if NDEBUG else
 
 # define GM_ERR(TAG, MSG)                                              \
-  gramods::gmIO::Console(gramods::gmIO::ConsoleLevel::ERROR,           \
+  gramods::gmCore::Console(gramods::gmCore::ConsoleLevel::ERROR,           \
                          TAG, __FILE__, __LINE__, __func__)            \
   << MSG << std::endl
 # define GM_WRN(TAG, MSG)                                             \
-  gramods::gmIO::Console(gramods::gmIO::ConsoleLevel::WARNING,        \
+  gramods::gmCore::Console(gramods::gmCore::ConsoleLevel::WARNING,        \
                          TAG, __FILE__, __LINE__, __func__)           \
   << MSG << std::endl
 # define GM_INF(TAG, MSG)                                            \
-  gramods::gmIO::Console(gramods::gmIO::ConsoleLevel::INFORMATION,   \
+  gramods::gmCore::Console(gramods::gmCore::ConsoleLevel::INFORMATION,   \
                          TAG, __FILE__, __LINE__, __func__)          \
   << MSG << std::endl
 # define GM_VINF(TAG, MSG)                                              \
-  gramods::gmIO::Console(gramods::gmIO::ConsoleLevel::VERBOSE_INFORMATION, \
+  gramods::gmCore::Console(gramods::gmCore::ConsoleLevel::VERBOSE_INFORMATION, \
                          TAG, __FILE__, __LINE__, __func__)             \
   << MSG << std::endl
 # define GM_VVINF(TAG, MSG)                                             \
-  gramods::gmIO::Console(gramods::gmIO::ConsoleLevel::VERY_VERBOSE_INFORMATION, \
+  gramods::gmCore::Console(gramods::gmCore::ConsoleLevel::VERY_VERBOSE_INFORMATION, \
                          TAG, __FILE__, __LINE__, __func__)             \
   << MSG << std::endl
 
 #endif // if NDEBUG else endif
 
-BEGIN_NAMESPACE_GMIO
+BEGIN_NAMESPACE_GMCORE
 
 /**
-   Console for easier handling of runtime and debugging information.
+   Console for easier handling of runtime and debugging informatCoren.
 */
 struct Console
   : public std::ostream {
@@ -69,9 +69,9 @@ struct Console
 public:
 
   Console(ConsoleLevel level, std::string tag,
-          std::string file, int line, std::string function)
+          std::string file, int line, std::string functCoren)
     : std::ostream(&buffer),
-    buffer(getBuffer(level, tag, file, line, function)) {}
+    buffer(getBuffer(level, tag, file, line, functCoren)) {}
 
   Console(ConsoleLevel level, std::string tag)
     : std::ostream(&buffer),
@@ -98,13 +98,13 @@ private:
   static ConsoleBuffer getBuffer(ConsoleLevel level, std::string tag);
 
   static ConsoleBuffer getBuffer(ConsoleLevel level, std::string tag,
-                                 std::string file, int line, std::string function);
+                                 std::string file, int line, std::string functCoren);
 
   static std::shared_ptr<MessageSink> default_message_sink;
 
   ConsoleBuffer buffer;
 };
 
-END_NAMESPACE_GMIO
+END_NAMESPACE_GMCORE
 
 #endif

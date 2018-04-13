@@ -1,14 +1,14 @@
 
-#ifndef GRAMODS_IO_MESSAGESINK
-#define GRAMODS_IO_MESSAGESINK
+#ifndef GRAMODS_CORE_MESSAGESINK
+#define GRAMODS_CORE_MESSAGESINK
 
-#include <gmIO/config.hh>
+#include <gmCore/config.hh>
 
-#include <gmIO/ConsoleLevel.hh>
-#include <gmConfig/Object.hh>
+#include <gmCore/ConsoleLevel.hh>
+#include <gmCore/Object.hh>
 #include <ostream>
 
-BEGIN_NAMESPACE_GMIO;
+BEGIN_NAMESPACE_GMCORE;
 
 /**
    This is the base type for back-ends taking care of information sent
@@ -16,7 +16,7 @@ BEGIN_NAMESPACE_GMIO;
    sink of the Console class upon initialization.
 */
 class MessageSink
-  : public gmConfig::Object {
+  : public gmCore::Object {
 
 public:
 
@@ -46,6 +46,6 @@ public:
 
 };
 
-END_NAMESPACE_GMIO;
+END_NAMESPACE_GMCORE;
 
 #endif

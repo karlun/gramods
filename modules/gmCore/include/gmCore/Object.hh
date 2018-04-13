@@ -1,12 +1,12 @@
 
-#ifndef GRAMODS_CONFIG_OBJECT
-#define GRAMODS_CONFIG_OBJECT
+#ifndef GRAMODS_CORE_OBJECT
+#define GRAMODS_CORE_OBJECT
 
-#include <gmConfig/config.hh>
+#include <gmCore/config.hh>
 
 #include <memory>
 
-BEGIN_NAMESPACE_GMCONFIG
+BEGIN_NAMESPACE_GMCORE
 
 /**
    Base type for objects in the Gramods package, for easier handling
@@ -33,6 +33,6 @@ struct Object
   virtual void initialize() {}
 };
 
-END_NAMESPACE_GMCONFIG
+END_NAMESPACE_GMCORE
 
 #endif

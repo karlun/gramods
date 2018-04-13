@@ -1,11 +1,11 @@
 
-#include <gmConfig/Configuration.hh>
+#include <gmCore/Configuration.hh>
 
-#include <gmConfig/OFactory.hh>
+#include <gmCore/OFactory.hh>
 
 #include <tinyxml2.h>
 
-USING_NAMESPACE_GMCONFIG;
+USING_NAMESPACE_GMCORE;
 
 Configuration::Configuration() {}
 

@@ -1,17 +1,17 @@
 
-#include <gmConfig/ImportLibrary.hh>
+#include <gmCore/ImportLibrary.hh>
 
-#include <gmConfig/OFactory.hh>
+#include <gmCore/OFactory.hh>
 
-BEGIN_NAMESPACE_GMCONFIG
+BEGIN_NAMESPACE_GMCORE
 namespace ImportLibraryInternals {
   OFactory::OFactoryInformation<ImportLibrary> OFI("ImportLibrary");
   OFI_PARAM(OFI, ImportLibrary, file, std::string, ImportLibrary::setFile);
   OFI_POINTER(OFI, ImportLibrary, child, ImportLibrary, ImportLibrary::setChild);
 }
-END_NAMESPACE_GMCONFIG
+END_NAMESPACE_GMCORE
 
-USING_NAMESPACE_GMCONFIG;
+USING_NAMESPACE_GMCORE;
 
 ImportLibrary::ImportLibrary()
   : library_loaded(false) {}
