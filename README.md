@@ -15,13 +15,7 @@ The purpose of the Gramods library is to simplify loading of platform dependent 
 ```c++
 int main(int argc, char *argv[]) {
 
-  gmConfig::Configuration config(argc, argv);
-
-  std::shared_ptr<gmUtils::Console> console;
-  if (! config.getObject(console)) {
-    ERROR("Cannot run without output console!");
-    return -1;
-  }
+  gmCore::Configuration config(argc, argv);
 
   std::shared_ptr<gmNetSync::SyncNode> cluster_sync;
   if (! config.getObject(cluster_sync)) {
@@ -35,15 +29,15 @@ int main(int argc, char *argv[]) {
     return -1;
   }
 
-  console.info << "Configuration loaded" << std::endl;
+  GM_INF("main", "Configuration loaded");
 
   std::shared_ptr<gmTracking::Tracker> head_tracker;
   config.getObject("head tracker", head_tracker);
-  console.info << "Head tracker: " << head_tracker << std::endl;
+  GM_INF("main", "Head tracker: " << head_tracker);
 
   std::shared_ptr<gmTracking::Tracker> wand_primary;
   config.getObject("primary controller", wand_primary);
-  console.info << "Primary controller: " << head_tracker << std::endl;
+  GM_INF("main", "Primary controller: " << head_tracker);
 
   ...
 
