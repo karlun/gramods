@@ -4,6 +4,8 @@
 
 #include <gmConfig/config.hh>
 
+#include <memory>
+
 BEGIN_NAMESPACE_GMCONFIG
 
 /**
@@ -16,7 +18,8 @@ BEGIN_NAMESPACE_GMCONFIG
    3. Call initialize.
    4. Object is ready to be used.
 */
-struct Object {
+struct Object
+  : public std::enable_shared_from_this<Object> {
 
   /**
      Cleaning up internal data.
