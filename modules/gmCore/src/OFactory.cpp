@@ -1,8 +1,6 @@
 
 #include <gmCore/OFactory.hh>
 
-#include <gmCore/Debug.hh>
-
 #include <assert.h>
 
 USING_NAMESPACE_GMCORE;

@@ -62,7 +62,7 @@ void Configuration::load(tinyxml2::XMLNode *node) {
     
     std::shared_ptr<Object> nn(OFactory::createObject(type));
     if (nn == NULL){
-      GRAMODS_DEBUG_LOG_E("Could not create object of type '" << type << "'");
+      GM_ERR("Configuration", "Could not create object of type '" << type << "'");
       continue;
     }
 
@@ -75,10 +75,10 @@ void Configuration::load(tinyxml2::XMLNode *node) {
       std::string value;
       bool good = node_conf.getParamAsString(param_name, value);
       assert(good);
-      GRAMODS_DEBUG_LOG_I(name << " -> " << type << "::" << param_name << " = " << value);
+      GM_INF("Configuration", name << " -> " << type << "::" << param_name << " = " << value);
       good = OFactory::getOFI(type)->setParamValueFromString(nn.get(), param_name, value);
       if (!good)
-        GRAMODS_THROW(std::invalid_argument, "no parameter " << param_name << " available in " << type);
+        GM_ERR("Configuration", "no parameter " << param_name << " available in " << type);
     }
 
     std::vector<std::string> child_names;
@@ -88,10 +88,10 @@ void Configuration::load(tinyxml2::XMLNode *node) {
       std::shared_ptr<Object> ptr;
       bool good = node_conf.getObject(child_name, ptr);
       assert(good);
-      GRAMODS_DEBUG_LOG_I(name << " -> " << type << "::" << child_name << " = ptr");
+      GM_INF("Configuration", name << " -> " << type << "::" << child_name << " = ptr");
       good = OFactory::getOFI(type)->setPointerValue(nn.get(), child_name, ptr);
       if (!good)
-        GRAMODS_THROW(std::invalid_argument, "no pointer " << child_name << " available in " << type);
+        GM_ERR("Configuration", "no pointer " << child_name << " available in " << type);
     }
 
     nn->initialize();
@@ -104,9 +104,9 @@ Configuration::~Configuration(){
   for( parameter_list::iterator it = parameters.begin() ;
        it != parameters.end() ; ++it) {
     if (! it->second.checked) {
-      GRAMODS_DEBUG_LOG_W("Parameter '" << it->first << "', "
-                       << "set to '" << it->second.value << "', "
-                       << "has not been used!");
+      GM_WRN("Configuration", "Parameter '" << it->first << "', "
+             << "set to '" << it->second.value << "', "
+             << "has not been used!");
     }
   }
 }
@@ -138,19 +138,19 @@ void Configuration::parse_param(tinyxml2::XMLElement *element){
   std::string value = value_attribute;
   
   if (parameters.count(name) != 0) {
-    GRAMODS_DEBUG_LOG_W("Cannot set parameter " << name << " to " << value
-                     << ", already set to " << parameters[name].value << "!");
+    GM_WRN("Configuration", "Cannot set parameter " << name << " to " << value
+           << ", already set to " << parameters[name].value << "!");
     return;
   }
   
   parameters[name] = parameter_t(value);
   
-  GRAMODS_DEBUG_LOG_I("Parsed param: " << name << " = " << value);
+  GM_INF("Configuration", "Parsed param: " << name << " = " << value);
 }
 
 bool Configuration::getParamAsString(const std::string &name, std::string &value) const {
   if (parameters.count(name) == 0) {
-    GRAMODS_DEBUG_LOG_I("Could not find " << name);
+    GM_INF("Configuration", "Could not find " << name);
     return false;
   }
   
@@ -158,6 +158,6 @@ bool Configuration::getParamAsString(const std::string &name, std::string &value
   
   value = parameters.find(name)->second.value;
   _this->parameters.find(name)->second.checked = true;
-  GRAMODS_DEBUG_LOG_I("Read " << name << " = " << value);
+  GM_INF("Configuration", "Read " << name << " = " << value);
   return true;
 }

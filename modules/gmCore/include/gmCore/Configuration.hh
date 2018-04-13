@@ -3,9 +3,10 @@
 #define GRAMODS_CORE_CONFIGURATION
 
 #include <gmCore/config.hh>
-#include <gmCore/Debug.hh>
+#include <gmCore/Console.hh>
 
 #include <vector>
+#include <map>
 #include <string>
 #include <algorithm>
 #include <memory>
@@ -251,7 +252,7 @@ bool Configuration::getParam(const std::string &name, T &value) const{
     return true;
   }
   catch(std::exception e){
-    GRAMODS_DEBUG_LOG_W("Could not parse '" << string_value << "' as " << typeid(T).name() << "!");
+    GM_WRN("Configuration", "Could not parse '" << string_value << "' as " << typeid(T).name() << "!");
     return false;
   }
 }
@@ -275,7 +276,7 @@ inline bool Configuration::getParam(const std::string &name, bool &value) const 
   if (string_value == "off") { value = false; return true; }
   if (string_value == "0") { value = false; return true; }
 
-  GRAMODS_DEBUG_LOG_W("Could not parse '" << string_value << "' as bool!");
+  GM_WRN("Configuration", "Could not parse '" << string_value << "' as bool!");
   return false;
 }
 

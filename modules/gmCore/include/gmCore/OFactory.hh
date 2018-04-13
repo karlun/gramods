@@ -5,7 +5,7 @@
 #include <gmCore/config.hh>
 #include <gmCore/Object.hh>
 #include <gmCore/Configuration.hh>
-#include <gmCore/Debug.hh>
+#include <gmCore/Console.hh>
 
 #include <map>
 #include <string>
@@ -262,8 +262,10 @@ void OFactory::OFactoryInformation<Node>::ParamSetter<T>::setValueFromString(Obj
   T val;
   ss >> val;
 
-  if (!ss)
-    GRAMODS_THROW(std::invalid_argument, "cannot cast '" << s << "' to type " << typeid(T).name());
+  if (!ss) {
+    GM_ERR("Configuration", "cannot parse '" << s << "' as type " << typeid(T).name());
+    throw new std::invalid_argument("type cannot parse string");
+  }
 
   (node->*method)(val);
 }
@@ -275,8 +277,10 @@ void OFactory::OFactoryInformation<Node>::PointerSetter<T>::setPointer(Object *n
   Node *node = static_cast<Node*>(n);
   std::shared_ptr<T> _ptr = std::dynamic_pointer_cast<T>(ptr);
 
-  if (!_ptr)
-    GRAMODS_THROW(std::invalid_argument, "cannot cast " << typeid(ptr).name() << " to type " << typeid(T).name());
+  if (!_ptr) {
+    GM_ERR("Configuration", "cannot cast " << typeid(ptr).name() << " to type " << typeid(T).name());
+    throw new std::invalid_argument("cannot cast pointer");
+  }
 
   (node->*method)(_ptr);
 }
