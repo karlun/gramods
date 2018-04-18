@@ -51,9 +51,9 @@ int main(int argc, char *argv[]) {
 
 ## Modules and Dependencies
 
-### gmConfig
+### gmCore
 
-Utilities for loading other modules and configure them based on configuration files.
+Utilities for loading other modules and configure them based on configuration files, and for handling library and application debugging output.
 
 Requirements:
  - TinyXML2
