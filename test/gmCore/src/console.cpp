@@ -11,13 +11,13 @@
 
 using namespace gramods;
 
-std::string removePath(std::string data) {
-  std::regex expr("\\s([^ ]*)(.test.gmCore.src.)(console\\.cpp)");
-  std::string result;
-  std::regex_replace (std::back_inserter(result),
-                      data.begin(), data.end(),
-                      expr, " /PATH/$3");
-  return result;
+TEST(gmCoreConsole, PathStripping) {
+  constexpr auto filename = gmCore::detail::strip_path(__FILE__);
+  constexpr auto basename = gmCore::detail::basename_impl
+    (filename, gmCore::detail::last_dot_of(filename));
+
+  EXPECT_EQ(std::string("console.cpp"), filename);
+  EXPECT_EQ(std::string("console"), to_string(basename));
 }
 
 TEST(gmCoreConsole, OStreamMessageSink_sstream) {
@@ -31,24 +31,26 @@ TEST(gmCoreConsole, OStreamMessageSink_sstream) {
   osms->setStream(&ss);
   osms->initialize();
 
+  int base_row = __LINE__;
   GM_INF("a", "A");
   GM_WRN("b", "B");
   GM_ERR("c", "C");
   GM_VINF("d", "E");
   GM_VVINF("e", "E");
 
-  std::string result = removePath(ss.str());
+  std::stringstream result;
+  result << "II (a) console.cpp:" << base_row + 1 << " (TestBody)" << std::endl;
+  result << "II (a) A" << std::endl << std::endl;
+  result << "WW (b) console.cpp:" << base_row + 2 << " (TestBody)" << std::endl;
+  result << "WW (b) B" << std::endl << std::endl;
+  result << "EE (c) console.cpp:" << base_row + 3 << " (TestBody)" << std::endl;
+  result << "EE (c) C" << std::endl << std::endl;
+  result << "I2 (d) console.cpp:" << base_row + 4 << " (TestBody)" << std::endl;
+  result << "I2 (d) E" << std::endl << std::endl;
+  result << "I3 (e) console.cpp:" << base_row + 5 << " (TestBody)" << std::endl;
+  result << "I3 (e) E" << std::endl << std::endl;
 
-  EXPECT_EQ(std::string("II (a) /PATH/console.cpp:34 (TestBody)\n"
-                        "II (a) A\n\n"
-                        "WW (b) /PATH/console.cpp:35 (TestBody)\n"
-                        "WW (b) B\n\n"
-                        "EE (c) /PATH/console.cpp:36 (TestBody)\n"
-                        "EE (c) C\n\n"
-                        "I2 (d) /PATH/console.cpp:37 (TestBody)\n"
-                        "I2 (d) E\n\n"
-                        "I3 (e) /PATH/console.cpp:38 (TestBody)\n"
-                        "I3 (e) E\n\n"), result);
+  EXPECT_EQ(result.str(), ss.str());
 }
 
 TEST(gmCoreConsole, OStreamMessageSink_stdcout) {
@@ -61,6 +63,7 @@ TEST(gmCoreConsole, OStreamMessageSink_stdcout) {
     "</config>";
 
   std::stringstream ss;
+  int base_row;
   {
     gmCore::ScopedOStreamRedirect redirect(std::cout, ss);
 
@@ -68,10 +71,13 @@ TEST(gmCoreConsole, OStreamMessageSink_stdcout) {
 
     ss.clear();
 
+    base_row = __LINE__;
     GM_INF("a", "A");
   }
 
-  std::string result = removePath(ss.str());
-  EXPECT_EQ(std::string("II (a) /PATH/console.cpp:71 (TestBody)\n"
-                        "II (a) A\n\n"), result);
+  std::stringstream result;
+  result << "II (a) console.cpp:" << base_row + 1 << " (TestBody)" << std::endl;
+  result << "II (a) A" << std::endl << std::endl;
+
+  EXPECT_EQ(result.str(), ss.str());
 }
