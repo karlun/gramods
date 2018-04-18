@@ -77,13 +77,13 @@ namespace detail {
   gramods::gmCore::Console(gramods::gmCore::ConsoleLevel::WARNING,        \
                          TAG) << MSG << std::endl
 # define GM_INF(TAG, MSG)                                            \
-  gramods::gmCore::Console(gramods::gmCore::ConsoleLevel::INFORMATCOREN,  \
+  gramods::gmCore::Console(gramods::gmCore::ConsoleLevel::INFORMATION,  \
                          TAG) << MSG << std::endl
 # define GM_VINF(TAG, MSG)                                              \
-  gramods::gmCore::Console(gramods::gmCore::ConsoleLevel::VERBOSE_INFORMATCOREN, \
+  gramods::gmCore::Console(gramods::gmCore::ConsoleLevel::VERBOSE_INFORMATION, \
                          TAG) << MSG << std::endl
 # define GM_VVINF(TAG, MSG)                                             \
-  gramods::gmCore::Console(gramods::gmCore::ConsoleLevel::VERY_VERBOSE_INFORMATCOREN, \
+  gramods::gmCore::Console(gramods::gmCore::ConsoleLevel::VERY_VERBOSE_INFORMATION, \
                          TAG) << MSG << std::endl
 
 #else // if NDEBUG else
