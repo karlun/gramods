@@ -55,5 +55,15 @@ int main(int argc, char *argv[]) {
 
 Utilities for loading other modules and configure them based on configuration files.
 
-Requirements: TinyXML2
+Requirements:
+ - TinyXML2
 
+### gmTrack
+
+Pose tracking client classes and filters.
+
+Requirements:
+ - Eigen
+
+Optional:
+ - VRPN, for VRPN support
