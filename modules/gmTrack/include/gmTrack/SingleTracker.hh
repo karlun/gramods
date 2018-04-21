@@ -22,3 +22,5 @@ public:
 };
 
 END_NAMESPACE_GMTRACK;
+
+#endif
