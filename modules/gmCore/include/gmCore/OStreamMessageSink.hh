@@ -4,6 +4,8 @@
 
 #include <gmCore/MessageSink.hh>
 
+#include <mutex>
+
 BEGIN_NAMESPACE_GMCORE;
 
 /**
@@ -21,6 +23,7 @@ public:
      std::cout.
   */
   void setStream(std::ostream *s) {
+    std::lock_guard<std::mutex> guard(lock);
     rp_out = s;
     sp_out = nullptr;
   }
@@ -32,6 +35,7 @@ public:
      system.
   */
   void setStream(std::shared_ptr<std::ostream> s) {
+    std::lock_guard<std::mutex> guard(lock);
     rp_out = nullptr;
     sp_out = s;
   }
@@ -50,6 +54,7 @@ private:
 
   std::ostream *rp_out;
   std::shared_ptr<std::ostream> sp_out;
+  std::mutex lock;
 };
 
 END_NAMESPACE_GMCORE;

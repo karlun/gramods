@@ -15,6 +15,7 @@ OStreamMessageSink::OStreamMessageSink()
   : rp_out(&std::cerr) {}
 
 void OStreamMessageSink::output(Message msg) {
+  std::lock_guard<std::mutex> guard(lock);
 
   if (rp_out == nullptr && !sp_out) return;
 
@@ -53,6 +54,7 @@ void OStreamMessageSink::outputLevelAndTag(Message msg) {
 }
 
 void OStreamMessageSink::setStream(std::string name) {
+  // no mutex lock since setStream engages the mutex
   if (name == "out") {
     setStream(&std::cout);
   } else if (name == "err") {
