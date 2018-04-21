@@ -17,6 +17,9 @@ BEGIN_NAMESPACE_GMCORE;
    2. Call setters to configure the object.
    3. Call initialize.
    4. Object is ready to be used.
+
+   All three steps are performed by the Configuration tool and an
+   Object extracted therefrom will be ready to be used.
 */
 struct Object
   : public std::enable_shared_from_this<Object> {
