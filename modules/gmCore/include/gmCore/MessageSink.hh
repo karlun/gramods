@@ -40,8 +40,17 @@ public:
     std::string function;
   };
 
+  /**
+     Called to initialize the MessageSink. This should be called once
+     only!
+  */
   virtual void initialize();
 
+  /**
+     Outputs the provided message to the implementation specific
+     channel. This method may be called concurrently from multiple
+     thread and must therefore be thread safe.
+  */
   virtual void output(Message msg) = 0;
 
 };
