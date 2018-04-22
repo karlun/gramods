@@ -68,23 +68,102 @@ namespace detail {
   }
 }
 
+/**\def GM_ERR(TAG, MSG)
+   Macro for sending an error message to the currently registered
+   MessageSink. The application specific tag may be any string, or an
+   empty string. Messages with this level should be very sparse, since
+   most error information needs to be provided to the users via the
+   user interface instead.
+
+   @param TAG A string to associate the message with, or an empty
+   string.
+
+   @param MSG The message to send. This supports the output operator
+   for easy printing of objects supporting this operator.
+*/
+
+/**\def GM_WRN(TAG, MSG)
+   Macro for sending a warning message to the currently registered
+   MessageSink. The application specific tag may be any string, or an
+   empty string. Messages with this level should be sparse, and
+   indicate something that might be normal, but might result in
+   unexpected behavior further on.
+
+   @param TAG A string to associate the message with, or an empty
+   string.
+
+   @param MSG The message to send. This supports the output operator
+   for easy printing of objects supporting this operator.
+*/
+
+/**\def GM_INF(TAG, MSG)
+   Macro for sending a debug message to the currently registered
+   MessageSink. The application specific tag may be any string, or an
+   empty string. Messages with this level report on high level
+   internal processes. Do not send more than a few at a time and
+   fairly seldom.
+
+   @param TAG A string to associate the message with, or an empty
+   string.
+
+   @param MSG The message to send. This supports the output operator
+   for easy printing of objects supporting this operator.
+*/
+
+/**\def GM_VINF(TAG, MSG)
+   Macro for sending a "verbose" debug message to the currently
+   registered MessageSink. The application specific tag may be any
+   string, or an empty string. Messages with this level may arrive at
+   a higher rate, inside loops, but should not slow down the
+   application.
+
+   @param TAG A string to associate the message with, or an empty
+   string.
+
+   @param MSG The message to send. This supports the output operator
+   for easy printing of objects supporting this operator.
+*/
+
+/**\def GM_VVINF(TAG, MSG)
+   Macro for sending a "very verbose" debug message to the currently
+   registered MessageSink. The application specific tag may be any
+   string, or an empty string. Messages with this level may arrive at
+   a high rate, inside loops, and may be so many that they can be
+   expected to slow down the application.
+
+   @param TAG A string to associate the message with, or an empty
+   string.
+
+   @param MSG The message to send. This supports the output operator
+   for easy printing of objects supporting this operator.
+*/
+
 #ifdef NDEBUG
 
-# define GM_ERR(TAG, MSG)                                              \
-  gramods::gmCore::Console(gramods::gmCore::ConsoleLevel::ERROR,           \
-                         TAG) << MSG << std::endl
-# define GM_WRN(TAG, MSG)                                              \
-  gramods::gmCore::Console(gramods::gmCore::ConsoleLevel::WARNING,        \
-                         TAG) << MSG << std::endl
-# define GM_INF(TAG, MSG)                                            \
-  gramods::gmCore::Console(gramods::gmCore::ConsoleLevel::INFORMATION,  \
-                         TAG) << MSG << std::endl
-# define GM_VINF(TAG, MSG)                                              \
-  gramods::gmCore::Console(gramods::gmCore::ConsoleLevel::VERBOSE_INFORMATION, \
-                         TAG) << MSG << std::endl
-# define GM_VVINF(TAG, MSG)                                             \
-  gramods::gmCore::Console(gramods::gmCore::ConsoleLevel::VERY_VERBOSE_INFORMATION, \
-                         TAG) << MSG << std::endl
+# define GM_ERR(TAG, MSG)                       \
+  gramods::gmCore::Console                      \
+  (gramods::gmCore::ConsoleLevel::ERROR,        \
+   TAG) << MSG << std::endl
+
+# define GM_WRN(TAG, MSG)                       \
+  gramods::gmCore::Console                      \
+  (gramods::gmCore::ConsoleLevel::WARNING,      \
+     TAG) << MSG << std::endl
+
+# define GM_INF(TAG, MSG)                       \
+  gramods::gmCore::Console                      \
+  (gramods::gmCore::ConsoleLevel::INFORMATION,  \
+   TAG) << MSG << std::endl
+
+# define GM_VINF(TAG, MSG)                              \
+  gramods::gmCore::Console                              \
+  (gramods::gmCore::ConsoleLevel::VERBOSE_INFORMATION,  \
+   TAG) << MSG << std::endl
+
+# define GM_VVINF(TAG, MSG)                                 \
+  gramods::gmCore::Console                                  \
+  (gramods::gmCore::ConsoleLevel::VERY_VERBOSE_INFORMATION, \
+   TAG) << MSG << std::endl
 
 #else // if NDEBUG else
 
@@ -94,31 +173,42 @@ namespace detail {
 #define GM_FILE __FILE__
 #endif
 
-# define GM_ERR(TAG, MSG)                                              \
-  gramods::gmCore::Console(gramods::gmCore::ConsoleLevel::ERROR,           \
-                         TAG, GM_FILE, __LINE__, __func__)            \
+# define GM_ERR(TAG, MSG)                       \
+  gramods::gmCore::Console                      \
+  (gramods::gmCore::ConsoleLevel::ERROR,        \
+   TAG, GM_FILE, __LINE__, __func__)            \
   << MSG << std::endl
-# define GM_WRN(TAG, MSG)                                             \
-  gramods::gmCore::Console(gramods::gmCore::ConsoleLevel::WARNING,        \
-                         TAG, GM_FILE, __LINE__, __func__)           \
+
+# define GM_WRN(TAG, MSG)                       \
+  gramods::gmCore::Console                      \
+  (gramods::gmCore::ConsoleLevel::WARNING,      \
+   TAG, GM_FILE, __LINE__, __func__)            \
   << MSG << std::endl
-# define GM_INF(TAG, MSG)                                            \
-  gramods::gmCore::Console(gramods::gmCore::ConsoleLevel::INFORMATION,   \
-                         TAG, GM_FILE, __LINE__, __func__)          \
+
+# define GM_INF(TAG, MSG)                       \
+  gramods::gmCore::Console                      \
+  (gramods::gmCore::ConsoleLevel::INFORMATION,  \
+   TAG, GM_FILE, __LINE__, __func__)            \
   << MSG << std::endl
-# define GM_VINF(TAG, MSG)                                              \
-  gramods::gmCore::Console(gramods::gmCore::ConsoleLevel::VERBOSE_INFORMATION, \
-                         TAG, GM_FILE, __LINE__, __func__)             \
+
+# define GM_VINF(TAG, MSG)                              \
+  gramods::gmCore::Console                              \
+  (gramods::gmCore::ConsoleLevel::VERBOSE_INFORMATION,  \
+   TAG, GM_FILE, __LINE__, __func__)                    \
   << MSG << std::endl
-# define GM_VVINF(TAG, MSG)                                             \
-  gramods::gmCore::Console(gramods::gmCore::ConsoleLevel::VERY_VERBOSE_INFORMATION, \
-                         TAG, GM_FILE, __LINE__, __func__)             \
+
+# define GM_VVINF(TAG, MSG)                                 \
+  gramods::gmCore::Console                                  \
+  (gramods::gmCore::ConsoleLevel::VERY_VERBOSE_INFORMATION, \
+   TAG, GM_FILE, __LINE__, __func__)                        \
   << MSG << std::endl
 
 #endif // if NDEBUG else endif
 
 /**
-   Console for easier handling of runtime and debugging information.
+   Console for easier handling of runtime and debugging
+   information. For convenience, use the macros GM_ERR, GM_WRN,
+   GM_INF, GM_VINF and GM_VINF
 */
 struct Console
   : public std::ostream {
