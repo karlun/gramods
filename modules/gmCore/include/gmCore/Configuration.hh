@@ -151,6 +151,17 @@ public:
   template<class T>
   int getAllObjects(std::vector<std::shared_ptr<T>> &value) const;
 
+  /**
+     Retrieve all objects with the specified name.
+
+     @param[in] name name of the objects to retrieve
+     @param[out] ptr a pointer to the object, if set
+     @return false if no object was found by that name or if it could
+     not be casted to the specified type.
+   */
+  template<class T>
+  int getAllObjects(std::string name, std::vector<std::shared_ptr<T>> &ptr) const;
+
 private:
 
   void load(tinyxml2::XMLNode *node);
@@ -182,6 +193,30 @@ int Configuration::getAllObjects(std::vector<std::shared_ptr<T>> &value) const {
   for( std::map<std::string, std::shared_ptr<Object>>::iterator it
          = _this->child_objects.begin() ;
        it != _this->child_objects.end() ; ++it ){
+
+    std::shared_ptr<T> node = std::dynamic_pointer_cast<T>(it->second);
+
+    if (node)
+      value.push_back(node);
+  }
+
+  return value.size() - original_size;
+}
+
+template<class T>
+int Configuration::getAllObjects(std::string name,
+                                 std::vector<std::shared_ptr<T>> &value) const {
+
+  Configuration *_this = const_cast<Configuration*>(this);
+
+  int original_size = value.size();
+
+  for( std::map<std::string, std::shared_ptr<Object>>::iterator it
+         = _this->child_objects.begin() ;
+       it != _this->child_objects.end() ; ++it ){
+
+    if (it->first != name)
+      continue;
 
     std::shared_ptr<T> node = std::dynamic_pointer_cast<T>(it->second);
 
