@@ -27,6 +27,43 @@ BEGIN_NAMESPACE_GMCORE;
 #define OFI_CREATE(OFI, NAME)                                         \
   gramods::gmCore::OFactory::OFactoryInformation<NAME> OFI(#NAME);
 
+/**\def OFI_DECLARE(OFI, NAME)
+   Macro for declaring the registration of OFactoryInformation as a
+   class member. Put this in your class definition, under a protected
+   access specifier to allow for inheritance.
+
+   @param NAME The name of the class.
+*/
+#define OFI_DECLARE(NAME)                                           \
+  static gramods::gmCore::OFactory::OFactoryInformation<NAME> _ofi;
+
+/**\def OFI_DEFINE(OFI, NAME)
+   Macro for instantiating the registration of a OFactoryInformation
+   declared with OFI_DECLARE.
+
+   @param NAME The name of the class, which will also be the
+   registered association string that refers to this class in the
+   object factory.
+*/
+#define OFI_DEFINE(NAME)                                \
+  gramods::gmCore::OFactory::OFactoryInformation<NAME>  \
+  NAME::_ofi(#NAME);
+
+/**\def OFI_DEFINE_SUB(OFI, NAME)
+   Macro for instantiating the registration of a OFactoryInformation
+   declared with OFI_DECLARE, with association with its base class'
+   registration data.
+
+   @param NAME The name of the class, which will also be the
+   registered association string that refers to this class in the
+   object factory.
+
+   @param BASE The name of the base class.
+*/
+#define OFI_DEFINE_SUB(NAME, BASE)                      \
+  gramods::gmCore::OFactory::OFactoryInformation<NAME>  \
+  NAME::_ofi(#NAME, BASE::_ofi);
+
 /**\def OFI_CREATE_SUB(OFI, NAME, BASE_OFI)
    Macro for registering a class to a OFactoryInformation node that
    links to the OFactoryInformation node of a base class. This makes
