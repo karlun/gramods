@@ -27,17 +27,17 @@ BEGIN_NAMESPACE_GMCORE;
 #define OFI_CREATE(OFI, NAME)                                         \
   gramods::gmCore::OFactory::OFactoryInformation<NAME> OFI(#NAME);
 
-/**\def OFI_DECLARE(OFI, NAME)
+/**\def GM_OFI_DECLARE(OFI, NAME)
    Macro for declaring the registration of OFactoryInformation as a
    class member. Put this in your class definition, under a protected
    access specifier to allow for inheritance.
 
    @param NAME The name of the class.
 */
-#define OFI_DECLARE(NAME)                                           \
+#define GM_OFI_DECLARE(NAME)                                           \
   static gramods::gmCore::OFactory::OFactoryInformation<NAME> _ofi;
 
-/**\def OFI_DEFINE(OFI, NAME)
+/**\def GM_OFI_DEFINE(OFI, NAME)
    Macro for instantiating the registration of a OFactoryInformation
    declared with OFI_DECLARE.
 
@@ -45,11 +45,11 @@ BEGIN_NAMESPACE_GMCORE;
    registered association string that refers to this class in the
    object factory.
 */
-#define OFI_DEFINE(NAME)                                \
+#define GM_OFI_DEFINE(NAME)                             \
   gramods::gmCore::OFactory::OFactoryInformation<NAME>  \
   NAME::_ofi(#NAME);
 
-/**\def OFI_DEFINE_SUB(OFI, NAME)
+/**\def GM_OFI_DEFINE_SUB(OFI, NAME)
    Macro for instantiating the registration of a OFactoryInformation
    declared with OFI_DECLARE, with association with its base class'
    registration data.
@@ -60,9 +60,53 @@ BEGIN_NAMESPACE_GMCORE;
 
    @param BASE The name of the base class.
 */
-#define OFI_DEFINE_SUB(NAME, BASE)                      \
+#define GM_OFI_DEFINE_SUB(NAME, BASE)                   \
   gramods::gmCore::OFactory::OFactoryInformation<NAME>  \
   NAME::_ofi(#NAME, BASE::_ofi);
+
+/**\def GM_OFI_PARAM(CLASS, NAME, TYPE, FUNC)
+   Macro for registering a parameter setter to a OFactoryInformation
+   node.
+
+   namespace MyClassInternals {
+     GM_OFI_DEFINE(MyClass);
+     GM_OFI_PARAM(MyClass, file, std::string, MyClass::setFile);
+   }
+
+   @param CLASS The type of the class in which this setter resides.
+
+   @param NAME The name to associate to the setter method, without
+   quotes.
+
+   @param TYPE The type of the variable set by this setter.
+
+   @param FUNC The setter method.
+ */
+#define GM_OFI_PARAM(CLASS, NAME, TYPE, FUNC)                         \
+  gramods::gmCore::OFactory::ParamSetterInsert OFI##NAME                \
+  (&CLASS::_ofi, #NAME, new gramods::gmCore::OFactory::OFactoryInformation<CLASS>::ParamSetter<TYPE>(&FUNC));
+
+/**\def GM_OFI_POINTER(OFI, CLASS, NAME, TYPE, FUNC)
+   Macro for registering a shared object setter to a
+   OFactoryInformation node.
+
+   GM_OFI_DEFINE(MyClass);
+   GM_OFI_POINTER(MyClass, child, Node, MyClass::setChild);
+
+   @param CLASS The type of the class in which this setter resides.
+
+   @param NAME The name to associate to the setter method, without
+   quotes.
+
+   @param TYPE The class of the shared object. The type of the setter
+   method is std::shared_ptr<TYPE>.
+
+   @param FUNC The setter method, with signature
+   void FUNC(std::shared_ptr<TYPE>)
+*/
+#define GM_OFI_POINTER(CLASS, NAME, TYPE, FUNC)                       \
+  gramods::gmCore::OFactory::PointerSetterInsert OFI##NAME            \
+  (&CLASS::_ofi, #NAME, new gramods::gmCore::OFactory::OFactoryInformation<CLASS>::PointerSetter<TYPE>(&FUNC));
 
 /**\def OFI_CREATE_SUB(OFI, NAME, BASE_OFI)
    Macro for registering a class to a OFactoryInformation node that
