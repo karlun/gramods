@@ -7,6 +7,9 @@
 
 BEGIN_NAMESPACE_GMTRACK;
 
+GM_OFI_DEFINE(VRPNTracker);
+GM_OFI_PARAM(VRPNTracker, connectionString, std::string, VRPNTracker::setConnectionString);
+
 VRPNTracker::VRPNTracker() {}
 
 VRPNTracker::~VRPNTracker() {

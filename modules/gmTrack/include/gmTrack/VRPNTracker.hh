@@ -8,6 +8,8 @@
 
 #include <vrpn_Tracker.h>
 
+#include <gmCore/OFactory.hh>
+
 BEGIN_NAMESPACE_GMTRACK;
 
 /**
@@ -27,6 +29,8 @@ public:
      Replaces the contents of p with pose data.
   */
   bool getPose(std::map<int, PoseSample> &p);
+
+  GM_OFI_DECLARE(VRPNTracker);
 
 private:
 
