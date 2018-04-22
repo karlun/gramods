@@ -67,14 +67,15 @@ public:
   bool hasParam(const std::string &name);
 
   /**
-     Fills the specified vector with all currently available parameter
-     names and returns the count.
+     Adds all currently available parameter names to the specified
+     vector and returns the count.
    */
   size_t getAllParamNames(std::vector<std::string> &name);
 
   /**
-     Fills the specified vector with all currently available child
-     names and returns the count.
+     Adds all currently available child names to the specified vector
+     and returns the count. Names used for multiple children will only
+     appear once and be counted once.
    */
   size_t getAllChildNames(std::vector<std::string> &name);
 

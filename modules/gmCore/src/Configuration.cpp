@@ -165,9 +165,17 @@ size_t Configuration::getAllParamNames(std::vector<std::string> &name) {
 }
 
 size_t Configuration::getAllChildNames(std::vector<std::string> &name) {
+  std::vector<std::string> new_names;
   for (auto child : child_objects)
-    name.push_back(child.first);
-  return child_objects.size();
+    new_names.push_back(child.first);
+
+  std::vector<std::string>::iterator it;
+  it = std::unique(new_names.begin(), new_names.end());
+  new_names.resize(std::distance(new_names.begin(), it));
+
+  name.insert(name.end(), new_names.begin(), new_names.end());
+
+  return new_names.size();
 }
 
 void Configuration::parse_param(tinyxml2::XMLElement *element){
