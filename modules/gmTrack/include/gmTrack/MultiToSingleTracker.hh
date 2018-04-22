@@ -5,6 +5,8 @@
 #include <gmTrack/SingleTracker.hh>
 #include <gmTrack/MultiTracker.hh>
 
+#include <gmCore/OFactory.hh>
+
 BEGIN_NAMESPACE_GMTRACK;
 
 /**
@@ -33,6 +35,8 @@ public:
      Replaces the contents of p with pose data.
   */
   bool getPose(PoseSample &p);
+
+  GM_OFI_DECLARE(MultiToSingleTracker);
 
 private:
 
