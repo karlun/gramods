@@ -7,9 +7,18 @@
 
 BEGIN_NAMESPACE_GMCORE;
 
-Configuration::Configuration() {}
+Configuration::Configuration(std::shared_ptr<def_list> defs)
+  : def_objects(defs) {
+  if (!def_objects)
+    def_objects = std::make_shared<def_list>();
+}
 
-Configuration::Configuration(std::string xml) {
+Configuration::Configuration(std::string xml,
+                             std::shared_ptr<def_list> defs)
+  : def_objects(defs) {
+  if (!def_objects)
+    def_objects = std::make_shared<def_list>();
+
   tinyxml2::XMLDocument doc;
 
   int xml_err = doc.Parse(xml.c_str());
@@ -18,7 +27,12 @@ Configuration::Configuration(std::string xml) {
   load(&doc);
 }
 
-Configuration::Configuration(tinyxml2::XMLNode *node) {
+Configuration::Configuration(tinyxml2::XMLNode *node,
+                             std::shared_ptr<def_list> defs)
+  : def_objects(defs) {
+  if (!def_objects)
+    def_objects = std::make_shared<def_list>();
+
   load(node);
 }
 
@@ -32,13 +46,13 @@ void Configuration::load(tinyxml2::XMLNode *node) {
     for( const tinyxml2::XMLAttribute *attr_it = node->ToElement()->FirstAttribute() ;
          attr_it != NULL ; attr_it = attr_it->Next()) {
       std::string name = attr_it->Name();
-      if (name == "type" || name == "name")
+      if (name == "AS" || name == "DEF" || name == "USE")
         continue;
       std::string value = attr_it->Value();
       setParam(name,value);
     }
   }
-  
+
   for( tinyxml2::XMLNode* node_it = node->FirstChild() ;
        node_it != NULL ; node_it = node_it->NextSibling()) {
     
@@ -52,21 +66,44 @@ void Configuration::load(tinyxml2::XMLNode *node) {
       continue;
     }
     
-    const char* type_attribute = node_element->Attribute("type");
-    std::string type = type_attribute != NULL
-      ? std::string(type_attribute) : std::string(node_it->Value());
+    std::string type = std::string(node_it->Value());
     
-    const char* name_attribute = node_element->Attribute("name");
+    const char* name_attribute = node_element->Attribute("AS");
     std::string name = name_attribute != NULL
       ? std::string(name_attribute) : type;
     
+    const char* def_attribute = node_element->Attribute("DEF");
+    std::string DEF = def_attribute != NULL
+      ? std::string(def_attribute) : "";
+    
+    const char* use_attribute = node_element->Attribute("USE");
+    std::string USE = use_attribute != NULL
+      ? std::string(use_attribute) : "";
+
+    if (USE != "") {
+      if (def_objects->count(USE) == 0) {
+        GM_ERR("Configuration", "no DEF to match USE " << USE << " in " << type);
+        throw std::invalid_argument("no DEF to match USE");
+      }
+      setObject(name, (*def_objects)[USE]);
+      continue;
+    }
+
     std::shared_ptr<Object> nn(OFactory::createObject(type));
     if (nn == NULL){
       GM_ERR("Configuration", "Could not create object of type '" << type << "'");
       continue;
     }
 
-    Configuration node_conf(node_it);
+    if (DEF != "") {
+      if (def_objects->count(USE) != 0) {
+        GM_ERR("Configuration", "DEF " << DEF << " has multiple associations");
+        throw std::invalid_argument("DEF has multiple associations");
+      }
+      (*def_objects)[DEF] = nn;
+    }
+
+    Configuration node_conf(node_it, def_objects);
 
     std::vector<std::string> param_names;
     node_conf.getAllParamNames(param_names);

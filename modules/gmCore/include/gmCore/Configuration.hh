@@ -37,22 +37,24 @@ class Configuration {
 
 public:
 
+  typedef std::map<std::string, std::shared_ptr<Object>> def_list;
+
   /**
       Creates an empty configuration.
    */
-  Configuration();
+  Configuration(std::shared_ptr<def_list> defs = nullptr);
 
   /**
      Loads an XML string, create objects as specified by the XML data
      and configure the objects.
    */
-  Configuration(std::string config);
+  Configuration(std::string config, std::shared_ptr<def_list> defs = nullptr);
 
   /**
      Read the XML data, create objects as specified by the XML data
      and configure the objects.
    */
-  Configuration(tinyxml2::XMLNode *node);
+  Configuration(tinyxml2::XMLNode *node, std::shared_ptr<def_list> defs = nullptr);
 
   /**
      Cleans up and checks that all configuration variables have been read.
@@ -177,6 +179,8 @@ private:
 
   std::multimap<std::string, std::shared_ptr<Object>> child_objects;
   parameter_list parameters;
+
+  std::shared_ptr<def_list> def_objects;
 
   void parse_param(tinyxml2::XMLElement *element);
 

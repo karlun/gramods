@@ -31,7 +31,7 @@ std::string xml = ""
   "<config>"
   "  <Base a=\"412\"/>"
   "  <Sub a=\"517\" b=\"917\">"
-  "    <Sub name=\"ptr\" a=\"1\" b=\"4\"/>"
+  "    <Sub AS=\"ptr\" a=\"1\" b=\"4\"/>"
   "  </Sub>"
   "</config>";
 

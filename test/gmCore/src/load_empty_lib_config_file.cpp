@@ -9,7 +9,7 @@ using namespace gramods;
 
 TEST(gmCoreLoadLib, SimpleLoad) {
   
-  gmCore::Configuration config1("<config param=\"5\"><ImportLibrary file=\"test-lib\"><ImportLibrary name=\"child\" file=\"test-lib\"/></ImportLibrary></config>");
+  gmCore::Configuration config1("<config param=\"5\"><ImportLibrary file=\"test-lib\"><ImportLibrary AS=\"child\" file=\"test-lib\"/></ImportLibrary></config>");
 
   int param;
   EXPECT_TRUE(config1.getParam("param", param));
