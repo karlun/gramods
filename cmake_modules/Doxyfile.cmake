@@ -32,7 +32,7 @@ DOXYFILE_ENCODING      = UTF-8
 # title of most generated pages and in a few other places.
 # The default value is: My Project.
 
-PROJECT_NAME           = "UTM50"
+PROJECT_NAME           = "gramods"
 
 # The PROJECT_NUMBER tag can be used to enter a project or revision number. This
 # could be handy for archiving the generated documentation or if some version
@@ -2360,7 +2360,7 @@ DIAFILE_DIRS           =
 # generate a warning when it encounters a \startuml command in this case and
 # will not generate output for the diagram.
 
-PLANTUML_JAR_PATH      =
+PLANTUML_JAR_PATH      = @PlantUML_JARFILE@
 
 # When using plantuml, the specified paths are searched for files specified by
 # the !include statement in a plantuml block.

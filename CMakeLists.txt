@@ -69,6 +69,7 @@ ENDIF ()
 
 FIND_PACKAGE(Doxygen)
 IF (DOXYGEN_FOUND)
+  FIND_PACKAGE(PlantUML)
   CONFIGURE_FILE (
     ${CMAKE_CURRENT_SOURCE_DIR}/cmake_modules/Doxyfile.cmake
     ${CMAKE_CURRENT_BINARY_DIR}/Doxyfile @ONLY)
