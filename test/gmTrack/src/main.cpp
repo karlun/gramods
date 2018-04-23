@@ -1,7 +1,7 @@
 
 #include <gtest/gtest.h>
 
-#define GM_STRIP_PATH_FROM_FILE
+#define gramods_STRIP_PATH_FROM_FILE
 #include "vrpn.cpp"
 
 

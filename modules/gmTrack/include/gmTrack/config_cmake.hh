@@ -4,7 +4,7 @@
 
 #cmakedefine HAVE_VRPN
 #ifdef HAVE_VRPN
-#cmakedefine GM_ENABLE_VRPN
+#cmakedefine gramods_ENABLE_VRPN
 #endif
 
 #define BEGIN_NAMESPACE_GMTRACK namespace gramods { namespace gmTrack {//

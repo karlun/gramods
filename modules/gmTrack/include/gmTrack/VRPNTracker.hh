@@ -4,7 +4,7 @@
 
 #include <gmTrack/MultiTracker.hh>
 
-#ifdef GM_ENABLE_VRPN
+#ifdef gramods_ENABLE_VRPN
 
 #include <vrpn_Tracker.h>
 

@@ -167,7 +167,7 @@ namespace detail {
 
 #else // if NDEBUG else
 
-#ifdef GM_STRIP_PATH_FROM_FILE
+#ifdef gramods_STRIP_PATH_FROM_FILE
 #define GM_FILE gmCore::detail::strip_path(__FILE__)
 #else
 #define GM_FILE __FILE__

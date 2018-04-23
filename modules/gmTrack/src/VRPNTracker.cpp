@@ -1,7 +1,7 @@
 
 #include <gmTrack/VRPNTracker.hh>
 
-#ifdef GM_ENABLE_VRPN
+#ifdef gramods_ENABLE_VRPN
 
 #include <gmCore/Console.hh>
 
