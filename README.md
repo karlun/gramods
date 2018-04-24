@@ -41,6 +41,8 @@ int main(int argc, char *argv[]) {
 
   ...
 
+  graphics->callOnceWithGLContext(myInitFunction);
+
   while (cluster_sync->isAlive()) {
     cluster_sync->synchronizeAllStates();
     graphics->renderFullPipeline(myRenderFunction);
