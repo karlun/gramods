@@ -31,38 +31,23 @@ void SDLEventAdaptor::handleEvent(const SDL_Event& event) {
     return;
     
   case SDL_FINGERDOWN: {
-#ifdef __linux__
-    float x = event.tfinger.x;
-    float y = event.tfinger.y;
-#else
     float x = event.tfinger.x * width;
     float y = event.tfinger.y * height;
-#endif
     addTouchState(event.tfinger.fingerId, x, y,
                   1e-3 * event.tfinger.timestamp);
     return;
   }
     
   case SDL_FINGERMOTION: {
-#ifdef __linux__
-    float x = event.tfinger.x;
-    float y = event.tfinger.y;
-#else
     float x = event.tfinger.x * width;
     float y = event.tfinger.y * height;
-#endif
     addTouchState(event.tfinger.fingerId, x, y, 1e-3 * event.tfinger.timestamp);
     return;
   }
     
   case SDL_FINGERUP:
-#ifdef __linux__
-    float x = event.tfinger.x;
-    float y = event.tfinger.y;
-#else
     float x = event.tfinger.x * width;
     float y = event.tfinger.y * height;
-#endif
     removeTouchState(event.tfinger.fingerId, x, y);
     return;
   }
