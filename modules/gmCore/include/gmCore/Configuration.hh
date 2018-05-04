@@ -37,24 +37,30 @@ class Configuration {
 
 public:
 
-  typedef std::map<std::string, std::shared_ptr<Object>> def_list;
-
   /**
       Creates an empty configuration.
    */
-  Configuration(std::shared_ptr<def_list> defs = nullptr);
+  Configuration();
+
+  /**
+     Consumes parameter --config <file> from the provided command line
+     arguments and reads the specified file. Command line argument
+     --param <identifier>=<value> will also override configuration
+     file parameters. For example --param head.connectionString=WAND@localhost
+  */
+  Configuration(int &argc, char *argv[]);
 
   /**
      Loads an XML string, create objects as specified by the XML data
      and configure the objects.
    */
-  Configuration(std::string config, std::shared_ptr<def_list> defs = nullptr);
+  Configuration(std::string config);
 
   /**
      Read the XML data, create objects as specified by the XML data
      and configure the objects.
    */
-  Configuration(tinyxml2::XMLNode *node, std::shared_ptr<def_list> defs = nullptr);
+  Configuration(tinyxml2::XMLNode *node);
 
   /**
      Cleans up and checks that all configuration variables have been read.
@@ -167,6 +173,9 @@ public:
 
 private:
 
+  typedef std::map<std::string, std::shared_ptr<Object>> def_list;
+  typedef std::map<std::string, std::string> override_list;
+
   void load(tinyxml2::XMLNode *node);
 
   struct parameter_t {
@@ -182,9 +191,20 @@ private:
   parameter_list parameters;
 
   std::shared_ptr<def_list> def_objects;
+  std::string param_path;
+  std::shared_ptr<parameter_list> parameter_overrides;
+  bool warn_unused_overrides;
 
   void parse_param(tinyxml2::XMLElement *element);
 
+  /**
+     Read the XML data, create objects as specified by the XML data
+     and configure the objects.
+   */
+  Configuration(tinyxml2::XMLNode *node,
+                std::shared_ptr<def_list> defs,
+                std::string param_path,
+                std::shared_ptr<parameter_list> overrides);
 };
 
 

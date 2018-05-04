@@ -19,6 +19,7 @@ CONFIGURE_FILE(
 
 
 ADD_LIBRARY(gmCore SHARED
+  src/CommandLineParser.cpp
   src/Configuration.cpp
   src/Console.cpp
   src/ImportLibrary.cpp

@@ -2,37 +2,122 @@
 #include <gmCore/Configuration.hh>
 
 #include <gmCore/OFactory.hh>
+#include <gmCore/CommandLineParser.hh>
 
 #include <tinyxml2.h>
 
 BEGIN_NAMESPACE_GMCORE;
 
-Configuration::Configuration(std::shared_ptr<def_list> defs)
-  : def_objects(defs) {
-  if (!def_objects)
-    def_objects = std::make_shared<def_list>();
-}
+Configuration::Configuration()
+  : def_objects(std::make_shared<def_list>()),
+    parameter_overrides(std::make_shared<parameter_list>()),
+    warn_unused_overrides(false) {}
 
-Configuration::Configuration(std::string xml,
-                             std::shared_ptr<def_list> defs)
-  : def_objects(defs) {
-  if (!def_objects)
-    def_objects = std::make_shared<def_list>();
+Configuration::Configuration(std::string xml)
+  : def_objects(std::make_shared<def_list>()),
+    parameter_overrides(std::make_shared<parameter_list>()),
+    warn_unused_overrides(false) {
 
   tinyxml2::XMLDocument doc;
 
   int xml_err = doc.Parse(xml.c_str());
-  if (xml_err != 0) throw std::invalid_argument(doc.GetErrorStr1());
+  if (xml_err != 0) throw std::invalid_argument(doc.ErrorStr());
 
   load(&doc);
 }
 
-Configuration::Configuration(tinyxml2::XMLNode *node,
-                             std::shared_ptr<def_list> defs)
-  : def_objects(defs) {
-  if (!def_objects)
-    def_objects = std::make_shared<def_list>();
+Configuration::Configuration(int &argc, char *argv[])
+  : warn_unused_overrides(true),
+    parameter_overrides(std::make_shared<parameter_list>()) {
 
+  std::vector<std::string> configs;
+  std::vector<std::string> xmls;
+
+  CommandLineParser cmd(argc, argv);
+
+  while (cmd.hasMoreArguments()) {
+
+    std::string value;
+    bool res = cmd.getNextArgument(value);
+    assert(res);
+
+    if (value == "--config") {
+
+      res = cmd.getNextArgument(value);
+      if (!res)
+        throw std::invalid_argument("--config missing value");
+      res = cmd.consumeLast(2);
+      assert(res);
+
+      configs.push_back(value);
+
+    } else if (value == "--xml") {
+
+      res = cmd.getNextArgument(value);
+      if (!res)
+        throw std::invalid_argument("--xml missing value");
+      res = cmd.consumeLast(2);
+      assert(res);
+
+      xmls.push_back(value);
+
+    } else if (value == "--param") {
+
+      res = cmd.getNextArgument(value);
+      if (!res)
+        throw std::invalid_argument("--param missing value");
+      res = cmd.consumeLast(2);
+      assert(res);
+
+      std::size_t sep_pos = value.find("=");
+      if (sep_pos == std::string::npos || sep_pos + 1 == value.size())
+        throw std::invalid_argument("--param value is not in form node.param=value");
+
+      std::string name = value.substr(0, sep_pos);
+      value = value.substr(sep_pos + 1);
+
+      (*parameter_overrides)[name] = parameter_t(value);
+    }
+  }
+
+  if (configs.empty() && xmls.empty())
+    throw std::invalid_argument("Either --config or --xml must be specified at least once");
+
+  for (auto config : configs) {
+
+    tinyxml2::XMLDocument doc;
+
+    int xml_err = doc.LoadFile(config.c_str());
+    if (xml_err != 0) {
+      GM_ERR("Configuration", doc.ErrorStr());
+      throw std::invalid_argument(doc.ErrorStr());
+    }
+
+    load(&doc);
+  }
+
+  for (auto xml : xmls) {
+
+    tinyxml2::XMLDocument doc;
+
+    int xml_err = doc.Parse(xml.c_str());
+    if (xml_err != 0) {
+      GM_ERR("Configuration", doc.ErrorStr());
+      throw std::invalid_argument(doc.ErrorStr());
+    }
+
+    load(&doc);
+  }
+}
+
+Configuration::Configuration(tinyxml2::XMLNode *node,
+                             std::shared_ptr<def_list> defs,
+                             std::string param_path,
+                             std::shared_ptr<parameter_list> overrides)
+  : def_objects(defs),
+    param_path(param_path),
+    parameter_overrides(overrides),
+    warn_unused_overrides(false) {
   load(node);
 }
 
@@ -103,16 +188,30 @@ void Configuration::load(tinyxml2::XMLNode *node) {
       (*def_objects)[DEF] = nn;
     }
 
-    Configuration node_conf(node_it, def_objects);
+    std::string node_path = param_path.size() == 0 ? name : param_path + "." + name;
+
+    Configuration node_conf(node_it, def_objects, node_path, parameter_overrides);
 
     std::vector<std::string> param_names;
     node_conf.getAllParamNames(param_names);
 
     for (auto param_name : param_names) {
       std::string value;
-      bool good = node_conf.getParamAsString(param_name, value);
-      assert(good);
-      GM_INF("Configuration", name << " -> " << type << "::" << param_name << " = " << value);
+      bool good;
+      std::string param_path = node_path + "." + param_name;
+      GM_INF("Configuration", "Checking parameter override for " << param_path);
+      if (parameter_overrides->find(param_path) ==
+          parameter_overrides->end()) {
+        good = node_conf.getParamAsString(param_name, value);
+        assert(good);
+        GM_INF("Configuration", name << " -> " <<
+               type << "::" << param_name << " = " << value);
+      } else {
+        value = (*parameter_overrides)[param_path].value;
+        (*parameter_overrides)[param_path].checked = true;
+        GM_INF("Configuration", name << " -> " <<
+               type << "::" << param_name << " = " << value << " (overridden)");
+      }
       good = OFactory::getOFI(type)->setParamValueFromString(nn.get(), param_name, value);
       if (!good) {
         GM_ERR("Configuration", "no parameter " << param_name << " available in " << type);
@@ -152,6 +251,13 @@ Configuration::~Configuration(){
              << "has not been used!");
     }
   }
+
+  if (warn_unused_overrides)
+    for (auto param : *parameter_overrides)
+      if (!param.second.checked)
+        GM_WRN("Configuration", "Override '" << param.first << "', "
+               << "set to '" << param.second.value << "', "
+               << "has not been used!");
 }
 
 bool Configuration::hasParam(const std::string &name) {
