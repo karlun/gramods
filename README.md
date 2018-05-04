@@ -41,12 +41,23 @@ int main(int argc, char *argv[]) {
 
   ...
 
-  graphics->callOnceWithGLContext(myInitFunction);
+  graphics->callOnceWithGLContext([=] (gmGraphics::FrameData info) {
+      myInitFunction(info.getGLContextIndex());
+    });
 
   while (cluster_sync->isAlive()) {
-    cluster_sync->synchronizeAllStates();
-    graphics->renderFullPipeline(myRenderFunction);
 
+    if (cluster_sync->isMaster())
+      update_master_states();
+    cluster_sync->synchronizeAllStates();
+    update_dependent_states();
+
+    graphics->renderFullPipeline([=] (gmGraphics::FrameData info) {
+        myRenderFunction(info.getFrustum(), info.getViewMatrix());
+      });
+
+    cluster_sync->waitForAll();
+    graphics->swap();
     ...
   }
 ```
