@@ -20,6 +20,8 @@
 
 BEGIN_NAMESPACE_GMCORE;
 
+/// TODO: replace with std::filesystem::path(__FILE__).filename() when
+/// this is supported by mainstream GCC (version > 8.0)
 namespace detail {
   constexpr bool is_path_sep(char c) {
     return c == '/' || c == '\\';
@@ -167,6 +169,8 @@ namespace detail {
 
 #else // if NDEBUG else
 
+/// TODO: replace with std::filesystem::path(__FILE__).filename() when
+/// this is supported by mainstream GCC (version > 8.0)
 #ifdef gramods_STRIP_PATH_FROM_FILE
 #define GM_FILE gmCore::detail::strip_path(__FILE__)
 #else
