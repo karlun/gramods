@@ -18,5 +18,8 @@
 #cmakedefine TOUCHLIB_ENABLE_TUIO
 #endif
 
+#ifndef utm50_PI
+#define utm50_PI (std::atan(1)*4)
+#endif
 
 #endif
