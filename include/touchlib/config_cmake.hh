@@ -19,7 +19,7 @@
 #endif
 
 #ifndef utm50_PI
-#define utm50_PI (std::atan(1)*4)
+#define utm50_PI (std::acos(-1))
 #endif
 
 #endif
