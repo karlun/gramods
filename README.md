@@ -62,21 +62,61 @@ int main(int argc, char *argv[]) {
   }
 ```
 
-## Modules and Dependencies
+# Modules and Dependencies
 
-### gmCore
+## gmCore
 
 Utilities for loading other modules and configure them based on configuration files, and for handling library and application debugging output.
 
 Requirements:
  - TinyXML2
 
-### gmTrack
+### Module Program Design Principles
+
+Complex object factory instantiation, XML and command line parameter control, and both internal and application level debugging information are encapsulated and hidden behind purpose specific interfaces and easy-to-use macros. At configuration time, from XML or command line arguments, there is an association between a attribute string and a corresponding class method setting this parameter. After instantiation, however, client code must instead call the methods.
+
+A Simple example of how configuration works:
+
+```c++
+/// Typically in header (myclass.hh)
+struct MyClass : gramods::gmCore::Object {
+  int parameter;
+  void setParameter(int value) { parameter = value; }
+  GM_OFI_DECLARE(MyClass);
+};
+
+/// Typically in c++ file (myclass.cpp)
+GM_OFI_DEFINE(MyClass);
+GM_OFI_PARAM(MyClass, parameter, int, MyClass::setParameter);
+```
+
+This class can then be instantiated by loading this configuration file:
+
+```xml
+<config>
+  <MyClass parameter="5"/>
+</config>
+```
+
+and the `parameter` value can be overridden by command line `--param MyClass.parameter=3`. This is when reading the configuration file using command line arguments, like this:
+
+```c++
+int main(int argc, char *argv[]) {
+  gmCore::Configuration config(argc, argv);
+
+  std::shared_ptr<MyClass> node;
+  config.getObject(node);
+
+  std::cout << node.parameter << std::endl;
+}
+```
+
+## gmTrack
 
 Pose tracking client classes and filters.
 
-Requirements:
+Required dependences:
  - Eigen
 
-Optional:
+Optional dependences:
  - VRPN, for VRPN support
