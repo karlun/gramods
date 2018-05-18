@@ -314,10 +314,6 @@ public:
       provided name, or NULL if no such name exists in the database. */
   static Object * createObject(std::string name);
 
-  /** Configure the object using the provided XML DOM tree. This
-      function must be implemented by a concrete class. */
-  virtual void configure(const Configuration &config) = 0;
-
 private:
 
   static std::map<std::string,OFactoryInformationBase*>& getOFIByNameMap();
