@@ -43,10 +43,13 @@ public:
   Configuration();
 
   /**
-     Consumes parameter --config <file> from the provided command line
-     arguments and reads the specified file. Command line argument
-     --param <identifier>=<value> will also override configuration
-     file parameters. For example --param head.connectionString=WAND@localhost
+     Consumes arguments --config <file>, --xml <string> and --param
+     <identifier>=<value> from the provided command line. Either
+     --config or --xml is required, upon which the specified file or
+     XML string will be parsed, or std::invalid_argument will be
+     thrown. Command line argument --param <identifier>=<value> will
+     also override configuration file parameters. For example --param
+     head.connectionString=WAND@localhost
   */
   Configuration(int &argc, char *argv[]);
 
