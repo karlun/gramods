@@ -120,3 +120,40 @@ Required dependences:
 
 Optional dependences:
  - VRPN, for VRPN support
+
+### Module Program Design Principles
+
+Abstraction of tracking using Decorator design pattern for flexible filtering, calibration and registration with minimal code duplication.
+
+## gmNetwork (to be defined)
+
+Network data and execution synchronization.
+
+Required dependences:
+ - ASIO (with or without Boost)
+
+### Module Program Design Principles
+
+Thread encapsulation and role agnostic synchronization.
+
+## gmGraphics (to be defined)
+
+Graphics rendering pipeline definition and handling.
+
+Required dependences:
+ - GLObjects
+
+### Module Program Design Principles
+
+A core principles of the graphics module is that application design parts are encapsulated in descriptive classes such as window, for producing output into a window, and tile, to specify tiles within windows. There is also an generalized abstraction of processing steps so that it should be easy to rearrange existing steps into new effects and to inject new post processing steps.
+
+```plantuml
+client - Pipeline
+Pipeline -> Window
+Window -> Tile
+Tile --> Camera
+note "does post processing through OpenGL" as N1
+Tile -> Processor
+Processor -- N1
+Processor --> Camera
+```
