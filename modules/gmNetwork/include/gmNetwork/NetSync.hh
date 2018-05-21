@@ -7,6 +7,8 @@
 #include <gmCore/Object.hh>
 #include <gmCore/OFactory.hh>
 
+#include <asio.hpp>
+
 BEGIN_NAMESPACE_GMNETWORK;
 
 class NetSync
@@ -37,6 +39,10 @@ public:
   void waitForAll(bool onlyConnected = false);
 
   GM_OFI_DECLARE(NetSync);
+
+private:
+
+  asio::io_service io_context;
 
 };
 

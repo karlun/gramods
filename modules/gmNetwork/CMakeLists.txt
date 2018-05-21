@@ -21,7 +21,7 @@ CONFIGURE_FILE(
 
 
 ADD_LIBRARY(gmNetwork SHARED
-  src/all.cpp
+  src/NetSync.cpp
   )
 
 TARGET_INCLUDE_DIRECTORIES(gmNetwork PUBLIC ${MODULE_INCLUDE_DIRS})

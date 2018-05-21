@@ -27,7 +27,8 @@ void NetSyncTest(std::string host, int delay_ms, int &count, bool &alive) {
   netsync->waitForAll();
   while (alive) {
     std::this_thread::sleep_for(std::chrono::milliseconds(delay_ms));
-    
+    ++count;
+    netsync->waitForAll();
   }
 }
 
@@ -37,11 +38,11 @@ TEST(gmNetworkNetSync, waitForAll) {
   int count2 = 0;
   bool alive = true;
 
-  std::thread t0(NetSyncTest, std::string("127.1.1.2"),  1, count0, alive);
-  std::thread t1(NetSyncTest, std::string("127.1.1.3"),  3, count1, alive);
-  std::thread t2(NetSyncTest, std::string("127.1.1.4"), 10, count2, alive);
+  std::thread t0(NetSyncTest, std::string("127.1.1.2"), 1, std::ref(count0), std::ref(alive));
+  std::thread t1(NetSyncTest, std::string("127.1.1.3"), 2, std::ref(count1), std::ref(alive));
+  std::thread t2(NetSyncTest, std::string("127.1.1.4"), 5, std::ref(count2), std::ref(alive));
 
-  std::this_thread::sleep_for(std::chrono::milliseconds(100));
+  std::this_thread::sleep_for(std::chrono::milliseconds(20));
   alive = false;
 
   t0.join();
