@@ -17,7 +17,7 @@ int main(int argc, char *argv[]) {
 
   gmCore::Configuration config(argc, argv);
 
-  std::shared_ptr<gmNetSync::SyncNode> cluster_sync;
+  std::shared_ptr<gmNetwork::NetSync> cluster_sync;
   if (! config.getObject(cluster_sync)) {
     ERROR("Cannot run without cluster synchronization settings!");
     return -1;
