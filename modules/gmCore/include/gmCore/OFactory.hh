@@ -35,7 +35,7 @@ BEGIN_NAMESPACE_GMCORE;
    @param NAME The name of the class.
 */
 #define GM_OFI_DECLARE(NAME)                                           \
-  static gramods::gmCore::OFactory::OFactoryInformation<NAME> _ofi;
+  static gramods::gmCore::OFactory::OFactoryInformation<NAME> _gm_ofi;
 
 /**\def GM_OFI_DEFINE(OFI, NAME)
    Macro for instantiating the registration of a OFactoryInformation
@@ -47,11 +47,11 @@ BEGIN_NAMESPACE_GMCORE;
 */
 #define GM_OFI_DEFINE(NAME)                             \
   gramods::gmCore::OFactory::OFactoryInformation<NAME>  \
-  NAME::_ofi(#NAME);
+  NAME::_gm_ofi(#NAME);
 
-/**\def GM_OFI_DEFINE_SUB(OFI, NAME)
+/**\def GM_OFI_DEFINE_SUB(NAME, BASE)
    Macro for instantiating the registration of a OFactoryInformation
-   declared with OFI_DECLARE, with association with its base class'
+   declared with GM_OFI_DECLARE, with association with its base class'
    registration data.
 
    @param NAME The name of the class, which will also be the
@@ -62,7 +62,7 @@ BEGIN_NAMESPACE_GMCORE;
 */
 #define GM_OFI_DEFINE_SUB(NAME, BASE)                   \
   gramods::gmCore::OFactory::OFactoryInformation<NAME>  \
-  NAME::_ofi(#NAME, BASE::_ofi);
+  NAME::_gm_ofi(#NAME, &BASE::_gm_ofi);
 
 /**\def GM_OFI_PARAM(CLASS, NAME, TYPE, FUNC)
    Macro for registering a parameter setter to a OFactoryInformation
@@ -81,10 +81,11 @@ BEGIN_NAMESPACE_GMCORE;
    @param TYPE The type of the variable set by this setter.
 
    @param FUNC The setter method.
- */
-#define GM_OFI_PARAM(CLASS, NAME, TYPE, FUNC)                         \
-  gramods::gmCore::OFactory::ParamSetterInsert OFI##NAME                \
-  (&CLASS::_ofi, #NAME, new gramods::gmCore::OFactory::OFactoryInformation<CLASS>::ParamSetter<TYPE>(&FUNC));
+*/
+#define GM_OFI_PARAM(CLASS, NAME, TYPE, FUNC)                           \
+  gramods::gmCore::OFactory::ParamSetterInsert gm_ofi_##CLASS##_param_##NAME \
+  (&CLASS::_gm_ofi, #NAME,                                              \
+   new gramods::gmCore::OFactory::OFactoryInformation<CLASS>::ParamSetter<TYPE>(&FUNC));
 
 /**\def GM_OFI_POINTER(OFI, CLASS, NAME, TYPE, FUNC)
    Macro for registering a shared object setter to a
@@ -104,9 +105,10 @@ BEGIN_NAMESPACE_GMCORE;
    @param FUNC The setter method, with signature
    void FUNC(std::shared_ptr<TYPE>)
 */
-#define GM_OFI_POINTER(CLASS, NAME, TYPE, FUNC)                       \
-  gramods::gmCore::OFactory::PointerSetterInsert OFI##NAME            \
-  (&CLASS::_ofi, #NAME, new gramods::gmCore::OFactory::OFactoryInformation<CLASS>::PointerSetter<TYPE>(&FUNC));
+#define GM_OFI_POINTER(CLASS, NAME, TYPE, FUNC)                         \
+  gramods::gmCore::OFactory::PointerSetterInsert gm_ofi_##CLASS##_pointer_##NAME \
+  (&CLASS::_gm_ofi, #NAME,                                              \
+   new gramods::gmCore::OFactory::OFactoryInformation<CLASS>::PointerSetter<TYPE>(&FUNC));
 
 /**\def OFI_CREATE_SUB(OFI, NAME, BASE_OFI)
    Macro for registering a class to a OFactoryInformation node that

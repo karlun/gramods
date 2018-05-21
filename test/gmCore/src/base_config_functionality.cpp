@@ -12,10 +12,11 @@ using namespace gramods;
 struct Base : gmCore::Object {
   int a;
   void setA(int v) { a = v; }
+  GM_OFI_DECLARE(Base);
 };
 
-OFI_CREATE(BaseOFI, Base);
-OFI_PARAM(BaseOFI, Base, a, int, Base::setA);
+GM_OFI_DEFINE(Base);
+GM_OFI_PARAM(Base, a, int, Base::setA);
 
 struct Sub : Base {
   int b;
@@ -24,12 +25,13 @@ struct Sub : Base {
   void setB(int v) { b = v; }
   void setPtr(std::shared_ptr<Sub> p) { ptr = p; }
   void addPtr(std::shared_ptr<Sub> p) { ptrs.push_back(p); }
+  GM_OFI_DECLARE(Sub);
 };
 
-OFI_CREATE_SUB(SubOFI, Sub, &BaseOFI);
-OFI_PARAM(SubOFI, Sub, b, int, Sub::setB);
-OFI_POINTER(SubOFI, Sub, ptr, Sub, Sub::setPtr);
-OFI_POINTER(SubOFI, Sub, ptrs, Sub, Sub::addPtr);
+GM_OFI_DEFINE_SUB(Sub, Base);
+GM_OFI_PARAM(Sub, b, int, Sub::setB);
+GM_OFI_POINTER(Sub, ptr, Sub, Sub::setPtr);
+GM_OFI_POINTER(Sub, ptrs, Sub, Sub::addPtr);
 
 std::string xml = ""
   "<config>"
