@@ -130,7 +130,7 @@ Abstraction of tracking using Decorator design pattern for flexible filtering, c
 Network data and execution synchronization.
 
 Required dependences:
- - ASIO (with or without Boost)
+ - ASIO (at least version 1.12)
 
 ### Module Program Design Principles
 
