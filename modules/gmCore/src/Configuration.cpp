@@ -237,8 +237,10 @@ void Configuration::load(tinyxml2::XMLNode *node) {
     }
 
     nn->initialize();
-
-    setObject(name, nn);
+    if (!nn->isInitialized())
+      GM_ERR("Configuration", "Could not initialize instance of " << type);
+    else
+      setObject(name, nn);
   }
 }
 

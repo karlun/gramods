@@ -11,7 +11,9 @@ void NetSync::addPeer(std::string address) {}
 
 void NetSync::setBindAddress(std::string address) {}
 
-void NetSync::initialize() {}
+void NetSync::initialize() {
+  Object::initialize();
+}
 
 void NetSync::waitForAll(bool onlyConnected) {}
 
