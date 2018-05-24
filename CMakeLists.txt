@@ -39,16 +39,12 @@ CONFIGURE_FILE(
   ${CMAKE_CURRENT_BINARY_DIR}/include/touchlib/config.hh)
 
 
-ADD_LIBRARY(touchlib
-  include/touchlib/config_cmake.hh
-  include/touchlib/EFFOAW.hh
-  include/touchlib/SDLEventAdaptor.hh
-  include/touchlib/TouchState.hh
-  include/touchlib/TUIOEventAdaptor.hh
-  src/SDLEventAdaptor.cpp
-  src/TouchState.cpp
-  src/TUIOEventAdaptor.cpp
-  )
+FILE(GLOB_RECURSE HEADERS include/*.hh)
+FILE(GLOB_RECURSE SOURCES src/*.cpp)
+
+SOURCE_GROUP("headers" FILES ${HEADERS})
+
+ADD_LIBRARY(touchlib ${HEADERS} ${SOURCES})
 
 TARGET_INCLUDE_DIRECTORIES(touchlib PUBLIC ${TOUCHLIB_INCLUDE_DIRS})
 TARGET_LINK_LIBRARIES(touchlib ${TOUCHLIB_LIBS})
