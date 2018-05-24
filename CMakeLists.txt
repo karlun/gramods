@@ -40,9 +40,15 @@ CONFIGURE_FILE(
 
 
 ADD_LIBRARY(touchlib
-  src/TouchState.cpp
+  include/touchlib/config_cmake.hh
+  include/touchlib/EFFOAW.hh
+  include/touchlib/SDLEventAdaptor.hh
+  include/touchlib/TouchState.hh
+  include/touchlib/TUIOEventAdaptor.hh
   src/SDLEventAdaptor.cpp
-  src/TUIOEventAdaptor.cpp)
+  src/TouchState.cpp
+  src/TUIOEventAdaptor.cpp
+  )
 
 TARGET_INCLUDE_DIRECTORIES(touchlib PUBLIC ${TOUCHLIB_INCLUDE_DIRS})
 TARGET_LINK_LIBRARIES(touchlib ${TOUCHLIB_LIBS})
