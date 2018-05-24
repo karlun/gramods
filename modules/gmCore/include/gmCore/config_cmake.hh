@@ -6,4 +6,6 @@
 #define END_NAMESPACE_GMCORE }}//
 #define USING_NAMESPACE_GMCORE using namespace gramods::gmCore;//
 
+#cmakedefine gramods_STRIP_PATH_FROM_FILE
+
 #endif
