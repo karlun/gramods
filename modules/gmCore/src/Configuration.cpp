@@ -208,14 +208,14 @@ void Configuration::load(tinyxml2::XMLNode *node) {
         assert(count > 0);
 
         for (std::string value : values) {
+          GM_INF("Configuration", name << " -> " <<
+                 type << "::" << param_name << " = " << value);
           bool good = OFactory::getOFI(type)->
             setParamValueFromString(nn.get(), param_name, value);
           if (!good) {
             GM_ERR("Configuration", "no parameter " << param_name << " available in " << type);
             throw std::invalid_argument("no parameter to match xml attribute");
           }
-          GM_INF("Configuration", name << " -> " <<
-                 type << "::" << param_name << " = " << value);
         }
 
       } else {
