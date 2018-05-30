@@ -13,9 +13,9 @@ void NetSyncTest(std::string host, int delay_ms, int &count, bool &alive) {
   ss_xml << "<config>" << std::endl;
   ss_xml << "  <NetSync>" << std::endl;
   ss_xml << "    <param name=\"bind\" value=\"" << host << "\"/>" << std::endl;
-  ss_xml << "    <param name=\"peer\" value=\"127.1.1.2\"/>" << std::endl;
-  ss_xml << "    <param name=\"peer\" value=\"127.1.1.3\"/>" << std::endl;
-  ss_xml << "    <param name=\"peer\" value=\"127.1.1.4\"/>" << std::endl;
+  ss_xml << "    <param name=\"peer\" value=\"127.0.0.1:20402\"/>" << std::endl;
+  ss_xml << "    <param name=\"peer\" value=\"127.0.0.1:20403\"/>" << std::endl;
+  //ss_xml << "    <param name=\"peer\" value=\"127.0.0.1:20404\"/>" << std::endl;
   ss_xml << "  </NetSync>" << std::endl;
   ss_xml << "</config>" << std::endl;
 
@@ -24,7 +24,8 @@ void NetSyncTest(std::string host, int delay_ms, int &count, bool &alive) {
   std::shared_ptr<gmNetwork::NetSync> netsync;
   EXPECT_TRUE(config.getObject(netsync));
 
-  netsync->waitForAll();
+  netsync->waitForConnection();
+
   while (alive) {
     std::this_thread::sleep_for(std::chrono::milliseconds(delay_ms));
     ++count;
@@ -38,16 +39,19 @@ TEST(gmNetworkNetSync, waitForAll) {
   int count2 = 0;
   bool alive = true;
 
-  std::thread t0(NetSyncTest, std::string("127.1.1.2"), 1, std::ref(count0), std::ref(alive));
-  std::thread t1(NetSyncTest, std::string("127.1.1.3"), 2, std::ref(count1), std::ref(alive));
-  std::thread t2(NetSyncTest, std::string("127.1.1.4"), 5, std::ref(count2), std::ref(alive));
+  std::thread t0(NetSyncTest, std::string("127.0.0.1:20402"),
+                 1, std::ref(count0), std::ref(alive));
+  std::thread t1(NetSyncTest, std::string("127.0.0.1:20403"),
+                 2, std::ref(count1), std::ref(alive));
+  /*std::thread t2(NetSyncTest, std::string("127.0.0.1:20404"),
+                   5, std::ref(count2), std::ref(alive));*/
 
   std::this_thread::sleep_for(std::chrono::milliseconds(20));
   alive = false;
 
   t0.join();
   t1.join();
-  t2.join();
+  //t2.join();
 
   EXPECT_EQ(count0, count1);
   EXPECT_EQ(count1, count2);

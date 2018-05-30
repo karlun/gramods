@@ -14,6 +14,10 @@ FIND_PACKAGE(ASIO REQUIRED)
 SET (MODULE_INCLUDE_DIRS ${MODULE_INCLUDE_DIRS} ${ASIO_INCLUDE_DIRS})
 
 
+OPTION(gramods_ACTIVATE_ASIO_HANDLER_TRACKING
+  "Activate ASIO handler tracking and debug output to the standard error stream."
+  OFF)
+
 CONFIGURE_FILE(
   ${CMAKE_CURRENT_SOURCE_DIR}/include/gmNetwork/config_cmake.hh
   ${CMAKE_CURRENT_BINARY_DIR}/include/gmNetwork/config.hh)
