@@ -1,19 +1,21 @@
 
 #include <gmCore/CommandLineParser.hh>
 
+#include <stdexcept>
+
 BEGIN_NAMESPACE_GMCORE;
 
 CommandLineParser::CommandLineParser(int &argc, char **&argv)
   : argc(argc), argv(argv), current_position(0) {}
 
-bool CommandLineParser::getNextArgument(std::string &value) {
+std::string CommandLineParser::getNextArgument() {
   if (current_position >= argc)
-    return false;
+    throw std::out_of_range("No more arguments on command line");
 
-  value = argv[current_position];
+  std::string value = argv[current_position];
   ++current_position;
 
-  return true;
+  return value;
 }
 
 bool CommandLineParser::hasMoreArguments() {

@@ -18,12 +18,27 @@ class CommandLineParser {
 
 public:
 
+  /**
+     Creates a new command line parser reading off arguments from the
+     specified command line variables.
+  */
   CommandLineParser(int &argc, char **&argv);
 
-  bool getNextArgument(std::string &value);
+  /**
+     Returns the next argument and increments the argument
+     pointer. Throws exception if there are no more arguments.
+  */
+  std::string getNextArgument();
 
+  /**
+     Returns true if there are more arguments to extract, false otherwise.
+  */
   bool hasMoreArguments();
 
+  /**
+     Removes the last arguments from the associnated command line
+     variables.
+  */
   bool consumeLast(int count);
 
 private:

@@ -37,36 +37,37 @@ Configuration::Configuration(int &argc, char *argv[])
 
   while (cmd.hasMoreArguments()) {
 
-    std::string value;
-    bool res = cmd.getNextArgument(value);
-    assert(res);
+    std::string value = cmd.getNextArgument();
 
     if (value == "--config") {
 
-      res = cmd.getNextArgument(value);
-      if (!res)
+      if (!cmd.hasMoreArguments())
         throw std::invalid_argument("--config missing value");
-      res = cmd.consumeLast(2);
+
+      value = cmd.getNextArgument();
+      bool res = cmd.consumeLast(2);
       assert(res);
 
       configs.push_back(value);
 
     } else if (value == "--xml") {
 
-      res = cmd.getNextArgument(value);
-      if (!res)
+      if (!cmd.hasMoreArguments())
         throw std::invalid_argument("--xml missing value");
-      res = cmd.consumeLast(2);
+
+      value = cmd.getNextArgument();
+      bool res = cmd.consumeLast(2);
       assert(res);
 
       xmls.push_back(value);
 
     } else if (value == "--param") {
-
-      res = cmd.getNextArgument(value);
-      if (!res)
+ 
+      if (!cmd.hasMoreArguments())
         throw std::invalid_argument("--param missing value");
-      res = cmd.consumeLast(2);
+
+      value = cmd.getNextArgument();
+      bool res = cmd.consumeLast(2);
       assert(res);
 
       std::size_t sep_pos = value.find("=");
