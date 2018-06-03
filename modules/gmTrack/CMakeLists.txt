@@ -27,6 +27,7 @@ CONFIGURE_FILE(
 
 
 ADD_LIBRARY(gmTrack SHARED
+  src/RelativeSinglePoseTracker.cpp
   src/VRPNPoseTracker.cpp
   src/MultiToSinglePoseTracker.cpp
   )
