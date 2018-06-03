@@ -1,0 +1,50 @@
+CMAKE_MINIMUM_REQUIRED(VERSION 2.8.3)
+
+
+SET (APP_INCLUDE_DIRS CACHE INTERNAL "The list of include folders to search for the app.")
+SET (APP_LIBS CACHE INTERNAL "The list of libraries that the app should link against.")
+
+SET (APP_INCLUDE_DIRS ${APP_INCLUDE_DIRS} ${CMAKE_CURRENT_SOURCE_DIR}/include)
+SET (APP_INCLUDE_DIRS ${APP_INCLUDE_DIRS} ${CMAKE_CURRENT_BINARY_DIR}/include)
+
+SET (APP_LIBS ${APP_LIBS} gmCore)
+SET (APP_LIBS ${APP_LIBS} gmTrack)
+
+
+FIND_PACKAGE (TCLAP REQUIRED)
+IF (TCLAP_FOUND)
+  SET (APP_INCLUDE_DIRS ${APP_INCLUDE_DIRS} ${TCLAP_INCLUDE_DIRS})
+ENDIF ()
+
+
+#CONFIGURE_FILE(
+#  ${CMAKE_CURRENT_SOURCE_DIR}/include/config_cmake.hh
+#  ${CMAKE_CURRENT_BINARY_DIR}/include/config.hh)
+
+
+ADD_EXECUTABLE(gm-track-base
+  src/base.cpp
+  src/BaseEstimator.cpp)
+
+TARGET_INCLUDE_DIRECTORIES(gm-track-base PUBLIC ${APP_INCLUDE_DIRS})
+TARGET_LINK_LIBRARIES(gm-track-base ${APP_LIBS})
+
+SET_PROPERTY(TARGET gm-track-base PROPERTY CXX_STANDARD 14)
+
+
+ADD_EXECUTABLE(gm-track-measure src/measure.cpp)
+
+TARGET_INCLUDE_DIRECTORIES(gm-track-measure PUBLIC ${APP_INCLUDE_DIRS})
+TARGET_LINK_LIBRARIES(gm-track-measure ${APP_LIBS})
+
+SET_PROPERTY(TARGET gm-track-measure PROPERTY CXX_STANDARD 14)
+
+
+ADD_EXECUTABLE(gm-track-position src/position.cpp)
+
+TARGET_INCLUDE_DIRECTORIES(gm-track-position PUBLIC ${APP_INCLUDE_DIRS})
+TARGET_LINK_LIBRARIES(gm-track-position ${APP_LIBS})
+
+SET_PROPERTY(TARGET gm-track-position PROPERTY CXX_STANDARD 14)
+
+
