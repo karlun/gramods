@@ -32,11 +32,11 @@ int main(int argc, char *argv[]) {
 
   GM_INF("main", "Configuration loaded");
 
-  std::shared_ptr<gmTracking::SinglePoseTracker> head_tracker;
+  std::shared_ptr<gmTrack::SinglePoseTracker> head_tracker;
   config.getObject("head tracker", head_tracker);
   GM_INF("main", "Head tracker: " << head_tracker);
 
-  std::shared_ptr<gmTracking::Wand> wand_primary;
+  std::shared_ptr<gmTrack::Controller> wand_primary;
   config.getObject("primary controller", wand_primary);
   GM_INF("main", "Primary controller: " << wand_primary);
 
