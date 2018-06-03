@@ -29,10 +29,12 @@ void OStreamMessageSink::output(Message msg) {
 
   std::ostream &out = raw_out != nullptr ? *raw_out : *shared_out.get();
 
+#ifndef NDEBUG
   if (msg.source_data_available) {
     outputLevelAndTag(msg, out);
     out << msg.file << ":" << msg.line << " (" << msg.function << ")" << std::endl;
   }
+#endif
 
   outputLevelAndTag(msg, out);
 
