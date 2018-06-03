@@ -9,9 +9,25 @@
 BEGIN_NAMESPACE_GMCORE;
 
 /**
-   Base type for objects in the Gramods package, for easier handling
-   of construction, initialization and destruction. The basic
-   initialization procedure should be as follows:
+   Base type for objects in the Gramods package for standardized
+   handling of construction, initialization and destruction, and for
+   setting up configuration based on configuration files, read using
+   gmCore::Configuration.
+
+   The most typical usage is
+   \code
+   gmCore::Configuration config(argc, argv);
+   
+   std::shared_ptr<MyClass> my_object;
+   if (! config.getObject(my_object)) {
+     GM_ERR("MyCode", "Cannot run without MyClass instance");
+     exit(-1);
+   }
+   \endcode
+
+   If gmCore::Configuration is not used, then the classes may be
+   manually instantiated and initialized. The basic initialization
+   procedure should then be as follows:
 
    1. Instantiate with empty constructor.
    2. Call setters to configure the object.
