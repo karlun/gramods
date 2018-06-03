@@ -27,8 +27,8 @@ CONFIGURE_FILE(
 
 
 ADD_LIBRARY(gmTrack SHARED
-  src/VRPNTracker.cpp
-  src/MultiToSingleTracker.cpp
+  src/VRPNPoseTracker.cpp
+  src/MultiToSinglePoseTracker.cpp
   )
 
 TARGET_INCLUDE_DIRECTORIES(gmTrack PUBLIC ${MODULE_INCLUDE_DIRS})

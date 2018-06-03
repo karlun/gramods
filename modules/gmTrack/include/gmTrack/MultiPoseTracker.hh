@@ -1,18 +1,18 @@
 
-#ifndef GRAMODS_TRACK_MULTITRACKER
-#define GRAMODS_TRACK_MULTITRACKER
+#ifndef GRAMODS_TRACK_MULTIPOSETRACKER
+#define GRAMODS_TRACK_MULTIPOSETRACKER
 
-#include <gmTrack/Tracker.hh>
+#include <gmTrack/PoseTracker.hh>
 
 #include <map>
 
 BEGIN_NAMESPACE_GMTRACK;
 
 /**
-   The base of MultiTrackers
+   The base of MultiPoseTrackers
  */
-class MultiTracker
-  : public Tracker {
+class MultiPoseTracker
+  : public PoseTracker {
 
 public:
 

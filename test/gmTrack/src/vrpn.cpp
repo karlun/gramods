@@ -1,9 +1,9 @@
 
-#include <gmTrack/VRPNTracker.hh>
+#include <gmTrack/VRPNPoseTracker.hh>
 
 #ifdef gramods_ENABLE_VRPN
 
-#include <gmTrack/SingleTracker.hh>
+#include <gmTrack/SinglePoseTracker.hh>
 
 #include <gmCore/Console.hh>
 #include <gmCore/OStreamMessageSink.hh>
@@ -52,9 +52,9 @@ TEST(gmTrackVRPN, VRPNTracker) {
     server.report_pose(0, timestamp, position, quaternion);
     server.mainloop();
 
-    std::map<int, gmTrack::Tracker::PoseSample> samples;
+    std::map<int, gmTrack::PoseTracker::PoseSample> samples;
     {
-      gmTrack::VRPNTracker tracker;
+      gmTrack::VRPNPoseTracker tracker;
       tracker.setConnectionString("TEST_DEVICE@localhost");
       tracker.initialize();
 
@@ -80,7 +80,7 @@ TEST(gmTrackVRPN, VRPNTracker) {
   std::this_thread::sleep_for(std::chrono::milliseconds(10));
 }
 
-TEST(gmTrackVRPN, VRPNTrackerConfigurationAndMultiToSingleTracker) {
+TEST(gmTrackVRPN, VRPNPoseTrackerConfigurationAndMultiToSinglePoseTracker) {
 
 #if 1
   gmCore::Console::setDefaultSink(nullptr);
@@ -112,18 +112,18 @@ TEST(gmTrackVRPN, VRPNTrackerConfigurationAndMultiToSingleTracker) {
     server.report_pose(0, timestamp, position, quaternion);
     server.mainloop();
 
-    gmTrack::Tracker::PoseSample sample;
+    gmTrack::PoseTracker::PoseSample sample;
     bool got_sample = false;
     {
       std::string xml = ""
         "<config>"
-        "  <MultiToSingleTracker sensor=\"0\">"
-        "    <VRPNTracker AS=\"tracker\" connectionString=\"TEST_DEVICE@localhost\"/>"
-        "  </MultiToSingleTracker>"
+        "  <MultiToSinglePoseTracker sensor=\"0\">"
+        "    <VRPNPoseTracker AS=\"tracker\" connectionString=\"TEST_DEVICE@localhost\"/>"
+        "  </MultiToSinglePoseTracker>"
         "</config>";
       gmCore::Configuration config(xml);
 
-      std::shared_ptr<gmTrack::SingleTracker> tracker;
+      std::shared_ptr<gmTrack::SinglePoseTracker> tracker;
       bool got_tracker = config.getObject(tracker);
 
       EXPECT_TRUE(got_tracker);

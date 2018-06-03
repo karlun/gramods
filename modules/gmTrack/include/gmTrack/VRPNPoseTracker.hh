@@ -1,8 +1,8 @@
 
-#ifndef GRAMODS_TRACK_VRPNTRACKER
-#define GRAMODS_TRACK_VRPNTRACKER
+#ifndef GRAMODS_TRACK_VRPNPOSETRACKER
+#define GRAMODS_TRACK_VRPNPOSETRACKER
 
-#include <gmTrack/MultiTracker.hh>
+#include <gmTrack/MultiPoseTracker.hh>
 
 #ifdef gramods_ENABLE_VRPN
 
@@ -13,15 +13,15 @@
 BEGIN_NAMESPACE_GMTRACK;
 
 /**
-   VRPNTracker
+   VRPNPoseTracker
  */
-class VRPNTracker
-  : public MultiTracker {
+class VRPNPoseTracker
+  : public MultiPoseTracker {
 
 public:
 
-  VRPNTracker();
-  ~VRPNTracker();
+  VRPNPoseTracker();
+  ~VRPNPoseTracker();
 
   void setConnectionString(std::string id);
 
@@ -30,7 +30,7 @@ public:
   */
   bool getPose(std::map<int, PoseSample> &p);
 
-  GM_OFI_DECLARE(VRPNTracker);
+  GM_OFI_DECLARE(VRPNPoseTracker);
 
 private:
 

@@ -1,6 +1,6 @@
 
-#ifndef GRAMODS_TRACK_TRACKER
-#define GRAMODS_TRACK_TRACKER
+#ifndef GRAMODS_TRACK_POSETRACKER
+#define GRAMODS_TRACK_POSETRACKER
 
 #include <gmTrack/config.hh>
 
@@ -11,9 +11,9 @@
 BEGIN_NAMESPACE_GMTRACK;
 
 /**
-   The base of Trackers
+   The base of PoseTrackers
  */
-class Tracker
+class PoseTracker
   : public gmCore::Object {
 
 public:
