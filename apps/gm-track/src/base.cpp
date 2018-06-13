@@ -3,11 +3,13 @@
 #include <gmCore/Configuration.hh>
 #include <gmCore/CommandLineParser.hh>
 #include <gmCore/OStreamMessageSink.hh>
-#include <gmTrack/SinglePoseTracker.hh>
+#include <gmTrack/Controller.hh>
 
 #include <tclap/CmdLine.h>
 
 #include <BaseEstimator.hh>
+
+#include <fstream>
 
 using namespace gramods;
 
@@ -23,17 +25,17 @@ int main(int argc, char *argv[]) {
 
   TCLAP::MultiArg<std::string> arg_config_dummy
     ("", "config",
-     "Configuration file to read tracker definition from.",
+     "Configuration file to read controller definition from.",
      true, "file");
   TCLAP::MultiArg<std::string> arg_xml_dummy
     ("", "xml",
-     "XML configuration to read tracker definition from.",
+     "XML configuration to read controller definition from.",
      true, "string");
   cmd.xorAdd(arg_config_dummy, arg_xml_dummy);
 
-  TCLAP::ValueArg<std::string> arg_tracker_name
-    ("", "tracker-name",
-     "Name of the tracker to use, in case multiple trackers are defined in the configuration file.",
+  TCLAP::ValueArg<std::string> arg_controller_name
+    ("", "controller-name",
+     "Name of the controller to use, in case multiple controllers are defined in the configuration file.",
      false, "", "string", cmd);
 
   TCLAP::SwitchArg arg_scale
@@ -87,13 +89,13 @@ int main(int argc, char *argv[]) {
     return -1;
   }
 
-  std::shared_ptr<gmTrack::SinglePoseTracker> tracker;
+  std::shared_ptr<gmTrack::Controller> controller;
 
-  if (arg_tracker_name.isSet()) {
-    if (!config->getObject(arg_tracker_name.getValue(), tracker)) {
+  if (arg_controller_name.isSet()) {
+    if (!config->getObject(arg_controller_name.getValue(), controller)) {
       std::cerr << std::endl
-                << "Could not find tracker named "
-                << "'" << arg_tracker_name.getValue() << "'"
+                << "Could not find controller named "
+                << "'" << arg_controller_name.getValue() << "'"
                 << " in the specified configuration." << std::endl
                 << std::endl
                 << "Internal messages:" << std::endl
@@ -102,9 +104,9 @@ int main(int argc, char *argv[]) {
       return -1;
     }
   } else {
-    if (!config->getObject(tracker)) {
+    if (!config->getObject(controller)) {
       std::cerr << std::endl
-                << "Could not find tracker in the specified configuration." << std::endl
+                << "Could not find controller in the specified configuration." << std::endl
                 << std::endl
                 << "Internal messages:" << std::endl
                 << internal_messages_ss.str() << std::endl
@@ -113,12 +115,27 @@ int main(int argc, char *argv[]) {
     }
   }
 
+  {
+    std::ofstream fout(arg_coords_file.getValue());
+    if (!fout) {
+      std::cerr << "Could not open output file '" << arg_coords_file.getValue() << "'" << std::endl;
+      return -1;
+    }
+  }
+
   BaseEstimator be;
   be.setScale(arg_scale.getValue());
   be.setUniform(arg_scale_uniform.getValue());
-  be.setTracker(tracker);
+  be.setController(controller);
 
-  be.process();
+  int ret = be.process();
+  if (ret)
+    return ret;
+
+  auto T = be.getBase();
+
+  std::ofstream fout(arg_coords_file.getValue());
+  fout << T;
 
   return 0;
 }
