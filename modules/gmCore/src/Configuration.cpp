@@ -286,9 +286,17 @@ void Configuration::addParam(std::string name, std::string value){
 }
 
 size_t Configuration::getAllParamNames(std::vector<std::string> &name) {
+  std::vector<std::string> new_names;
   for (auto param : parameters)
-    name.push_back(param.first);
-  return parameters.size();
+    new_names.push_back(param.first);
+
+  std::vector<std::string>::iterator it;
+  it = std::unique(new_names.begin(), new_names.end());
+  new_names.resize(std::distance(new_names.begin(), it));
+
+  name.insert(name.end(), new_names.begin(), new_names.end());
+
+  return new_names.size();
 }
 
 size_t Configuration::getAllObjectNames(std::vector<std::string> &name) {
