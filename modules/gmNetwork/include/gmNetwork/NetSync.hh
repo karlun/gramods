@@ -8,7 +8,8 @@
 #include <gmCore/OFactory.hh>
 
 #include <asio.hpp>
-#include <set>
+#include <map>
+#include <vector>
 
 BEGIN_NAMESPACE_GMNETWORK;
 
@@ -37,23 +38,18 @@ public:
   void addPeer(std::string address);
 
   /**
-     Sets which of the peer addresses to bind to.
-
-     Valid syntax is ipv4 or ipv6 with or without port/service
-     (defaults to 20401) e.g.
-
-     -  nnn.nnn.nnn.nnn
-     -  nnn.nnn.nnn.nnn:port
-     -  nnnn:nnn::nnnn:nn:nnnn
-     -  [nnnn:nnn:nnnn::nnn:nnn:nnnn:nnn]:port
+     Sets which of the peers that represents the local address.
   */
-  void setBindAddress(std::string address);
+  void setLocalPeerIdx(int idx);
 
   /**
-     Bind the specified address and connects to the added peers.
+     Connects to the peers.
   */
   void initialize();
 
+  /**
+     Waits until all peers have connected.
+  */
   void waitForConnection();
 
   /**
@@ -78,19 +74,28 @@ private:
         endpoints(endpoints),
         is_connected(false) {}
 
-    bool connect();
+    Peer (asio::io_context &io_context,
+          asio::ip::tcp::socket socket)
+      : io_context(io_context),
+        socket(std::move(socket)),
+        is_connected(false) {}
 
-    bool match(asio::ip::tcp::endpoint ep);
+    bool connect();
 
     bool isConnected() { return is_connected; }
 
-    //private:
+    void sendHandshake();
+    void readHandshake();
+
+  private:
 
     asio::io_context &io_context;
+    bool is_connected;
     asio::ip::tcp::socket socket;
+    char buffer_data[1024];
+
     std::string address;
     asio::ip::tcp::resolver::results_type endpoints;
-    bool is_connected;
   };
 
   void split_address_service(std::string comb, std::string &host, std::string &port);
@@ -101,11 +106,12 @@ private:
   asio::io_context io_context;
   std::thread io_thread;
 
-  std::vector<std::shared_ptr<Peer>> peers;
+  std::vector<std::shared_ptr<Peer>> alpha_peers;
+  std::vector<std::shared_ptr<Peer>> beta_peers;
+  std::vector<std::string> peer_addresses;
+  int local_peer_idx;
 
   std::shared_ptr<asio::ip::tcp::acceptor> server_acceptor;
-  std::string bind_address;
-  asio::ip::tcp::resolver::results_type bind_endpoints;
 };
 
 END_NAMESPACE_GMNETWORK;

@@ -5,9 +5,10 @@ BEGIN_NAMESPACE_GMNETWORK;
 
 GM_OFI_DEFINE(NetSync);
 GM_OFI_PARAM(NetSync, peer, std::string, NetSync::addPeer);
-GM_OFI_PARAM(NetSync, bind, std::string, NetSync::setBindAddress);
+GM_OFI_PARAM(NetSync, localPeerIdx, int, NetSync::setLocalPeerIdx);
 
 #define DEFAULT_SERVICE "20401"
+#define HANDSHAKE_LENGTH 256
 
 NetSync::NetSync() {}
 
@@ -19,36 +20,14 @@ NetSync::~NetSync() {
 void NetSync::addPeer(std::string address) {
   if (isInitialized())
     throw std::logic_error("Adding peer after initialization is not supported");
-
-  std::string host;
-  std::string port;
-  split_address_service(address, host, port);
-
-  asio::ip::tcp::resolver resolver(io_context);
-  auto endpoints = resolver.resolve(host, port);
-  if (endpoints.empty()) {
-    GM_ERR("NetSync", "Cannot resolve " << host << ":" << port);
-    throw std::invalid_argument("Cannot resolve peer address");
-  }
-
-  peers.push_back(std::make_shared<Peer>(io_context, address, endpoints));
+  peer_addresses.push_back(address);
 }
 
-void NetSync::setBindAddress(std::string address) {
+void NetSync::setLocalPeerIdx(int idx) {
   if (isInitialized())
-    throw std::logic_error("Setting bind address after initialization is not supported");
+    throw std::logic_error("Setting local peer after initialization is not supported");
 
-  bind_address = address;
-  std::string host;
-  std::string port;
-  split_address_service(address, host, port);
-
-  asio::ip::tcp::resolver resolver(io_context);
-  bind_endpoints = resolver.resolve(host, port);
-  if (bind_endpoints.empty()) {
-    GM_ERR("NetSync", "Cannot resolve " << host << ":" << port);
-    throw std::invalid_argument("Cannot resolve bind address");
-  }
+  local_peer_idx = idx;
 }
 
 void NetSync::split_address_service
@@ -101,34 +80,84 @@ bool NetSync::Peer::connect() {
                           socket.set_option(option);
                           is_connected = true;
                           GM_VINF("NetSync", "Connected");
+                          sendHandshake();
                         } else {
                           GM_ERR("NetSync", "Could not connect: " << ec.message());
+                          connect();
                         }
                       });
 }
 
-bool NetSync::Peer::match(asio::ip::tcp::endpoint ep) {
-  GM_VINF("NetSync", "Comparing endpoint " << ep << " (" << this << ")");
-  for (auto &pt : endpoints) {
-    GM_VINF("NetSync", " with peer endpoint " << pt.host_name() << ":" << pt.service_name() << " (" << this << ")");
-    if (pt == ep) return true;
-  }
-  return false;
+void NetSync::Peer::sendHandshake() {
+  std::stringstream string_data;
+  string_data << GRAMODS_NETSYNC_VERSION << " " << address;
+  char data[HANDSHAKE_LENGTH] = { 0 };
+  assert(string_data.str().size() < HANDSHAKE_LENGTH - 1);
+  memcpy(data, string_data.str().c_str(),
+         sizeof(string_data.str().c_str()) * string_data.str().size());
+
+  asio::write(socket, asio::buffer(data, HANDSHAKE_LENGTH));
+}
+
+void NetSync::Peer::readHandshake() {
+  asio::async_read(socket,
+                   asio::buffer(buffer_data, HANDSHAKE_LENGTH),
+                   [this](std::error_code ec, std::size_t length){
+                     std::string NetSync_version;
+
+                     std::stringstream data(buffer_data);
+                     data >> NetSync_version >> address;
+                     GM_INF("NetSync",
+                            "Got handshake: " << length << " " << buffer_data
+                            << " (version=" << NetSync_version
+                            << ", address=" << address << ")");
+                     is_connected = true;
+                   });
 }
 
 void NetSync::initialize() {
-  if (peers.size() == 0)
+  if (peer_addresses.size() == 0)
     return;
 
-  if (bind_endpoints.empty())
+  if (local_peer_idx < 0 || local_peer_idx >= peer_addresses.size())
     return;
 
-  GM_INF("NetSync", "Bind address " << bind_address);
-  for (auto end : bind_endpoints)
-    GM_INF("NetSync", "Resolved "
-           << end.host_name()
-           << " : "
-           << end.service_name());
+  asio::ip::tcp::resolver resolver(io_context);
+
+  for (int idx = local_peer_idx + 1; idx < peer_addresses.size(); ++idx) {
+    std::string address = peer_addresses[idx];
+    GM_INF("NetSync", "Adding Beta Peer " << idx << " (" << address << ")");
+
+    std::string host;
+    std::string port;
+    split_address_service(address, host, port);
+
+    auto endpoints = resolver.resolve(host, port);
+    if (endpoints.empty()) {
+      GM_ERR("NetSync", "Cannot resolve " << host << ":" << port);
+      throw std::invalid_argument("Cannot resolve peer address");
+    }
+
+    beta_peers.push_back(std::make_shared<Peer>(io_context, address, endpoints));
+  }
+
+  asio::ip::tcp::resolver::results_type bind_endpoints;
+  {
+    std::string address = peer_addresses[local_peer_idx];
+    GM_INF("NetSync", "Bind address " << address);
+
+    std::string host;
+    std::string port;
+    split_address_service(address, host, port);
+
+    bind_endpoints = resolver.resolve(host, port);
+
+    for (auto end : bind_endpoints)
+      GM_INF("NetSync", "Resolved "
+             << end.host_name()
+             << " : "
+             << end.service_name());
+  }
 
   server_acceptor =
     std::make_shared<asio::ip::tcp::acceptor>
@@ -136,14 +165,11 @@ void NetSync::initialize() {
 
   accept();
 
-  std::this_thread::sleep_for(std::chrono::milliseconds(100));
-
-  for (auto peer : peers) {
-    if (peer->address != bind_address)
-      peer->connect();
-  }
-
   io_thread = std::thread([this](){ this->runContext(); });
+
+  for (auto peer : beta_peers)
+    peer->connect();
+
   Object::initialize();
 }
 
@@ -156,39 +182,30 @@ void NetSync::accept() {
         GM_WRN("NetSync", "Incoming connection problem (" << ec << ")");
 
       auto endpoint = socket.remote_endpoint();
-      GM_INF("NetSync", "Received incoming connection (" << endpoint.address() << ":" << endpoint.port() << ")");
+      GM_INF("NetSync", this << " received incoming connection (" << endpoint.address() << ":" << endpoint.port() << ")");
 
-      bool found_match = false;
-      endpoint.port(server_acceptor->local_endpoint().port());
-      for (auto &peer : peers)
-        if (peer->match(endpoint)) {
-          if (found_match)
-            GM_WRN("NetSync", "Incoming connection match multiple peers");
-          peer->socket = std::move(socket);
-          found_match = true;
-        }
-      if (!found_match)
-        GM_WRN("NetSync", "No match among peers for incoming connection");
+      alpha_peers.push_back(std::make_shared<Peer>(io_context, std::move(socket)));
+      alpha_peers.back()->readHandshake();
 
-      bool all_connected = true;
-      for (auto peer : peers)
-        if (peer->isConnected() == false)
-          all_connected = false;
-
-      if (!all_connected)
-        accept();
+      accept();
     });
 }
 
 void NetSync::waitForConnection() {
-  bool wait = true;
-  while (wait) {
+  while (true) {
 
     if (io_context.stopped()) return;
 
-    wait = false;
-    for (auto peer : peers)
+    bool wait = false;
+    for (auto peer : alpha_peers)
       wait |= !peer->isConnected();
+    for (auto peer : beta_peers)
+      wait |= !peer->isConnected();
+
+    if (wait == false)
+      break;
+
+    std::this_thread::yield();
   }
 }
 

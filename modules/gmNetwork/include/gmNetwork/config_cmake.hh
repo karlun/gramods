@@ -6,6 +6,8 @@
 #define END_NAMESPACE_GMNETWORK }}//
 #define USING_NAMESPACE_GMNETWORK using namespace gramods::gmNetwork
 
+#define GRAMODS_NETSYNC_VERSION dev
+
 #cmakedefine gramods_ACTIVATE_ASIO_HANDLER_TRACKING
 #ifdef gramods_ACTIVATE_ASIO_HANDLER_TRACKING
 #define ASIO_ENABLE_HANDLER_TRACKING
