@@ -24,7 +24,9 @@ CONFIGURE_FILE(
 
 
 ADD_LIBRARY(gmNetwork SHARED
-  src/NetSync.cpp
+  src/ExecutionSynchronization.cpp
+  src/PeersConnection.cpp
+  src/Protocol.cpp
   )
 
 TARGET_INCLUDE_DIRECTORIES(gmNetwork PUBLIC ${MODULE_INCLUDE_DIRS})

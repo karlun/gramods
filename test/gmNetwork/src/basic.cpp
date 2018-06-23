@@ -1,5 +1,6 @@
 
-#include <gmNetwork/NetSync.hh>
+#include <gmNetwork/PeersConnection.hh>
+#include <gmNetwork/ExecutionSynchronization.hh>
 
 #include <gmCore/Configuration.hh>
 
@@ -16,31 +17,40 @@ struct Peer {
 
     std::stringstream ss_xml;
     ss_xml << "<config>" << std::endl;
-    ss_xml << "  <NetSync>" << std::endl;
-    ss_xml << "    <param name=\"localPeerIdx\" value=\"" << host_idx << "\"/>" << std::endl;
-    ss_xml << "    <param name=\"peer\" value=\"127.0.0.1:20402\"/>" << std::endl;
-    ss_xml << "    <param name=\"peer\" value=\"127.0.0.1:20403\"/>" << std::endl;
-    //ss_xml << "    <param name=\"peer\" value=\"127.0.0.1:20404\"/>" << std::endl;
-    ss_xml << "  </NetSync>" << std::endl;
+    ss_xml << "  <ExecutionSynchronization>" << std::endl;
+    ss_xml << "    <PeersConnection" << std::endl;
+    ss_xml << "        AS=\"connection\"" << std::endl;
+    ss_xml << "        DEF=\"PEERS\"" << std::endl;
+    ss_xml << "        localPeerIdx=\"" << host_idx << "\">" << std::endl;
+    ss_xml << "      <param name=\"peer\" value=\"127.0.0.1:20402\"/>" << std::endl;
+    ss_xml << "      <param name=\"peer\" value=\"127.0.0.1:20403\"/>" << std::endl;
+    //ss_xml << "      <param name=\"peer\" value=\"127.0.0.1:20404\"/>" << std::endl;
+    ss_xml << "    </PeersConnection>" << std::endl;
+    ss_xml << "  </ExecutionSynchronization>" << std::endl;
+    //ss_xml << "  <VariableSynchronization>" << std::endl;
+    //ss_xml << "    <PeersConnection" << std::endl;
+    //ss_xml << "        USE=\"PEERS\"/>" << std::endl;
+    //ss_xml << "  </VariableSynchronization>" << std::endl;
     ss_xml << "</config>" << std::endl;
 
     gmCore::Configuration config(ss_xml.str());
 
-    EXPECT_TRUE(config.getObject(netsync));
+    EXPECT_TRUE(config.getObject(sync));
 
-    if (netsync)
+    if (sync)
       thread = std::make_unique<std::thread>([this](){ this->run(); });
   }
 
   ~Peer() {
     {
+      sync->getConnection()->close();
       std::lock_guard<std::mutex> guard(lock);
-      netsync = 0;
+      sync = 0;
     }
     thread->join();
   }
 
-  std::shared_ptr<gmNetwork::NetSync> netsync;
+  std::shared_ptr<gmNetwork::ExecutionSynchronization> sync;
   std::unique_ptr<std::thread> thread;
   std::mutex lock;
   int delay_ms;
@@ -49,23 +59,23 @@ struct Peer {
   void run() {
     {
       std::lock_guard<std::mutex> guard(lock);
-      netsync->waitForConnection();
+      sync->waitForConnection();
     }
 
     while (true) {
-      ++count;
       std::this_thread::sleep_for(std::chrono::milliseconds(delay_ms));
       {
         std::lock_guard<std::mutex> guard(lock);
-        if (!netsync)
+        if (!sync)
           break;
-        netsync->waitForAll();
+        sync->waitForAll();
       }
+      ++count;
     }
   }
 };
 
-TEST(gmNetworkNetSync, waitForAll) {
+TEST(gmNetworkPeersConnection, waitForAll) {
   int count0 = 0;
   int count1 = 0;
   int count2 = 0;
@@ -79,8 +89,8 @@ TEST(gmNetworkNetSync, waitForAll) {
     std::this_thread::sleep_for(std::chrono::milliseconds(20));
   }
 
-  EXPECT_GT(count0, 0);
-  EXPECT_GT(count1, 0);
+  EXPECT_GT(count0, 1);
+  EXPECT_GT(count1, 1);
   //EXPECT_GT(count2, 0);
 
   EXPECT_EQ(count0, count1);
