@@ -10,12 +10,12 @@ BEGIN_NAMESPACE_GMCORE;
 
 Configuration::Configuration()
   : def_objects(std::make_shared<def_list>()),
-    parameter_overrides(std::make_shared<parameter_list>()),
+    parameter_overrides(std::make_shared<overrides_list>()),
     warn_unused_overrides(false) {}
 
 Configuration::Configuration(std::string xml)
   : def_objects(std::make_shared<def_list>()),
-    parameter_overrides(std::make_shared<parameter_list>()),
+    parameter_overrides(std::make_shared<overrides_list>()),
     warn_unused_overrides(false) {
 
   tinyxml2::XMLDocument doc;
@@ -28,7 +28,7 @@ Configuration::Configuration(std::string xml)
 
 Configuration::Configuration(int &argc, char *argv[])
   : warn_unused_overrides(true),
-    parameter_overrides(std::make_shared<parameter_list>()) {
+    parameter_overrides(std::make_shared<overrides_list>()) {
 
   std::vector<std::string> configs;
   std::vector<std::string> xmls;
@@ -114,7 +114,7 @@ Configuration::Configuration(int &argc, char *argv[])
 Configuration::Configuration(tinyxml2::XMLNode *node,
                              std::shared_ptr<def_list> defs,
                              std::string param_path,
-                             std::shared_ptr<parameter_list> overrides)
+                             std::shared_ptr<overrides_list> overrides)
   : def_objects(defs),
     param_path(param_path),
     parameter_overrides(overrides),
@@ -135,7 +135,7 @@ void Configuration::load(tinyxml2::XMLNode *node) {
       if (name == "AS" || name == "DEF" || name == "USE")
         continue;
       std::string value = attr_it->Value();
-      setParam(name,value);
+      addParam(name,value);
     }
   }
 
@@ -171,7 +171,7 @@ void Configuration::load(tinyxml2::XMLNode *node) {
         GM_ERR("Configuration", "no DEF to match USE " << USE << " in " << type);
         throw std::invalid_argument("no DEF to match USE");
       }
-      setObject(name, (*def_objects)[USE]);
+      addObject(name, (*def_objects)[USE]);
       continue;
     }
 
@@ -197,31 +197,46 @@ void Configuration::load(tinyxml2::XMLNode *node) {
     node_conf.getAllParamNames(param_names);
 
     for (auto param_name : param_names) {
-      std::string value;
-      bool good;
+
       std::string param_path = node_path + "." + param_name;
       GM_INF("Configuration", "Checking parameter override for " << param_path);
+
       if (parameter_overrides->find(param_path) ==
           parameter_overrides->end()) {
-        good = node_conf.getParamAsString(param_name, value);
-        assert(good);
-        GM_INF("Configuration", name << " -> " <<
-               type << "::" << param_name << " = " << value);
+
+        std::vector<std::string> values;
+        size_t count = node_conf.getAllParams(param_name, values);
+        assert(count > 0);
+
+        for (std::string value : values) {
+          GM_INF("Configuration", name << " -> " <<
+                 type << "::" << param_name << " = " << value);
+          bool good = OFactory::getOFI(type)->
+            setParamValueFromString(nn.get(), param_name, value);
+          if (!good) {
+            GM_ERR("Configuration", "no parameter " << param_name << " available in " << type);
+            throw std::invalid_argument("no parameter to match xml attribute");
+          }
+        }
+
       } else {
-        value = (*parameter_overrides)[param_path].value;
+
+        std::string value = (*parameter_overrides)[param_path].value;
         (*parameter_overrides)[param_path].checked = true;
         GM_INF("Configuration", name << " -> " <<
                type << "::" << param_name << " = " << value << " (overridden)");
-      }
-      good = OFactory::getOFI(type)->setParamValueFromString(nn.get(), param_name, value);
-      if (!good) {
-        GM_ERR("Configuration", "no parameter " << param_name << " available in " << type);
-        throw std::invalid_argument("no parameter to match xml attribute");
+
+        bool good = OFactory::getOFI(type)->
+          setParamValueFromString(nn.get(), param_name, value);
+        if (!good) {
+          GM_ERR("Configuration", "no parameter " << param_name << " available in " << type);
+          throw std::invalid_argument("no parameter to match xml attribute");
+        }
       }
     }
 
     std::vector<std::string> child_names;
-    node_conf.getAllChildNames(child_names);
+    node_conf.getAllObjectNames(child_names);
 
     for (auto child_name : child_names) {
       std::vector<std::shared_ptr<Object>> ptrs;
@@ -238,8 +253,10 @@ void Configuration::load(tinyxml2::XMLNode *node) {
     }
 
     nn->initialize();
-
-    setObject(name, nn);
+    if (!nn->isInitialized())
+      GM_ERR("Configuration", "Could not initialize instance of " << type);
+    else
+      addObject(name, nn);
   }
 }
 
@@ -261,17 +278,29 @@ Configuration::~Configuration(){
                << "has not been used!");
 }
 
-bool Configuration::hasParam(const std::string &name) {
+bool Configuration::hasParam(std::string name) {
   return parameters.count(name) > 0;
 }
 
-size_t Configuration::getAllParamNames(std::vector<std::string> &name) {
-  for (auto param : parameters)
-    name.push_back(param.first);
-  return parameters.size();
+void Configuration::addParam(std::string name, std::string value){
+  parameters.insert(std::pair<std::string, parameter_t>(name, parameter_t(value)));
 }
 
-size_t Configuration::getAllChildNames(std::vector<std::string> &name) {
+size_t Configuration::getAllParamNames(std::vector<std::string> &name) {
+  std::vector<std::string> new_names;
+  for (auto param : parameters)
+    new_names.push_back(param.first);
+
+  std::vector<std::string>::iterator it;
+  it = std::unique(new_names.begin(), new_names.end());
+  new_names.resize(std::distance(new_names.begin(), it));
+
+  name.insert(name.end(), new_names.begin(), new_names.end());
+
+  return new_names.size();
+}
+
+size_t Configuration::getAllObjectNames(std::vector<std::string> &name) {
   std::vector<std::string> new_names;
   for (auto child : child_objects)
     new_names.push_back(child.first);
@@ -294,30 +323,10 @@ void Configuration::parse_param(tinyxml2::XMLElement *element){
   const char* value_attribute = element->Attribute("value");
   if (value_attribute == NULL) { return; }
   std::string value = value_attribute;
-  
-  if (parameters.count(name) != 0) {
-    GM_WRN("Configuration", "Cannot set parameter " << name << " to " << value
-           << ", already set to " << parameters[name].value << "!");
-    return;
-  }
-  
-  parameters[name] = parameter_t(value);
-  
-  GM_INF("Configuration", "Parsed param: " << name << " = " << value);
-}
 
-bool Configuration::getParamAsString(const std::string &name, std::string &value) const {
-  if (parameters.count(name) == 0) {
-    GM_INF("Configuration", "Could not find " << name);
-    return false;
-  }
-  
-  Configuration * _this = const_cast<Configuration*>(this);
-  
-  value = parameters.find(name)->second.value;
-  _this->parameters.find(name)->second.checked = true;
-  GM_INF("Configuration", "Read " << name << " = " << value);
-  return true;
+  GM_INF("Configuration", "Parsed param: " << name << " = " << value);
+
+  addParam(name, value);
 }
 
 END_NAMESPACE_GMCORE;

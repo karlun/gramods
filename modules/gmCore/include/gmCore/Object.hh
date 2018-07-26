@@ -41,6 +41,11 @@ struct Object
   : public std::enable_shared_from_this<Object> {
 
   /**
+     Initializes internal data.
+  */
+  Object() : is_initialized(false) {}
+
+  /**
      Cleaning up internal data.
   */
   virtual ~Object() {}
@@ -49,7 +54,17 @@ struct Object
      Called to initialize the Object. Sub classes to override this to
      make use of set parameter data. This should be called once only!
   */
-  virtual void initialize() {}
+  virtual void initialize() { is_initialized = true; }
+
+  /**
+     Returns true if the Object is initialized. Sub classes must call
+     Object::initialize() if and only if the initialization succeeded.
+  */
+  bool isInitialized() { return is_initialized; }
+
+private:
+
+  bool is_initialized;
 };
 
 END_NAMESPACE_GMCORE;

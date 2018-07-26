@@ -182,3 +182,44 @@ TEST(gmCoreBaseFunctionality, ConfigCommandLine) {
 
   }
 }
+
+
+struct Multi : gmCore::Object {
+  std::vector<int> a;
+  void addA(int v) { a.push_back(v); }
+  GM_OFI_DECLARE(Multi);
+};
+
+GM_OFI_DEFINE(Multi);
+GM_OFI_PARAM(Multi, a, int, Multi::addA);
+
+TEST(gmCoreBaseFunctionality, MultipleParameters) {
+
+  char arg0[] = "--xml";
+  char arg1[] = ""
+    "<config>"
+    "  <Multi a=\"312\"/>"
+    "  <Multi a=\"174\">"
+    "    <param name=\"a\" value=\"1391\"/>"
+    "    <param name=\"a\" value=\"31\"/>"
+    "    <param name=\"a\" value=\"74\"/>"
+    "  </Multi>"
+    "</config>";
+
+  char *argv[] = { arg0, arg1 };
+  int argc = 2;
+
+  gmCore::Configuration config(argc, argv);
+  EXPECT_EQ(argc, 0);
+
+  std::vector<std::shared_ptr<Multi>> multis;
+  EXPECT_TRUE(config.getAllObjects(multis));
+  ASSERT_EQ(multis.size(), 2);
+  EXPECT_EQ(multis[0]->a.size(), 1);
+  ASSERT_EQ(multis[1]->a.size(), 4);
+  EXPECT_EQ(multis[1]->a[0], 174);
+  EXPECT_EQ(multis[1]->a[1], 1391);
+  EXPECT_EQ(multis[1]->a[2], 31);
+  EXPECT_EQ(multis[1]->a[3], 74);
+
+}

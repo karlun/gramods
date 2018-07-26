@@ -73,26 +73,35 @@ public:
   /**
      Check if a specific parameter is available.
    */
-  bool hasParam(const std::string &name);
+  bool hasParam(std::string name);
 
   /**
      Adds all currently available parameter names to the specified
      vector and returns the count.
    */
-  size_t getAllParamNames(std::vector<std::string> &name);
+  std::size_t getAllParamNames(std::vector<std::string> &name);
 
   /**
-     Adds all currently available child names to the specified vector
-     and returns the count. Names used for multiple children will only
+     Adds all currently available object names to the specified vector
+     and returns the count. Names used for multiple objects will only
      appear once and be counted once.
    */
-  size_t getAllChildNames(std::vector<std::string> &name);
+  std::size_t getAllObjectNames(std::vector<std::string> &name);
 
   /**
-     Retrieve a specified parameter of a specified type. This function
-     will use stringstream to parse most types but will need
-     specializations to parse non-standard types. If the parameter is
-     not found, the value argument will not be changed.
+     Add a parameter value.
+  */
+  void addParam(std::string name, std::string value);
+
+  /**
+     Retrieves a named parameter as a specified type. If there are
+     multiple parameters with the same name, there is no saying which
+     will be retrieved with this function.
+
+     If the value type is not string, then this function will use
+     stringstream to parse most types but will need specializations to
+     parse non-standard types. If the parameter is not found, the
+     value argument will not be changed.
 
      @param[in] name name of the parameter to retrieve
      @param[out] value the parameter value, if set
@@ -100,25 +109,22 @@ public:
      be casted to the specified type.
    */
   template<class T>
-  bool getParam(const std::string &name, T &value) const;
+  bool getParam(std::string name, T &value) const;
 
   /**
-     Set a parameter value.
-   */
+     Retrieves all parameters with a specified name.
+
+     If the value type is not string, then this function will use
+     stringstream to parse most types but will need specializations to
+     parse non-standard types.
+  */
   template<class T>
-  void setParam(const std::string &name, const T &value);
+  std::size_t getAllParams(std::string name, std::vector<T> &value) const;
 
   /**
-     Retrieve a specified parameter as string.
-
-     @param[in] name name of the parameter to retrieve
-     @param[out] value the parameter value, if set
-     @return false if the parameter is not set
-   */
-  bool getParamAsString(const std::string &name, std::string &value) const;
-
-  /**
-     Retrieve an object by its name.
+     Retrieve an object by its name. If there are multiple objects of
+     the same type, there is no saying which will be retrieved with
+     this function.
 
      @param[in] name name of the parameter to retrieve
      @param[out] ptr a pointer to the object, if set
@@ -126,7 +132,7 @@ public:
      not be casted to the specified type.
    */
   template<class T>
-  bool getObject(const std::string &name, std::shared_ptr<T> &ptr) const;
+  bool getObject(std::string name, std::shared_ptr<T> &ptr) const;
 
   /**
      Retrieve an object by its type. If there are multiple objects of
@@ -144,13 +150,13 @@ public:
      Set an object.
    */
   template<class T>
-  void setObject(const std::string &name, std::shared_ptr<T> ptr);
+  void addObject(std::string name, std::shared_ptr<T> ptr);
 
   /**
      Set an object.
    */
   template<class T>
-  void setObject(std::shared_ptr<T> ptr){ setObject(typeid(T).name(), ptr); }
+  void addObject(std::shared_ptr<T> ptr){ addObject(typeid(T).name(), ptr); }
 
   /**
      Retrieve all objects of a specified type. This function will
@@ -161,7 +167,7 @@ public:
      @return the number of objects added to the list.
    */
   template<class T>
-  int getAllObjects(std::vector<std::shared_ptr<T>> &value) const;
+  std::size_t getAllObjects(std::vector<std::shared_ptr<T>> &value) const;
 
   /**
      Retrieve all objects with the specified name.
@@ -172,7 +178,7 @@ public:
      not be casted to the specified type.
    */
   template<class T>
-  int getAllObjects(std::string name, std::vector<std::shared_ptr<T>> &ptr) const;
+  std::size_t getAllObjects(std::string name, std::vector<std::shared_ptr<T>> &ptr) const;
 
 private:
 
@@ -182,20 +188,21 @@ private:
   void load(tinyxml2::XMLNode *node);
 
   struct parameter_t {
-    parameter_t(const std::string &value = "")
+    parameter_t(std::string value = "")
       : checked(false), value(value) {}
     std::string value;
     bool checked;
   };
 
-  typedef std::map<std::string, parameter_t> parameter_list;
+  typedef std::multimap<std::string, parameter_t> parameter_list;
+  typedef std::map<std::string, parameter_t> overrides_list;
 
   std::multimap<std::string, std::shared_ptr<Object>> child_objects;
   parameter_list parameters;
 
   std::shared_ptr<def_list> def_objects;
   std::string param_path;
-  std::shared_ptr<parameter_list> parameter_overrides;
+  std::shared_ptr<overrides_list> parameter_overrides;
   bool warn_unused_overrides;
 
   void parse_param(tinyxml2::XMLElement *element);
@@ -207,18 +214,18 @@ private:
   Configuration(tinyxml2::XMLNode *node,
                 std::shared_ptr<def_list> defs,
                 std::string param_path,
-                std::shared_ptr<parameter_list> overrides);
+                std::shared_ptr<overrides_list> overrides);
 };
 
 
 template<class T>
-int Configuration::getAllObjects(std::vector<std::shared_ptr<T>> &value) const {
+std::size_t Configuration::getAllObjects(std::vector<std::shared_ptr<T>> &value) const {
 
   Configuration *_this = const_cast<Configuration*>(this);
 
-  int original_size = value.size();
+  auto original_size = value.size();
 
-  for( std::map<std::string, std::shared_ptr<Object>>::iterator it
+  for( std::multimap<std::string, std::shared_ptr<Object>>::iterator it
          = _this->child_objects.begin() ;
        it != _this->child_objects.end() ; ++it ){
 
@@ -232,14 +239,14 @@ int Configuration::getAllObjects(std::vector<std::shared_ptr<T>> &value) const {
 }
 
 template<class T>
-int Configuration::getAllObjects(std::string name,
-                                 std::vector<std::shared_ptr<T>> &value) const {
+std::size_t Configuration::getAllObjects(std::string name,
+                                         std::vector<std::shared_ptr<T>> &value) const {
 
   Configuration *_this = const_cast<Configuration*>(this);
 
-  int original_size = value.size();
+  auto original_size = value.size();
 
-  for( std::map<std::string, std::shared_ptr<Object>>::iterator it
+  for( std::multimap<std::string, std::shared_ptr<Object>>::iterator it
          = _this->child_objects.begin() ;
        it != _this->child_objects.end() ; ++it ){
 
@@ -256,7 +263,7 @@ int Configuration::getAllObjects(std::string name,
 }
 
 template<class T>
-bool Configuration::getObject(const std::string &name, std::shared_ptr<T> &ptr) const{
+bool Configuration::getObject(std::string name, std::shared_ptr<T> &ptr) const{
 
   if( child_objects.count(name) == 0 ){
     return false; }
@@ -293,15 +300,15 @@ bool Configuration::getObject(std::shared_ptr<T> &ptr) const {
 }
 
 template<class T>
-void Configuration::setObject(const std::string &name, std::shared_ptr<T> ptr) {
+void Configuration::addObject(std::string name, std::shared_ptr<T> ptr) {
   child_objects.insert(std::pair<std::string, std::shared_ptr<Object>>(name, ptr));
 }
 
 template<class T>
-bool Configuration::getParam(const std::string &name, T &value) const{
+bool Configuration::getParam(std::string name, T &value) const{
 
   std::string string_value;
-  if (!getParamAsString(name, string_value))
+  if (!getParam(name, string_value))
     return false;
 
   try {
@@ -320,12 +327,27 @@ bool Configuration::getParam(const std::string &name, T &value) const{
   }
 }
 
+template <>
+inline bool Configuration::getParam(std::string name, std::string &value) const {
+  if (parameters.count(name) == 0) {
+    GM_INF("Configuration", "Could not find " << name);
+    return false;
+  }
+
+  Configuration * _this = const_cast<Configuration*>(this);
+
+  value = parameters.find(name)->second.value;
+  _this->parameters.find(name)->second.checked = true;
+  GM_INF("Configuration", "Read " << name << " = " << value);
+  return true;
+}
+
 template<>
-inline bool Configuration::getParam(const std::string &name, bool &value) const {
+inline bool Configuration::getParam(std::string name, bool &value) const {
 
   std::string string_value;
 
-  if (!getParamAsString(name, string_value))
+  if (!getParam(name, string_value))
     return false;
 
   std::transform(string_value.begin(), string_value.end(),
@@ -343,13 +365,66 @@ inline bool Configuration::getParam(const std::string &name, bool &value) const 
   return false;
 }
 
+template<>
+inline std::size_t Configuration::getAllParams(std::string name, std::vector<std::string> &value) const {
+
+  Configuration * _this = const_cast<Configuration*>(this);
+  std::size_t original_size = value.size();
+
+  for (auto &param : _this->parameters)
+    if (param.first == name) {
+      value.push_back(param.second.value);
+      param.second.checked = true;
+      GM_INF("Configuration", "Read " << name << " = " << param.second.value);
+    }
+
+  return value.size() - original_size;
+}
+
+template<>
+inline std::size_t Configuration::getAllParams(std::string name, std::vector<bool> &value) const {
+   std::vector<std::string> values;
+  getAllParams(name, values);
+
+  std::size_t original_size = value.size();
+  for (auto string_value : values)
+    try {
+      std::transform(string_value.begin(), string_value.end(),
+                     string_value.begin(), ::tolower);
+
+      if (string_value == "true") { value.push_back(true); continue; }
+      if (string_value == "on") { value.push_back(true); continue; }
+      if (string_value == "1") { value.push_back(true); continue; }
+
+      if (string_value == "false") { value.push_back(false); continue; }
+      if (string_value == "off") { value.push_back(false); continue; }
+      if (string_value == "0") { value.push_back(false); continue; }
+
+      GM_WRN("Configuration", "Could not parse '" << string_value << "' as bool!");
+    }
+    catch(std::exception e){
+      GM_WRN("Configuration", "Could not parse '" << string_value << "' as bool!");
+    }
+  return value.size() - original_size;
+}
+
 template<class T>
-void Configuration::setParam(const std::string &name, const T &value){
+inline std::size_t Configuration::getAllParams(std::string name, std::vector<T> &value) const {
+  std::vector<std::string> values;
+  getAllParams(name, values);
 
-  std::stringstream ss_value;
-  ss_value << value;
+  std::size_t original_size = value.size();
+  for (auto string_value : values)
+    try {
+      T _value;
+      std::stringstream(string_value) >> _value;
 
-  parameters[name] = parameter_t(ss_value.str());
+      value.push_back(_value);
+    }
+    catch(std::exception e){
+      GM_WRN("Configuration", "Could not parse '" << string_value << "' as bool!");
+    }
+  return value.size() - original_size;
 }
 
 END_NAMESPACE_GMCORE;

@@ -13,6 +13,10 @@ SET (MODULE_INCLUDE_DIRS ${MODULE_INCLUDE_DIRS} ${TinyXML2_INCLUDE_DIRS})
 SET (MODULE_LIBS ${MODULE_LIBS} ${TinyXML2_LIBRARIES})
 
 
+OPTION(gramods_STRIP_PATH_FROM_FILE
+  "Strip full path from source file in debug output through Console (GM_ERR, GM_WRN, etc)"
+  OFF)
+
 CONFIGURE_FILE(
   ${CMAKE_CURRENT_SOURCE_DIR}/include/gmCore/config_cmake.hh
   ${CMAKE_CURRENT_BINARY_DIR}/include/gmCore/config.hh)
@@ -23,6 +27,7 @@ ADD_LIBRARY(gmCore SHARED
   src/Configuration.cpp
   src/Console.cpp
   src/ImportLibrary.cpp
+  src/LogFileMessageSink.cpp
   src/MessageSink.cpp
   src/OFactory.cpp
   src/OStreamMessageSink.cpp
