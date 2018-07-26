@@ -1,15 +1,13 @@
 
 #include <gmCore/OStreamMessageSink.hh>
 
-#include <gmCore/OFactory.hh>
-
 #include <iostream>
 #include <assert.h>
 
 BEGIN_NAMESPACE_GMCORE;
 
-OFI_CREATE(OStreamMessageSinkOFI, OStreamMessageSink);
-OFI_PARAM(OStreamMessageSinkOFI, OStreamMessageSink, stream, std::string, OStreamMessageSink::setStream);
+GM_OFI_DEFINE(OStreamMessageSink);
+GM_OFI_PARAM(OStreamMessageSink, stream, std::string, OStreamMessageSink::setStream);
 
 OStreamMessageSink::OStreamMessageSink()
   : rp_out(&std::cerr) {}
@@ -28,7 +26,7 @@ void OStreamMessageSink::output(Message msg) {
 
   outputLevelAndTag(msg);
 
-  out << msg.message << std::endl;
+  out << msg.message;
 }
 
 void OStreamMessageSink::outputLevelAndTag(Message msg) {

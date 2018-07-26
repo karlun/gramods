@@ -4,6 +4,8 @@
 
 #include <gmCore/MessageSink.hh>
 
+#include <gmCore/OFactory.hh>
+
 #include <mutex>
 
 BEGIN_NAMESPACE_GMCORE;
@@ -47,6 +49,8 @@ public:
   void setStream(std::string name);
 
   void output(Message msg);
+
+  GM_OFI_DECLARE(OStreamMessageSink);
 
 private:
 
