@@ -27,6 +27,7 @@ ADD_LIBRARY(gmCore SHARED
   src/Configuration.cpp
   src/Console.cpp
   src/ImportLibrary.cpp
+  src/LogFileMessageSink.cpp
   src/MessageSink.cpp
   src/OFactory.cpp
   src/OStreamMessageSink.cpp
