@@ -13,6 +13,7 @@
 #include <map>
 #include <vector>
 #include <deque>
+#include <mutex>
 
 BEGIN_NAMESPACE_GMNETWORK;
 
@@ -131,7 +132,7 @@ private:
 
     bool connect();
 
-    bool isConnected() { return is_connected; }
+    bool isConnected();
 
     void sendMessage(Protocol::Message mess);
     void readData();
@@ -143,8 +144,9 @@ private:
 
     asio::io_context &io_context;
     std::weak_ptr<PeersConnection> parent;
-    bool is_connected;
     asio::ip::tcp::socket socket;
+    bool is_connected;
+    std::mutex lock;
 
     std::unique_ptr<Protocol::Message> message;
     std::size_t message_length;
@@ -158,18 +160,26 @@ private:
   void runContext();
   void accept();
 
+  static void routeMessage(std::shared_ptr<PeersConnection> self,
+                           Protocol::Message mess);
+
   asio::io_context io_context;
   std::thread io_thread;
   bool closing;
+  std::mutex system_lock;
 
   std::vector<std::shared_ptr<Peer>> alpha_peers;
   std::vector<std::shared_ptr<Peer>> beta_peers;
   std::vector<std::string> peer_addresses;
   int local_peer_idx;
+  std::mutex peers_lock;
 
   std::shared_ptr<asio::ip::tcp::acceptor> server_acceptor;
 
   std::vector<std::weak_ptr<Protocol>> protocols;
+  std::mutex protocols_lock;
+
+  friend Peer;
 };
 
 END_NAMESPACE_GMNETWORK;

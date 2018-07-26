@@ -18,6 +18,9 @@ class ExecutionSynchronization
 
 public:
 
+  ExecutionSynchronization();
+  ~ExecutionSynchronization();
+
   /**
      Waits until all peers have called this method. It is up to the
      client code to avoid deadlock or contention, and make sure that
@@ -52,6 +55,7 @@ private:
   std::condition_variable waiting_condition;
   std::set<char> waiting_peers;
 
+  bool closing;
 };
 
 END_NAMESPACE_GMNETWORK;

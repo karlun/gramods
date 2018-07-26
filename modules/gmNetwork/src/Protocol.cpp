@@ -10,6 +10,8 @@ GM_OFI_POINTER(Protocol, connection, PeersConnection, Protocol::setConnection);
 
 void Protocol::setConnection(std::shared_ptr<PeersConnection> conn) {
 
+  std::lock_guard<std::mutex> guard(connection_lock);
+
   auto self = std::dynamic_pointer_cast<Protocol>(this->shared_from_this());
 
   if (connection) connection->removeProtocol(self);
@@ -18,10 +20,12 @@ void Protocol::setConnection(std::shared_ptr<PeersConnection> conn) {
 }
 
 std::shared_ptr<PeersConnection> Protocol::getConnection() {
+  std::lock_guard<std::mutex> guard(connection_lock);
   return connection;
 }
 
 void Protocol::close() {
+  std::lock_guard<std::mutex> guard(connection_lock);
   std::shared_ptr<PeersConnection> old_connection = connection;
   connection = nullptr;
   if (old_connection) old_connection->close();
@@ -29,7 +33,10 @@ void Protocol::close() {
 }
 
 void Protocol::sendMessage(std::vector<char> data) {
-  if (!connection)
+  std::lock_guard<std::mutex> guard(connection_lock);
+
+  std::shared_ptr<PeersConnection> _connection = connection;
+  if (!_connection)
     return;
 
   Message m = {
@@ -37,12 +44,14 @@ void Protocol::sendMessage(std::vector<char> data) {
     getProtocolFlag(),
     data
   };
-  connection->sendMessage(m);
+  _connection->sendMessage(m);
 }
 
 void Protocol::waitForConnection() {
+  std::lock_guard<std::mutex> guard(connection_lock);
+  std::shared_ptr<PeersConnection> _connection = connection;
   if (connection)
-    connection->waitForConnection();
+    _connection->waitForConnection();
 }
 
 END_NAMESPACE_GMNETWORK;

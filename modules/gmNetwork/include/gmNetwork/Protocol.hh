@@ -7,6 +7,8 @@
 #include <gmCore/Object.hh>
 #include <gmCore/OFactory.hh>
 
+#include <mutex>
+
 BEGIN_NAMESPACE_GMNETWORK;
 
 class PeersConnection;
@@ -109,6 +111,9 @@ protected:
   */
   std::shared_ptr<PeersConnection> connection;
 
+private:
+
+  std::mutex connection_lock;
 };
 
 END_NAMESPACE_GMNETWORK;

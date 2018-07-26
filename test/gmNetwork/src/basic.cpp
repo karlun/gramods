@@ -22,9 +22,9 @@ struct Peer {
     ss_xml << "        AS=\"connection\"" << std::endl;
     ss_xml << "        DEF=\"PEERS\"" << std::endl;
     ss_xml << "        localPeerIdx=\"" << host_idx << "\">" << std::endl;
+    ss_xml << "      <param name=\"peer\" value=\"127.0.0.1:20400\"/>" << std::endl;
+    ss_xml << "      <param name=\"peer\" value=\"127.0.0.1:20401\"/>" << std::endl;
     ss_xml << "      <param name=\"peer\" value=\"127.0.0.1:20402\"/>" << std::endl;
-    ss_xml << "      <param name=\"peer\" value=\"127.0.0.1:20403\"/>" << std::endl;
-    //ss_xml << "      <param name=\"peer\" value=\"127.0.0.1:20404\"/>" << std::endl;
     ss_xml << "    </PeersConnection>" << std::endl;
     ss_xml << "  </ExecutionSynchronization>" << std::endl;
     //ss_xml << "  <VariableSynchronization>" << std::endl;
@@ -65,10 +65,13 @@ struct Peer {
     while (true) {
       std::this_thread::sleep_for(std::chrono::milliseconds(delay_ms));
       {
-        std::lock_guard<std::mutex> guard(lock);
-        if (!sync)
-          break;
-        sync->waitForAll();
+        std::shared_ptr<gmNetwork::ExecutionSynchronization> tmp_sync;
+        {
+          std::lock_guard<std::mutex> guard(lock);
+          tmp_sync = sync;
+        }
+        if (!tmp_sync) break;
+        tmp_sync->waitForAll();
       }
       ++count;
     }
@@ -84,16 +87,16 @@ TEST(gmNetworkPeersConnection, waitForAll) {
     std::vector<std::shared_ptr<Peer>> peers;
     peers.push_back(std::make_shared<Peer>(0, 1, std::ref(count0)));
     peers.push_back(std::make_shared<Peer>(1, 2, std::ref(count1)));
-    //peers.push_back(std::make_shared<Peer>(2, 5, std::ref(count1)));
+    peers.push_back(std::make_shared<Peer>(2, 5, std::ref(count2)));
 
-    std::this_thread::sleep_for(std::chrono::milliseconds(20));
+    std::this_thread::sleep_for(std::chrono::milliseconds(5000));
   }
 
-  EXPECT_GT(count0, 1);
-  EXPECT_GT(count1, 1);
-  //EXPECT_GT(count2, 0);
+  EXPECT_GT(count0, 10);
+  EXPECT_GT(count1, 10);
+  EXPECT_GT(count2, 10);
 
-  EXPECT_EQ(count0, count1);
-  //EXPECT_EQ(count1, count2);
-  //EXPECT_EQ(count0, count2);
+  EXPECT_LE(abs(count0 - count1), 1);
+  EXPECT_LE(abs(count0 - count2), 1);
+  EXPECT_LE(abs(count1 - count2), 1);
 }
