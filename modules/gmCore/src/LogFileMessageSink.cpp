@@ -40,7 +40,29 @@ void LogFileMessageSink::output(Message msg) {
     }
   }
 
-  logfile << msg.message << std::endl;
+  outputLevelAndTag(logfile, msg);
+
+  logfile << msg.message;
+}
+
+void LogFileMessageSink::outputLevelAndTag(std::ostream &out, Message msg) {
+  switch (msg.level) {
+  case ConsoleLevel::ERROR:
+    out << "EE"; break;
+  case ConsoleLevel::WARNING:
+    out << "WW"; break;
+  case ConsoleLevel::INFORMATION:
+    out << "II"; break;
+  case ConsoleLevel::VERBOSE_INFORMATION:
+    out << "I2"; break;
+  case ConsoleLevel::VERY_VERBOSE_INFORMATION:
+    out << "I3"; break;
+  default:
+    assert(0);
+  }
+
+  if (msg.tag.length() == 0) out << ": "; 
+  else out << " (" << msg.tag << ") ";
 }
 
 

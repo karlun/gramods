@@ -26,7 +26,7 @@ void OStreamMessageSink::output(Message msg) {
 
   outputLevelAndTag(msg);
 
-  out << msg.message << std::endl;
+  out << msg.message;
 }
 
 void OStreamMessageSink::outputLevelAndTag(Message msg) {

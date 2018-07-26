@@ -39,6 +39,8 @@ public:
 
 private:
 
+  void outputLevelAndTag(std::ostream &out, Message msg);
+
   bool append;
   std::string logfile_path;
   std::ofstream logfile;
