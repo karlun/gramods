@@ -51,8 +51,11 @@ struct Object
   virtual ~Object() {}
 
   /**
-     Called to initialize the Object. Sub classes to override this to
-     make use of set parameter data. This should be called once only!
+     Called to initialize the Object. This should be called once only!
+
+     Sub classes should override this method to make use of set
+     parameter data. They should also always call its base class'
+     implementation as well.
   */
   virtual void initialize() { is_initialized = true; }
 

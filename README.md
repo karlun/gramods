@@ -23,7 +23,7 @@ int main(int argc, char *argv[]) {
     return -1;
   }
 
-  std::shared_ptr<gmGraphics::Pipeline> graphics;
+  std::shared_ptr<gmGraphics::Dispatcher> graphics;
   if (! config.getObject(graphics)) {
     ERROR("Cannot run without graphics pipeline!");
     return -1;
