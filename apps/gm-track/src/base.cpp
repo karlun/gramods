@@ -38,7 +38,7 @@ int main(int argc, char *argv[]) {
      "Name of the controller to use, in case multiple controllers are defined in the configuration file.",
      false, "", "string", cmd);
 
-  TCLAP::SwitchArg arg_scale
+  TCLAP::SwitchArg arg_scale_free
     ("f", "free-scale",
      "Activates free scaling in the registration. Typically uniform scaling is what you want.",
      false);
@@ -47,7 +47,7 @@ int main(int argc, char *argv[]) {
      "Activates uniform scaling, for example changing coordinates unit together with the registration.",
      false);
   cmd.add(arg_scale_uniform);
-  cmd.add(arg_scale);
+  cmd.add(arg_scale_free);
 
   try {
     cmd.parse(argc, argv);
@@ -56,7 +56,7 @@ int main(int argc, char *argv[]) {
     return -1;
   }
 
-  if (arg_scale.getValue() && arg_scale_uniform.getValue()) {
+  if (arg_scale_free.getValue() && arg_scale_uniform.getValue()) {
     TCLAP::CmdLineParseException e("Arguments free-scale and uniform-scale both set!");
     cmd.getOutput()->failure(cmd, e);
     return -1;
@@ -82,10 +82,11 @@ int main(int argc, char *argv[]) {
   if (!config) {
     std::cerr << std::endl
               << "No valid configuration available." << std::endl
-              << std::endl
-              << "Internal messages:" << std::endl
-              << internal_messages_ss.str() << std::endl
               << std::endl;
+    if (!internal_messages_ss.str().empty())
+      std::cerr << "Internal messages:" << std::endl
+                << internal_messages_ss.str() << std::endl
+                << std::endl;
     return -1;
   }
 
@@ -97,20 +98,22 @@ int main(int argc, char *argv[]) {
                 << "Could not find controller named "
                 << "'" << arg_controller_name.getValue() << "'"
                 << " in the specified configuration." << std::endl
-                << std::endl
-                << "Internal messages:" << std::endl
-                << internal_messages_ss.str() << std::endl
                 << std::endl;
+      if (!internal_messages_ss.str().empty())
+        std::cerr << "Internal messages:" << std::endl
+                  << internal_messages_ss.str() << std::endl
+                  << std::endl;
       return -1;
     }
   } else {
     if (!config->getObject(controller)) {
       std::cerr << std::endl
                 << "Could not find controller in the specified configuration." << std::endl
-                << std::endl
-                << "Internal messages:" << std::endl
-                << internal_messages_ss.str() << std::endl
                 << std::endl;
+      if (!internal_messages_ss.str().empty())
+        std::cerr << "Internal messages:" << std::endl
+                  << internal_messages_ss.str() << std::endl
+                  << std::endl;
       return -1;
     }
   }
@@ -124,8 +127,10 @@ int main(int argc, char *argv[]) {
   }
 
   BaseEstimator be;
-  be.setScale(arg_scale.getValue());
-  be.setUniform(arg_scale_uniform.getValue());
+  if (arg_scale_free.getValue())
+    be.setMode(BaseEstimator::Mode::FREE_SCALE);
+  if (arg_scale_uniform.getValue())
+    be.setMode(BaseEstimator::Mode::UNIFORM_SCALE);
   be.setController(controller);
 
   int ret = be.process();

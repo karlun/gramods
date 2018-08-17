@@ -8,13 +8,17 @@
 class BaseEstimator {
 public:
 
+  enum struct Mode {
+    UNIT,
+      FREE_SCALE,
+      UNIFORM_SCALE
+  };
+
   BaseEstimator();
 
   int process();
 
-  void setScale(bool on) { scale = on; }
-
-  void setUniform(bool on) { uniform = on; }
+  void setMode(Mode m) { mode = m; }
 
   void setController(std::shared_ptr<gramods::gmTrack::Controller> controller) {
     this->controller = controller;
@@ -27,22 +31,21 @@ private:
   int getSamples(std::vector<Eigen::Vector3f> &samples);
   int getIQM3D(std::vector<Eigen::Vector3f> samples, Eigen::Vector3f &x);
 
-  int printUnitBase(Eigen::Vector3f origin_position,
-                    Eigen::Vector3f x_position,
-                    Eigen::Vector3f y_position);
-
-  int printScaleBase(Eigen::Vector3f origin_position,
-                     Eigen::Vector3f x_position,
-                     Eigen::Vector3f y_position,
-                     Eigen::Vector3f z_position);
-
-  int printUniformBase(Eigen::Vector3f origin_position,
+  int estimateUnitBase(Eigen::Vector3f origin_position,
                        Eigen::Vector3f x_position,
-                       Eigen::Vector3f y_position,
-                       Eigen::Vector3f z_position);
+                       Eigen::Vector3f y_position);
 
-  bool scale;
-  bool uniform;
+  int estimateFreeScaleBase(Eigen::Vector3f origin_position,
+                            Eigen::Vector3f x_position,
+                            Eigen::Vector3f y_position,
+                            Eigen::Vector3f z_position);
+
+  int estimateUniformScaleBase(Eigen::Vector3f origin_position,
+                               Eigen::Vector3f x_position,
+                               Eigen::Vector3f y_position,
+                               Eigen::Vector3f z_position);
+
+  Mode mode;
   std::shared_ptr<gramods::gmTrack::Controller> controller;
 
   Eigen::Matrix4f base;

@@ -5,8 +5,12 @@
 #include <set>
 
 BaseEstimator::BaseEstimator()
-  : scale(false),
-    uniform(false) {}
+  : mode(Mode::UNIT) {
+  Eigen::MatrixXf A = Eigen::MatrixXf::Random(3, 3);
+  Eigen::VectorXf b = Eigen::VectorXf::Random(3, 3);
+  std::cout << "The solution using the QR decomposition is:\n"
+            << A.colPivHouseholderQr().solve(b) << std::endl;
+}
 
 int BaseEstimator::process() {
   if (!controller) return -1;
@@ -22,7 +26,7 @@ int BaseEstimator::process() {
   err = getIQM3D(origin_position_samples, origin_position);
   if (err) return err;
 
-  if (scale || uniform)
+  if (mode == Mode::UNIT)
     std::cout << "Mark +x direction (hold for multiple samples)" << std::endl;
   else
     std::cout << "Mark +x position (1,0,0) (hold for multiple samples)" << std::endl;
@@ -34,7 +38,7 @@ int BaseEstimator::process() {
   err = getIQM3D(x_position_samples, x_position);
   if (err) return err;
 
-  if (scale || uniform)
+  if (mode == Mode::UNIT)
     std::cout << "Mark +y direction (hold for multiple samples)" << std::endl;
   else
     std::cout << "Mark +y position (1,0,0) (hold for multiple samples)" << std::endl;
@@ -46,13 +50,10 @@ int BaseEstimator::process() {
   err = getIQM3D(y_position_samples, y_position);
   if (err) return err;
 
-  if (!scale && !uniform)
-    return printUnitBase(origin_position, x_position, y_position);
+  if (mode == Mode::UNIT)
+    return estimateUnitBase(origin_position, x_position, y_position);
 
-  if (scale || uniform)
-    std::cout << "Mark +z direction (hold for multiple samples)" << std::endl;
-  else
-    std::cout << "Mark +z position (1,0,0) (hold for multiple samples)" << std::endl;
+  std::cout << "Mark +z position (1,0,0) (hold for multiple samples)" << std::endl;
   std::vector<Eigen::Vector3f> z_position_samples;
   err = getSamples(z_position_samples);
   if (err) return err;
@@ -61,11 +62,11 @@ int BaseEstimator::process() {
   err = getIQM3D(z_position_samples, z_position);
   if (err) return err;
 
-  if (scale)
-    return printScaleBase(origin_position, x_position, y_position, z_position);
+  if (mode == Mode::FREE_SCALE)
+    return estimateFreeScaleBase(origin_position, x_position, y_position, z_position);
 
-  if (uniform)
-    return printUniformBase(origin_position, x_position, y_position, z_position);
+  if (mode == Mode::UNIFORM_SCALE)
+    return estimateUniformScaleBase(origin_position, x_position, y_position, z_position);
 
   assert(0);
 }
@@ -147,7 +148,7 @@ int BaseEstimator::getSamples(std::vector<Eigen::Vector3f> &samples) {
   return 0;
 }
 
-int BaseEstimator::printUnitBase
+int BaseEstimator::estimateUnitBase
 (Eigen::Vector3f origin_position,
  Eigen::Vector3f x_position,
  Eigen::Vector3f y_position) {
@@ -179,13 +180,13 @@ int BaseEstimator::printUnitBase
   return 0;
 }
 
-int BaseEstimator::printScaleBase
+int BaseEstimator::estimateFreeScaleBase
 (Eigen::Vector3f origin_position,
  Eigen::Vector3f x_position,
  Eigen::Vector3f y_position,
  Eigen::Vector3f z_position) {}
 
-int BaseEstimator::printUniformBase
+int BaseEstimator::estimateUniformScaleBase
 (Eigen::Vector3f origin_position,
  Eigen::Vector3f x_position,
  Eigen::Vector3f y_position,
