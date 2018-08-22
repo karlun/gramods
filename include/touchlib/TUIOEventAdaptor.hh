@@ -22,11 +22,12 @@ namespace touchlib {
    * 
    * Typical use:
    * \code{.cpp}
+   * touchState.getEventAdaptor<touchlib::TUIOEventAdaptor>().open();
+   * ...
    * int width, height;
    * SDL_GetWindowSize(sdl_window, &width, &height);
    * 
    * touchState.eventsInit(width, height);
-   * touchState.getEventAdaptor<touchlib::TUIOEventAdaptor>().sync();
    * touchState.eventsDone();
    * \endcode
    */
