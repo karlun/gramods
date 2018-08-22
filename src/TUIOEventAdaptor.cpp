@@ -43,7 +43,9 @@ double t0 = std::chrono::duration_cast<std::chrono::duration<double>>(TouchState
 
 void TUIOEventAdaptor::addTuioCursor(TUIO::TuioCursor *tcur) {
   std::unique_lock<std::mutex> lck(cursor_data_lock);
-  double seconds = std::chrono::duration_cast<std::chrono::duration<double>>(TouchState::clock::now().time_since_epoch()).count();
+  double seconds =
+    std::chrono::duration_cast<std::chrono::duration<double>>
+    (TouchState::clock::now().time_since_epoch()).count();
   cursor_data.push_back(Cursor{
       tcur->getCursorID(),
         tcur->getX(),
@@ -55,7 +57,9 @@ void TUIOEventAdaptor::addTuioCursor(TUIO::TuioCursor *tcur) {
 
 void TUIOEventAdaptor::updateTuioCursor(TUIO::TuioCursor *tcur) {
   std::unique_lock<std::mutex> lck(cursor_data_lock);
-  double seconds = std::chrono::duration_cast<std::chrono::duration<double>>(TouchState::clock::now().time_since_epoch()).count();
+  double seconds =
+    std::chrono::duration_cast<std::chrono::duration<double>>
+    (TouchState::clock::now().time_since_epoch()).count();
   cursor_data.push_back(Cursor {
       tcur->getCursorID(),
         tcur->getX(),
