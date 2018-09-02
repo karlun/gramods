@@ -22,18 +22,21 @@ CONFIGURE_FILE(
   ${CMAKE_CURRENT_BINARY_DIR}/include/gmCore/config.hh)
 
 
-ADD_LIBRARY(gmCore SHARED
-  src/CommandLineParser.cpp
-  src/Configuration.cpp
-  src/Console.cpp
-  src/ImportLibrary.cpp
-  src/LogFileMessageSink.cpp
-  src/MessageSink.cpp
-  src/OFactory.cpp
-  src/OStreamMessageSink.cpp
-  )
+FILE(GLOB_RECURSE HEADERS include/*.hh)
+FILE(GLOB_RECURSE SOURCES src/*.cpp)
+
+SOURCE_GROUP("headers" FILES ${HEADERS})
+SOURCE_GROUP("sources" FILES ${SOURCES})
+
+ADD_LIBRARY(gmCore SHARED ${HEADERS} ${SOURCES})
 
 TARGET_INCLUDE_DIRECTORIES(gmCore PUBLIC ${MODULE_INCLUDE_DIRS})
 TARGET_LINK_LIBRARIES(gmCore ${MODULE_LIBS})
 
 SET_PROPERTY(TARGET gmCore PROPERTY CXX_STANDARD 14)
+
+INSTALL(TARGETS gmCore
+  LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
+  RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR})
+INSTALL(DIRECTORY include/
+  DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
