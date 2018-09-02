@@ -2,10 +2,7 @@ CMAKE_MINIMUM_REQUIRED(VERSION 2.8.3)
 PROJECT(gramods)
 
 SET (CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_CURRENT_SOURCE_DIR}/cmake_modules")
-
-IF (CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
-  SET (CMAKE_INSTALL_PREFIX "${gramods_SOURCE_DIR}" CACHE PATH "Install path prefix, prepended onto install directories." FORCE)
-ENDIF()
+INCLUDE(GNUInstallDirs)
 
 # Find folders in a folder
 MACRO(SUBDIRLIST result curdir)
@@ -41,6 +38,7 @@ ENDFOREACH ()
 INCLUDE(InstallRequiredSystemLibraries)
 
 SET(CPACK_PACKAGE_DESCRIPTION_SUMMARY "The gramods package is a collection of modules for graphics rendering.")
+SET(CPACK_PACKAGE_NAME "libgramods")
 SET(CPACK_PACKAGE_VENDOR "Linköping University")
 SET(CPACK_PACKAGE_DESCRIPTION_FILE "${CMAKE_CURRENT_SOURCE_DIR}/README.md")
 SET(CPACK_PACKAGE_CONTACT "Karljohan Lundin Palmerius <karljohan.lundin.palmerius@liu.se>")
