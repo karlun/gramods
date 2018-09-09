@@ -27,6 +27,8 @@ void SdlWindow::initialize() {
                             SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED,
                             size[0], size[1], video_flags);
   gl_context = SDL_GL_CreateContext(window);
+
+  Window::initialize();
 }
 
 END_NAMESPACE_GMGRAPHICS;
