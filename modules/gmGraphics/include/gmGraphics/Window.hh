@@ -2,35 +2,66 @@
 #ifndef GRAMODS_GRAPHICS_WINDOW
 #define GRAMODS_GRAPHICS_WINDOW
 
-#include <gmGraphics/Dispatcher.hh>
-#include <gmGraphics/Tile.hh>
+#include <gmGraphics/config.hh>
+#include <gmGraphics/Camera.hh>
+
+#include <gmCore/Object.hh>
+#include <gmCore/OFactory.hh>
 
 BEGIN_NAMESPACE_GMGRAPHICS;
 
+class View;
+
 /**
    The base of graphics Window implementations.
- */
+*/
 class Window
-  : public Dispatcher {
+  : public gmCore::Object {
 
 public:
 
   /**
-     Asks the Window to call the specified function once for each
-     camera that requires rendering for the current window. For
-     simple stereo rendering, for example, the specified function will
-     be called twice, but more times for full dome rendering.
+     Asks the Window to call its views for rendering.
    */
-  void renderFullPipeline(Camera::RenderFunction func);
+  void renderFullPipeline(Camera::RenderFunction *func = 0);
 
   /**
-     Adds a tile to the window. A window without a tile will render
-     nothing - it is the tiles that provide the graphics.
+     Adds a view to the window. A window without views will render
+     nothing - it is the tiles that provide the graphics. If multiple
+     views are added, then these will be rendered over each other.
   */
-  void addTile(Tile);
+  void addView(std::shared_ptr<View> view);
+
+  /**
+     Asks the Window to make its GL context current. This is called
+     automatically by the renderFullPipeline method.
+  */
+  virtual void makeGLContextCurrent() = 0;
+
+  /**
+     Sets the window size to the specified values.
+  */
+  //virtual void setWindowSize(glm::ivec2 size) = 0;
+
+  /**
+     Activates or deactivates fullscreen mode. This should be
+     overloaded by sub classes to support run-time changes.
+  */
+  virtual void setFullscreen(bool on) { fullscreen = on; }
+
+  /**
+     Sets the title of the windows. This should be overloaded by sub
+     classes to support run-time changes.
+  */
+  virtual void setTitle(std::string t) { title = t; }
 
   GM_OFI_DECLARE(Window);
 
+protected:
+
+  bool fullscreen;
+  std::string title;
+  
 };
 
 END_NAMESPACE_GMGRAPHICS;

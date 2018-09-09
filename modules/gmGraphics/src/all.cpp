@@ -1,2 +1,0 @@
-
-#include <gmGraphics/Pipeline.hh>
