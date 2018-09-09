@@ -5,6 +5,8 @@
 #include <gmGraphics/config.hh>
 #include <gmGraphics/Camera.hh>
 
+#include <gmTypes/all.hh>
+
 #include <gmCore/Object.hh>
 #include <gmCore/OFactory.hh>
 
@@ -19,6 +21,8 @@ class Window
   : public gmCore::Object {
 
 public:
+
+  Window();
 
   /**
      Asks the Window to call its views for rendering.
@@ -50,6 +54,12 @@ public:
   virtual void setFullscreen(bool on) { fullscreen = on; }
 
   /**
+     Sets the size of the window. This should be overloaded by sub
+     classes to support run-time changes.
+  */
+  virtual void setSize(gmTypes::size2 s) { size = s; }
+
+  /**
      Sets the title of the windows. This should be overloaded by sub
      classes to support run-time changes.
   */
@@ -61,6 +71,7 @@ protected:
 
   bool fullscreen;
   std::string title;
+  gmTypes::size2 size;
   
 };
 

@@ -25,7 +25,7 @@ void SdlWindow::initialize() {
 
   window = SDL_CreateWindow(title.c_str(),
                             SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED,
-                            1920, 1080, video_flags);
+                            size[0], size[1], video_flags);
   gl_context = SDL_GL_CreateContext(window);
 }
 
