@@ -36,7 +36,7 @@ public:
      Asks the Window to make its GL context current. This is called
      automatically by the renderFullPipeline method.
   */
-  virtual void makeGLContextCurrent() = 0;
+  virtual void makeGLContextCurrent() {}
 
   /**
      Sets the window size to the specified values.
