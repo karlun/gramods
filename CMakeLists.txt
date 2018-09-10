@@ -18,19 +18,23 @@ ENDMACRO()
 
 # --- HANDLE MODULES ---
 
-IF (NOT DEFINED gramods_MODULES)
-  SUBDIRLIST(SUBDIRS ${gramods_SOURCE_DIR}/modules)
-  SET (gramods_MODULES ${SUBDIRS} CACHE STRING "Add names of modules that should be included. Separate each name by ;. The modules' CMakeLists.txt must be located in ${gramods_SOURCE_DIR}/modules/(name of toolkit)" FORCE)
-  MESSAGE (STATUS "Automatically creating modules list: " ${gramods_MODULES})
-ENDIF ()
-
+SUBDIRLIST(gramods_MODULES ${gramods_SOURCE_DIR}/modules)
 FOREACH (MODULE ${gramods_MODULES})
-  IF (EXISTS ${gramods_SOURCE_DIR}/modules/${MODULE}/CMakeLists.txt)
-    MESSAGE (STATUS "Including module ${MODULE}" )
-    ADD_SUBDIRECTORY (${gramods_SOURCE_DIR}/modules/${MODULE})
-  ELSE ()
-    MESSAGE (WARNING "Unable to include module ${MODULE}")
+
+  OPTION(gramods_INCLUDE_${MODULE} "Include the module ${MODULE}" ON)
+
+  IF (NOT gramods_INCLUDE_${MODULE})
+    CONTINUE()
+  ENDIF()
+
+  IF (NOT EXISTS ${gramods_SOURCE_DIR}/modules/${MODULE}/CMakeLists.txt)
+    MESSAGE (STATUS "Not including ${MODULE} - not a module")
+    CONTINUE()
   ENDIF ()
+
+  MESSAGE (STATUS "Including module ${MODULE}" )
+  ADD_SUBDIRECTORY (${gramods_SOURCE_DIR}/modules/${MODULE})
+
 ENDFOREACH ()
 
 # --- PACKING ---
