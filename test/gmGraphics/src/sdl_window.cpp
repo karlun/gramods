@@ -25,6 +25,7 @@ TEST(gmGraphics, SdlWindow) {
 
   std::shared_ptr<gmGraphics::Window> win;
   config.getObject(win);
+  ASSERT_TRUE(win);
 
   std::this_thread::sleep_for(std::chrono::seconds(10));
 }
