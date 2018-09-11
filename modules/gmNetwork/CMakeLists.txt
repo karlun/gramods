@@ -7,10 +7,26 @@ SET (MODULE_LIBS CACHE INTERNAL "The list of libraries that the network module s
 SET (MODULE_INCLUDE_DIRS ${MODULE_INCLUDE_DIRS} ${CMAKE_CURRENT_SOURCE_DIR}/include)
 SET (MODULE_INCLUDE_DIRS ${MODULE_INCLUDE_DIRS} ${CMAKE_CURRENT_BINARY_DIR}/include)
 
+
+IF (NOT TARGET gmCore)
+  MESSAGE (STATUS "Not including gmGraphics - requires gmCore")
+  RETURN()
+ENDIF()
 SET (MODULE_LIBS ${MODULE_LIBS} gmCore)
 
 # Boost ASIO (headers only)
-FIND_PACKAGE(ASIO REQUIRED)
+FIND_PACKAGE (ASIO)
+IF (ASIO_FOUND)
+  SET(HAVE_ASIO 1)
+  OPTION(gramods_ENABLE_ASIO "Enable functionality that requires ASIO" ON)
+  IF (NOT gramods_ENABLE_ASIO)
+    MESSAGE (STATUS "Not including gmNetwork - requires ASIO (disabled)")
+    RETURN()
+  ENDIF()
+ELSE()
+  MESSAGE (STATUS "Not including gmNetwork - requires ASIO")
+  RETURN()
+ENDIF()
 SET (MODULE_INCLUDE_DIRS ${MODULE_INCLUDE_DIRS} ${ASIO_INCLUDE_DIRS})
 
 
