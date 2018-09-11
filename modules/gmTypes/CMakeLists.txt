@@ -7,11 +7,13 @@ SET (MODULE_LIBS CACHE INTERNAL "The list of libraries that the types module sho
 SET (MODULE_INCLUDE_DIRS ${MODULE_INCLUDE_DIRS} ${CMAKE_CURRENT_SOURCE_DIR}/include)
 SET (MODULE_INCLUDE_DIRS ${MODULE_INCLUDE_DIRS} ${CMAKE_CURRENT_BINARY_DIR}/include)
 
-SET (MODULE_LIBS ${MODULE_LIBS} gmCore)
-
 FIND_PACKAGE (Eigen3 3.3 NO_MODULE)
 IF (Eigen3_FOUND)
-  SET (MODULE_LIBS ${MODULE_LIBS} Eigen3::Eigen)
+  SET(HAVE_Eigen3 1)
+  OPTION(gramods_ENABLE_Eigen3 "Enable functionality that requires Eigen3" ON)
+  IF (gramods_ENABLE_Eigen3)
+    SET (MODULE_LIBS ${MODULE_LIBS} Eigen3::Eigen)
+  ENDIF()
 ENDIF()
 
 

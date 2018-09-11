@@ -28,11 +28,11 @@ FOREACH (MODULE ${gramods_MODULES})
   ENDIF()
 
   IF (NOT EXISTS ${gramods_SOURCE_DIR}/modules/${MODULE}/CMakeLists.txt)
-    MESSAGE (STATUS "Not including ${MODULE} - not a module")
+    MESSAGE (STATUS "Skipping ${MODULE} - not a module")
     CONTINUE()
   ENDIF ()
 
-  MESSAGE (STATUS "Including module ${MODULE}" )
+  MESSAGE (STATUS "Adding module ${MODULE}" )
   ADD_SUBDIRECTORY (${gramods_SOURCE_DIR}/modules/${MODULE})
 
 ENDFOREACH ()
@@ -59,7 +59,7 @@ IF (GTest_FOUND)
   
   FOREACH (TEST ${SUBDIRS})
     IF (EXISTS ${gramods_SOURCE_DIR}/test/${TEST}/CMakeLists.txt)
-      MESSAGE (STATUS "Including test suite ${TEST}" )
+      MESSAGE (STATUS "Adding test suite ${TEST}" )
       ADD_SUBDIRECTORY (${gramods_SOURCE_DIR}/test/${TEST})
     ELSE ()
       MESSAGE (WARNING "Unable to include test suite ${TEST} --- missing file test/${TEST}/CMakeLists.txt")
