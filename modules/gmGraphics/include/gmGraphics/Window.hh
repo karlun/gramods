@@ -23,6 +23,7 @@ class Window
 public:
 
   Window();
+  virtual ~Window() {}
 
   /**
      Asks the Window to call its views for rendering.
