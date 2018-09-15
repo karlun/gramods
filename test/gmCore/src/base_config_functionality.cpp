@@ -1,6 +1,5 @@
 
 #include <gmCore/OFactory.hh>
-#include <gmCore/ImportLibrary.hh>
 #include <gmCore/Configuration.hh>
 
 #include <memory>
