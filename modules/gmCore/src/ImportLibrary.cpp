@@ -1,36 +1,34 @@
 
 #include <gmCore/ImportLibrary.hh>
 
-#include <gmCore/OFactory.hh>
+#include <dlfcn.h>
 
 BEGIN_NAMESPACE_GMCORE;
 
-namespace ImportLibraryInternals {
-  OFactory::OFactoryInformation<ImportLibrary> OFI("ImportLibrary");
-  OFI_PARAM(OFI, ImportLibrary, file, std::string, ImportLibrary::setFile);
-  OFI_POINTER(OFI, ImportLibrary, child, ImportLibrary, ImportLibrary::setChild);
-}
+GM_OFI_DEFINE(ImportLibrary);
+GM_OFI_PARAM(ImportLibrary, lib, std::string, ImportLibrary::setLib);
 
 ImportLibrary::ImportLibrary()
-  : library_loaded(false) {}
+  : library_loaded(false),
+    handle(nullptr) {}
 
-ImportLibrary::~ImportLibrary(){}
-
-void ImportLibrary::setFile(std::string file) {
-  this->file = file;
-  library_loaded = true;
+ImportLibrary::~ImportLibrary() {
+  if (handle)
+    dlclose(handle);
+  handle = nullptr;
 }
 
-std::string ImportLibrary::getFile() {
-  return file;
+void ImportLibrary::setLib(std::string lib) {
+  this->lib = lib;
 }
 
-void ImportLibrary::setChild(std::shared_ptr<ImportLibrary> ptr) {
-  child = ptr;
-}
-
-std::shared_ptr<ImportLibrary> ImportLibrary::getChild() {
-  return child;
+void ImportLibrary::initialize() {
+  handle = dlopen(lib.c_str(), RTLD_NOW);
+  if (handle)
+    library_loaded = true;
+  else
+    GM_ERR("ImportLibrary", "Could not import library " << lib.c_str());
+  Object::initialize();
 }
 
 END_NAMESPACE_GMCORE;

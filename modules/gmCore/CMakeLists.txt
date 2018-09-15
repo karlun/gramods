@@ -33,6 +33,8 @@ IF(SDL2_FOUND)
   ENDIF()
 ENDIF()
 
+SET (MODULE_LIBS ${MODULE_LIBS} ${CMAKE_DL_LIBS})
+
 
 OPTION(gramods_STRIP_PATH_FROM_FILE
   "Strip full path from source file in debug output through Console (GM_ERR, GM_WRN, etc)"
