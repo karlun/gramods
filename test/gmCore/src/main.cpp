@@ -3,6 +3,7 @@
 
 #define gramods_STRIP_PATH_FROM_FILE
 #include "base_config_functionality.cpp"
+#include "load_empty_lib_config_file.cpp"
 #include "console.cpp"
 
 
