@@ -30,7 +30,7 @@ public:
   */
   bool getPose(std::map<int, PoseSample> &p);
 
-  GM_OFI_DECLARE(VRPNPoseTracker);
+  GM_OFI_DECLARE;
 
 private:
 

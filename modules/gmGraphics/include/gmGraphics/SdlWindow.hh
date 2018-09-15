@@ -34,7 +34,7 @@ public:
   */
   void setContext(std::shared_ptr<gmCore::SdlContext> ctx) { context = ctx; }
 
-  GM_OFI_DECLARE(SdlWindow);
+  GM_OFI_DECLARE;
 
 private:
 

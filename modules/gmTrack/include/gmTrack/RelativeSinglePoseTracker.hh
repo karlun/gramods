@@ -33,7 +33,7 @@ public:
    */
   void setTargetTracker(std::shared_ptr<SinglePoseTracker> tracker);
 
-  GM_OFI_DECLARE(RelativeSinglePoseTracker);
+  GM_OFI_DECLARE;
   
 private:
 

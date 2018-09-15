@@ -101,7 +101,7 @@ public:
 
   void sendMessage(Protocol::Message mess);
 
-  GM_OFI_DECLARE(PeersConnection);
+  GM_OFI_DECLARE;
 
 private:
 

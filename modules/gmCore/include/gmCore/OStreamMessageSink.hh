@@ -50,7 +50,7 @@ public:
 
   void output(Message msg);
 
-  GM_OFI_DECLARE(OStreamMessageSink);
+  GM_OFI_DECLARE;
 
 private:
 

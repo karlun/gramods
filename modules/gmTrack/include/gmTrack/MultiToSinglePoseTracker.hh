@@ -36,7 +36,7 @@ public:
   */
   bool getPose(PoseSample &p);
 
-  GM_OFI_DECLARE(MultiToSinglePoseTracker);
+  GM_OFI_DECLARE;
 
 private:
 

@@ -30,7 +30,7 @@ public:
   void setUseVideo(bool on) { use_video = on; }
   void setUseAudio(bool on) { use_audio = on; }
 
-  GM_OFI_DECLARE(SdlContext);
+  GM_OFI_DECLARE;
 
   /**
      Returns true if context has been initialized with video support.

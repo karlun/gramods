@@ -66,7 +66,7 @@ public:
   */
   virtual void setTitle(std::string t) { title = t; }
 
-  GM_OFI_DECLARE(Window);
+  GM_OFI_DECLARE;
 
 protected:
 

@@ -14,15 +14,13 @@
 
 BEGIN_NAMESPACE_GMCORE;
 
-/**\def GM_OFI_DECLARE(OFI, NAME)
+/**\def GM_OFI_DECLARE
    Macro for declaring the registration of OFactoryInformation as a
    class member. Put this in your class definition, under a public or
    protected access specifier to allow for inheritance.
-
-   @param NAME The name of the class.
 */
-#define GM_OFI_DECLARE(NAME)                                      \
-  static gramods::gmCore::OFactory::OFactoryInformation _gm_ofi;
+#define GM_OFI_DECLARE                                              \
+  static gramods::gmCore::OFactory::OFactoryInformation _gm_ofi;//
 
 /**\def GM_OFI_DEFINE(OFI, NAME)
    Macro for instantiating the registration of a OFactoryInformation
