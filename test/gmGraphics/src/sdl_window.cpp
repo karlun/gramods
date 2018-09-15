@@ -25,9 +25,6 @@ TEST(gmCore, ImportLibrary) {
 }
 
 TEST(gmGraphics, SdlWindow) {
-  std::shared_ptr<gmCore::OStreamMessageSink> osms =
-    std::make_shared<gmCore::OStreamMessageSink>();
-  osms->initialize();
 
   std::string xml = ""
     "<config>"
