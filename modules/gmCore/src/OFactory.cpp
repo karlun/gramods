@@ -1,5 +1,6 @@
 
 #include <gmCore/OFactory.hh>
+#include <gmCore/Console.hh>
 
 #include <assert.h>
 
@@ -17,12 +18,14 @@ std::map<std::string,OFactory::OFactoryInformation*>& OFactory::getOFIByNameMap(
 }
 
 void OFactory::registerOFI(std::string name, OFactoryInformation *info){
+  GM_INF("OFactory", "Registering " << name);
   assert( getOFIByNameMap().count(name) == 0 );
 
   getOFIByNameMap()[name] = info;
 }
 
 void OFactory::unregisterOFI(std::string name){
+  GM_INF("OFactory", "Unregistering " << name);
   assert( getOFIByNameMap().count(name) == 1 );
 
   if( getOFIByNameMap().count(name) == 1 ){

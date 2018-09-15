@@ -5,7 +5,6 @@
 #include <gmCore/config.hh>
 #include <gmCore/Object.hh>
 #include <gmCore/Configuration.hh>
-#include <gmCore/Console.hh>
 
 #include <map>
 #include <string>
