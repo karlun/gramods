@@ -15,27 +15,15 @@
 
 BEGIN_NAMESPACE_GMCORE;
 
-/**\def OFI_CREATE(OFI, NAME)
-   Macro for registering a class to a OFactoryInformation node.
-
-   @param OFI A name to use for the registration instance.
-
-   @param NAME The name of the class, which will also be the
-   registered association string that refers to this class in the
-   object factory.
-*/
-#define OFI_CREATE(OFI, NAME)                                         \
-  gramods::gmCore::OFactory::OFactoryInformation<NAME> OFI(#NAME);
-
 /**\def GM_OFI_DECLARE(OFI, NAME)
    Macro for declaring the registration of OFactoryInformation as a
-   class member. Put this in your class definition, under a protected
-   access specifier to allow for inheritance.
+   class member. Put this in your class definition, under a public or
+   protected access specifier to allow for inheritance.
 
    @param NAME The name of the class.
 */
-#define GM_OFI_DECLARE(NAME)                                           \
-  static gramods::gmCore::OFactory::OFactoryInformation<NAME> _gm_ofi;
+#define GM_OFI_DECLARE(NAME)                                      \
+  static gramods::gmCore::OFactory::OFactoryInformation _gm_ofi;
 
 /**\def GM_OFI_DEFINE(OFI, NAME)
    Macro for instantiating the registration of a OFactoryInformation
@@ -45,9 +33,9 @@ BEGIN_NAMESPACE_GMCORE;
    registered association string that refers to this class in the
    object factory.
 */
-#define GM_OFI_DEFINE(NAME)                             \
-  gramods::gmCore::OFactory::OFactoryInformation<NAME>  \
-  NAME::_gm_ofi(#NAME);
+#define GM_OFI_DEFINE(NAME)                                             \
+  gramods::gmCore::OFactory::OFactoryInformation                        \
+  NAME::_gm_ofi(#NAME, new gramods::gmCore::OFactory::ObjectCreator<NAME>());
 
 /**\def GM_OFI_DEFINE_SUB(NAME, BASE)
    Macro for instantiating the registration of a OFactoryInformation
@@ -60,9 +48,9 @@ BEGIN_NAMESPACE_GMCORE;
 
    @param BASE The name of the base class.
 */
-#define GM_OFI_DEFINE_SUB(NAME, BASE)                   \
-  gramods::gmCore::OFactory::OFactoryInformation<NAME>  \
-  NAME::_gm_ofi(#NAME, &BASE::_gm_ofi);
+#define GM_OFI_DEFINE_SUB(NAME, BASE)                                   \
+  gramods::gmCore::OFactory::OFactoryInformation                        \
+  NAME::_gm_ofi(#NAME, new gramods::gmCore::OFactory::ObjectCreator<NAME>(), &BASE::_gm_ofi);
 
 /**\def GM_OFI_PARAM(CLASS, NAME, TYPE, FUNC)
    Macro for registering a parameter setter to a OFactoryInformation
@@ -85,7 +73,7 @@ BEGIN_NAMESPACE_GMCORE;
 #define GM_OFI_PARAM(CLASS, NAME, TYPE, FUNC)                           \
   gramods::gmCore::OFactory::ParamSetterInsert gm_ofi_##CLASS##_param_##NAME \
   (&CLASS::_gm_ofi, #NAME,                                              \
-   new gramods::gmCore::OFactory::OFactoryInformation<CLASS>::ParamSetter<TYPE>(&FUNC));
+   new gramods::gmCore::OFactory::ParamSetter<CLASS, TYPE>(&FUNC));
 
 /**\def GM_OFI_POINTER(OFI, CLASS, NAME, TYPE, FUNC)
    Macro for registering a shared object setter to a
@@ -108,77 +96,7 @@ BEGIN_NAMESPACE_GMCORE;
 #define GM_OFI_POINTER(CLASS, NAME, TYPE, FUNC)                         \
   gramods::gmCore::OFactory::PointerSetterInsert gm_ofi_##CLASS##_pointer_##NAME \
   (&CLASS::_gm_ofi, #NAME,                                              \
-   new gramods::gmCore::OFactory::OFactoryInformation<CLASS>::PointerSetter<TYPE>(&FUNC));
-
-/**\def OFI_CREATE_SUB(OFI, NAME, BASE_OFI)
-   Macro for registering a class to a OFactoryInformation node that
-   links to the OFactoryInformation node of a base class. This makes
-   it possible to set base class parameters when creating the sub
-   class instance.
-
-   @param OFI A name to use for the registration instance.
-
-   @param NAME The name of the class, which will also be the
-   registered association string that refers to this class in the
-   object factory.
-
-   @param BASE_OFI A pointer to the OFactoryInformation instance of
-   the base class.
-*/
-#define OFI_CREATE_SUB(OFI, NAME, BASE_OFI)                             \
-  gramods::gmCore::OFactory::OFactoryInformation<NAME> OFI(#NAME, BASE_OFI);
-
-/**\def OFI_PARAM(OFI, CLASS, NAME, TYPE, FUNC)
-   Macro for registering a parameter setter to a OFactoryInformation
-   node.
-
-   namespace MyClassInternals {
-     OFI_CREATE(OFI, MyClass);
-     OFI_SETTER(OFI, MyClass, file, std::string, MyClass::setFile);
-   }
-
-   @param OFI The statically instantiated OFactoryInformation of the
-   Object for which to register setters.
-
-   @param CLASS The type of the class in which this setter resides.
-
-   @param NAME The name to associate to the setter method, without
-   quotes.
-
-   @param TYPE The type of the variable set by this setter.
-
-   @param FUNC The setter method.
-*/
-#define OFI_PARAM(OFI, CLASS, NAME, TYPE, FUNC)                         \
-  gramods::gmCore::OFactory::ParamSetterInsert OFI##NAME              \
-  (&OFI, #NAME, new gramods::gmCore::OFactory::OFactoryInformation<CLASS>::ParamSetter<TYPE>(&FUNC));
-
-/**\def OFI_POINTER(OFI, CLASS, NAME, TYPE, FUNC)
-   Macro for registering a shared object setter to a
-   OFactoryInformation node.
-
-   namespace MyClassInternals {
-     OFI_CREATE(OFI, MyClass);
-     OFI_SETTER(OFI, MyClass, file, std::string, MyClass::setFile);
-   }
-
-   @param OFI The statically instantiated OFactoryInformation of the
-   Object for which to register setters.
-
-   @param CLASS The type of the class in which this setter resides.
-
-   @param NAME The name to associate to the setter method, without
-   quotes.
-
-   @param TYPE The class of the shared object. The type of the setter
-   method is std::shared_ptr<TYPE>.
-
-   @param FUNC The setter method, with signature
-   void FUNC(std::shared_ptr<TYPE>)
-*/
-#define OFI_POINTER(OFI, CLASS, NAME, TYPE, FUNC)                       \
-  gramods::gmCore::OFactory::PointerSetterInsert OFI##NAME            \
-  (&OFI, #NAME, new gramods::gmCore::OFactory::OFactoryInformation<CLASS>::PointerSetter<TYPE>(&FUNC));
+   new gramods::gmCore::OFactory::PointerSetter<CLASS, TYPE>(&FUNC));
 
 /**
    This is an object factory for classes with Object as base type,
@@ -195,32 +113,51 @@ class OFactory {
     virtual void setPointer(Object *n, std::shared_ptr<Object> o) = 0;
   };
 
-  struct OFactoryInformationBase {
-
+  struct ObjectCreatorBase {
+    /** Creates and returns an instance of the template argument
+        class. */
     virtual Object * create() = 0;
+  };
 
-    void registerParamSetter(std::string name, ParamSetterBase *setter) {
-      assert(param_setters.count(name) == 0);
-      param_setters[name].reset(setter);
-    }
+public:
 
-    void registerPointerSetter(std::string name, PointerSetterBase *setter) {
-      assert(pointer_setters.count(name) == 0);
-      pointer_setters[name].reset(setter);
-    }
+  struct OFactoryInformation {
 
-    virtual bool setParamValueFromString(Object *n, std::string name, std::string value) = 0;
+    /**
+       Registers the specified creator with the object factory and
+       associates it with the provided name. The optional base
+       parameter specifies the information of the base class for
+       inheritance of setters.
+    */
+    OFactoryInformation(std::string name,
+                        ObjectCreatorBase *creator,
+                        OFactoryInformation *base = nullptr);
 
-    virtual bool setPointerValue(Object *n, std::string name, std::shared_ptr<Object> ptr) = 0;
+    /** Unregisters the class at the object factory. */
+    ~OFactoryInformation();
+
+    Object * create();
+
+    void registerParamSetter(std::string name, ParamSetterBase *setter);
+
+    void registerPointerSetter(std::string name, PointerSetterBase *setter);
+
+    bool setParamValueFromString(Object *node, std::string name, std::string value);
+
+    bool setPointerValue(Object *node, std::string name, std::shared_ptr<Object> ptr);
+
+  private:
+
+    const std::string name;
+    ObjectCreatorBase * const creator;
+    OFactoryInformation * const base;
 
     std::map<std::string, std::unique_ptr<ParamSetterBase>> param_setters;
     std::map<std::string, std::unique_ptr<PointerSetterBase>> pointer_setters;
   };
 
-public:
-
   struct ParamSetterInsert {
-    ParamSetterInsert(OFactoryInformationBase *ofi,
+    ParamSetterInsert(OFactoryInformation *ofi,
                       std::string name,
                       ParamSetterBase *setter) {
       ofi->registerParamSetter(name, setter);
@@ -228,113 +165,64 @@ public:
   };
 
   struct PointerSetterInsert {
-    PointerSetterInsert(OFactoryInformationBase *ofi,
+    PointerSetterInsert(OFactoryInformation *ofi,
                         std::string name,
                         PointerSetterBase *setter) {
       ofi->registerPointerSetter(name, setter);
     }
   };
 
-  /** Creating a static instance of this class with the concrete class
-      as template argument will register that class with this object
-      factory. */
+  template<class Node, class T>
+  struct ParamSetter : ParamSetterBase {
+
+    ParamSetter(void (Node::*m)(T val))
+      : method(m) {}
+
+    void setValueFromString(Object *n, std::string s);
+
+    void (Node::*method)(T val);
+  };
+
+  template<class Node, class T>
+  struct PointerSetter : PointerSetterBase {
+
+    PointerSetter(void (Node::*m)(std::shared_ptr<T> ptr))
+      : method(m) {}
+
+    void setPointer(Object *n, std::shared_ptr<Object> ptr);
+
+    void (Node::*method)(std::shared_ptr<T> ptr);
+  };
+
   template<class Node>
-  struct OFactoryInformation
-    : OFactoryInformationBase {
-
-    template<class T>
-    struct ParamSetter : ParamSetterBase {
-
-      ParamSetter(void (Node::*m)(T val))
-        : method(m) {}
-
-      void setValueFromString(Object *n, std::string s);
-
-      void (Node::*method)(T val);
-    };
-
-    template<class T>
-    struct PointerSetter : PointerSetterBase {
-
-      PointerSetter(void (Node::*m)(std::shared_ptr<T> ptr))
-        : method(m) {}
-
-      void setPointer(Object *n, std::shared_ptr<Object> ptr);
-
-      void (Node::*method)(std::shared_ptr<T> ptr);
-    };
-
-    /**
-       Registers the template argument class with the object factory
-       and associates it with the provided name. The optional base
-       parameter specifies the base class for inheritance of setters.
-    */
-    OFactoryInformation(std::string name,
-                        OFactoryInformationBase *base = nullptr)
-      : name(name),
-        base(base) {
-      OFactory::registerOFI(name, this);
-    }
-
-    /** Unregisters the template argument class. */
-    ~OFactoryInformation(){
-      OFactory::unregisterOFI(name);
-    }
-
+  struct ObjectCreator : ObjectCreatorBase {
     /** Creates and returns an instance of the template argument
         class. */
     Object * create(){ return new Node; }
-
-    bool setParamValueFromString(Object *node, std::string name, std::string value) {
-      if (param_setters.count(name) == 0)
-        if (base == nullptr)
-          return false;
-        else
-          return base->setParamValueFromString(node, name, value);
-      param_setters[name]->setValueFromString(node, value);
-      return true;
-    }
-
-    bool setPointerValue(Object *node, std::string name, std::shared_ptr<Object> ptr) {
-      if (pointer_setters.count(name) == 0)
-        if (base == nullptr)
-          return false;
-        else
-          return base->setPointerValue(node, name, ptr);
-      pointer_setters[name]->setPointer(node, ptr);
-      return true;
-    }
-
-    const std::string name;
-    OFactoryInformationBase * const base;
-
-  private:
-    OFactoryInformation();
   };
-
+  
   /** Creates and returns an instance of the class associated with the
       provided name, or NULL if no such name exists in the database. */
   static Object * createObject(std::string name);
 
 private:
 
-  static std::map<std::string,OFactoryInformationBase*>& getOFIByNameMap();
+  static std::map<std::string,OFactoryInformation*>& getOFIByNameMap();
 
-  static void registerOFI(std::string name, OFactoryInformationBase *info);
+  static void registerOFI(std::string name, OFactoryInformation *info);
   static void unregisterOFI(std::string name);
-  static OFactoryInformationBase* getOFI(std::string name);
+  static OFactoryInformation* getOFI(std::string name);
 
 
-  template<class Node>
   friend struct OFactoryInformation;
 
   friend class Configuration;
 };
 
 
-template<class Node>
-template<class T>
-void OFactory::OFactoryInformation<Node>::ParamSetter<T>::setValueFromString(Object *n, std::string s) {
+template<class Node, class T>
+void OFactory::ParamSetter<Node, T>::setValueFromString
+(Object *n, std::string s) {
   assert(dynamic_cast<Node*>(n) != nullptr);
   Node *node = static_cast<Node*>(n);
   std::stringstream ss(s);
@@ -349,9 +237,9 @@ void OFactory::OFactoryInformation<Node>::ParamSetter<T>::setValueFromString(Obj
   (node->*method)(val);
 }
 
-template<class Node>
-template<class T>
-void OFactory::OFactoryInformation<Node>::PointerSetter<T>::setPointer(Object *n, std::shared_ptr<Object> ptr) {
+template<class Node, class T>
+void OFactory::PointerSetter<Node, T>::setPointer
+(Object *n, std::shared_ptr<Object> ptr) {
   assert(dynamic_cast<Node*>(n) != nullptr);
   Node *node = static_cast<Node*>(n);
   std::shared_ptr<T> _ptr = std::dynamic_pointer_cast<T>(ptr);
