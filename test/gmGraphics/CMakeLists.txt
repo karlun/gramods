@@ -6,8 +6,6 @@ SET (TEST_LIBS CACHE INTERNAL "The list of libraries that the test should link a
 
 SET (TEST_INCLUDE_DIRS ${TEST_INCLUDE_DIRS} ${CMAKE_CURRENT_SOURCE_DIR}/include)
 
-SET (TEST_LIBS ${TEST_LIBS} gmTrack)
-SET (TEST_LIBS ${TEST_LIBS} gmGraphics)
 
 IF (TARGET gmGraphics)
   SET (TEST_LIBS ${TEST_LIBS} gmGraphics)
