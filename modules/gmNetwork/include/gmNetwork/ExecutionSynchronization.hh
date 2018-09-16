@@ -46,7 +46,7 @@ public:
   */
   char getProtocolFlag() { return 10; }
 
-  GM_OFI_DECLARE(ExecutionSynchronization);
+  GM_OFI_DECLARE;
 
 private:
 

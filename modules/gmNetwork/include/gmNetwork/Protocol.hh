@@ -96,7 +96,7 @@ public:
   */
   void waitForConnection();
 
-  GM_OFI_DECLARE(Protocol);
+  GM_OFI_DECLARE;
 
 protected:
 

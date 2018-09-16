@@ -35,7 +35,7 @@ public:
 
   void output(Message msg);
 
-  GM_OFI_DECLARE(LogFileMessageSink);
+  GM_OFI_DECLARE;
 
 private:
 

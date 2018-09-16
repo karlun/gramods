@@ -23,7 +23,7 @@ int main(int argc, char *argv[]) {
     return -1;
   }
 
-  std::shared_ptr<gmGraphics::Pipeline> graphics;
+  std::shared_ptr<gmGraphics::Window> graphics;
   if (! config.getObject(graphics)) {
     ERROR("Cannot run without graphics pipeline!");
     return -1;
@@ -144,6 +144,29 @@ Required dependences:
  - GLObjects
 
 ### Module Program Design Principles
+
+A Window creates a graphics context and makes it current before any subsequent calls. The Window calls a View, twice if there is a StereoTechnique available. A View will make one or more calls to the specified callback, to render the scene. A Tiler will render a set of Tiles at different locations within the Window. Content may implement common contents that might be included without explicit calls from the client code.
+
+```plantuml
+GraphicsContext <|-- Window
+GraphicsContext : render(callback)
+Window - View
+note top of View : View sets texture as render target\nand calls callback.
+View : render(callback)
+View <|-- Tiler
+View <|-- SkewedView
+View <|-- FisheyeView
+View <|-- LatLongView
+View - Viewpoint
+note top of Viewpoint : View may ignore orientation.
+Viewpoint : position
+Viewpoint : orientation
+Window <|-- Sdl2Window
+StereoTechnique - Window
+note top of StereoTechnique : Window lets a stereo technique render to\nthe back buffer(s), if available.
+StereoTechnique <|-- AnaglyphsStereo
+StereoTechnique <|-- QuadBufferStereo
+```
 
 A core principles of the graphics module is that application design parts are encapsulated in descriptive classes such as window, for producing output into a window, and tile, to specify tiles within windows. There is also an generalized abstraction of processing steps so that it should be easy to rearrange existing steps into new effects and to inject new post processing steps.
 

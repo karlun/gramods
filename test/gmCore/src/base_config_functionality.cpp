@@ -12,7 +12,7 @@ using namespace gramods;
 struct Base : gmCore::Object {
   int a;
   void setA(int v) { a = v; }
-  GM_OFI_DECLARE(Base);
+  GM_OFI_DECLARE;
 };
 
 GM_OFI_DEFINE(Base);
@@ -25,7 +25,7 @@ struct Sub : Base {
   void setB(int v) { b = v; }
   void setPtr(std::shared_ptr<Sub> p) { ptr = p; }
   void addPtr(std::shared_ptr<Sub> p) { ptrs.push_back(p); }
-  GM_OFI_DECLARE(Sub);
+  GM_OFI_DECLARE;
 };
 
 GM_OFI_DEFINE_SUB(Sub, Base);
@@ -187,7 +187,7 @@ TEST(gmCoreBaseFunctionality, ConfigCommandLine) {
 struct Multi : gmCore::Object {
   std::vector<int> a;
   void addA(int v) { a.push_back(v); }
-  GM_OFI_DECLARE(Multi);
+  GM_OFI_DECLARE;
 };
 
 GM_OFI_DEFINE(Multi);

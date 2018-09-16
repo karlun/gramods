@@ -8,4 +8,9 @@
 
 #cmakedefine gramods_STRIP_PATH_FROM_FILE
 
+#cmakedefine SDL2_FOUND
+#ifdef SDL2_FOUND
+#cmakedefine gramods_ENABLE_SDL2
+#endif
+
 #endif
