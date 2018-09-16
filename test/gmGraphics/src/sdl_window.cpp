@@ -40,5 +40,5 @@ TEST(gmGraphics, SdlWindow) {
   config.getObject(win);
   ASSERT_TRUE(win);
 
-  std::this_thread::sleep_for(std::chrono::seconds(10));
+  std::this_thread::sleep_for(std::chrono::seconds(1));
 }
