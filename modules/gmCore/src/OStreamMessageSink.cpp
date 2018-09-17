@@ -10,14 +10,14 @@ GM_OFI_DEFINE(OStreamMessageSink);
 GM_OFI_PARAM(OStreamMessageSink, stream, std::string, OStreamMessageSink::setStream);
 
 OStreamMessageSink::OStreamMessageSink()
-  : rp_out(&std::cerr) {}
+  : raw_out(&std::cerr) {}
 
 void OStreamMessageSink::output(Message msg) {
   std::lock_guard<std::mutex> guard(lock);
 
-  if (rp_out == nullptr && !sp_out) return;
+  if (raw_out == nullptr && !shared_out) return;
 
-  std::ostream &out = rp_out != nullptr ? *rp_out : *sp_out.get();
+  std::ostream &out = raw_out != nullptr ? *raw_out : *shared_out.get();
 
   if (msg.source_data_available) {
     outputLevelAndTag(msg);
@@ -30,7 +30,7 @@ void OStreamMessageSink::output(Message msg) {
 }
 
 void OStreamMessageSink::outputLevelAndTag(Message msg) {
-  std::ostream &out = rp_out != nullptr ? *rp_out : *sp_out.get();
+  std::ostream &out = raw_out != nullptr ? *raw_out : *shared_out.get();
 
   switch (msg.level) {
   case ConsoleLevel::ERROR:

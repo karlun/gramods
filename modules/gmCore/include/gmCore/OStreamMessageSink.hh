@@ -26,8 +26,8 @@ public:
   */
   void setStream(std::ostream *s) {
     std::lock_guard<std::mutex> guard(lock);
-    rp_out = s;
-    sp_out = nullptr;
+    raw_out = s;
+    shared_out = nullptr;
   }
 
   /**
@@ -38,8 +38,8 @@ public:
   */
   void setStream(std::shared_ptr<std::ostream> s) {
     std::lock_guard<std::mutex> guard(lock);
-    rp_out = nullptr;
-    sp_out = s;
+    raw_out = nullptr;
+    shared_out = s;
   }
 
   /**
@@ -56,8 +56,8 @@ private:
 
   void outputLevelAndTag(Message msg);
 
-  std::ostream *rp_out;
-  std::shared_ptr<std::ostream> sp_out;
+  std::ostream *raw_out;
+  std::shared_ptr<std::ostream> shared_out;
   std::mutex lock;
 };
 
