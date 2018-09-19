@@ -24,10 +24,12 @@ void ImportLibrary::setLib(std::string lib) {
 
 void ImportLibrary::initialize() {
   handle = dlopen(lib.c_str(), RTLD_NOW);
-  if (handle)
+  if (handle) {
     library_loaded = true;
-  else
-    GM_ERR("ImportLibrary", "Could not import library " << lib.c_str());
+  } else {
+    char *msg = dlerror();
+    GM_ERR("ImportLibrary", "Could not import library '" << lib.c_str() << "':" << msg);
+  }
   Object::initialize();
 }
 
