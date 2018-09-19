@@ -9,12 +9,16 @@ BEGIN_NAMESPACE_GMCORE;
 GM_OFI_DEFINE(OStreamMessageSink);
 GM_OFI_PARAM(OStreamMessageSink, stream, std::string, OStreamMessageSink::setStream);
 GM_OFI_PARAM(OStreamMessageSink, useAnsiColor, bool, OStreamMessageSink::setUseAnsiColor);
+GM_OFI_PARAM(OStreamMessageSink, level, int, OStreamMessageSink::setLevel);
+
 
 OStreamMessageSink::OStreamMessageSink()
   : raw_out(&std::cerr),
-    use_ansi_color(false) {}
+    use_ansi_color(false),
+    level(4) {}
 
 void OStreamMessageSink::output(Message msg) {
+  if (msg.level > gramods::gmCore::ConsoleLevel(level)) return;
   std::lock_guard<std::mutex> guard(lock);
 
   if (raw_out == nullptr && !shared_out) return;

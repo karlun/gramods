@@ -58,6 +58,13 @@ public:
 
   void output(Message msg);
 
+  /**
+     Set the level of messages to output. This is an integer 0-4 where
+     0 results in only error messages begin printed and 4 results in
+     all messages.
+  */
+  void setLevel(int l) { level = l; }
+
   GM_OFI_DECLARE;
 
 private:
@@ -69,6 +76,7 @@ private:
   std::mutex lock;
 
   bool use_ansi_color;
+  int level;
 };
 
 END_NAMESPACE_GMCORE;
