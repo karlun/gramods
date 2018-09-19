@@ -22,7 +22,7 @@ TEST(gmCoreConsole, PathStripping) {
 
 TEST(gmCoreConsole, OStreamMessageSink_sstream) {
 
-  gmCore::Console::setDefaultSink(nullptr);
+  gmCore::Console::removeAllSinks();
 
   std::stringstream ss;
 
@@ -55,7 +55,7 @@ TEST(gmCoreConsole, OStreamMessageSink_sstream) {
 
 TEST(gmCoreConsole, OStreamMessageSink_stdcout) {
 
-  gmCore::Console::setDefaultSink(nullptr);
+  gmCore::Console::removeAllSinks();
 
   std::string xml = ""
     "<config>"
@@ -81,5 +81,5 @@ TEST(gmCoreConsole, OStreamMessageSink_stdcout) {
 
   EXPECT_EQ(result.str(), ss.str());
 
-  gmCore::Console::setDefaultSink(nullptr);
+  gmCore::Console::removeAllSinks();
 }

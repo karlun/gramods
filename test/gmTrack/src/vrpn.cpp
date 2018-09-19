@@ -23,7 +23,7 @@ using namespace gramods;
 TEST(gmTrackVRPN, VRPNTracker) {
 
 #if 1
-  gmCore::Console::setDefaultSink(nullptr);
+  gmCore::Console::removeAllSinks();
 #else  
   std::shared_ptr<gmCore::OStreamMessageSink> osms =
     std::make_shared<gmCore::OStreamMessageSink>();
@@ -83,7 +83,7 @@ TEST(gmTrackVRPN, VRPNTracker) {
 TEST(gmTrackVRPN, VRPNPoseTrackerConfigurationAndMultiToSinglePoseTracker) {
 
 #if 1
-  gmCore::Console::setDefaultSink(nullptr);
+  gmCore::Console::removeAllSinks();
 #else  
   std::shared_ptr<gmCore::OStreamMessageSink> osms =
     std::make_shared<gmCore::OStreamMessageSink>();
