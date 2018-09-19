@@ -48,17 +48,27 @@ public:
   */
   void setStream(std::string name);
 
+  /**
+     Activate or deactivate the use of ANSI color escape characters to
+     emphasize error and warning messages.
+  */
+  void setUseAnsiColor(bool on) {
+    use_ansi_color = on;
+  }
+
   void output(Message msg);
 
   GM_OFI_DECLARE;
 
 private:
 
-  void outputLevelAndTag(Message msg);
+  void outputLevelAndTag(Message msg, std::ostream &out);
 
   std::ostream *raw_out;
   std::shared_ptr<std::ostream> shared_out;
   std::mutex lock;
+
+  bool use_ansi_color;
 };
 
 END_NAMESPACE_GMCORE;

@@ -8,9 +8,11 @@ BEGIN_NAMESPACE_GMCORE;
 
 GM_OFI_DEFINE(OStreamMessageSink);
 GM_OFI_PARAM(OStreamMessageSink, stream, std::string, OStreamMessageSink::setStream);
+GM_OFI_PARAM(OStreamMessageSink, useAnsiColor, bool, OStreamMessageSink::setUseAnsiColor);
 
 OStreamMessageSink::OStreamMessageSink()
-  : raw_out(&std::cerr) {}
+  : raw_out(&std::cerr),
+    use_ansi_color(false) {}
 
 void OStreamMessageSink::output(Message msg) {
   std::lock_guard<std::mutex> guard(lock);
@@ -20,29 +22,39 @@ void OStreamMessageSink::output(Message msg) {
   std::ostream &out = raw_out != nullptr ? *raw_out : *shared_out.get();
 
   if (msg.source_data_available) {
-    outputLevelAndTag(msg);
+    outputLevelAndTag(msg, out);
     out << msg.file << ":" << msg.line << " (" << msg.function << ")" << std::endl;
   }
 
-  outputLevelAndTag(msg);
+  outputLevelAndTag(msg, out);
 
   out << msg.message;
+
+  if (use_ansi_color) out << "\033[37m";
 }
 
-void OStreamMessageSink::outputLevelAndTag(Message msg) {
-  std::ostream &out = raw_out != nullptr ? *raw_out : *shared_out.get();
-
+void OStreamMessageSink::outputLevelAndTag(Message msg, std::ostream &out) {
   switch (msg.level) {
   case ConsoleLevel::ERROR:
-    out << "EE"; break;
+    if (use_ansi_color) out << "\033[31m";
+    out << "EE";
+    break;
   case ConsoleLevel::WARNING:
-    out << "WW"; break;
+    if (use_ansi_color) out << "\033[33m";
+    out << "WW";
+    break;
   case ConsoleLevel::INFORMATION:
-    out << "II"; break;
+    if (use_ansi_color) out << "\033[37m";
+    out << "II";
+    break;
   case ConsoleLevel::VERBOSE_INFORMATION:
-    out << "I2"; break;
+    if (use_ansi_color) out << "\033[37m";
+    out << "I2";
+    break;
   case ConsoleLevel::VERY_VERBOSE_INFORMATION:
-    out << "I3"; break;
+    if (use_ansi_color) out << "\033[37m";
+    out << "I3";
+    break;
   default:
     assert(0);
   }
@@ -58,7 +70,9 @@ void OStreamMessageSink::setStream(std::string name) {
   } else if (name == "err") {
     setStream(&std::cerr);
   } else {
-    setStream(nullptr);
+    std::stringstream ss;
+    ss << "invalid stream name '" << name << "'";
+    throw std::invalid_argument(ss.str());
   }
 }
 
