@@ -3,15 +3,15 @@
 
 BEGIN_NAMESPACE_GMCORE;
 
-std::shared_ptr<MessageSink> Console::default_message_sink;
+std::vector<std::shared_ptr<MessageSink>> Console::message_sinks;
 
 int Console::ConsoleBuffer::sync() {
 
-  if (!sink) return 0;
-
   MessageSink::Message m = message_template;
   m.message = str();
-  sink->output(m);
+
+  for (auto sink : sinks)
+    sink->output(m);
 
   str("");
 
@@ -20,14 +20,14 @@ int Console::ConsoleBuffer::sync() {
 
 Console::ConsoleBuffer Console::getBuffer
 (ConsoleLevel level, std::string tag) {
-  return ConsoleBuffer(default_message_sink,
+  return ConsoleBuffer(message_sinks,
                        MessageSink::Message(level, tag, ""));
 }
 
 Console::ConsoleBuffer Console::getBuffer
 (ConsoleLevel level, std::string tag,
  std::string file, int line, std::string function) {
-  return ConsoleBuffer(default_message_sink,
+  return ConsoleBuffer(message_sinks,
                        MessageSink::Message(level, tag, "", file, line, function));
 }
 

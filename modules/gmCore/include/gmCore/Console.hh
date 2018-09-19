@@ -13,10 +13,12 @@
 #include <gmCore/ConsoleLevel.hh>
 #include <gmCore/MessageSink.hh>
 #include <memory>
+#include <vector>
 #include <sstream>
 
 #include <iostream>
 #include <string>
+#include <algorithm>
 
 BEGIN_NAMESPACE_GMCORE;
 
@@ -228,20 +230,29 @@ public:
     : std::ostream(&buffer),
     buffer(getBuffer(level, tag)) {}
 
-  static void setDefaultSink(std::shared_ptr<MessageSink> ms) {
-    default_message_sink = ms;
+  static void addSink(std::shared_ptr<MessageSink> ms) {
+    message_sinks.push_back(ms);
+  }
+
+  static void removeSink(std::shared_ptr<MessageSink> ms) {
+    message_sinks.erase(std::remove(message_sinks.begin(), message_sinks.end(), ms),
+                        message_sinks.end());
+  }
+
+  static void removeAllSinks() {
+    message_sinks.clear();
   }
 
 private:
 
   class ConsoleBuffer
       : public std::stringbuf {
-    std::shared_ptr<MessageSink> sink;
+    std::vector<std::shared_ptr<MessageSink>> sinks;
     MessageSink::Message message_template;
   public:
-    ConsoleBuffer(std::shared_ptr<MessageSink> sink,
+    ConsoleBuffer(std::vector<std::shared_ptr<MessageSink>> sinks,
                   MessageSink::Message msg)
-      : sink(sink),
+      : sinks(sinks),
         message_template(msg) {}
     virtual int sync();
   };
@@ -251,7 +262,7 @@ private:
   static ConsoleBuffer getBuffer(ConsoleLevel level, std::string tag,
                                  std::string file, int line, std::string function);
 
-  static std::shared_ptr<MessageSink> default_message_sink;
+  static std::vector<std::shared_ptr<MessageSink>> message_sinks;
 
   ConsoleBuffer buffer;
 };

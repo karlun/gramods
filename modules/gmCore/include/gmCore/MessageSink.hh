@@ -12,8 +12,9 @@ BEGIN_NAMESPACE_GMCORE;
 
 /**
    This is the base type for back-ends taking care of information sent
-   to the Console class. A sink will register itself as the default
-   sink of the Console class upon initialization.
+   to the Console class. A sink will register itself as a sink of the
+   Console class upon initialization. To remove a registered message
+   sink, call removeSink or removeAllSinks to remove all sinks.
 */
 class MessageSink
   : public gmCore::Object {
