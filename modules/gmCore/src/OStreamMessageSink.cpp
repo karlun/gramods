@@ -11,6 +11,10 @@ GM_OFI_PARAM(OStreamMessageSink, stream, std::string, OStreamMessageSink::setStr
 GM_OFI_PARAM(OStreamMessageSink, useAnsiColor, bool, OStreamMessageSink::setUseAnsiColor);
 GM_OFI_PARAM(OStreamMessageSink, level, int, OStreamMessageSink::setLevel);
 
+#define ANSI_NORMAL  "\033[37m"
+#define ANSI_ERROR   "\033[91m"
+#define ANSI_WARNING "\033[93m"
+
 
 OStreamMessageSink::OStreamMessageSink()
   : raw_out(&std::cerr),
@@ -34,29 +38,29 @@ void OStreamMessageSink::output(Message msg) {
 
   out << msg.message;
 
-  if (use_ansi_color) out << "\033[37m";
+  if (use_ansi_color) out << ANSI_NORMAL;
 }
 
 void OStreamMessageSink::outputLevelAndTag(Message msg, std::ostream &out) {
   switch (msg.level) {
   case ConsoleLevel::ERROR:
-    if (use_ansi_color) out << "\033[31m";
+    if (use_ansi_color) out << ANSI_ERROR;
     out << "EE";
     break;
   case ConsoleLevel::WARNING:
-    if (use_ansi_color) out << "\033[33m";
+    if (use_ansi_color) out << ANSI_WARNING;
     out << "WW";
     break;
   case ConsoleLevel::INFORMATION:
-    if (use_ansi_color) out << "\033[37m";
+    if (use_ansi_color) out << ANSI_NORMAL;
     out << "II";
     break;
   case ConsoleLevel::VERBOSE_INFORMATION:
-    if (use_ansi_color) out << "\033[37m";
+    if (use_ansi_color) out << ANSI_NORMAL;
     out << "I2";
     break;
   case ConsoleLevel::VERY_VERBOSE_INFORMATION:
-    if (use_ansi_color) out << "\033[37m";
+    if (use_ansi_color) out << ANSI_NORMAL;
     out << "I3";
     break;
   default:
