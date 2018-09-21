@@ -4,6 +4,7 @@
 
 #include <gmTypes/config.hh>
 #include <gmTypes/types.hh>
+#include <iostream>
 
 inline std::istream& operator>> (std::istream &in, gramods::gmTypes::size2 &s) {
   in >> s[0] >> s[1];

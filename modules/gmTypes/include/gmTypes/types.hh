@@ -3,6 +3,7 @@
 #define GRAMODS_TYPES_TYPES
 
 #include <gmTypes/config.hh>
+#include <array>
 
 BEGIN_NAMESPACE_GMTYPES;
 
