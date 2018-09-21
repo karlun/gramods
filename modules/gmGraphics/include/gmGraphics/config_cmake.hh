@@ -7,9 +7,14 @@
 #define USING_NAMESPACE_GMGRAPHICS using namespace gramods::gmGraphics;//
 
 
-#cmakedefine SDL2_FOUND
-#ifdef SDL2_FOUND
+#cmakedefine HAVE_SDL2
+#ifdef HAVE_SDL2
 #cmakedefine gramods_ENABLE_SDL2
+#endif
+
+#cmakedefine HAVE_libuvc
+#ifdef HAVE_libuvc
+#cmakedefine gramods_ENABLE_libuvc
 #endif
 
 
