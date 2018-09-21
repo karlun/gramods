@@ -37,6 +37,27 @@ FOREACH (MODULE ${gramods_MODULES})
 
 ENDFOREACH ()
 
+# --- HANDLE APPS ---
+
+SUBDIRLIST(gramods_APPS ${gramods_SOURCE_DIR}/apps)
+FOREACH (APP ${gramods_APPS})
+
+  OPTION(gramods_INCLUDE_${APP} "Include the app ${APP}" ON)
+
+  IF (NOT gramods_INCLUDE_${APP})
+    CONTINUE()
+  ENDIF()
+
+  IF (NOT EXISTS ${gramods_SOURCE_DIR}/apps/${APP}/CMakeLists.txt)
+    MESSAGE (STATUS "Skipping ${APP} - not an app")
+    CONTINUE()
+  ENDIF ()
+
+  MESSAGE (STATUS "Adding app ${APP}" )
+  ADD_SUBDIRECTORY (${gramods_SOURCE_DIR}/apps/${APP})
+
+ENDFOREACH ()
+
 # --- PACKING ---
 
 INCLUDE(InstallRequiredSystemLibraries)
