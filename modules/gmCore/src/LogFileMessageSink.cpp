@@ -4,7 +4,7 @@
 BEGIN_NAMESPACE_GMCORE;
 
 GM_OFI_DEFINE(LogFileMessageSink);
-GM_OFI_PARAM(LogFileMessageSink, logfilePath, std::string, LogFileMessageSink::setLogFilePath);
+GM_OFI_PARAM(LogFileMessageSink, logFilePath, std::string, LogFileMessageSink::setLogFilePath);
 GM_OFI_PARAM(LogFileMessageSink, append, bool, LogFileMessageSink::setAppend);
 
 LogFileMessageSink::LogFileMessageSink()
