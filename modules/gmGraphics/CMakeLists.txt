@@ -48,6 +48,16 @@ ELSE()
   RETURN()
 ENDIF()
 
+FIND_PACKAGE (libuvc)
+IF(libuvc_FOUND)
+  SET(HAVE_libuvc 1)
+  OPTION(gramods_ENABLE_libuvc "" ON)
+  IF (gramods_ENABLE_libuvc)
+    SET (MODULE_INCLUDE_DIRS ${MODULE_INCLUDE_DIRS} ${libuvc_INCLUDE_DIR})
+    SET (MODULE_LIBS ${MODULE_LIBS} ${libuvc_LIBRARIES})
+  ENDIF(gramods_ENABLE_libuvc)
+ENDIF(libuvc_FOUND)
+
 
 CONFIGURE_FILE(
   ${CMAKE_CURRENT_SOURCE_DIR}/include/gmGraphics/config_cmake.hh
