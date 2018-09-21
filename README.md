@@ -136,7 +136,7 @@ Required dependences:
 
 Thread encapsulation and role agnostic synchronization.
 
-## gmGraphics (to be defined)
+## gmGraphics (work in progress)
 
 Graphics rendering pipeline definition and handling.
 
@@ -145,7 +145,9 @@ Required dependences:
 
 ### Module Program Design Principles
 
-A Window creates a graphics context and makes it current before any subsequent calls. The Window calls a View, twice if there is a StereoTechnique available. A View will make one or more calls to the specified callback, to render the scene. A Tiler will render a set of Tiles at different locations within the Window. Content may implement common contents that might be included without explicit calls from the client code.
+A Window creates a graphics context and makes it current before any subsequent calls. The Window calls a View, twice if there is a StereoTechnique available. A View will make one or more calls to the specified callback, to render the scene. A View may call multiple other Views at different viewports, to create a tiled layout within the Window.
+
+If the Window has a StereoTechnique, it will set up frame buffer targets for the view to render the left and right eye images to. It will then send these buffers to the StereoTechnique to be rendered to the designated buffers. Thus, the StereoTechnique does not know how the eyes are physically oriented and offset, which may be different depending on the View, but only knows if the graphics should be rendered to quad buffers or interlaced or anaglyphic to the back buffer. A smart interlaced technique can therefore combine the masked out lines with the closest shown lines.
 
 ```plantuml
 GraphicsContext <|-- Window
@@ -166,17 +168,4 @@ StereoTechnique - Window
 note top of StereoTechnique : Window lets a stereo technique render to\nthe back buffer(s), if available.
 StereoTechnique <|-- AnaglyphsStereo
 StereoTechnique <|-- QuadBufferStereo
-```
-
-A core principles of the graphics module is that application design parts are encapsulated in descriptive classes such as window, for producing output into a window, and tile, to specify tiles within windows. There is also an generalized abstraction of processing steps so that it should be easy to rearrange existing steps into new effects and to inject new post processing steps.
-
-```plantuml
-client - Pipeline
-Pipeline -> Window
-Window -> Tile
-Tile --> Camera
-note "does post processing through OpenGL" as N1
-Tile -> Processor
-Processor -- N1
-Processor --> Camera
 ```
