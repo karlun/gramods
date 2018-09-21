@@ -20,12 +20,6 @@ class Camera
 public:
 
   /**
-     The signature of the rendering function that provides the actual
-     graphics. See gmGraphics::Dispatcher for more information.
-  */
-  typedef std::function<void(Camera)> RenderFunction;
-
-  /**
      Computes and returns a projection matrix for the current camera
      and the provided near and far distances.
   */

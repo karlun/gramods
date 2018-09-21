@@ -7,6 +7,7 @@
 #include <stdio.h>
 #include <thread>
 #include <sstream>
+#include <mutex>
 
 #include <glbinding/gl/enum.h>
 #include <glm/glm.hpp>
@@ -28,6 +29,7 @@ struct UvcTexture::_This {
   ~_This();
 
   static uvc_frame_format formatFromString(std::string s);
+  static std::string formatToString(uvc_frame_format f);
 
   bool initialize_context();
   bool locate_device(int vendor, int product, std::string serial);
@@ -53,6 +55,7 @@ struct UvcTexture::_This {
   uvc_frame_format format;
 
   uvc_frame_t *cache_bgr = nullptr;
+  std::mutex data_lock;
 
   std::unique_ptr<globjects::Texture> texture;
   bool started = false;
@@ -100,9 +103,6 @@ void UvcTexture::_This::startAll(int vendor, int product, std::string serial) {
 
 void UvcTexture::_This::update() {
 
-  if (!cache_bgr)
-    return;
-
   if (!texture)
     try {
       texture = std::make_unique<globjects::Texture>();
@@ -111,6 +111,11 @@ void UvcTexture::_This::update() {
       closeAll();
       return;
     }
+
+  std::lock_guard<std::mutex> guard(data_lock);
+
+  if (!cache_bgr)
+    return;
 
   // TODO: Fill texture with data
   // uvc_frame_t cache_bgr uvc_frame_t
@@ -212,48 +217,59 @@ bool UvcTexture::_This::start_streaming() {
  * input queue. If this function takes too long, you'll start losing frames. */
 void UvcTexture::_This::uvc_frame_cb(uvc_frame_t *frame, void *ptr) {
 
+  GM_VVINF("UvcTexture",
+           "Incoming UVC frame: " <<
+           frame->width << "x" << frame->height
+           << " in " << formatToString(frame->frame_format));
+
   UvcTexture::_This *_this = static_cast<UvcTexture::_This*>(ptr);
+
+  std::lock_guard<std::mutex> guard(_this->data_lock);
 
   uvc_frame_t *bgr;
   uvc_error_t ret;
 
-  /* We'll convert the image from YUV/JPEG to BGR, so allocate space */
   bgr = uvc_allocate_frame(frame->width * frame->height * 3);
   if (!bgr) {
-    printf("unable to allocate bgr frame!");
+    GM_ERR("UvcTexture", "Unable to allocate bgr frame");
     return;
   }
 
-  /* Do the BGR conversion */
-  ret = uvc_any2bgr(frame, bgr);
+  ret = uvc_any2rgb(frame, bgr);
   if (ret) {
-    uvc_perror(ret, "uvc_any2bgr");
+    GM_ERR("UvcTexture", "Cannot convert incoming data: " << uvc_strerror(ret));
     uvc_free_frame(bgr);
     return;
   }
 
-  // TODO: Queue up frame data so that GL thread may call image2D for them
-  if (_this->cache_bgr) uvc_free_frame(_this->cache_bgr);
+  if (_this->cache_bgr)
+    uvc_free_frame(_this->cache_bgr);
+
   _this->cache_bgr = bgr;
 }
 
 void UvcTexture::_This::closeAll() {
+
+  std::lock_guard<std::mutex> guard(data_lock);
+
   if (cache_bgr)
     uvc_free_frame(cache_bgr);
+  cache_bgr = nullptr;
+
   if (device_handle != nullptr) {
     uvc_stop_streaming(device_handle);
     uvc_close(device_handle);
   }
+  device_handle = nullptr;
+
   if (device != nullptr)
     uvc_unref_device(device);
+  device = nullptr;
+
   if (context != nullptr)
     uvc_exit(context);
-
-  device_handle = nullptr;
-  device = nullptr;
   context = nullptr;
 
-  cache_bgr = nullptr;
   texture = nullptr;
 }
 
@@ -298,6 +314,33 @@ uvc_frame_format UvcTexture::_This::formatFromString(std::string s) {
     GM_WRN("UvcTexture", "Unrecognized frame format " << s << "; using any");
     return UVC_FRAME_FORMAT_ANY;
   }
+
+#undef FORMAT
+}
+
+std::string UvcTexture::_This::formatToString(uvc_frame_format f) {
+
+#define FORMAT(A,B)                             \
+  if (f == A) return std::string(#B); //
+
+  FORMAT(UVC_FRAME_FORMAT_ANY, ANY);
+  FORMAT(UVC_FRAME_FORMAT_UNCOMPRESSED, UNCOMPRESSED);
+  FORMAT(UVC_FRAME_FORMAT_COMPRESSED, COMPRESSED);
+  FORMAT(UVC_FRAME_FORMAT_YUYV, YUYV);
+  FORMAT(UVC_FRAME_FORMAT_UYVY, UYVY);
+  FORMAT(UVC_FRAME_FORMAT_RGB, RGB);
+  FORMAT(UVC_FRAME_FORMAT_BGR, BGR);
+  FORMAT(UVC_FRAME_FORMAT_MJPEG, MJPEG);
+  FORMAT(UVC_FRAME_FORMAT_GRAY8, GRAY8);
+  FORMAT(UVC_FRAME_FORMAT_GRAY16, GRAY16);
+  FORMAT(UVC_FRAME_FORMAT_BY8, BY8);
+  FORMAT(UVC_FRAME_FORMAT_BA81, BA81);
+  FORMAT(UVC_FRAME_FORMAT_SGRBG8, SGRBG8);
+  FORMAT(UVC_FRAME_FORMAT_SGBRG8, SGBRG8);
+  FORMAT(UVC_FRAME_FORMAT_SRGGB8, SRGGB8);
+  FORMAT(UVC_FRAME_FORMAT_SBGGR8, SBGGR8);
+
+  return "invalid";
 
 #undef FORMAT
 }
