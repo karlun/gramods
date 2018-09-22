@@ -20,6 +20,21 @@ inline std::istream& operator>> (std::istream &in, gramods::gmTypes::size4 &s) {
   return in;
 }
 
+inline std::ostream& operator<< (std::ostream &out, gramods::gmTypes::size2 &s) {
+  out << s[0] << " " << s[1];
+  return out;
+}
+
+inline std::ostream& operator<< (std::ostream &out, gramods::gmTypes::size3 &s) {
+  out << s[0] << " " << s[1] << " " << s[2];
+  return out;
+}
+
+inline std::ostream& operator<< (std::ostream &out, gramods::gmTypes::size4 &s) {
+  out << s[0] << " " << s[1] << " " << s[2] << " " << s[3];
+  return out;
+}
+
 
 inline std::istream& operator>> (std::istream &in, gramods::gmTypes::float2 &s) {
   in >> s[0] >> s[1];
@@ -34,6 +49,21 @@ inline std::istream& operator>> (std::istream &in, gramods::gmTypes::float3 &s) 
 inline std::istream& operator>> (std::istream &in, gramods::gmTypes::float4 &s) {
   in >> s[0] >> s[1] >> s[2] >> s[3];
   return in;
+}
+
+inline std::ostream& operator<< (std::ostream &out, gramods::gmTypes::float2 &s) {
+  out << s[0] << " " << s[1];
+  return out;
+}
+
+inline std::ostream& operator<< (std::ostream &out, gramods::gmTypes::float3 &s) {
+  out << s[0] << " " << s[1] << " " << s[2];
+  return out;
+}
+
+inline std::ostream& operator<< (std::ostream &out, gramods::gmTypes::float4 &s) {
+  out << s[0] << " " << s[1] << " " << s[2] << " " << s[3];
+  return out;
 }
 
 #endif
