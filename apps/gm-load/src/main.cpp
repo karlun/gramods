@@ -15,7 +15,7 @@ using namespace gramods;
 int main(int argc, char *argv[]) {
 
   TCLAP::CmdLine cmd
-    ("Simple configuration loader. Any functionality is encoded directly in the loaded configurations.");
+    ("This is a simple configuration loader for gramods. Any functionality is encoded directly in the loaded configurations.");
 
   TCLAP::MultiArg<std::string> arg_config_dummy
     ("", "config",
@@ -29,7 +29,7 @@ int main(int argc, char *argv[]) {
 
   TCLAP::MultiArg<std::string> arg_param_dummy
     ("", "param",
-     "XML configuration(s) to load.",
+     "Overrides configuration parameters. For example, if there is a node 'head' under the root and this node has a parameter 'connectionString' then this parameter can be overridden by '--param head.connectionString=WAND@localhost'.",
      false, "identifier=value");
   cmd.add(arg_param_dummy);
 
