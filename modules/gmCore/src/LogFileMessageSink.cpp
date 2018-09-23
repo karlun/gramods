@@ -43,6 +43,7 @@ void LogFileMessageSink::output(Message msg) {
   outputLevelAndTag(logfile, msg);
 
   logfile << msg.message;
+  logfile.flush();
 }
 
 void LogFileMessageSink::outputLevelAndTag(std::ostream &out, Message msg) {
