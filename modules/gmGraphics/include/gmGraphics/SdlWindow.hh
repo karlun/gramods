@@ -27,6 +27,24 @@ public:
   void makeGLContextCurrent();
 
   /**
+     Sets the major version to be requested for the GL context in this
+     Window.
+  */
+  void setGLMajor(int v) { gl_major = v; }
+
+  /**
+     Sets the minor version to be requested for the GL context in this
+     Window.
+  */
+  void setGLMinor(int v) { gl_minor = v; }
+
+  /**
+     Sets the profile to be requested for the GL context in this
+     Window. Valid values are CORE, ES and COMPATIBILITY.
+  */
+  void setGLProfile(std::string s) { gl_profile = s; }
+
+  /**
      The SDL context. Providing the context pointer to the SDL window
      is not strictly necessary, but putting the SDL context here
      ensures that it is not destroyed until the SdlWindow has been
@@ -61,6 +79,10 @@ private:
   bool alive;
   SDL_Window* window;
   SDL_GLContext gl_context;
+
+  int gl_major = 4;
+  int gl_minor = 1;
+  std::string gl_profile = "core";
 
   std::shared_ptr<gmCore::SdlContext> context;
 };

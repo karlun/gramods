@@ -5,8 +5,12 @@
 
   <ImportLibrary lib="libgmGraphics.so"/>
 
-  <SdlWindow size="1920 1080">
-    <SdlContext AS="context" useVideo="1"/>
+  <SdlWindow
+      size="1920 1080"
+      GLMajor="3" GLMinor="3">
+    <SdlContext
+        AS="context"
+        useVideo="1"/>
     <TextureRenderer AS="renderer">
       <UvcTexture
           AS="texture"

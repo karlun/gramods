@@ -4,8 +4,6 @@
 BEGIN_NAMESPACE_GMCORE;
 
 GM_OFI_DEFINE(SdlContext);
-GM_OFI_PARAM(SdlContext, GLMajor, int, SdlContext::setGLMajor);
-GM_OFI_PARAM(SdlContext, GLMinor, int, SdlContext::setGLMinor);
 GM_OFI_PARAM(SdlContext, useVideo, bool, SdlContext::setUseVideo);
 GM_OFI_PARAM(SdlContext, useAudio, bool, SdlContext::setUseAudio);
 
@@ -36,8 +34,6 @@ void SdlContext::initialize() {
 
   if (use_video) {
     sdl_flags |= SDL_INIT_VIDEO;
-    SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, gl_major);
-    SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, gl_minor);
   }
 
   if (sdl_flags == 0)

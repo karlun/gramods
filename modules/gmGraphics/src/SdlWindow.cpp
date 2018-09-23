@@ -5,6 +5,8 @@
 BEGIN_NAMESPACE_GMGRAPHICS;
 
 GM_OFI_DEFINE_SUB(SdlWindow, Window);
+GM_OFI_PARAM(SdlWindow, GLMajor, int, SdlWindow::setGLMajor);
+GM_OFI_PARAM(SdlWindow, GLMinor, int, SdlWindow::setGLMinor);
 GM_OFI_POINTER(SdlWindow, context, gmCore::SdlContext, SdlWindow::setContext);
 
 SdlWindow::SdlWindow()
@@ -39,10 +41,33 @@ void SdlWindow::initialize() {
   if (!window)
     throw std::runtime_error("Cannot create SDL window");
 
+  SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, gl_major);
+  SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, gl_minor);
+  if (gl_profile == "core" || gl_profile == "CORE")
+    SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
+  else if (gl_profile == "es" || gl_profile == "ES")
+    SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_ES);
+  else if (gl_profile == "compatibility" || gl_profile == "COMPATIBILITY")
+    SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_COMPATIBILITY);
+  else if (gl_profile.size() > 0)
+    GM_WRN("SdlWindow", "Unknown GL profile '" << gl_profile << "' - using default");
+  GM_INF("SdlWindow", "Requesting GL context " << gl_major << "." << gl_minor << " " << gl_profile);
+  
   gl_context = SDL_GL_CreateContext(window);
   if (!gl_context)
     throw std::runtime_error("Cannot create GL context");
 
+  int real_major, real_minor, real_profile;
+  SDL_GL_GetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, &real_major);
+  SDL_GL_GetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, &real_minor);
+  SDL_GL_GetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, &real_profile);
+  std::string str_profile =
+    real_profile == SDL_GL_CONTEXT_PROFILE_CORE ? "core" :
+    real_profile == SDL_GL_CONTEXT_PROFILE_ES ? "ES" :
+    real_profile == SDL_GL_CONTEXT_PROFILE_COMPATIBILITY ? "compatibility" :
+    "unknown";
+  GM_INF("SdlWindow", "Got GL context " << real_major << "." << real_minor << " " << str_profile);
+  
   globjects::init();
 
   alive = true;
