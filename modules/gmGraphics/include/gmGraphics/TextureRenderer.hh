@@ -3,7 +3,7 @@
 #define GRAMODS_GRAPHICS_TEXTURERENDERER
 
 #include <gmGraphics/Renderer.hh>
-#include <gmGraphics/LiveTexture.hh>
+#include <gmGraphics/Texture.hh>
 
 #include <gmCore/OFactory.hh>
 
@@ -33,7 +33,7 @@ public:
      Sets the Texture that should be called upon calls to the render
      method.
   */
-  void setTexture(std::shared_ptr<LiveTexture> tex) {
+  void setTexture(std::shared_ptr<Texture> tex) {
     texture = tex;
   }
 
@@ -41,7 +41,7 @@ public:
 
 private:
 
-  std::shared_ptr<LiveTexture> texture;
+  std::shared_ptr<Texture> texture;
 
   struct _This;
   std::unique_ptr<_This> _this;

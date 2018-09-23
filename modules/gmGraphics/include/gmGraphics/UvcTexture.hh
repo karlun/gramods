@@ -8,7 +8,7 @@
 
 #include <gmTypes/all.hh>
 #include <gmCore/OFactory.hh>
-#include <gmGraphics/LiveTexture.hh>
+#include <gmGraphics/Texture.hh>
 #include <memory>
 
 BEGIN_NAMESPACE_GMGRAPHICS;
@@ -18,28 +18,24 @@ BEGIN_NAMESPACE_GMGRAPHICS;
    its texture data with RGB streamed from that device.
 */
 class UvcTexture
-  : public gmGraphics::LiveTexture {
+  : public gmGraphics::Texture {
 
 public:
 
-  /**
-     Connects to the first available UVC device matching the specified
-     ID or serial number. Throws std::runtime_exception if streaming
-     could not be started for some reason.
-  */
   UvcTexture();
 
   void initialize();
 
   /**
-     Updates the live texture with new data.
+     Updates the live texture with new data. Must be called with GL
+     context.
   */
   void update();
 
   /**
-     Returns a raw pointer to the internal texture object.
+     Returns the ID of the associated GL texture object.
   */
-  globjects::Texture * getTexture();
+  gl::GLuint getGLTextureID();
 
   /**
      Set the vendor ID of the UVC device to stream from. As XML

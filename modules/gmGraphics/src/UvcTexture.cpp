@@ -9,6 +9,7 @@
 #include <sstream>
 #include <mutex>
 
+#include <globjects/Texture.h>
 #include <glbinding/gl/enum.h>
 #include <glm/glm.hpp>
 
@@ -43,7 +44,7 @@ struct UvcTexture::_This {
   void closeAll();
 
   void update();
-  globjects::Texture * getTexture() { return texture.get(); }
+  gl::GLuint getGLTextureID() { return texture->id(); }
 
   uvc_context_t *context = nullptr;
   uvc_device_t *device = nullptr;
@@ -68,7 +69,7 @@ UvcTexture::UvcTexture()
     serial("") {}
 
 void UvcTexture::initialize() {
-  LiveTexture::initialize();
+  Texture::initialize();
 }
 
 UvcTexture::_This::_This()
@@ -89,8 +90,8 @@ void UvcTexture::update() {
   _this->update();
 }
 
-globjects::Texture * UvcTexture::getTexture() {
-  return _this->getTexture();
+gl::GLuint UvcTexture::getGLTextureID() {
+  return _this->getGLTextureID();
 }
 
 void UvcTexture::_This::startAll(int vendor, int product, std::string serial) {

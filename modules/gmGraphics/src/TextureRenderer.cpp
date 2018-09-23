@@ -8,6 +8,7 @@
 #include <globjects/globjects.h>
 #include <globjects/base/StaticStringSource.h>
 #include <globjects/VertexAttributeBinding.h>
+#include <globjects/Texture.h>
 
 #include <glm/glm.hpp>
 
@@ -17,7 +18,7 @@
 BEGIN_NAMESPACE_GMGRAPHICS;
 
 GM_OFI_DEFINE(TextureRenderer);
-GM_OFI_POINTER(TextureRenderer, texture, gmGraphics::LiveTexture, TextureRenderer::setTexture);
+GM_OFI_POINTER(TextureRenderer, texture, gmGraphics::Texture, TextureRenderer::setTexture);
 
 namespace {
   const char * vertex_shader_code = R"(
@@ -49,8 +50,8 @@ void main()
 
 struct TextureRenderer::_This {
 
-  void render(LiveTexture *tex, Camera &camera);
-  void initialize();
+  void render(Texture *tex, Camera &camera);
+  void setup();
 
   std::unique_ptr<globjects::Program> program;
   std::unique_ptr<globjects::VertexArray> vao;
@@ -62,31 +63,33 @@ TextureRenderer::TextureRenderer()
   : _this(new _This) {}
 
 void TextureRenderer::setup() {
-  _this->initialize();
+  _this->setup();
 }
 
 void TextureRenderer::render(Camera camera) {
   _this->render(texture.get(), camera);
 }
 
-void TextureRenderer::_This::render(LiveTexture *texture, Camera &camera) {
+void TextureRenderer::_This::render(Texture *texture, Camera &camera) {
   GM_VINF("TextureRenderer", "rendering");
 
   texture->update();
 
-  if (!texture->getTexture()) return;
+  if (!texture->getGLTextureID()) return;
+  std::unique_ptr<globjects::Texture> gl_texture =
+    globjects::Texture::fromId(texture->getGLTextureID(), gl::GL_TEXTURE_2D);
 
   glActiveTexture(gl::GL_TEXTURE0);
-  texture->getTexture()->bind();
+  gl_texture->bind();
 
   program->use();
   vao->drawArrays(gl::GL_TRIANGLE_STRIP, 0, 4);
   program->release();
 
-  texture->getTexture()->unbind();
+  gl_texture->unbind();
 }
 
-void TextureRenderer::_This::initialize() {
+void TextureRenderer::_This::setup() {
 
   auto vertex_shader_str = globjects::Shader::sourceFromString(vertex_shader_code);
   vertex_shader =
