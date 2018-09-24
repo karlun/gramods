@@ -1,4 +1,5 @@
 
+
 #ifndef GRAMODS_GRAPHICS_TEXTURE
 #define GRAMODS_GRAPHICS_TEXTURE
 
@@ -6,7 +7,8 @@
 
 #include <gmCore/Object.hh>
 
-#include <glbinding/gl/types.h>
+#include <GL/glew.h>
+#include <GL/gl.h>
 
 BEGIN_NAMESPACE_GMGRAPHICS;
 
@@ -27,7 +29,7 @@ public:
   /**
      Returns the ID of the associated GL texture object.
   */
-  virtual gl::GLuint getGLTextureID() = 0;
+  virtual GLuint getGLTextureID() = 0;
 
 };
 

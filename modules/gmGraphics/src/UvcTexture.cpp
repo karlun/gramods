@@ -5,13 +5,10 @@
 
 #include <libuvc/libuvc.h>
 #include <stdio.h>
+#include <string.h>
 #include <thread>
 #include <sstream>
 #include <mutex>
-
-#include <globjects/Texture.h>
-#include <glbinding/gl/enum.h>
-#include <glm/glm.hpp>
 
 BEGIN_NAMESPACE_GMGRAPHICS;
 
@@ -44,7 +41,7 @@ struct UvcTexture::_This {
   void closeAll();
 
   void update();
-  gl::GLuint getGLTextureID() { return texture->id(); }
+  GLuint getGLTextureID() { return texture_id; }
 
   uvc_context_t *context = nullptr;
   uvc_device_t *device = nullptr;
@@ -58,7 +55,7 @@ struct UvcTexture::_This {
   uvc_frame_t *cache_bgr = nullptr;
   std::mutex data_lock;
 
-  std::unique_ptr<globjects::Texture> texture;
+  GLuint texture_id;
   bool started = false;
 };
 
@@ -90,7 +87,7 @@ void UvcTexture::update() {
   _this->update();
 }
 
-gl::GLuint UvcTexture::getGLTextureID() {
+GLuint UvcTexture::getGLTextureID() {
   return _this->getGLTextureID();
 }
 
@@ -104,14 +101,24 @@ void UvcTexture::_This::startAll(int vendor, int product, std::string serial) {
 
 void UvcTexture::_This::update() {
 
-  if (!texture)
-    try {
-      texture = std::make_unique<globjects::Texture>();
-    } catch(std::exception e) {
-      GM_ERR("UvcTexture", "Could not create GL texture: " << e.what());
-      closeAll();
-      return;
-    }
+  if (!texture_id) {
+    std::vector<GLubyte> data;
+    for (int idxY = 0; idxY < resolution[1]; ++idxY)
+      for (int idxX = 0; idxX < resolution[0]; ++idxX)
+        for (int idxC = 0; idxC < 3; ++idxC)
+          data.push_back(((idxX/10 + idxY/10) % 2 ? 150 : 50) +
+                         ((idxX/100 + idxY/100) % 2 ? 20 : -20));
+
+    glGenTextures(1, &texture_id);
+    glBindTexture(GL_TEXTURE_2D, texture_id);
+    glTexImage2D(GL_TEXTURE_2D,
+                 0, GL_RGBA8, resolution[0], resolution[1],
+                 0, GL_RGB, GL_UNSIGNED_BYTE, &data.front());
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    glBindTexture(GL_TEXTURE_2D, 0);
+    GM_INF("UvcTexture", "Created texture with default data");
+  }
 
   std::lock_guard<std::mutex> guard(data_lock);
 
@@ -132,8 +139,9 @@ void UvcTexture::_This::update() {
     return;
   }
 
-  texture->image2D(0, gl::GL_RGB, glm::ivec2(cache_bgr->width, cache_bgr->height),
-                   0, gl::GL_BGR, gl::GL_UNSIGNED_BYTE, cache_bgr->data);
+  glTexImage2D(GL_TEXTURE_2D,
+               0, GL_RGB, cache_bgr->width, cache_bgr->height,
+               0, GL_BGR, GL_UNSIGNED_BYTE, cache_bgr->data);
 
   uvc_free_frame(cache_bgr);
   cache_bgr = nullptr;
@@ -272,7 +280,8 @@ void UvcTexture::_This::closeAll() {
     uvc_exit(context);
   context = nullptr;
 
-  texture = nullptr;
+  glDeleteTextures(1, &texture_id);
+  texture_id = 0;
 }
 
 void UvcTexture::setResolution(gmTypes::size2 res) {

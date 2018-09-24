@@ -12,7 +12,7 @@ GM_OFI_POINTER(Window, renderer, gmGraphics::Renderer, Window::addRenderer);
 Window::Window()
   : fullscreen(false),
     title("untitled gramods window"),
-    size(gmTypes::size2({1920, 1080})) {}
+    size(gmTypes::size2({640, 480})) {}
 
 void Window::renderFullPipeline() {
 

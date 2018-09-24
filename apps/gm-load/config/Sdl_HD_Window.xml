@@ -6,7 +6,7 @@
   <ImportLibrary lib="libgmGraphics.so"/>
 
   <SdlWindow
-      size="1920 1080"
+      size="640 640"
       GLMajor="3" GLMinor="3">
     <SdlContext
         AS="context"
@@ -14,7 +14,7 @@
     <TextureRenderer AS="renderer">
       <UvcTexture
           AS="texture"
-          resolution="1920 1080"
+          resolution="640 480"
           framerate="30"
           format="mjpeg"/>
     </TextureRenderer>

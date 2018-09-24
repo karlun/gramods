@@ -1,6 +1,8 @@
 
 #include <gmGraphics/SdlWindow.hh>
-#include <globjects/globjects.h>
+
+#include <GL/glew.h>
+#include <GL/gl.h>
 
 BEGIN_NAMESPACE_GMGRAPHICS;
 
@@ -26,6 +28,57 @@ void SdlWindow::makeGLContextCurrent() {
   SDL_GL_MakeCurrent(window, gl_context);
 }
 
+void MessageCallback(GLenum source,
+                     GLenum type,
+                     GLuint id,
+                     GLenum severity,
+                     GLsizei length,
+                     const GLchar* message,
+                     const void* userParam) {
+  std::string type_str;
+  switch(type) {
+  case GL_DEBUG_TYPE_ERROR: type_str = "error"; break;
+  case GL_DEBUG_TYPE_DEPRECATED_BEHAVIOR: type_str = "deprecated behavior"; break;
+  case GL_DEBUG_TYPE_UNDEFINED_BEHAVIOR: type_str = "undefined behavior"; break;
+  case GL_DEBUG_TYPE_PORTABILITY: type_str = "portability problem"; break;
+case GL_DEBUG_TYPE_PERFORMANCE: type_str = "performance issue"; break;
+  case GL_DEBUG_TYPE_MARKER: type_str = "marker"; break;
+  case GL_DEBUG_TYPE_PUSH_GROUP: type_str = "push"; break;
+  case GL_DEBUG_TYPE_POP_GROUP: type_str = "pop"; break;
+  case GL_DEBUG_TYPE_OTHER: type_str = "other"; break;
+  default:
+    type_str = "unknown";
+  }
+
+  std::string severity_str;
+  switch(severity) {
+  case GL_DEBUG_SEVERITY_HIGH: severity_str = "high"; break;
+  case GL_DEBUG_SEVERITY_MEDIUM: severity_str = "medium"; break;
+  case GL_DEBUG_SEVERITY_LOW: severity_str = "low"; break;
+  case GL_DEBUG_SEVERITY_NOTIFICATION: severity_str = "notification"; break;
+  default:
+    severity_str = "unknown";
+  }
+
+  switch(severity) {
+  case GL_DEBUG_SEVERITY_HIGH:
+    GM_ERR("OpenGL", "OpenGL " << type_str
+           << ", severity = " << severity_str
+           << ", message = " << message );
+    break;
+  case GL_DEBUG_SEVERITY_MEDIUM:
+    GM_WRN("OpenGL", "OpenGL " << type_str
+           << ", severity = " << severity_str
+           << ", message = " << message );
+    break;
+  case GL_DEBUG_SEVERITY_LOW:
+  case GL_DEBUG_SEVERITY_NOTIFICATION:
+    GM_INF("OpenGL", "OpenGL " << type_str
+           << ", severity = " << severity_str
+           << ", message = " << message );
+  }
+}
+
 void SdlWindow::initialize() {
   if (!gmCore::SdlContext::hasVideo())
     throw std::runtime_error("Cannot open SDL window - no SDL video context initialized");
@@ -35,6 +88,7 @@ void SdlWindow::initialize() {
     video_flags |= SDL_WINDOW_FULLSCREEN_DESKTOP;
   video_flags |= SDL_WINDOW_RESIZABLE;
 
+  GM_INF("SdlWindow", "Requesting window " << size[0] << "x" << size[1] << " " << (fullscreen?"fullscreen":""));
   window = SDL_CreateWindow(title.c_str(),
                             SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED,
                             size[0], size[1], video_flags);
@@ -51,8 +105,8 @@ void SdlWindow::initialize() {
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_COMPATIBILITY);
   else if (gl_profile.size() > 0)
     GM_WRN("SdlWindow", "Unknown GL profile '" << gl_profile << "' - using default");
+
   GM_INF("SdlWindow", "Requesting GL context " << gl_major << "." << gl_minor << " " << gl_profile);
-  
   gl_context = SDL_GL_CreateContext(window);
   if (!gl_context)
     throw std::runtime_error("Cannot create GL context");
@@ -67,9 +121,17 @@ void SdlWindow::initialize() {
     real_profile == SDL_GL_CONTEXT_PROFILE_COMPATIBILITY ? "compatibility" :
     "unknown";
   GM_INF("SdlWindow", "Got GL context " << real_major << "." << real_minor << " " << str_profile);
-  
-  globjects::init();
 
+  GLenum err = glewInit();
+  if (GLEW_OK != err) {
+    std::stringstream s;
+    s << "Cannot link GL symbols: " << glewGetErrorString( err );
+    throw std::runtime_error(s.str());
+  }
+
+  glEnable              ( GL_DEBUG_OUTPUT );
+  glDebugMessageCallback( MessageCallback, 0 );
+  
   alive = true;
 
   Window::initialize();
@@ -95,6 +157,13 @@ bool SdlWindow::handleEvent(SDL_Event& event) {
 
   case SDL_WINDOWEVENT:
     switch (event.window.event) {
+
+#if 0
+    case SDL_WINDOWEVENT_SIZE_CHANGED:
+      glViewport(0, 0, event.window.data1, event.window.data2);
+      GM_WRN("SdlWindow", "SIZE_CHANGED");
+      break;
+#endif
 
     case SDL_WINDOWEVENT_CLOSE:
       alive = false;

@@ -35,7 +35,7 @@ public:
   /**
      Returns the ID of the associated GL texture object.
   */
-  gl::GLuint getGLTextureID();
+  GLuint getGLTextureID();
 
   /**
      Set the vendor ID of the UVC device to stream from. As XML
