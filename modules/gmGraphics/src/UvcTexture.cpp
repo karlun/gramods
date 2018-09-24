@@ -118,8 +118,6 @@ void UvcTexture::_This::update() {
   if (!cache_bgr)
     return;
 
-  // TODO: Fill texture with data
-  // uvc_frame_t cache_bgr uvc_frame_t
   cache_bgr->data;
   cache_bgr->width;
   cache_bgr->height;
@@ -136,6 +134,9 @@ void UvcTexture::_This::update() {
 
   texture->image2D(0, gl::GL_RGB, glm::ivec2(cache_bgr->width, cache_bgr->height),
                    0, gl::GL_BGR, gl::GL_UNSIGNED_BYTE, cache_bgr->data);
+
+  uvc_free_frame(cache_bgr);
+  cache_bgr = nullptr;
 }
 
 bool UvcTexture::_This::initialize_context() {
