@@ -55,7 +55,7 @@ struct UvcTexture::_This {
   uvc_frame_t *cache_bgr = nullptr;
   std::mutex data_lock;
 
-  GLuint texture_id;
+  GLuint texture_id = 0;
   bool started = false;
 };
 

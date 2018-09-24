@@ -39,14 +39,16 @@ void main() {
 
 struct TextureRenderer::_This {
 
+  ~_This();
+
   void render(Texture *tex, Camera &camera);
   void setup();
 
-  GLuint vertex_shader_id;
-  GLuint fragment_shader_id;
-  GLuint program_id;
-  GLuint vao_id;
-  GLuint vbo_id;
+  GLuint vertex_shader_id = 0;
+  GLuint fragment_shader_id = 0;
+  GLuint program_id = 0;
+  GLuint vao_id = 0;
+  GLuint vbo_id = 0;
 };
 
 TextureRenderer::TextureRenderer()
@@ -124,5 +126,20 @@ void TextureRenderer::_This::setup() {
 
   GM_INF("TextureRenderer", "initialized");
 }
+
+TextureRenderer::_This::~_This() {
+  glDeleteProgram(program_id);
+  glDeleteShader(vertex_shader_id);
+  glDeleteShader(fragment_shader_id);
+  glDeleteVertexArrays(1, &vao_id);
+  glDeleteBuffers(1, &vbo_id);
+
+  vertex_shader_id = 0;
+  fragment_shader_id = 0;
+  program_id = 0;
+  vao_id = 0;
+  vbo_id = 0;
+}
+
 
 END_NAMESPACE_GMGRAPHICS;
