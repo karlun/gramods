@@ -57,6 +57,8 @@ struct TextureRenderer::_This {
   std::unique_ptr<globjects::VertexArray> vao;
   std::unique_ptr<globjects::Shader> vertex_shader;
   std::unique_ptr<globjects::Shader> fragment_shader;
+  std::unique_ptr<globjects::AbstractStringSource> vertex_shader_str;
+  std::unique_ptr<globjects::AbstractStringSource> fragment_shader_str;
 };
 
 TextureRenderer::TextureRenderer()
@@ -91,11 +93,11 @@ void TextureRenderer::_This::render(Texture *texture, Camera &camera) {
 
 void TextureRenderer::_This::setup() {
 
-  auto vertex_shader_str = globjects::Shader::sourceFromString(vertex_shader_code);
+  vertex_shader_str = globjects::Shader::sourceFromString(vertex_shader_code);
   vertex_shader =
     std::make_unique<globjects::Shader>
     (gl::GL_VERTEX_SHADER, vertex_shader_str.get());
-  auto fragment_shader_str = globjects::Shader::sourceFromString(fragment_shader_code);
+  fragment_shader_str = globjects::Shader::sourceFromString(fragment_shader_code);
   fragment_shader =
     std::make_unique<globjects::Shader>
     (gl::GL_FRAGMENT_SHADER, fragment_shader_str.get());
