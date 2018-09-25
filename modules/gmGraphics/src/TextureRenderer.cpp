@@ -78,9 +78,11 @@ void TextureRenderer::_This::render(Texture *texture, Camera &camera) {
 
   glBindVertexArray(vao_id);
   glBindBuffer(GL_ARRAY_BUFFER, vbo_id);
+  glEnableVertexAttribArray(0);
   glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
-  //glBindBuffer(GL_ARRAY_BUFFER, 0);
-  //glBindVertexArray(0);
+  glDisableVertexAttribArray(0);
+  glBindBuffer(GL_ARRAY_BUFFER, 0);
+  glBindVertexArray(0);
 
   glUseProgram(0);
   glDisableVertexAttribArray(0);
@@ -108,7 +110,7 @@ void TextureRenderer::_This::setup() {
   glBindAttribLocation(program_id, 0, "in_Position");
     
   GM_VINF("TextureRenderer", "Creating vertex array");
-  glCreateVertexArrays(1, &vao_id);
+  glGenVertexArrays(1, &vao_id);
   glBindVertexArray(vao_id);
 
   GM_VINF("TextureRenderer", "Creating and setting up array buffer");
