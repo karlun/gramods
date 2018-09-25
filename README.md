@@ -141,7 +141,12 @@ Thread encapsulation and role agnostic synchronization.
 Graphics rendering pipeline definition and handling.
 
 Required dependences:
- - GLObjects
+ - Eigen3 (at least version 3.3)
+ - GLEW
+
+Optional dependencies:
+ - SDL2, for SDL-based window
+ - libuvc, for UVC support, reading image data from video class USB devices.
 
 ### Module Program Design Principles
 
