@@ -128,11 +128,11 @@ void TextureRenderer::_This::setup() {
 }
 
 TextureRenderer::_This::~_This() {
-  glDeleteProgram(program_id);
-  glDeleteShader(vertex_shader_id);
-  glDeleteShader(fragment_shader_id);
-  glDeleteVertexArrays(1, &vao_id);
-  glDeleteBuffers(1, &vbo_id);
+  if (program_id) glDeleteProgram(program_id);
+  if (vertex_shader_id) glDeleteShader(vertex_shader_id);
+  if (fragment_shader_id) glDeleteShader(fragment_shader_id);
+  if (vao_id) glDeleteVertexArrays(1, &vao_id);
+  if (vbo_id) glDeleteBuffers(1, &vbo_id);
 
   vertex_shader_id = 0;
   fragment_shader_id = 0;
