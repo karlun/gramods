@@ -18,7 +18,8 @@ in vec2 a_vertex;
 out vec2 v_uv;
 
 void main() {
-  v_uv = a_vertex * 0.5 + 0.5;
+  v_uv = a_vertex * 0.5 - 0.5;
+  v_uv.y = 1 - v_uv.y;
   gl_Position = vec4(a_vertex, 0.0, 1.0);
 }
 )";
