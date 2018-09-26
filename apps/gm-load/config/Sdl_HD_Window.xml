@@ -6,7 +6,7 @@
   <ImportLibrary lib="libgmGraphics.so"/>
 
   <SdlWindow
-      size="640 640"
+      size="640 480"
       GLMajor="3" GLMinor="3">
     <SdlContext
         AS="context"

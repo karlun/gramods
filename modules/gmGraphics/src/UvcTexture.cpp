@@ -52,7 +52,7 @@ struct UvcTexture::_This {
   int framerate;
   uvc_frame_format format;
 
-  uvc_frame_t *cache_bgr = nullptr;
+  uvc_frame_t *cache_rgb = nullptr;
   std::mutex data_lock;
 
   GLuint texture_id = 0;
@@ -122,29 +122,33 @@ void UvcTexture::_This::update() {
 
   std::lock_guard<std::mutex> guard(data_lock);
 
-  if (!cache_bgr)
+  if (!cache_rgb)
     return;
 
-  cache_bgr->data;
-  cache_bgr->width;
-  cache_bgr->height;
-  cache_bgr->data_bytes;
+  GM_VINF("UvcTexture", "Found frame cache - updating texture");
 
-  if (cache_bgr->data_bytes > cache_bgr->width * cache_bgr->height * 3) {
+  cache_rgb->data;
+  cache_rgb->width;
+  cache_rgb->height;
+  cache_rgb->data_bytes;
+
+  if (cache_rgb->data_bytes > cache_rgb->width * cache_rgb->height * 3) {
     GM_WRN("UvcTexture", "Too much data in frame");
   }
 
-  if (cache_bgr->data_bytes < cache_bgr->width * cache_bgr->height * 3) {
+  if (cache_rgb->data_bytes < cache_rgb->width * cache_rgb->height * 3) {
     GM_ERR("UvcTexture", "Too little data in frame");
     return;
   }
 
+  glBindTexture(GL_TEXTURE_2D, texture_id);
   glTexImage2D(GL_TEXTURE_2D,
-               0, GL_RGB, cache_bgr->width, cache_bgr->height,
-               0, GL_BGR, GL_UNSIGNED_BYTE, cache_bgr->data);
+               0, GL_RGB, cache_rgb->width, cache_rgb->height,
+               0, GL_RGB, GL_UNSIGNED_BYTE, cache_rgb->data);
+  glBindTexture(GL_TEXTURE_2D, 0);
 
-  uvc_free_frame(cache_bgr);
-  cache_bgr = nullptr;
+  uvc_free_frame(cache_rgb);
+  cache_rgb = nullptr;
 }
 
 bool UvcTexture::_This::initialize_context() {
@@ -236,35 +240,39 @@ void UvcTexture::_This::uvc_frame_cb(uvc_frame_t *frame, void *ptr) {
 
   std::lock_guard<std::mutex> guard(_this->data_lock);
 
-  uvc_frame_t *bgr;
-  uvc_error_t ret;
+  uvc_frame_t *rgb;
 
-  bgr = uvc_allocate_frame(frame->width * frame->height * 3);
-  if (!bgr) {
-    GM_ERR("UvcTexture", "Unable to allocate bgr frame");
+  rgb = uvc_allocate_frame(frame->width * frame->height * 3);
+  if (!rgb) {
+    GM_ERR("UvcTexture", "Unable to allocate rgb frame");
     return;
   }
 
-  ret = uvc_any2rgb(frame, bgr);
+  uvc_error_t ret =
+    frame->frame_format == UVC_FRAME_FORMAT_MJPEG ?
+    uvc_mjpeg2rgb(frame, rgb) :
+    uvc_any2rgb(frame, rgb);
   if (ret) {
-    GM_ERR("UvcTexture", "Cannot convert incoming data: " << uvc_strerror(ret));
-    uvc_free_frame(bgr);
+    GM_ERR("UvcTexture", "Cannot convert incoming data "
+           << "(" << formatToString(frame->frame_format) << "): "
+           << uvc_strerror(ret));
+    uvc_free_frame(rgb);
     return;
   }
 
-  if (_this->cache_bgr)
-    uvc_free_frame(_this->cache_bgr);
+  if (_this->cache_rgb)
+    uvc_free_frame(_this->cache_rgb);
 
-  _this->cache_bgr = bgr;
+  _this->cache_rgb = rgb;
 }
 
 void UvcTexture::_This::closeAll() {
 
   std::lock_guard<std::mutex> guard(data_lock);
 
-  if (cache_bgr)
-    uvc_free_frame(cache_bgr);
-  cache_bgr = nullptr;
+  if (cache_rgb)
+    uvc_free_frame(cache_rgb);
+  cache_rgb = nullptr;
 
   if (device_handle != nullptr) {
     uvc_stop_streaming(device_handle);
