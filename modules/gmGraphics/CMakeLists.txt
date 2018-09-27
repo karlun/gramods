@@ -60,6 +60,15 @@ IF(libuvc_FOUND)
   ENDIF(gramods_ENABLE_libuvc)
 ENDIF(libuvc_FOUND)
 
+FIND_PACKAGE(FreeImage)
+IF(FreeImage_FOUND)
+  SET(HAVE_FreeImage 1)
+  OPTION(gramods_ENABLE_FreeImage "" ON)
+  IF (gramods_ENABLE_FreeImage)
+    SET (MODULE_INCLUDE_DIRS ${MODULE_INCLUDE_DIRS} ${FreeImage_INCLUDE_DIR})
+    SET (MODULE_LIBS ${MODULE_LIBS} ${FreeImage_LIBRARIES})
+  ENDIF(gramods_ENABLE_FreeImage)
+ENDIF(FreeImage_FOUND)
 
 CONFIGURE_FILE(
   ${CMAKE_CURRENT_SOURCE_DIR}/include/gmGraphics/config_cmake.hh

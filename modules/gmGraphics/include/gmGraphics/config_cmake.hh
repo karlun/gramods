@@ -17,5 +17,10 @@
 #cmakedefine gramods_ENABLE_libuvc
 #endif
 
+#cmakedefine HAVE_FreeImage
+#ifdef HAVE_FreeImage
+#cmakedefine gramods_ENABLE_FreeImage
+#endif
+
 
 #endif
