@@ -27,7 +27,8 @@ Configuration::Configuration(std::string xml)
 }
 
 Configuration::Configuration(int &argc, char *argv[])
-  : warn_unused_overrides(true),
+  : def_objects(std::make_shared<def_list>()),
+    warn_unused_overrides(true),
     parameter_overrides(std::make_shared<overrides_list>()) {
 
   std::vector<std::string> configs;
