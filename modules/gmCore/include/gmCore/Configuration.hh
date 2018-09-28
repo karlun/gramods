@@ -32,7 +32,10 @@ class Object;
    int width = DEFAULT_WIDTH;
    config->getParam("width", width);
 
- */
+   In XML every node accepts attributes AS, for specifying container,
+   DEF, for specifying handle, and USE, for reusing node with
+   specified handle.
+*/
 class Configuration {
 
 public:
