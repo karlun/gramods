@@ -11,16 +11,15 @@ GM_OFI_PARAM(SdlWindow, GLMajor, int, SdlWindow::setGLMajor);
 GM_OFI_PARAM(SdlWindow, GLMinor, int, SdlWindow::setGLMinor);
 GM_OFI_POINTER(SdlWindow, context, gmCore::SdlContext, SdlWindow::setContext);
 
+std::map<unsigned int, std::weak_ptr<SdlWindow>> SdlWindow::sdl_windows;
+
 SdlWindow::SdlWindow()
   : alive(false),
     window(nullptr),
     gl_context(0) {}
 
 SdlWindow::~SdlWindow() {
-  if (gl_context) SDL_GL_DeleteContext(gl_context);
-  if (window) SDL_DestroyWindow(window);
-  gl_context = nullptr;
-  window = nullptr;
+  close();
 }
 
 
@@ -88,12 +87,13 @@ void SdlWindow::initialize() {
     video_flags |= SDL_WINDOW_FULLSCREEN_DESKTOP;
   video_flags |= SDL_WINDOW_RESIZABLE;
 
-  GM_INF("SdlWindow", "Requesting window " << size[0] << "x" << size[1] << " " << (fullscreen?"fullscreen":""));
+  GM_INF("SdlWindow", "Requesting window (" << title << ") " << size[0] << "x" << size[1] << " " << (fullscreen?"fullscreen":""));
   window = SDL_CreateWindow(title.c_str(),
                             SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED,
                             size[0], size[1], video_flags);
   if (!window)
     throw std::runtime_error("Cannot create SDL window");
+  sdl_windows[SDL_GetWindowID(window)] = std::static_pointer_cast<SdlWindow>(shared_from_this());
 
   SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, gl_major);
   SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, gl_minor);
@@ -140,7 +140,23 @@ void SdlWindow::initialize() {
 void SdlWindow::processEvents() {
   SDL_Event event;
   while(SDL_PollEvent(&event)) {
-    handleEvent(event);
+    switch (event.type) {
+    case SDL_WINDOWEVENT: {
+      auto _that = sdl_windows[event.window.windowID].lock();
+      if (_that) _that->handleEvent(event);
+    }
+      break;
+    case SDL_KEYUP: {
+      auto _that = sdl_windows[event.key.windowID].lock();
+      if (_that) _that->handleEvent(event);
+    }
+      break;
+    case SDL_QUIT:
+      for (auto it : sdl_windows) {
+        auto _that = it.second.lock();
+        if (_that) _that->close();
+      }
+    }
   }
 }
 
@@ -152,21 +168,37 @@ void SdlWindow::swap() {
   SDL_GL_SwapWindow(window);
 }
 
+void SdlWindow::close() {
+  GM_INF("SdlWindow", "Closing window " << title);
+
+  alive = false;
+
+  if (gl_context){
+    SDL_GL_DeleteContext(gl_context);
+    gl_context = nullptr;
+  }
+
+  if (window) {
+    sdl_windows.erase(SDL_GetWindowID(window));
+    SDL_DestroyWindow(window);
+    window = nullptr;
+  }
+}
+
 bool SdlWindow::handleEvent(SDL_Event& event) {
   switch (event.type) {
 
   case SDL_WINDOWEVENT:
+
     switch (event.window.event) {
 
-#if 0
     case SDL_WINDOWEVENT_SIZE_CHANGED:
+      makeGLContextCurrent();
       glViewport(0, 0, event.window.data1, event.window.data2);
-      GM_WRN("SdlWindow", "SIZE_CHANGED");
       break;
-#endif
 
     case SDL_WINDOWEVENT_CLOSE:
-      alive = false;
+      close();
       return true;
 
     default:
@@ -178,7 +210,7 @@ bool SdlWindow::handleEvent(SDL_Event& event) {
     switch (event.key.keysym.sym) {
 
     case SDLK_ESCAPE:
-      alive = false;
+      close();
       return true;
 
     case SDLK_F11:
@@ -191,10 +223,6 @@ bool SdlWindow::handleEvent(SDL_Event& event) {
     }
 
     return false;
-
-  case SDL_QUIT:
-    alive = false;
-    return true;
 
   default:
     return false;

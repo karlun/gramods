@@ -27,6 +27,11 @@ public:
   void makeGLContextCurrent();
 
   /**
+     Close window.
+  */
+  void close();
+
+  /**
      Sets the major version to be requested for the GL context in this
      Window.
   */
@@ -79,6 +84,7 @@ private:
   bool alive;
   SDL_Window* window;
   SDL_GLContext gl_context;
+  static std::map<unsigned int, std::weak_ptr<SdlWindow>> sdl_windows;
 
   int gl_major = 4;
   int gl_minor = 1;

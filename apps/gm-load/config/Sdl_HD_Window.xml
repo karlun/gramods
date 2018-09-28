@@ -7,9 +7,10 @@
 
   <SdlWindow
       size="640 480"
+      title="UVCstream"
       GLMajor="3" GLMinor="3">
     <SdlContext
-        AS="context"
+        AS="context" DEF="SDLContext"
         useVideo="1"/>
     <TextureRenderer AS="renderer">
       <UvcTexture
@@ -17,6 +18,21 @@
           resolution="640 480"
           framerate="30"
           format="mjpeg"/>
+    </TextureRenderer>
+  </SdlWindow>
+
+  <SdlWindow
+      size="640 480"
+      title="images"
+      GLMajor="3" GLMinor="3">
+    <SdlContext
+        AS="context" USE="SDLContext"/>
+    <TextureRenderer AS="renderer">
+      <ImageTexture
+          AS="texture"
+          file="tmp/video_frame_%05d.jpg"
+          range="1 339"
+          loop="1"/>
     </TextureRenderer>
   </SdlWindow>
 

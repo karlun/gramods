@@ -51,6 +51,12 @@ public:
   virtual void makeGLContextCurrent() {}
 
   /**
+     Asks the Window to close itself. This should be overloaded by sub
+     classes to support run-time changes.
+  */
+  virtual void close() {}
+
+  /**
      Activates or deactivates fullscreen mode. This should be
      overloaded by sub classes to also support run-time changes.
   */
