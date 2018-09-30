@@ -1,5 +1,6 @@
 
-#include <gmGraphics/SdlWindow.hh>
+#include <gmGraphics/Window.hh>
+#include <gmGraphics/View.hh>
 
 BEGIN_NAMESPACE_GMGRAPHICS;
 
@@ -7,30 +8,27 @@ GM_OFI_DEFINE(Window);
 GM_OFI_PARAM(Window, fullscreen, bool, Window::setFullscreen);
 GM_OFI_PARAM(Window, title, std::string, Window::setTitle);
 GM_OFI_PARAM(Window, size, gmTypes::size2, Window::setSize);
-GM_OFI_POINTER(Window, renderer, gmGraphics::Renderer, Window::addRenderer);
+GM_OFI_POINTER(Window, view, gmGraphics::View, Window::addView);
 
 Window::Window()
   : fullscreen(false),
     title("untitled gramods window"),
     size(gmTypes::size2({640, 480})) {}
 
-void Window::renderFullPipeline() {
-
+void Window::renderFullPipeline(ViewSettings settings) {
   makeGLContextCurrent();
+  RendererDispatcher::renderFullPipeline(settings);
 
-  if (!renderers_to_setup.empty())
-    GM_VINF("Window", "setting up " << renderers_to_setup.size() << " renderers");
-  while (!renderers_to_setup.empty()) {
-    auto &renderer = renderers_to_setup.back();
-    renderer->setup();
-    renderers.push_back(renderer);
-    renderers_to_setup.pop_back();
-  }
+  GM_VINF("Window", "Got " << settings.renderers.size() << " and adding " << renderers.size() << " renderers");
+  settings.renderers.insert(settings.renderers.end(),
+                            renderers.begin(), renderers.end());
 
-  Camera c;
-  GM_VINF("Window", "rendering " << renderers.size() << " renderers");
-  for (auto renderer : renderers)
-    renderer->render(c);
+  if (viewpoint)
+    settings.viewpoint = viewpoint;
+
+  GM_VINF("Window", "Dispatching " << views.size() << " views");
+  for (auto view : views)
+    view->renderFullPipeline(settings);
 }
 
 END_NAMESPACE_GMGRAPHICS;

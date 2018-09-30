@@ -2,13 +2,7 @@
 #ifndef GRAMODS_GRAPHICS_WINDOW
 #define GRAMODS_GRAPHICS_WINDOW
 
-#include <gmGraphics/config.hh>
-#include <gmGraphics/Renderer.hh>
-
-#include <gmTypes/all.hh>
-
-#include <gmCore/Object.hh>
-#include <gmCore/OFactory.hh>
+#include <gmGraphics/RendererDispatcher.hh>
 
 BEGIN_NAMESPACE_GMGRAPHICS;
 
@@ -18,7 +12,7 @@ class View;
    The base of graphics Window implementations.
 */
 class Window
-  : public gmCore::Object {
+  : public RendererDispatcher {
 
 public:
 
@@ -26,23 +20,19 @@ public:
   virtual ~Window() {}
 
   /**
-     Asks the Window to call its views for rendering.
-   */
-  void renderFullPipeline();
-
-  /**
-     Adds a renderer to the window.
+     Dispatches specified renders, both method argument and class
+     members, to the views in this window.
   */
-  void addRenderer(std::shared_ptr<Renderer> renderer) {
-    renderers_to_setup.push_back(renderer);
-  }
+  void renderFullPipeline(ViewSettings settings);
 
   /**
      Adds a view to the window. A window without views will render
      nothing - it is the tiles that provide the graphics. If multiple
      views are added, then these will be rendered over each other.
   */
-  void addView(std::shared_ptr<View> view);
+  void addView(std::shared_ptr<View> view) {
+    views.push_back(view);
+  }
 
   /**
      Asks the Window to make its GL context current. This is called
@@ -97,8 +87,7 @@ public:
 
 protected:
 
-  std::vector<std::shared_ptr<Renderer>> renderers_to_setup;
-  std::vector<std::shared_ptr<Renderer>> renderers;
+  std::vector<std::shared_ptr<View>> views;
 
   bool fullscreen;
   std::string title;

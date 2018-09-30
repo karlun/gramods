@@ -46,16 +46,6 @@ private:
      The orientation of the camera.
   */
   Eigen::Quaternionf orientation;
-
-  /**
-     The viewport that the camera is supposed to render to. This may
-     be of size 0, 2 or 4. A vector of size 0 represents unspecified
-     size and position (viewport), size 2 represents viewport size
-     (width and height) but unspecified position and size 4 provides a
-     full viewport representation (x, y, width, height).
-   */
-  std::vector<std::size_t> viewport;
-
 };
 
 END_NAMESPACE_GMGRAPHICS;

@@ -71,7 +71,7 @@ int main(int argc, char *argv[]) {
 
     for (auto window : windows) {
       window->processEvents();
-      window->renderFullPipeline();
+      window->RendererDispatcher::renderFullPipeline();
       window->swap();
 
       alive |= window->isOpen();
