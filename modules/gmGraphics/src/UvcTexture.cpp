@@ -21,10 +21,10 @@ GM_OFI_PARAM(UvcTexture, framerate, int, UvcTexture::setFramerate);
 GM_OFI_PARAM(UvcTexture, format, std::string, UvcTexture::setFormat);
 
 
-struct UvcTexture::_This {
+struct UvcTexture::Impl {
 
-  _This();
-  ~_This();
+  Impl();
+  ~Impl();
 
   static uvc_frame_format formatFromString(std::string s);
   static std::string formatToString(uvc_frame_format f);
@@ -60,7 +60,7 @@ struct UvcTexture::_This {
 };
 
 UvcTexture::UvcTexture()
-  : _this(new _This()),
+  : _impl(new Impl()),
     vendor(0),
     product(0),
     serial("") {}
@@ -69,29 +69,29 @@ void UvcTexture::initialize() {
   Texture::initialize();
 }
 
-UvcTexture::_This::_This()
+UvcTexture::Impl::Impl()
   : context(nullptr),
     device(nullptr),
     device_handle(nullptr) {}
 
-UvcTexture::_This::~_This() {
+UvcTexture::Impl::~Impl() {
   closeAll();
 }
 
 void UvcTexture::update() {
-  if (!_this->started) {
-    _this->startAll(vendor, product, serial);
-    _this->started = true;
+  if (!_impl->started) {
+    _impl->startAll(vendor, product, serial);
+    _impl->started = true;
   }
 
-  _this->update();
+  _impl->update();
 }
 
 GLuint UvcTexture::getGLTextureID() {
-  return _this->getGLTextureID();
+  return _impl->getGLTextureID();
 }
 
-void UvcTexture::_This::startAll(int vendor, int product, std::string serial) {
+void UvcTexture::Impl::startAll(int vendor, int product, std::string serial) {
   if (!initialize_context()) return;
   if (!locate_device(vendor, product, serial)) return;
   if (!open_device()) return;
@@ -99,7 +99,7 @@ void UvcTexture::_This::startAll(int vendor, int product, std::string serial) {
   if (!start_streaming()) return;
 }
 
-void UvcTexture::_This::update() {
+void UvcTexture::Impl::update() {
 
   if (!texture_id) {
     std::vector<GLubyte> data;
@@ -151,7 +151,7 @@ void UvcTexture::_This::update() {
   cache_rgb = nullptr;
 }
 
-bool UvcTexture::_This::initialize_context() {
+bool UvcTexture::Impl::initialize_context() {
   uvc_error_t res = uvc_init(&context, NULL);
   if (res < 0) {
     closeAll();
@@ -163,7 +163,7 @@ bool UvcTexture::_This::initialize_context() {
   return true;
 }
 
-bool UvcTexture::_This::locate_device(int vendor, int product, std::string serial) {
+bool UvcTexture::Impl::locate_device(int vendor, int product, std::string serial) {
   const char *serial_cstr = serial.size() == 0 ? NULL : &serial[0];
   uvc_error_t res = uvc_find_device(context, &device, vendor, product, serial_cstr);
   if (res < 0) {
@@ -176,7 +176,7 @@ bool UvcTexture::_This::locate_device(int vendor, int product, std::string seria
   return true;
 }
 
-bool UvcTexture::_This::open_device() {
+bool UvcTexture::Impl::open_device() {
   /* Try to open the device: requires exclusive access */
   uvc_error_t res = uvc_open(device, &device_handle);
   if (res < 0) {
@@ -189,7 +189,7 @@ bool UvcTexture::_This::open_device() {
   return true;
 }
 
-bool UvcTexture::_This::negotiate_format() {
+bool UvcTexture::Impl::negotiate_format() {
 
   /* Print out a message containing all the information that libuvc
    * knows about the device */
@@ -211,8 +211,8 @@ bool UvcTexture::_This::negotiate_format() {
   return true;
 }
 
-bool UvcTexture::_This::start_streaming() {
-  uvc_error_t res = uvc_start_streaming(device_handle, &stream_control, &UvcTexture::_This::uvc_frame_cb, this, 0);
+bool UvcTexture::Impl::start_streaming() {
+  uvc_error_t res = uvc_start_streaming(device_handle, &stream_control, &UvcTexture::Impl::uvc_frame_cb, this, 0);
   if (res < 0) {
     closeAll();
 
@@ -229,16 +229,16 @@ bool UvcTexture::_This::start_streaming() {
 /* This callback function runs once per frame. Use it to perform any
  * quick processing you need, or have it put the frame into your application's
  * input queue. If this function takes too long, you'll start losing frames. */
-void UvcTexture::_This::uvc_frame_cb(uvc_frame_t *frame, void *ptr) {
+void UvcTexture::Impl::uvc_frame_cb(uvc_frame_t *frame, void *ptr) {
 
   GM_VVINF("UvcTexture",
            "Incoming UVC frame: " <<
            frame->width << "x" << frame->height
            << " in " << formatToString(frame->frame_format));
 
-  UvcTexture::_This *_this = static_cast<UvcTexture::_This*>(ptr);
+  UvcTexture::Impl *_impl = static_cast<UvcTexture::Impl*>(ptr);
 
-  std::lock_guard<std::mutex> guard(_this->data_lock);
+  std::lock_guard<std::mutex> guard(_impl->data_lock);
 
   uvc_frame_t *rgb;
 
@@ -260,13 +260,13 @@ void UvcTexture::_This::uvc_frame_cb(uvc_frame_t *frame, void *ptr) {
     return;
   }
 
-  if (_this->cache_rgb)
-    uvc_free_frame(_this->cache_rgb);
+  if (_impl->cache_rgb)
+    uvc_free_frame(_impl->cache_rgb);
 
-  _this->cache_rgb = rgb;
+  _impl->cache_rgb = rgb;
 }
 
-void UvcTexture::_This::closeAll() {
+void UvcTexture::Impl::closeAll() {
 
   std::lock_guard<std::mutex> guard(data_lock);
 
@@ -293,18 +293,18 @@ void UvcTexture::_This::closeAll() {
 }
 
 void UvcTexture::setResolution(gmTypes::size2 res) {
-  _this->resolution = res;
+  _impl->resolution = res;
 }
 
 void UvcTexture::setFramerate(int fps) {
-  _this->framerate = fps;
+  _impl->framerate = fps;
 }
 
 void UvcTexture::setFormat(std::string fmt) {
-  _this->format = UvcTexture::_This::formatFromString(fmt);
+  _impl->format = UvcTexture::Impl::formatFromString(fmt);
 }
 
-uvc_frame_format UvcTexture::_This::formatFromString(std::string s) {
+uvc_frame_format UvcTexture::Impl::formatFromString(std::string s) {
 
 #define FORMAT(A,B)                                   \
   if (std::equal(s.begin(), s.end(),                  \
@@ -337,7 +337,7 @@ uvc_frame_format UvcTexture::_This::formatFromString(std::string s) {
 #undef FORMAT
 }
 
-std::string UvcTexture::_This::formatToString(uvc_frame_format f) {
+std::string UvcTexture::Impl::formatToString(uvc_frame_format f) {
 
 #define FORMAT(A,B)                             \
   if (f == A) return std::string(#B); //

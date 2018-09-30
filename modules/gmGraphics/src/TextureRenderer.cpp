@@ -38,9 +38,9 @@ void main() {
 )";
 }
 
-struct TextureRenderer::_This {
+struct TextureRenderer::Impl {
 
-  ~_This();
+  ~Impl();
 
   void render(Texture *tex, Camera &camera);
   void setup();
@@ -53,17 +53,17 @@ struct TextureRenderer::_This {
 };
 
 TextureRenderer::TextureRenderer()
-  : _this(new _This) {}
+  : _impl(new Impl) {}
 
 void TextureRenderer::setup() {
-  _this->setup();
+  _impl->setup();
 }
 
 void TextureRenderer::render(Camera camera) {
-  _this->render(texture.get(), camera);
+  _impl->render(texture.get(), camera);
 }
 
-void TextureRenderer::_This::render(Texture *texture, Camera &camera) {
+void TextureRenderer::Impl::render(Texture *texture, Camera &camera) {
   GM_VINF("TextureRenderer", "rendering");
 
   texture->update();
@@ -91,7 +91,7 @@ void TextureRenderer::_This::render(Texture *texture, Camera &camera) {
   GM_VVINF("TextureRenderer", "Done rendering");
 }
 
-void TextureRenderer::_This::setup() {
+void TextureRenderer::Impl::setup() {
 
   GM_VINF("TextureRenderer", "Creating vertex shader");
   vertex_shader_id = glCreateShader(GL_VERTEX_SHADER);
@@ -130,7 +130,7 @@ void TextureRenderer::_This::setup() {
   GM_INF("TextureRenderer", "initialized");
 }
 
-TextureRenderer::_This::~_This() {
+TextureRenderer::Impl::~Impl() {
   if (program_id) glDeleteProgram(program_id);
   if (vertex_shader_id) glDeleteShader(vertex_shader_id);
   if (fragment_shader_id) glDeleteShader(fragment_shader_id);

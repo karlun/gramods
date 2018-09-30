@@ -79,8 +79,8 @@ public:
 
 private:
 
-  class _This;
-  std::unique_ptr<_This> _this;
+  class Impl;
+  std::unique_ptr<Impl> _impl;
 
   int vendor;
   int product;

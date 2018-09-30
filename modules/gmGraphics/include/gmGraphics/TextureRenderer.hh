@@ -43,8 +43,8 @@ private:
 
   std::shared_ptr<Texture> texture;
 
-  struct _This;
-  std::unique_ptr<_This> _this;
+  struct Impl;
+  std::unique_ptr<Impl> _impl;
 };
 
 END_NAMESPACE_GMGRAPHICS;

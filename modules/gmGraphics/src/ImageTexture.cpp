@@ -23,9 +23,10 @@ namespace {
     GM_ERR("FreeImage", msg);
   }
 }
-struct ImageTexture::_This {
 
-  _This();
+struct ImageTexture::Impl {
+
+  Impl();
 
   GLuint getGLTextureID() { return texture_id; }
 
@@ -43,7 +44,7 @@ struct ImageTexture::_This {
   static FreeImage free_image;
 };
 
-FreeImage ImageTexture::_This::free_image;
+FreeImage ImageTexture::Impl::free_image;
 
 FreeImage::FreeImage() {
   FreeImage_Initialise();
@@ -55,29 +56,29 @@ FreeImage::~FreeImage() {
 }
 
 ImageTexture::ImageTexture()
-  : _this(new _This) {}
+  : _impl(new Impl) {}
 
 void ImageTexture::initialize() {
   Texture::initialize();
 }
 
 void ImageTexture::setFile(std::string file) {
-  _this->file = file;
+  _impl->file = file;
 }
 
 void ImageTexture::setRange(gmTypes::size2 range) {
-  _this->animation_range = range;
-  _this->animation_frame = range[0];
-  _this->animate = true;
+  _impl->animation_range = range;
+  _impl->animation_frame = range[0];
+  _impl->animate = true;
 }
 
 void ImageTexture::setLoop(bool on) {
-  _this->loop = on;
+  _impl->loop = on;
 }
 
-ImageTexture::_This::_This() {}
+ImageTexture::Impl::Impl() {}
 
-void ImageTexture::_This::update() {
+void ImageTexture::Impl::update() {
 
   if (fail) return;
 
@@ -99,7 +100,7 @@ void ImageTexture::_This::update() {
   }
 }
 
-bool ImageTexture::_This::loadImage(std::string file_template, size_t frame) {
+bool ImageTexture::Impl::loadImage(std::string file_template, size_t frame) {
 
   // Arbitrary padding for numbers
   size_t filename_buffer_size = file_template.size() + 1024;
@@ -217,11 +218,11 @@ bool ImageTexture::_This::loadImage(std::string file_template, size_t frame) {
 }
 
 void ImageTexture::update() {
-  _this->update();
+  _impl->update();
 }
 
 GLuint ImageTexture::getGLTextureID() {
-  return _this->getGLTextureID();
+  return _impl->getGLTextureID();
 }
 
 END_NAMESPACE_GMGRAPHICS;
