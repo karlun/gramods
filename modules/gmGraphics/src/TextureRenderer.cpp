@@ -50,20 +50,19 @@ struct TextureRenderer::Impl {
   GLuint program_id = 0;
   GLuint vao_id = 0;
   GLuint vbo_id = 0;
+
+  bool has_been_setup = false;
 };
 
 TextureRenderer::TextureRenderer()
   : _impl(new Impl) {}
-
-void TextureRenderer::setup() {
-  _impl->setup();
-}
 
 void TextureRenderer::render(Camera camera) {
   _impl->render(texture.get(), camera);
 }
 
 void TextureRenderer::Impl::render(Texture *texture, Camera &camera) {
+  if (!has_been_setup) setup();
   GM_VINF("TextureRenderer", "rendering");
 
   texture->update();
@@ -128,6 +127,7 @@ void TextureRenderer::Impl::setup() {
   glBindVertexArray(0);
 
   GM_INF("TextureRenderer", "initialized");
+  has_been_setup = true;
 }
 
 TextureRenderer::Impl::~Impl() {

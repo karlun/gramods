@@ -18,11 +18,6 @@ class Renderer
 public:
 
   /**
-     Called with GL context to setup renderer.
-  */
-  virtual void setup() = 0;
-
-  /**
      Performs rendering of 3D objects in the scene.
   */
   virtual void render(Camera camera) = 0;

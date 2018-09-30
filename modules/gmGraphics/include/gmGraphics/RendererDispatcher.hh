@@ -34,10 +34,10 @@ public:
   };
 
   /**
-     Dispatches specified class members renders. This default
-     implementation calls setup on the member renderers, but render
-     nothing and should be overloaded by sub classes to implement
-     their respective effects.
+     Dispatches specified class members renders. The default
+     implementation calls the renderers but with a default Camera, and
+     should be overloaded by sub classes to implement their respective
+     effects.
   */
   void renderFullPipeline() {
     renderFullPipeline(ViewSettings(viewpoint));
@@ -45,9 +45,9 @@ public:
 
   /**
      Dispatches specified renders, both method argument and class
-     members. This default implementation calls setup on the member
-     renderers, but render nothing and should be overloaded by sub
-     classes to implement their respective effects.
+     members. The default implementation calls the renderers but with
+     a default Camera, and should be overloaded by sub classes to
+     implement their respective effects.
   */
   virtual void renderFullPipeline(ViewSettings settings);
 
@@ -55,7 +55,7 @@ public:
      Adds a renderer to the view.
   */
   void addRenderer(std::shared_ptr<Renderer> renderer) {
-    renderers_to_setup.push_back(renderer);
+    renderers.push_back(renderer);
   }
 
   /**
@@ -70,7 +70,6 @@ public:
 
 protected:
 
-  std::vector<std::shared_ptr<Renderer>> renderers_to_setup;
   std::vector<std::shared_ptr<Renderer>> renderers;
   std::shared_ptr<Viewpoint> viewpoint;
 

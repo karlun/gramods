@@ -20,11 +20,6 @@ public:
   TextureRenderer();
 
   /**
-     Called with GL context to setup renderer.
-  */
-  void setup();
-
-  /**
      Performs rendering of 3D objects in the scene.
   */
   void render(Camera camera);

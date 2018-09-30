@@ -34,18 +34,19 @@ public:
   typedef std::function<void(Camera)> RenderFunction;
 
   /**
-     Called with GL context to setup renderer.
-  */
-  void setup() { if (setup_function) setup_function(); }
-
-  /**
      Performs rendering of 3D objects in the scene.
   */
-  void render(Camera camera) { if(render_function) render_function(camera); }
+  void render(Camera camera) {
+    if (!has_been_setup) {
+      if (setup_function) setup_function();
+      has_been_setup = true;
+    }
+    if (render_function) render_function(camera);
+  }
 
   /**
-     Sets the callback that should be called upon calls to the render
-     method.
+     Sets the callback that should be called to set up GL for
+     rendering.
   */
   void setCallback(SetupFunction func) { setup_function = func; }
 
@@ -59,6 +60,7 @@ private:
 
   SetupFunction setup_function;
   RenderFunction render_function;
+  bool has_been_setup = false;
 
 };
 

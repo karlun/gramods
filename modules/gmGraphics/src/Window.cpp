@@ -4,7 +4,7 @@
 
 BEGIN_NAMESPACE_GMGRAPHICS;
 
-GM_OFI_DEFINE(Window);
+GM_OFI_DEFINE_SUB(Window, RendererDispatcher);
 GM_OFI_PARAM(Window, fullscreen, bool, Window::setFullscreen);
 GM_OFI_PARAM(Window, title, std::string, Window::setTitle);
 GM_OFI_PARAM(Window, size, gmTypes::size2, Window::setSize);
