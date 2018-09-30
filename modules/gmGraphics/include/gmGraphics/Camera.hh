@@ -30,12 +30,20 @@ public:
   */
   Eigen::Matrix4f getViewMatrix();
 
+  void setPlanes(float l, float r, float t, float b) {
+    left = l; right = r; top = t; bottom = b;
+  }
+
+  void setPose(Eigen::Vector3f p, Eigen::Quaternionf r) {
+    position = p; orientation = r;
+  }
+
 private:
 
   /**
      Frustum planes at distance of 1.0 (meters, typically).
   */
-  float left, right, top, bottom;
+  float left = 1.f, right = 1.f, top = 1.f, bottom = 1.f;
 
   /**
      The position of the camera.

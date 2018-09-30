@@ -31,6 +31,7 @@ public:
     std::vector<std::shared_ptr<Renderer>> renderers;
     std::shared_ptr<Viewpoint> viewpoint;
     Viewpoint::Eye eye_to_render;
+    float eye_separation = 0.065;
   };
 
   /**

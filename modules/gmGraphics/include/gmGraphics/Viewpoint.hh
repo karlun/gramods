@@ -25,7 +25,7 @@ class Viewpoint
 
 public:
 
-  enum Eye {
+  enum struct Eye {
     MONO,
     LEFT,
     RIGHT
