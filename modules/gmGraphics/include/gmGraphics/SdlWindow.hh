@@ -27,6 +27,12 @@ public:
   void makeGLContextCurrent();
 
   /**
+     Returns the size of the drawable canvas of this window, in
+     pixels.
+  */
+  gmTypes::size2 getSize();
+
+  /**
      Close window.
   */
   void close();

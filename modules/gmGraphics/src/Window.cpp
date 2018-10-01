@@ -2,6 +2,9 @@
 #include <gmGraphics/Window.hh>
 #include <gmGraphics/View.hh>
 
+#include <GL/glew.h>
+#include <GL/gl.h>
+
 BEGIN_NAMESPACE_GMGRAPHICS;
 
 GM_OFI_DEFINE_SUB(Window, RendererDispatcher);
@@ -17,18 +20,26 @@ Window::Window()
 
 void Window::renderFullPipeline(ViewSettings settings) {
   makeGLContextCurrent();
-  RendererDispatcher::renderFullPipeline(settings);
 
-  GM_VINF("Window", "Got " << settings.renderers.size() << " and adding " << renderers.size() << " renderers");
   settings.renderers.insert(settings.renderers.end(),
                             renderers.begin(), renderers.end());
 
   if (viewpoint)
     settings.viewpoint = viewpoint;
 
-  GM_VINF("Window", "Dispatching " << views.size() << " views");
-  for (auto view : views)
-    view->renderFullPipeline(settings);
+  glViewport(0, 0, getSize()[0], getSize()[1]);
+
+  if (!views.empty()) {
+
+    for (auto view : views)
+      view->renderFullPipeline(settings);
+
+  } else {
+
+    Camera c;
+    for (auto renderer : settings.renderers)
+      renderer->render(c);
+  }
 }
 
 END_NAMESPACE_GMGRAPHICS;

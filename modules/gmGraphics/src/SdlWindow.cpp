@@ -40,7 +40,7 @@ void MessageCallback(GLenum source,
   case GL_DEBUG_TYPE_DEPRECATED_BEHAVIOR: type_str = "deprecated behavior"; break;
   case GL_DEBUG_TYPE_UNDEFINED_BEHAVIOR: type_str = "undefined behavior"; break;
   case GL_DEBUG_TYPE_PORTABILITY: type_str = "portability problem"; break;
-case GL_DEBUG_TYPE_PERFORMANCE: type_str = "performance issue"; break;
+  case GL_DEBUG_TYPE_PERFORMANCE: type_str = "performance issue"; break;
   case GL_DEBUG_TYPE_MARKER: type_str = "marker"; break;
   case GL_DEBUG_TYPE_PUSH_GROUP: type_str = "push"; break;
   case GL_DEBUG_TYPE_POP_GROUP: type_str = "pop"; break;
@@ -185,17 +185,19 @@ void SdlWindow::close() {
   }
 }
 
+gmTypes::size2 SdlWindow::getSize() {
+  if (!window) return gmTypes::size2 { 0, 0 };
+  int width, height;
+  SDL_GetWindowSize(window, &width, &height);
+  return gmTypes::size2 { (size_t)width, (size_t)height };
+}
+
 bool SdlWindow::handleEvent(SDL_Event& event) {
   switch (event.type) {
 
   case SDL_WINDOWEVENT:
 
     switch (event.window.event) {
-
-    case SDL_WINDOWEVENT_SIZE_CHANGED:
-      makeGLContextCurrent();
-      glViewport(0, 0, event.window.data1, event.window.data2);
-      break;
 
     case SDL_WINDOWEVENT_CLOSE:
       close();

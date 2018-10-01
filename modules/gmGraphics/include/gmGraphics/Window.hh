@@ -53,10 +53,18 @@ public:
   virtual void setFullscreen(bool on) { fullscreen = on; }
 
   /**
-     Sets the size of the window. This should be overloaded by sub
-     classes to also support run-time changes.
+     Sets the size of the drawable canvas of this window, in
+     pixels. This should be overloaded by sub classes to also support
+     run-time changes.
   */
   virtual void setSize(gmTypes::size2 s) { size = s; }
+
+  /**
+     Returns the size of the drawable canvas of this window, in
+     pixels. This should be overloaded by sub classes to also support
+     run-time changes.
+  */
+  virtual gmTypes::size2 getSize() { return size; }
 
   /**
      Sets the title of the windows. This should be overloaded by sub

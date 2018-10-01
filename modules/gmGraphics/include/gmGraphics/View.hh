@@ -11,7 +11,13 @@ BEGIN_NAMESPACE_GMGRAPHICS;
    of rendered data into a buffer.
 */
 class View
-  : public RendererDispatcher {};
+  : public RendererDispatcher {
+
+public:
+
+  GM_OFI_DECLARE;
+
+};
 
 END_NAMESPACE_GMGRAPHICS;
 

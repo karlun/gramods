@@ -22,7 +22,7 @@
   </SdlWindow>
 
   <SdlWindow
-      size="640 480"
+      size="1410 940"
       title="images"
       GLMajor="3" GLMinor="3">
     <SdlContext
@@ -34,6 +34,14 @@
           range="1 339"
           loop="1"/>
     </TextureRenderer>
+    <TiledView AS="view">
+      <param name="tileLocation" value="0 2 1 1"/>
+      <View AS="view"/>
+      <param name="tileLocation" value="1 2 1 1"/>
+      <View AS="view"/>
+      <param name="tileLocation" value="0 0 2 2"/>
+      <View AS="view"/>
+    </TiledView>
   </SdlWindow>
 
 </config>
