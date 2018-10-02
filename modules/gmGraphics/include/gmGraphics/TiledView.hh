@@ -14,11 +14,11 @@ BEGIN_NAMESPACE_GMGRAPHICS;
    ```{xml}
    <SomeWindow>
      <TiledView>
+       <param name="tileLocation" value="0 2 1 1"/>
+       <SomeView AS="view"/>
+       <param name="tileLocation" value="1 2 1 1"/>
+       <SomeView AS="view"/>
        <param name="tileLocation" value="0 0 2 2"/>
-       <SomeView AS="view"/>
-       <param name="tileLocation" value="2 0 1 1"/>
-       <SomeView AS="view"/>
-       <param name="tileLocation" value="2 1 1 1"/>
        <SomeView AS="view"/>
      </TiledView>
    </SdlWindow>
@@ -39,7 +39,8 @@ public:
 
   /**
      Adds a location and span that is used when adding views. Format
-     is [row col rowspan colspan].
+     is [row col rowspan colspan] where row and col start at zero at
+     bottom left corner.
    */
   void addTileLocation(gmTypes::size4 c);
 
