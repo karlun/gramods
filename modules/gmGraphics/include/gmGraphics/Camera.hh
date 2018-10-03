@@ -28,7 +28,7 @@ public:
   /**
      Computes and returns a view matrix for the current camera.
   */
-  Eigen::Matrix4f getViewMatrix();
+  Eigen::Affine3f getViewMatrix();
 
   void setPlanes(float l, float r, float t, float b) {
     left = l; right = r; top = t; bottom = b;

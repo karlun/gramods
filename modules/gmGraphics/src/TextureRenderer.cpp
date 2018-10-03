@@ -72,16 +72,11 @@ void TextureRenderer::Impl::render(Texture *texture, Camera &camera) {
 
   glActiveTexture(GL_TEXTURE0 + TEXTURE_IDX);
   glBindTexture(GL_TEXTURE_2D, tex_id);
-  glEnableVertexAttribArray(0);
   glUseProgram(program_id);
   glUniform1i(glGetUniformLocation(program_id, "tex"), TEXTURE_IDX);
 
   glBindVertexArray(vao_id);
-  glBindBuffer(GL_ARRAY_BUFFER, vbo_id);
-  glEnableVertexAttribArray(0);
   glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
-  glDisableVertexAttribArray(0);
-  glBindBuffer(GL_ARRAY_BUFFER, 0);
   glBindVertexArray(0);
 
   glUseProgram(0);
@@ -123,6 +118,7 @@ void TextureRenderer::Impl::setup() {
     { -1.0, +1.0  } };
   glBufferData(GL_ARRAY_BUFFER, 8 * sizeof(GLfloat), vertices, GL_STATIC_DRAW);
   glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 0, 0);
+  glEnableVertexAttribArray(0);
   glBindBuffer(GL_ARRAY_BUFFER, 0);
   glBindVertexArray(0);
 

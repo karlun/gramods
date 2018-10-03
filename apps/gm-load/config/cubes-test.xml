@@ -1,0 +1,29 @@
+<config>
+
+  <OStreamMessageSink stream="err" useAnsiColor="1" level="1"/>
+  <LogFileMessageSink logFilePath="gramod.log" append="0"/>
+
+  <ImportLibrary lib="libgmGraphics.so"/>
+
+  <SdlWindow
+      size="900 900"
+      title="Spatial"
+      GLMajor="3" GLMinor="3">
+    <SdlContext
+        AS="context" DEF="SDLContext"
+        useVideo="1"/>
+    <CubeSceneRenderer
+        AS="renderer"
+        cubeSize="0.1"
+        cubeSetSize="2.0"/>
+    <Viewpoint
+        AS="viewpoint"
+        position="2.0 0.0 0.0"/>
+    <SpatialPlanarView
+        AS="view"
+        topLeftCorner="0.0 1.5 1.5"
+        bottomRightCorner="0.0 -1.5 -1.5"
+        upDirection="0.0 1.0 0.0"/>
+  </SdlWindow>
+
+</config>

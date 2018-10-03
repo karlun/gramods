@@ -16,6 +16,11 @@ void SpatialPlanarView::renderFullPipeline(ViewSettings settings) {
   if (settings.viewpoint) {
     x_VP = settings.viewpoint->getPosition();
     q_VP = settings.viewpoint->getOrientation();
+  } else {
+    static bool message_shown = false;
+    if (!message_shown)
+      GM_WRN("SpatialPlanarView", "No viewpoint available - using zero position and rotation");
+    message_shown = true;
   }
 
   switch (settings.eye_to_render) {
@@ -50,6 +55,9 @@ void SpatialPlanarView::renderFullPipeline(ViewSettings settings) {
   Camera camera;
   camera.setPlanes(left, right, top, bottom);
   camera.setPose(x_VP, Q1 * Q0);
+
+  for (auto renderer : settings.renderers)
+    renderer->render(camera);
 }
 
 END_NAMESPACE_GMGRAPHICS;
