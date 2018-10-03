@@ -34,11 +34,13 @@ void SpatialPlanarView::renderFullPipeline(ViewSettings settings) {
     x_VP += q_VP * Eigen::Vector3f(0.5f * settings.eye_separation, 0.f, 0.f);
   }
 
+  auto up = upDirection.normalized();
+
   // Display center and normal
   auto center = 0.5f * (bottomRightCorner + topLeftCorner);
-  auto display_normal = (bottomRightCorner - topLeftCorner).cross(upDirection);
+  auto display_normal = (bottomRightCorner - topLeftCorner).cross(up);
   display_normal = display_normal.normalized();
-  auto rightDirection = upDirection.cross(display_normal);
+  auto rightDirection = up.cross(display_normal);
   rightDirection = rightDirection.normalized();
 
   auto distance = (x_VP - center).dot(display_normal);
@@ -47,13 +49,13 @@ void SpatialPlanarView::renderFullPipeline(ViewSettings settings) {
   float ratio = 1.f / distance;
   float left = ratio * (topLeftCorner - center).dot(rightDirection);
   float right = ratio * (bottomRightCorner - center).dot(rightDirection);
-  float top = ratio * (topLeftCorner - center).dot(upDirection);
-  float bottom = ratio * (bottomRightCorner - center).dot(upDirection);
+  float top = ratio * (topLeftCorner - center).dot(up);
+  float bottom = ratio * (bottomRightCorner - center).dot(up);
 
   static const Eigen::Vector3f z(0, 0, 1);
   static const Eigen::Vector3f y(0, 1, 0);
   auto Q0 = Eigen::Quaternionf::FromTwoVectors(z, display_normal);
-  auto Q1 = Eigen::Quaternionf::FromTwoVectors(Q0 * y, upDirection);
+  auto Q1 = Eigen::Quaternionf::FromTwoVectors(Q0 * y, up);
 
   Camera camera;
   camera.setPlanes(left, right, top, bottom);
