@@ -3,12 +3,15 @@
 
 BEGIN_NAMESPACE_GMGRAPHICS;
 
-GM_OFI_DEFINE(SpatialPlanarView);
+GM_OFI_DEFINE_SUB(SpatialPlanarView, View);
 GM_OFI_PARAM(SpatialPlanarView, topLeftCorner, gmTypes::float3, SpatialPlanarView::setTopLeftCorner);
 GM_OFI_PARAM(SpatialPlanarView, bottomRightCorner, gmTypes::float3, SpatialPlanarView::setBottomRightCorner);
 GM_OFI_PARAM(SpatialPlanarView, upDirection, gmTypes::float3, SpatialPlanarView::setUpDirection);
 
 void SpatialPlanarView::renderFullPipeline(ViewSettings settings) {
+
+  if (viewpoint)
+    settings.viewpoint = viewpoint;
 
   Eigen::Vector3f x_VP;
   Eigen::Quaternionf q_VP;
