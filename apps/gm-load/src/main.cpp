@@ -70,11 +70,14 @@ int main(int argc, char *argv[]) {
     alive = windows.empty();
 
     for (auto window : windows) {
+
       window->processEvents();
+      if (!window->isOpen()) continue;
+
       window->RendererDispatcher::renderFullPipeline();
       window->swap();
 
-      alive |= window->isOpen();
+      alive |= true;
     }
   }
 
