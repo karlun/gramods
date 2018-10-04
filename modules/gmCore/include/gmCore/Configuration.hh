@@ -197,10 +197,11 @@ private:
     bool checked;
   };
 
-  typedef std::multimap<std::string, parameter_t> parameter_list;
+  typedef std::vector<std::pair<std::string, parameter_t>> parameter_list;
   typedef std::map<std::string, parameter_t> overrides_list;
+  typedef std::vector<std::pair<std::string, std::shared_ptr<Object>>> child_object_list;
 
-  std::multimap<std::string, std::shared_ptr<Object>> child_objects;
+  child_object_list child_objects;
   parameter_list parameters;
 
   std::shared_ptr<def_list> def_objects;
@@ -228,8 +229,7 @@ std::size_t Configuration::getAllObjects(std::vector<std::shared_ptr<T>> &value)
 
   auto original_size = value.size();
 
-  for( std::multimap<std::string, std::shared_ptr<Object>>::iterator it
-         = _this->child_objects.begin() ;
+  for( child_object_list::iterator it = _this->child_objects.begin() ;
        it != _this->child_objects.end() ; ++it ){
 
     std::shared_ptr<T> node = std::dynamic_pointer_cast<T>(it->second);
@@ -249,8 +249,7 @@ std::size_t Configuration::getAllObjects(std::string name,
 
   auto original_size = value.size();
 
-  for( std::multimap<std::string, std::shared_ptr<Object>>::iterator it
-         = _this->child_objects.begin() ;
+  for( child_object_list::iterator it = _this->child_objects.begin() ;
        it != _this->child_objects.end() ; ++it ){
 
     if (it->first != name)
@@ -268,11 +267,16 @@ std::size_t Configuration::getAllObjects(std::string name,
 template<class T>
 bool Configuration::getObject(std::string name, std::shared_ptr<T> &ptr) const{
 
-  if( child_objects.count(name) == 0 ){
-    return false; }
+  Configuration *_this = const_cast<Configuration*>(this);
 
-  std::multimap<std::string, std::shared_ptr<Object>>::iterator it
-    = const_cast<Configuration*>(this)->child_objects.find(name);
+  auto it = std::find_if(child_objects.begin(),
+                         child_objects.end(),
+                         [name](std::pair<std::string, std::shared_ptr<Object>> &pair) {
+                           return pair.first == name;
+                         });
+  if (it == child_objects.end())
+    return false;
+
   std::shared_ptr<T> _value = std::dynamic_pointer_cast<T>(it->second);
 
   if (!_value) {
@@ -287,9 +291,8 @@ bool Configuration::getObject(std::shared_ptr<T> &ptr) const {
 
   Configuration *_this = const_cast<Configuration*>(this);
 
-  for( std::multimap<std::string, std::shared_ptr<Object>>::iterator
-         it = _this->child_objects.begin() ;
-       it != _this->child_objects.end() ; ++it ){
+  for (child_object_list::iterator it = _this->child_objects.begin() ;
+       it != _this->child_objects.end() ; ++it) {
 
     std::shared_ptr<T> _value = std::dynamic_pointer_cast<T>(it->second);
 
@@ -304,7 +307,7 @@ bool Configuration::getObject(std::shared_ptr<T> &ptr) const {
 
 template<class T>
 void Configuration::addObject(std::string name, std::shared_ptr<T> ptr) {
-  child_objects.insert(std::pair<std::string, std::shared_ptr<Object>>(name, ptr));
+  child_objects.push_back(std::pair<std::string, std::shared_ptr<Object>>(name, ptr));
 }
 
 template<class T>
@@ -332,15 +335,21 @@ bool Configuration::getParam(std::string name, T &value) const{
 
 template <>
 inline bool Configuration::getParam(std::string name, std::string &value) const {
-  if (parameters.count(name) == 0) {
+
+  Configuration * _this = const_cast<Configuration*>(this);
+
+  auto it = std::find_if(_this->parameters.begin(),
+                         _this->parameters.end(),
+                         [name](std::pair<std::string, parameter_t> pair) {
+                           return pair.first == name;
+                         });
+  if (it == _this->parameters.end()) {
     GM_INF("Configuration", "Could not find " << name);
     return false;
   }
 
-  Configuration * _this = const_cast<Configuration*>(this);
-
-  value = parameters.find(name)->second.value;
-  _this->parameters.find(name)->second.checked = true;
+  value = it->second.value;
+  it->second.checked = true;
   GM_INF("Configuration", "Read " << name << " = " << value);
   return true;
 }

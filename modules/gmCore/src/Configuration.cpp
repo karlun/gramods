@@ -280,11 +280,17 @@ Configuration::~Configuration(){
 }
 
 bool Configuration::hasParam(std::string name) {
-  return parameters.count(name) > 0;
+  auto it = std::find_if(parameters.begin(),
+                         parameters.end(),
+                         [name](std::pair<std::string, parameter_t> &pair) {
+                           return pair.first == name;
+                         });
+  return it != parameters.end();
 }
 
-void Configuration::addParam(std::string name, std::string value){
-  parameters.insert(std::pair<std::string, parameter_t>(name, parameter_t(value)));
+void Configuration::addParam(std::string name, std::string value) {
+  GM_VINF("Configuration", "addParam(" << name << ", " << value << ")");
+  parameters.push_back(std::pair<std::string, parameter_t>(name, parameter_t(value)));
 }
 
 size_t Configuration::getAllParamNames(std::vector<std::string> &name) {
@@ -292,9 +298,18 @@ size_t Configuration::getAllParamNames(std::vector<std::string> &name) {
   for (auto param : parameters)
     new_names.push_back(param.first);
 
+  std::stringstream ss;
+  for (auto name : new_names)
+    ss << name << " ";
+
   std::vector<std::string>::iterator it;
   it = std::unique(new_names.begin(), new_names.end());
   new_names.resize(std::distance(new_names.begin(), it));
+
+  ss << " -> ";
+  for (auto name : new_names)
+    ss << name << " ";
+  GM_VVINF("Configuration", "getAllParameterNames " << ss.str());
 
   name.insert(name.end(), new_names.begin(), new_names.end());
 
