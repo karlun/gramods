@@ -13,8 +13,8 @@ void SpatialPlanarView::renderFullPipeline(ViewSettings settings) {
   if (viewpoint)
     settings.viewpoint = viewpoint;
 
-  Eigen::Vector3f x_VP;
-  Eigen::Quaternionf q_VP;
+  Eigen::Vector3f x_VP = Eigen::Vector3f::Zero();
+  Eigen::Quaternionf q_VP = Eigen::Quaternionf::Identity();
 
   if (settings.viewpoint) {
     x_VP = settings.viewpoint->getPosition();
@@ -58,7 +58,7 @@ void SpatialPlanarView::renderFullPipeline(ViewSettings settings) {
   auto Q1 = Eigen::Quaternionf::FromTwoVectors(Q0 * y, up);
 
   Camera camera;
-  camera.setPlanes(left, right, top, bottom);
+  camera.setPlanes(left, right, bottom, top);
   camera.setPose(x_VP, Q1 * Q0);
 
   for (auto renderer : settings.renderers)

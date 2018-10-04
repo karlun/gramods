@@ -83,12 +83,34 @@ public:
       (Eigen::Quaternionf::AngleAxisType(rot[3], Eigen::Vector3f(rot[0], rot[1], rot[2]).normalized()));
   }
 
+  /**
+     Set the up direction to be used in a later call to
+     setLookAt. This does nothing if setLookAt is not used.
+  */
+  virtual void setUpDirection(gmTypes::float3 up) {
+    up_direction = Eigen::Vector3f(up[0], up[1], up[2]).normalized();
+  }
+
+  /**
+     Implicitly rotates the viewpoint to look at the specified
+     point. This makes use of the currently set viewpoint position and
+     up direction, so make sure that those are set before this is
+     used.
+
+     Observe that this affects only the viewpoint orientation -
+     camera orientation will not automatically toe-in to this point.
+  */
+  virtual void setLookAt(gmTypes::float3 pt);
+
   GM_OFI_DECLARE;
 
 protected:
 
-  Eigen::Vector3f position;
-  Eigen::Quaternionf orientation;
+  Eigen::Vector3f position = Eigen::Vector3f::Zero();
+  Eigen::Quaternionf orientation = Eigen::Quaternionf::Identity();
+
+  Eigen::Vector3f up_direction = Eigen::Vector3f(0, 1, 0);
+
 };
 
 END_NAMESPACE_GMGRAPHICS;

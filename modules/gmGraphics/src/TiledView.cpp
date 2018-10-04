@@ -46,16 +46,23 @@ void TiledView::Impl::renderFullPipeline(ViewSettings settings) {
     total_cols = std::max(total_cols, tile.location[1] + tile.location[3]);
   }
 
-  GLint cvp[4];
+  GLint cvp[4] = { 0, 0, 0, 0 };
   glGetIntegerv(GL_VIEWPORT, cvp);
   float col_width = cvp[2] / (float)total_cols;
   float row_height = cvp[3] / (float)total_rows;
+
+  if (cvp[2] == 0 || cvp[3] == 0) {
+    GM_ERR("TiledView", "Cannot render to degenerate viewport");
+    return;
+  }
 
   GM_VINF("TiledView",
           "Tiling "
           << "[" << total_rows
           << " " << total_cols
-          << "] in "
+          << "] in ");
+  GM_VINF("TiledView",
+          "Tiling "
           << "(" << cvp[0]
           << " " << cvp[1]
           << " " << cvp[2]
