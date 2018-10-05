@@ -19,7 +19,7 @@ ENDIF ()
 SET (APP_INCLUDE_DIRS ${APP_INCLUDE_DIRS} ${TCLAP_INCLUDE_DIRS})
 
 FIND_PACKAGE(Threads)
-IF (Threads_FOUND)
+IF (NOT Threads_FOUND)
   MESSAGE (STATUS "Not including gm-load - requires Threads")
   RETURN()
 ENDIF ()
