@@ -18,11 +18,11 @@ public:
   void renderFullPipeline(ViewSettings settings);
 
   /**
-     Sets the vertical field of view, in degrees, while the horizontal
+     Sets the vertical field of view, in radians, while the horizontal
      is affected by the size of the viewport.
   */
   void setFieldOfView(float fov) {
-    field_of_view = (std::acos(-1)/180.0) * fov;
+    field_of_view = fov;
   }
 
   GM_OFI_DECLARE;

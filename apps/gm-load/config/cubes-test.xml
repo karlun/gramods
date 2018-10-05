@@ -57,7 +57,7 @@
       <param name="tileLocation" value="0 1 1 1"/>
       <PosedPlanarView
           AS="view"
-          fieldOfView="60">
+          fieldOfView="1">
         <Viewpoint
             AS="viewpoint"
             position="2.0 2.0 2.0"
