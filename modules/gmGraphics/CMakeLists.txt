@@ -12,7 +12,7 @@ SET (MODULE_LIBS ${MODULE_LIBS} gmCore)
 SET (MODULE_LIBS ${MODULE_LIBS} gmTypes)
 SET (MODULE_LIBS ${MODULE_LIBS} gmTrack)
 
-FIND_PACKAGE (Eigen3 3.3 NO_MODULE CONFIG)
+FIND_PACKAGE (Eigen3 3.3 QUIET NO_MODULE)
 IF (Eigen3_FOUND)
   SET(HAVE_Eigen3 1)
   OPTION(gramods_ENABLE_Eigen3 "Enable functionality that requires Eigen3" ON)
