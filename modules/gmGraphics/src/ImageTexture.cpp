@@ -84,9 +84,8 @@ void ImageTexture::Impl::update() {
 bool ImageTexture::Impl::loadImage(std::string file_template, size_t frame) {
 
   // Arbitrary padding for numbers
-  size_t filename_buffer_size = file_template.size() + 1024;
-  char filename[filename_buffer_size];
-  snprintf(filename, filename_buffer_size, file_template.c_str(), frame);
+  char filename[1024];
+  snprintf(filename, 1024, file_template.c_str(), frame);
 
 	FREE_IMAGE_FORMAT image_format = FreeImage_GetFileType(filename, 0);
 	if(image_format == FIF_UNKNOWN)
