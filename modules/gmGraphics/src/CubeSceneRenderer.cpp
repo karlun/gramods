@@ -212,7 +212,7 @@ void CubeSceneRenderer::Impl::render(Camera camera) {
           (1.0 * step * idx_x +
            0.4 * step * idx_y +
            0.7 * step * idx_z,
-           Eigen::Vector3f(idx_z, idx_y, idx_x).normalized());
+           Eigen::Vector3f(idx_z + 1, idx_y, idx_x).normalized());
         glUniformMatrix4fv(Mm_id, 1, false, Mm.data());
 
         Eigen::Vector3f color(0.5 + 0.5 * step * idx_x,
