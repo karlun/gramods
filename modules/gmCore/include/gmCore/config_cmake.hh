@@ -13,4 +13,10 @@
 #cmakedefine gramods_ENABLE_SDL2
 #endif
 
+#ifdef gmCore_EXPORTS
+#define gmCore_API __declspec(dllexport)
+#else
+#define gmCore_API __declspec(dllimport)
+#endif
+
 #endif
