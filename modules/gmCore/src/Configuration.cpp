@@ -148,7 +148,7 @@ void Configuration::load(tinyxml2::XMLNode *node) {
       continue;
     }
     
-    if (strcasecmp( node_it->Value(), "param" ) == 0) {
+    if (strcmp(node_it->Value(), "param") == 0) {
       parse_param(node_element);
       continue;
     }
