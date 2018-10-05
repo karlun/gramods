@@ -12,6 +12,8 @@ void SpatialPlanarView::renderFullPipeline(ViewSettings settings) {
 
   if (viewpoint)
     settings.viewpoint = viewpoint;
+  settings.renderers.insert(settings.renderers.end(),
+                            renderers.begin(), renderers.end());
 
   Eigen::Vector3f x_VP = Eigen::Vector3f::Zero();
   Eigen::Quaternionf q_VP = Eigen::Quaternionf::Identity();
