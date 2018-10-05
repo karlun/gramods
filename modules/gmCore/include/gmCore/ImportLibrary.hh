@@ -9,6 +9,12 @@
 #include <string>
 #include <memory>
 
+#ifdef WIN32
+# include <Windows.h>
+#else
+# include <dlfcn.h>
+#endif
+
 BEGIN_NAMESPACE_GMCORE;
 
 /**
@@ -19,7 +25,6 @@ class ImportLibrary
 
 public:
 
-  ImportLibrary();
   ~ImportLibrary();
 
   bool isLoaded() { return library_loaded; }
@@ -34,7 +39,12 @@ private:
 
   bool library_loaded;
   std::string lib;
-  void *handle;
+
+#ifdef WIN32
+  HMODULE handle = 0;
+#else
+  void *handle = nullptr;
+#endif
 };
 
 END_NAMESPACE_GMCORE;
