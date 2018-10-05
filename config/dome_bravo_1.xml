@@ -1,0 +1,31 @@
+<config>
+
+  <OStreamMessageSink stream="err" useAnsiColor="1" level="1"/>
+  <LogFileMessageSink logFilePath="gramod.log" append="0"/>
+
+  <ImportLibrary lib="libgmGraphics.so"/>
+
+  <SdlWindow
+      fullscreen="1"
+      GLMajor="3" GLMinor="3">
+
+    <SdlContext
+        AS="context" DEF="SDLContext"
+        useVideo="1"/>
+
+    <CubeSceneRenderer
+        AS="renderer"
+        cubeSize="0.1"
+        cubeSetSize="20.0"/>
+
+    <!-- FOV: -55.82 55.82 7.70 74.10, Euler: 45 0 0-->
+    <FovPlanarView
+        AS="view"
+        clipAngles="-0.9742 0.9742 0.1344 1.2933"
+        eulerAngles="0.7854 0 0">
+      <Viewpoint
+          AS="viewpoint"
+          position="0 0 0"/>
+    </FovPlanarView>
+  </SdlWindow>
+</config>
