@@ -54,7 +54,8 @@ OFactory::OFactoryInformation::~OFactoryInformation(){
 }
 
 Object * OFactory::OFactoryInformation::create() {
-  creator->create();
+  if (!creator) return nullptr;
+  return creator->create();
 }
 
 void OFactory::OFactoryInformation::registerParamSetter

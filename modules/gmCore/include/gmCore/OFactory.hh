@@ -34,6 +34,17 @@ BEGIN_NAMESPACE_GMCORE;
   gramods::gmCore::OFactory::OFactoryInformation                        \
   NAME::_gm_ofi(#NAME, new gramods::gmCore::OFactory::ObjectCreator<NAME>());
 
+/**\def GM_OFI_DEFINE_ABSTRACT(OFI, NAME)
+   Macro for instantiating the registration of a OFactoryInformation
+   declared with OFI_DECLARE. A class registered with this macro
+   cannot be instantiated, but may declare attributes.
+
+   @param NAME The name of the class.
+*/
+#define GM_OFI_DEFINE_ABSTRACT(NAME)              \
+  gramods::gmCore::OFactory::OFactoryInformation  \
+  NAME::_gm_ofi(#NAME, nullptr);
+
 /**\def GM_OFI_DEFINE_SUB(NAME, BASE)
    Macro for instantiating the registration of a OFactoryInformation
    declared with GM_OFI_DECLARE, with association with its base class'
@@ -48,6 +59,19 @@ BEGIN_NAMESPACE_GMCORE;
 #define GM_OFI_DEFINE_SUB(NAME, BASE)                                   \
   gramods::gmCore::OFactory::OFactoryInformation                        \
   NAME::_gm_ofi(#NAME, new gramods::gmCore::OFactory::ObjectCreator<NAME>(), &BASE::_gm_ofi);
+
+/**\def GM_OFI_DEFINE_ABSTRACT_SUB(NAME, BASE)
+   Macro for instantiating the registration of a OFactoryInformation
+   declared with GM_OFI_DECLARE, with association with its base class'
+   registration data. A class registered with this macro cannot be
+   instantiated, but may declare attributes.
+
+   @param NAME The name of the class.
+   @param BASE The name of the base class.
+*/
+#define GM_OFI_DEFINE_ABSTRACT_SUB(NAME, BASE)    \
+  gramods::gmCore::OFactory::OFactoryInformation  \
+  NAME::_gm_ofi(#NAME, nullptr, &BASE::_gm_ofi);
 
 /**\def GM_OFI_PARAM(CLASS, NAME, TYPE, FUNC)
    Macro for registering a parameter setter to a OFactoryInformation
