@@ -9,12 +9,18 @@ GM_OFI_POINTER(RendererDispatcher, viewpoint, gmGraphics::Viewpoint, RendererDis
 
 void RendererDispatcher::renderFullPipeline(ViewSettings settings) {
 
+  populateViewSettings(settings);
+
+  Camera camera;
+  for (auto renderer : settings.renderers)
+    renderer->render(camera);
+}
+
+void RendererDispatcher::populateViewSettings(ViewSettings &settings) {
   settings.renderers.insert(settings.renderers.end(),
                             renderers.begin(), renderers.end());
-
-  Camera c;
-  for (auto renderer : settings.renderers)
-    renderer->render(c);
+  if (viewpoint)
+    settings.viewpoint = viewpoint;
 }
 
 END_NAMESPACE_GMGRAPHICS;

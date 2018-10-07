@@ -25,14 +25,6 @@ void FovPlanarView::renderFullPipeline(ViewSettings settings) {
     q_VP = settings.viewpoint->getOrientation();
   }
 
-  switch (settings.eye_to_render) {
-  case Viewpoint::Eye::LEFT:
-    x_VP -= q_VP * Eigen::Vector3f(0.5f * settings.eye_separation, 0.f, 0.f);
-    break;
-  case Viewpoint::Eye::RIGHT:
-    x_VP += q_VP * Eigen::Vector3f(0.5f * settings.eye_separation, 0.f, 0.f);
-  }
-
   Camera camera;
   camera.setPlanes(planes[0], planes[1], planes[2], planes[3]);
   camera.setPose(x_VP, orientation);

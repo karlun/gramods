@@ -29,21 +29,6 @@ void PosedPlanarView::renderFullPipeline(ViewSettings settings) {
     message_shown = true;
   }
 
-  if (settings.eye_to_render != Viewpoint::Eye::MONO) {
-    static bool message_shown = false;
-    if (!message_shown)
-      GM_WRN("PosedPlanarView", "This view is not suitable for stereoscopic rendering - provide parallel offset rendering.");
-    message_shown = true;
-  }
-
-  switch (settings.eye_to_render) {
-  case Viewpoint::Eye::LEFT:
-    x_VP -= q_VP * Eigen::Vector3f(0.5f * settings.eye_separation, 0.f, 0.f);
-    break;
-  case Viewpoint::Eye::RIGHT:
-    x_VP += q_VP * Eigen::Vector3f(0.5f * settings.eye_separation, 0.f, 0.f);
-  }
-
   GLint cvp[4] = { 0, 0, 0, 0 };
   glGetIntegerv(GL_VIEWPORT, cvp);
   if (cvp[2] == 0 || cvp[3] == 0) {
