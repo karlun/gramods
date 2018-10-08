@@ -721,7 +721,7 @@ WARNINGS               = YES
 # will automatically be disabled.
 # The default value is: YES.
 
-WARN_IF_UNDOCUMENTED   = YES
+WARN_IF_UNDOCUMENTED   = NO
 
 # If the WARN_IF_DOC_ERROR tag is set to YES, doxygen will generate warnings for
 # potential errors in the documentation, such as not documenting some parameters
@@ -771,7 +771,23 @@ WARN_LOGFILE           =
 # spaces. See also FILE_PATTERNS and EXTENSION_MAPPING
 # Note: If this tag is empty the current directory is searched.
 
-INPUT                  = @CMAKE_CURRENT_SOURCE_DIR@/README.md @CMAKE_CURRENT_SOURCE_DIR@/modules @CMAKE_CURRENT_SOURCE_DIR@/apps
+INPUT                  = @CMAKE_CURRENT_SOURCE_DIR@/README.md
+
+INPUT                 += @CMAKE_CURRENT_BINARY_DIR@/modules/gmCore/include
+INPUT                 += @CMAKE_CURRENT_SOURCE_DIR@/modules/gmCore/include
+
+INPUT                 += @CMAKE_CURRENT_BINARY_DIR@/modules/gmGraphics/include
+INPUT                 += @CMAKE_CURRENT_SOURCE_DIR@/modules/gmGraphics/include
+
+INPUT                 += @CMAKE_CURRENT_BINARY_DIR@/modules/gmNetwork/include
+INPUT                 += @CMAKE_CURRENT_SOURCE_DIR@/modules/gmNetwork/include
+
+INPUT                 += @CMAKE_CURRENT_BINARY_DIR@/modules/gmTrack/include
+INPUT                 += @CMAKE_CURRENT_SOURCE_DIR@/modules/gmTrack/include
+
+INPUT                 += @CMAKE_CURRENT_BINARY_DIR@/modules/gmTypes/include
+INPUT                 += @CMAKE_CURRENT_SOURCE_DIR@/modules/gmTypes/include
+
 
 # This tag can be used to specify the character encoding of the source files
 # that doxygen parses. Internally doxygen uses the UTF-8 encoding. Doxygen uses
@@ -796,7 +812,7 @@ INPUT_ENCODING         = UTF-8
 # *.m, *.markdown, *.md, *.mm, *.dox, *.py, *.pyw, *.f90, *.f, *.for, *.tcl,
 # *.vhd, *.vhdl, *.ucf, *.qsf, *.as and *.js.
 
-FILE_PATTERNS          =
+FILE_PATTERNS          = *.hh
 
 # The RECURSIVE tag can be used to specify whether or not subdirectories should
 # be searched for input files as well.
@@ -811,7 +827,7 @@ RECURSIVE              = YES
 # Note that relative paths are relative to the directory from which doxygen is
 # run.
 
-EXCLUDE                =
+EXCLUDE                = *_cmake.hh
 
 # The EXCLUDE_SYMLINKS tag can be used to select whether or not files or
 # directories that are symbolic links (a Unix file system feature) are excluded
@@ -1988,7 +2004,7 @@ PERLMOD_MAKEVAR_PREFIX =
 # C-preprocessor directives found in the sources and include files.
 # The default value is: YES.
 
-ENABLE_PREPROCESSING   = NO
+ENABLE_PREPROCESSING   = YES
 
 # If the MACRO_EXPANSION tag is set to YES, doxygen will expand all macro names
 # in the source code. If set to NO, only conditional compilation will be
@@ -1997,7 +2013,7 @@ ENABLE_PREPROCESSING   = NO
 # The default value is: NO.
 # This tag requires that the tag ENABLE_PREPROCESSING is set to YES.
 
-MACRO_EXPANSION        = NO
+MACRO_EXPANSION        = YES
 
 # If the EXPAND_ONLY_PREDEF and MACRO_EXPANSION tags are both set to YES then
 # the macro expansion is limited to the macros specified with the PREDEFINED and
@@ -2019,7 +2035,21 @@ SEARCH_INCLUDES        = YES
 # preprocessor.
 # This tag requires that the tag SEARCH_INCLUDES is set to YES.
 
-INCLUDE_PATH           =
+INCLUDE_PATH           = @CMAKE_CURRENT_BINARY_DIR@/modules/gmCore/include
+INCLUDE_PATH          += @CMAKE_CURRENT_SOURCE_DIR@/modules/gmCore/include
+
+INCLUDE_PATH          += @CMAKE_CURRENT_BINARY_DIR@/modules/gmGraphics/include
+INCLUDE_PATH          += @CMAKE_CURRENT_SOURCE_DIR@/modules/gmGraphics/include
+
+INCLUDE_PATH          += @CMAKE_CURRENT_BINARY_DIR@/modules/gmNetwork/include
+INCLUDE_PATH          += @CMAKE_CURRENT_SOURCE_DIR@/modules/gmNetwork/include
+
+INCLUDE_PATH          += @CMAKE_CURRENT_BINARY_DIR@/modules/gmTrack/include
+INCLUDE_PATH          += @CMAKE_CURRENT_SOURCE_DIR@/modules/gmTrack/include
+
+INCLUDE_PATH          += @CMAKE_CURRENT_BINARY_DIR@/modules/gmTypes/include
+INCLUDE_PATH          += @CMAKE_CURRENT_SOURCE_DIR@/modules/gmTypes/include
+
 
 # You can use the INCLUDE_FILE_PATTERNS tag to specify one or more wildcard
 # patterns (like *.h and *.hpp) to filter out the header-files in the
@@ -2037,7 +2067,7 @@ INCLUDE_FILE_PATTERNS  =
 # recursively expanded use the := operator instead of the = operator.
 # This tag requires that the tag ENABLE_PREPROCESSING is set to YES.
 
-PREDEFINED             = UTM50_ENABLE_GDAL UTM50_ENABLE_TinyXML2 UTM50_ENABLE_MOUSE_INTERACTION UTM50_ENABLE_SDL2
+PREDEFINED             =
 
 
 # If the MACRO_EXPANSION and EXPAND_ONLY_PREDEF tags are set to YES then this
@@ -2057,7 +2087,7 @@ EXPAND_AS_DEFINED      =
 # The default value is: YES.
 # This tag requires that the tag ENABLE_PREPROCESSING is set to YES.
 
-SKIP_FUNCTION_MACROS   = YES
+SKIP_FUNCTION_MACROS   = NO
 
 #---------------------------------------------------------------------------
 # Configuration options related to external references

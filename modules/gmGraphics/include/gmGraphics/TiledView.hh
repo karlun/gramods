@@ -11,7 +11,7 @@ BEGIN_NAMESPACE_GMGRAPHICS;
    View) into sub tiles each containing a separate View.
 
    Example usage:
-   ```{xml}
+   ~~~~~{.xml}
    <SomeWindow>
      <TiledView>
        <param name="tileLocation" value="0 2 1 1"/>
@@ -22,7 +22,7 @@ BEGIN_NAMESPACE_GMGRAPHICS;
        <SomeView AS="view"/>
      </TiledView>
    </SdlWindow>
-   ```
+   ~~~~~
 */
 class TiledView
   : public View {
