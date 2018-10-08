@@ -4,7 +4,6 @@
 
 #include <gmGraphics/config.hh>
 
-#include <gmCore/Object.hh>
 #include <gmCore/Console.hh>
 
 #include <Eigen/Eigen>
@@ -15,8 +14,7 @@ BEGIN_NAMESPACE_GMGRAPHICS;
 /**
    The base of graphics Camera implementations.
  */
-class Camera
-  : public gmCore::Object {
+class Camera {
 
 public:
 
