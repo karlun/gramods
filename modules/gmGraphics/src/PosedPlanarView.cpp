@@ -36,7 +36,7 @@ void PosedPlanarView::renderFullPipeline(ViewSettings settings) {
     return;
   }
 
-  float ratio = cvp[2] / cvp[3];
+  float ratio = cvp[2] / (float)cvp[3];
 
   Camera camera;
   camera.setFieldOfView(ratio * field_of_view, field_of_view);
