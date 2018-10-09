@@ -62,6 +62,14 @@ void TextureRenderer::render(Camera camera) {
 }
 
 void TextureRenderer::Impl::render(Texture *texture, Camera &camera) {
+  if (!texture) {
+    static bool message_shown = false;
+    if (!message_shown)
+      GM_WRN("TextureRenderer", "No texture to render");
+    message_shown = true;
+    return;
+  }
+
   if (!has_been_setup) setup();
   GM_VINF("TextureRenderer", "rendering");
 
