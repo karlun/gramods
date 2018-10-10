@@ -49,6 +49,8 @@
           topLeftCorner="-2.0 0.0 -2.0"
           bottomRightCorner="2.0 0.0 2.0"
           upDirection="0.0 0.0 -1.0">
+        <SimpleAnaglyphsMultiplexer
+            AS="stereoscopicMultiplexer"/>
         <Viewpoint
             AS="viewpoint"
             position="0.0 3.0 0.0"/>

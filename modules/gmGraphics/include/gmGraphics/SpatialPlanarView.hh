@@ -14,8 +14,6 @@ class SpatialPlanarView
 
 public:
 
-  void renderFullPipeline(ViewSettings settings);
-
   void setTopLeftCorner(gmTypes::float3 tlc) {
     topLeftCorner = Eigen::Vector3f(tlc[0], tlc[1], tlc[2]);
   }

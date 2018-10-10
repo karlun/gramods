@@ -8,26 +8,6 @@ GM_OFI_PARAM(SpatialPlanarView, topLeftCorner, gmTypes::float3, SpatialPlanarVie
 GM_OFI_PARAM(SpatialPlanarView, bottomRightCorner, gmTypes::float3, SpatialPlanarView::setBottomRightCorner);
 GM_OFI_PARAM(SpatialPlanarView, upDirection, gmTypes::float3, SpatialPlanarView::setUpDirection);
 
-void SpatialPlanarView::renderFullPipeline(ViewSettings settings) {
-  populateViewSettings(settings);
-
-  if (stereoscopic_multiplexer) {
-
-    stereoscopic_multiplexer->prepair();
-
-    stereoscopic_multiplexer->setupRendering(StereoscopicMultiplexer::Eye::LEFT);
-    renderFullPipeline(settings, Eye::LEFT);
-
-    stereoscopic_multiplexer->setupRendering(StereoscopicMultiplexer::Eye::RIGHT);
-    renderFullPipeline(settings, Eye::RIGHT);
-
-    stereoscopic_multiplexer->finalize();
-    
-  } else {
-    renderFullPipeline(settings, Eye::MONO);
-  }
-}
-
 void SpatialPlanarView::renderFullPipeline(ViewSettings settings, Eye eye) {
 
   Eigen::Vector3f x_VP = Eigen::Vector3f::Zero();

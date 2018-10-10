@@ -25,6 +25,8 @@ public:
     RIGHT
   };
 
+  virtual void renderFullPipeline(ViewSettings settings);
+
   /**
      Sets the distance between the eyes, in internal units, typically
      meters.
@@ -44,6 +46,11 @@ public:
   GM_OFI_DECLARE;
 
 protected:
+
+  /**
+     Renders one eye at a time, or just a mono eye.
+  */
+  virtual void renderFullPipeline(ViewSettings settings, Eye eye) = 0;
 
   std::shared_ptr<StereoscopicMultiplexer> stereoscopic_multiplexer;
   float eye_separation = 0.65;

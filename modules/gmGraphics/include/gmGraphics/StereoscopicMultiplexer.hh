@@ -19,7 +19,7 @@ BEGIN_NAMESPACE_GMGRAPHICS;
 
    A StereoscopicView will for each frame call, in order,
 
-    1. prepair()
+    1. prepare()
     2. setupRendering(Eye::LEFT)
     3. setupRendering(Eye::RIGHT)
     4. finalize()
@@ -33,15 +33,15 @@ public:
      The two eyes that can be rendered.
   */
   enum struct Eye {
-    MONO,
-    LEFT,
-    RIGHT
+    LEFT = 0,
+    RIGHT,
+    COUNT
   };
 
   /**
-     Prepairs the multiplexer for rendering to the two eyes.
+     Prepares the multiplexer for rendering to the two eyes.
   */
-  virtual void prepair() = 0;
+  virtual void prepare() = 0;
 
   /**
      Sets up rendering for one eye at a time.
