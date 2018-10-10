@@ -92,9 +92,9 @@ private:
   SDL_GLContext gl_context;
   static std::map<unsigned int, std::weak_ptr<SdlWindow>> sdl_windows;
 
-  int gl_major = 4;
-  int gl_minor = 1;
-  std::string gl_profile = "core";
+  int gl_major = -1;
+  int gl_minor = -1;
+  std::string gl_profile;
 
   std::shared_ptr<gmCore::SdlContext> context;
 };
