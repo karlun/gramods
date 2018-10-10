@@ -29,10 +29,7 @@ TiledView::TiledView()
   : _impl(std::make_unique<Impl>()) {}
 
 void TiledView::renderFullPipeline(ViewSettings settings) {
-  settings.renderers.insert(settings.renderers.end(),
-                            renderers.begin(), renderers.end());
-  if (viewpoint)
-    settings.viewpoint = viewpoint;
+  populateViewSettings(settings);
   _impl->renderFullPipeline(settings);
 }
 

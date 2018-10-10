@@ -30,8 +30,6 @@ public:
 
     std::vector<std::shared_ptr<Renderer>> renderers;
     std::shared_ptr<Viewpoint> viewpoint;
-    Viewpoint::Eye eye_to_render = Viewpoint::Eye::MONO;
-    float eye_separation = 0.065;
   };
 
   /**
@@ -70,6 +68,12 @@ public:
   GM_OFI_DECLARE;
 
 protected:
+
+  /**
+     Adds the dispatcher's local renderers and viewpoint, if set. Call
+     this from overloaded renderFullPipeline.
+  */
+  void populateViewSettings(ViewSettings &settings);
 
   std::vector<std::shared_ptr<Renderer>> renderers;
   std::shared_ptr<Viewpoint> viewpoint;

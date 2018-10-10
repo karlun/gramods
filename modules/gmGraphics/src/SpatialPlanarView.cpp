@@ -3,17 +3,32 @@
 
 BEGIN_NAMESPACE_GMGRAPHICS;
 
-GM_OFI_DEFINE_SUB(SpatialPlanarView, View);
+GM_OFI_DEFINE_SUB(SpatialPlanarView, StereoscopicView);
 GM_OFI_PARAM(SpatialPlanarView, topLeftCorner, gmTypes::float3, SpatialPlanarView::setTopLeftCorner);
 GM_OFI_PARAM(SpatialPlanarView, bottomRightCorner, gmTypes::float3, SpatialPlanarView::setBottomRightCorner);
 GM_OFI_PARAM(SpatialPlanarView, upDirection, gmTypes::float3, SpatialPlanarView::setUpDirection);
 
 void SpatialPlanarView::renderFullPipeline(ViewSettings settings) {
+  populateViewSettings(settings);
 
-  if (viewpoint)
-    settings.viewpoint = viewpoint;
-  settings.renderers.insert(settings.renderers.end(),
-                            renderers.begin(), renderers.end());
+  if (stereoscopic_multiplexer) {
+
+    stereoscopic_multiplexer->prepair();
+
+    stereoscopic_multiplexer->setupRendering(StereoscopicMultiplexer::Eye::LEFT);
+    renderFullPipeline(settings, Eye::LEFT);
+
+    stereoscopic_multiplexer->setupRendering(StereoscopicMultiplexer::Eye::RIGHT);
+    renderFullPipeline(settings, Eye::RIGHT);
+
+    stereoscopic_multiplexer->finalize();
+    
+  } else {
+    renderFullPipeline(settings, Eye::MONO);
+  }
+}
+
+void SpatialPlanarView::renderFullPipeline(ViewSettings settings, Eye eye) {
 
   Eigen::Vector3f x_VP = Eigen::Vector3f::Zero();
   Eigen::Quaternionf q_VP = Eigen::Quaternionf::Identity();
@@ -28,24 +43,23 @@ void SpatialPlanarView::renderFullPipeline(ViewSettings settings) {
     message_shown = true;
   }
 
-  switch (settings.eye_to_render) {
-  case Viewpoint::Eye::LEFT:
-    x_VP -= q_VP * Eigen::Vector3f(0.5f * settings.eye_separation, 0.f, 0.f);
+  switch (eye) {
+  case Eye::LEFT:
+    x_VP -= q_VP * Eigen::Vector3f(0.5f * eye_separation, 0.f, 0.f);
     break;
-  case Viewpoint::Eye::RIGHT:
-    x_VP += q_VP * Eigen::Vector3f(0.5f * settings.eye_separation, 0.f, 0.f);
+  case Eye::RIGHT:
+    x_VP += q_VP * Eigen::Vector3f(0.5f * eye_separation, 0.f, 0.f);
   }
 
   auto up = upDirection.normalized();
 
-  // Display center and normal
-  auto center = 0.5f * (bottomRightCorner + topLeftCorner);
   auto display_normal = (bottomRightCorner - topLeftCorner).cross(up);
   display_normal = display_normal.normalized();
   auto rightDirection = up.cross(display_normal);
   rightDirection = rightDirection.normalized();
 
-  auto distance = (x_VP - center).dot(display_normal);
+  auto distance = (x_VP - topLeftCorner).dot(display_normal);
+  auto center = x_VP - distance * display_normal;
 
   // Map geometry onto near plane
   float ratio = 1.f / distance;

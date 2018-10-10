@@ -20,14 +20,11 @@ Window::Window()
 
 void Window::renderFullPipeline(ViewSettings settings) {
   makeGLContextCurrent();
-
-  settings.renderers.insert(settings.renderers.end(),
-                            renderers.begin(), renderers.end());
-
-  if (viewpoint)
-    settings.viewpoint = viewpoint;
+  populateViewSettings(settings);
 
   glViewport(0, 0, getSize()[0], getSize()[1]);
+  glClear(GL_COLOR_BUFFER_BIT |
+          GL_DEPTH_BUFFER_BIT);
 
   if (!views.empty()) {
 

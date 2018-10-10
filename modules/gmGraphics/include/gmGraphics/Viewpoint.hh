@@ -14,8 +14,9 @@ BEGIN_NAMESPACE_GMGRAPHICS;
 
 /**
    The viewpoint represents a point in space from which the view is to
-   be rendered, and an orientation to use for eye separation. The view
-   may use this Viewpoint to create Camera fitting for rendering.
+   be rendered, and an orientation. The orientation may be used for
+   view orientation or for eye separation. The view may use this
+   Viewpoint to create Camera fitting for rendering.
 
    Sub classes may implement dynamically updated Viewpoints, based on
    animation or tracking data.
@@ -24,12 +25,6 @@ class Viewpoint
   : public gmCore::Object {
 
 public:
-
-  enum struct Eye {
-    MONO,
-    LEFT,
-    RIGHT
-  };
 
   /**
      Returns the position of the viewpoint.

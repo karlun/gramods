@@ -40,9 +40,10 @@ public:
 
   /**
      Sets the frustum planes of a symmetric frustum for the camera
-     based on field-of-view, expressed in radians.
+     based on horizontal and vertical field-of-view, expressed in
+     radians.
   */
-  void setFieldOfView(float fov_v, float fov_h);
+  void setFieldOfView(float fov_h, float fov_v);
 
   /**
      Sets the pose of the camera.

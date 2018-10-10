@@ -2,7 +2,7 @@
 #ifndef GRAMODS_GRAPHICS_SPATIALPLANARVIEW
 #define GRAMODS_GRAPHICS_SPATIALPLANARVIEW
 
-#include <gmGraphics/View.hh>
+#include <gmGraphics/StereoscopicView.hh>
 
 BEGIN_NAMESPACE_GMGRAPHICS;
 
@@ -10,7 +10,7 @@ BEGIN_NAMESPACE_GMGRAPHICS;
    This view provides skewed frustum projection of the renderers.
 */
 class SpatialPlanarView
-  : public View {
+  : public StereoscopicView {
 
 public:
 
@@ -29,6 +29,8 @@ public:
   GM_OFI_DECLARE;
 
 private:
+
+  void renderFullPipeline(ViewSettings settings, Eye eye);
 
   Eigen::Vector3f topLeftCorner;
   Eigen::Vector3f bottomRightCorner;
