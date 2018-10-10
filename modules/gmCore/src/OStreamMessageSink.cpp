@@ -45,23 +45,23 @@ void OStreamMessageSink::output(Message msg) {
 
 void OStreamMessageSink::outputLevelAndTag(Message msg, std::ostream &out) {
   switch (msg.level) {
-  case ConsoleLevel::ERROR:
+  case ConsoleLevel::error:
     if (use_ansi_color) out << ANSI_ERROR;
     out << "EE";
     break;
-  case ConsoleLevel::WARNING:
+  case ConsoleLevel::warning:
     if (use_ansi_color) out << ANSI_WARNING;
     out << "WW";
     break;
-  case ConsoleLevel::INFORMATION:
+  case ConsoleLevel::information:
     if (use_ansi_color) out << ANSI_NORMAL;
     out << "II";
     break;
-  case ConsoleLevel::VERBOSE_INFORMATION:
+  case ConsoleLevel::verbose_information:
     if (use_ansi_color) out << ANSI_NORMAL;
     out << "I2";
     break;
-  case ConsoleLevel::VERY_VERBOSE_INFORMATION:
+  case ConsoleLevel::very_verbose_information:
     if (use_ansi_color) out << ANSI_NORMAL;
     out << "I3";
     break;

@@ -48,15 +48,15 @@ void LogFileMessageSink::output(Message msg) {
 
 void LogFileMessageSink::outputLevelAndTag(std::ostream &out, Message msg) {
   switch (msg.level) {
-  case ConsoleLevel::ERROR:
+  case ConsoleLevel::error:
     out << "EE"; break;
-  case ConsoleLevel::WARNING:
+  case ConsoleLevel::warning:
     out << "WW"; break;
-  case ConsoleLevel::INFORMATION:
+  case ConsoleLevel::information:
     out << "II"; break;
-  case ConsoleLevel::VERBOSE_INFORMATION:
+  case ConsoleLevel::verbose_information:
     out << "I2"; break;
-  case ConsoleLevel::VERY_VERBOSE_INFORMATION:
+  case ConsoleLevel::very_verbose_information:
     out << "I3"; break;
   default:
     assert(0);

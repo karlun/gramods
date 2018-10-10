@@ -146,27 +146,27 @@ namespace detail {
 
 # define GM_ERR(TAG, MSG)                       \
   gramods::gmCore::Console                      \
-  (gramods::gmCore::ConsoleLevel::ERROR,        \
+  (gramods::gmCore::ConsoleLevel::error,        \
    TAG) << MSG << std::endl
 
 # define GM_WRN(TAG, MSG)                       \
   gramods::gmCore::Console                      \
-  (gramods::gmCore::ConsoleLevel::WARNING,      \
+  (gramods::gmCore::ConsoleLevel::warning,      \
      TAG) << MSG << std::endl
 
 # define GM_INF(TAG, MSG)                       \
   gramods::gmCore::Console                      \
-  (gramods::gmCore::ConsoleLevel::INFORMATION,  \
+  (gramods::gmCore::ConsoleLevel::information,  \
    TAG) << MSG << std::endl
 
 # define GM_VINF(TAG, MSG)                              \
   gramods::gmCore::Console                              \
-  (gramods::gmCore::ConsoleLevel::VERBOSE_INFORMATION,  \
+  (gramods::gmCore::ConsoleLevel::verbose_information,  \
    TAG) << MSG << std::endl
 
 # define GM_VVINF(TAG, MSG)                                 \
   gramods::gmCore::Console                                  \
-  (gramods::gmCore::ConsoleLevel::VERY_VERBOSE_INFORMATION, \
+  (gramods::gmCore::ConsoleLevel::very_verbose_information, \
    TAG) << MSG << std::endl
 
 #else // if NDEBUG else
@@ -181,31 +181,31 @@ namespace detail {
 
 # define GM_ERR(TAG, MSG)                       \
   gramods::gmCore::Console                      \
-  (gramods::gmCore::ConsoleLevel::ERROR,        \
+  (gramods::gmCore::ConsoleLevel::error,        \
    TAG, GM_FILE, __LINE__, __func__)            \
   << MSG << std::endl
 
 # define GM_WRN(TAG, MSG)                       \
   gramods::gmCore::Console                      \
-  (gramods::gmCore::ConsoleLevel::WARNING,      \
+  (gramods::gmCore::ConsoleLevel::warning,      \
    TAG, GM_FILE, __LINE__, __func__)            \
   << MSG << std::endl
 
 # define GM_INF(TAG, MSG)                       \
   gramods::gmCore::Console                      \
-  (gramods::gmCore::ConsoleLevel::INFORMATION,  \
+  (gramods::gmCore::ConsoleLevel::information,  \
    TAG, GM_FILE, __LINE__, __func__)            \
   << MSG << std::endl
 
 # define GM_VINF(TAG, MSG)                              \
   gramods::gmCore::Console                              \
-  (gramods::gmCore::ConsoleLevel::VERBOSE_INFORMATION,  \
+  (gramods::gmCore::ConsoleLevel::verbose_information,  \
    TAG, GM_FILE, __LINE__, __func__)                    \
   << MSG << std::endl
 
 # define GM_VVINF(TAG, MSG)                                 \
   gramods::gmCore::Console                                  \
-  (gramods::gmCore::ConsoleLevel::VERY_VERBOSE_INFORMATION, \
+  (gramods::gmCore::ConsoleLevel::very_verbose_information, \
    TAG, GM_FILE, __LINE__, __func__)                        \
   << MSG << std::endl
 
