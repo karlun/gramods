@@ -4,6 +4,7 @@
 
 #include <gmGraphics/config.hh>
 
+#include <gmTypes/all.hh>
 #include <gmCore/Object.hh>
 #include <gmCore/OFactory.hh>
 

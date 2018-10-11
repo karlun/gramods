@@ -17,6 +17,26 @@ public:
   SimpleAnaglyphsMultiplexer();
 
   /**
+     Sets the color of the left eye filter, in RGB 0-1. Default is red
+     (1, 0, 0).
+  */
+  void setLeftColor(gmTypes::float3 c);
+
+  /**
+     Sets the color of the right eye filter, in RGB 0-1. Default is
+     cyan (0, 1, 1).
+  */
+  void setRightColor(gmTypes::float3 c);
+
+  /**
+     Sets the saturation of color to use in the final image, in the
+     range 0-1. Removing some saturation reduces the problem that an
+     object with the same color as the eye filter becomes invisible
+     for that eye. Default is 0.8.
+  */
+  void setSaturation(float s);
+
+  /**
      Prepares the multiplexer for rendering to the two eyes.
   */
   void prepare();

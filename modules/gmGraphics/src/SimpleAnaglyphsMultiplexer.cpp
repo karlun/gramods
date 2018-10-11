@@ -9,6 +9,9 @@
 BEGIN_NAMESPACE_GMGRAPHICS;
 
 GM_OFI_DEFINE(SimpleAnaglyphsMultiplexer);
+GM_OFI_PARAM(SimpleAnaglyphsMultiplexer, leftColor, gmTypes::float3, SimpleAnaglyphsMultiplexer::setLeftColor);
+GM_OFI_PARAM(SimpleAnaglyphsMultiplexer, rightColor, gmTypes::float3, SimpleAnaglyphsMultiplexer::setRightColor);
+GM_OFI_PARAM(SimpleAnaglyphsMultiplexer, saturation, float, SimpleAnaglyphsMultiplexer::setSaturation);
 
 struct SimpleAnaglyphsMultiplexer::Impl {
 
@@ -30,6 +33,10 @@ struct SimpleAnaglyphsMultiplexer::Impl {
   GLuint tex_width, tex_height;
   GLuint port_width, port_height;
   GLint viewport[4] = { 0, 0, 0, 0 };
+
+  gmTypes::float3 left_color = { 1, 0, 0 };
+  gmTypes::float3 right_color = { 0, 1, 1 };
+  float saturation = 0.8;
 
   void setup();
   void teardown();
@@ -57,6 +64,18 @@ void SimpleAnaglyphsMultiplexer::setupRendering(Eye eye) {
 
 void SimpleAnaglyphsMultiplexer::finalize() {
   _impl->finalize();
+}
+
+void SimpleAnaglyphsMultiplexer::setLeftColor(gmTypes::float3 c) {
+  _impl->left_color = c;
+}
+
+void SimpleAnaglyphsMultiplexer::setRightColor(gmTypes::float3 c) {
+  _impl->right_color = c;
+}
+
+void SimpleAnaglyphsMultiplexer::setSaturation(float s) {
+  _impl->saturation = s;
 }
 
 bool SimpleAnaglyphsMultiplexer::Impl::verify_framebuffer() {
@@ -136,11 +155,30 @@ void main() {
 uniform sampler2D texL;
 uniform sampler2D texR;
 
+uniform vec3 left_color;
+uniform vec3 right_color;
+uniform float saturation;
+
 in vec2 v_uv;
 out vec4 fragColor;
 
+vec3 grsc = vec3((1.0/3.0), (1.0/3.0), (1.0/3.0));
+
 void main() {
-  fragColor = 0.5 * vec4(texture(texL, v_uv).rgb, 1) + 0.5 * vec4(texture(texR, v_uv).rgb, 1);
+
+  vec3 colL = texture(texL, v_uv).rgb;
+  vec3 colR = texture(texR, v_uv).rgb;
+
+  float grL = dot(colL, grsc);
+  float grR = dot(colR, grsc);
+
+  float ra = saturation;
+  float rb = 1 - saturation;
+
+  vec3 L = ra * colL + rb * vec3(grL, grL, grL);
+  vec3 R = ra * colR + rb * vec3(grR, grR, grR);
+
+  fragColor = vec4(L * left_color + R * right_color, 1);
 }
 )";
 
@@ -255,6 +293,9 @@ void SimpleAnaglyphsMultiplexer::Impl::finalize() {
   glUniform1i(glGetUniformLocation(program_id, "texR"), 1);
   glUniform1f(glGetUniformLocation(program_id, "dx"), port_width/(float)tex_width);
   glUniform1f(glGetUniformLocation(program_id, "dy"), port_height/(float)tex_height);
+  glUniform3fv(glGetUniformLocation(program_id, "left_color"), 1, left_color.data());
+  glUniform3fv(glGetUniformLocation(program_id, "right_color"), 1, right_color.data());
+  glUniform1f(glGetUniformLocation(program_id, "saturation"), saturation);
 
   glBindVertexArray(vao_id);
   glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
