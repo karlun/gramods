@@ -116,11 +116,9 @@ void SimpleAnaglyphsMultiplexer::Impl::setup() {
 
     glFramebufferTexture2D(GL_DRAW_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, tex_id[eye_idx], 0);
 
-#if 0
     glBindRenderbuffer(GL_RENDERBUFFER, rb_depth_id);
     glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT32F, 32, 32);
     glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, rb_depth_id);
-#endif
 
     if (!verify_framebuffer())
       return;
@@ -265,15 +263,15 @@ void SimpleAnaglyphsMultiplexer::Impl::setupRendering(Eye eye) {
 
   GM_VINF("SimpleAnaglyphsMultiplexer", "Allocating frame buffer texture " << tex_width << "x" << tex_height << " for port " << port_width << "x" << port_height);
   glBindTexture(GL_TEXTURE_2D, tex_id[(size_t)eye]);
-  glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, tex_width, tex_height, 0,GL_RGB, GL_UNSIGNED_BYTE, 0);
+  glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, tex_width, tex_height, 0, GL_RGB, GL_UNSIGNED_BYTE, 0);
   glBindTexture(GL_TEXTURE_2D, 0);
 
-#if 0
   glBindRenderbuffer(GL_RENDERBUFFER, rb_depth_id);
   glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT32F, tex_width, tex_height);
-#endif
+  glBindRenderbuffer(GL_RENDERBUFFER, 0);
 
   glViewport(0, 0, port_width, port_height);
+  glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 }
 
 void SimpleAnaglyphsMultiplexer::Impl::finalize() {
