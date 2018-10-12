@@ -160,21 +160,19 @@ uniform float saturation;
 in vec2 v_uv;
 out vec4 fragColor;
 
-vec3 grsc = vec3((1.0/3.0), (1.0/3.0), (1.0/3.0));
+// Digital ITU BT.601
+vec3 togray = vec3(0.299, 0.587, 0.114);
 
 void main() {
 
   vec3 colL = texture(texL, v_uv).rgb;
   vec3 colR = texture(texR, v_uv).rgb;
 
-  float grL = dot(colL, grsc);
-  float grR = dot(colR, grsc);
+  float grL = dot(colL, togray);
+  float grR = dot(colR, togray);
 
-  float ra = saturation;
-  float rb = 1 - saturation;
-
-  vec3 L = ra * colL + rb * vec3(grL, grL, grL);
-  vec3 R = ra * colR + rb * vec3(grR, grR, grR);
+  vec3 L = mix(vec3(grL, grL, grL), colL, saturation);
+  vec3 R = mix(vec3(grR, grR, grR), colR, saturation);
 
   fragColor = vec4(L * left_color + R * right_color, 1);
 }
@@ -191,7 +189,15 @@ void main() {
   glAttachShader(program_id, fragment_shader_id);
   glLinkProgram(program_id);
   glBindAttribLocation(program_id, 0, "in_Position");
-    
+
+  {
+    GLsizei msg_len;
+    GLchar msg_data[1024];
+    glGetProgramInfoLog(program_id, 1024, &msg_len, msg_data);
+    msg_data[1023] = '\0';
+    GM_INF("SimpleAnaglyphsMultiplexer", "GL program status: " << msg_data);
+  }
+
   GM_VINF("SimpleAnaglyphsMultiplexer", "Creating vertex array");
   glGenVertexArrays(1, &vao_id);
   glBindVertexArray(vao_id);
