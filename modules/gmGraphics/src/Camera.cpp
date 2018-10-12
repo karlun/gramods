@@ -16,8 +16,8 @@ Eigen::Matrix4f Camera::getProjectionMatrix(float near, float far) {
 
   Mp(0,0) = 2.0 / (right - left);
   Mp(1,1) = 2.0 / (top - bottom);
-  Mp(0,2) = 2.0 * (right + left) / (right - left);
-  Mp(1,2) = 2.0 * (top + bottom) / (top - bottom);
+  Mp(0,2) = (right + left) / (right - left);
+  Mp(1,2) = (top + bottom) / (top - bottom);
   Mp(2,2) = -(far + near) / (far - near);
   Mp(3,2) = -1.0;
   Mp(2,3) = -(2.0 * far * near) / (far - near);
