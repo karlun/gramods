@@ -38,6 +38,11 @@ public:
   void close();
 
   /**
+     Sets if quad buffers should be requested for the GL context.
+  */
+  void setUseQuadBuffers(bool on) { gl_use_quad_buffers = on; }
+
+  /**
      Sets the major version to be requested for the GL context in this
      Window.
   */
@@ -92,6 +97,7 @@ private:
   SDL_GLContext gl_context;
   static std::map<unsigned int, std::weak_ptr<SdlWindow>> sdl_windows;
 
+  bool gl_use_quad_buffers = false;
   int gl_major = -1;
   int gl_minor = -1;
   std::string gl_profile;

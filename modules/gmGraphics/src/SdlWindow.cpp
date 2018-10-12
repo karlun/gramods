@@ -7,6 +7,7 @@
 BEGIN_NAMESPACE_GMGRAPHICS;
 
 GM_OFI_DEFINE_SUB(SdlWindow, Window);
+GM_OFI_PARAM(SdlWindow, useQuadBuffers, bool, SdlWindow::setUseQuadBuffers);
 GM_OFI_PARAM(SdlWindow, GLMajor, int, SdlWindow::setGLMajor);
 GM_OFI_PARAM(SdlWindow, GLMinor, int, SdlWindow::setGLMinor);
 GM_OFI_POINTER(SdlWindow, context, gmCore::SdlContext, SdlWindow::setContext);
@@ -91,10 +92,14 @@ void SdlWindow::initialize() {
   window = SDL_CreateWindow(title.c_str(),
                             SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED,
                             size[0], size[1], video_flags);
-  if (!window)
-    throw std::runtime_error("Cannot create SDL window");
+  if (!window) {
+    GM_ERR("SdlWindow", SDL_GetError());
+    throw std::runtime_error("Could not create SDL window");
+  }
+
   sdl_windows[SDL_GetWindowID(window)] = std::static_pointer_cast<SdlWindow>(shared_from_this());
 
+  if (gl_use_quad_buffers) SDL_GL_SetAttribute(SDL_GL_STEREO, 1);
   if (gl_major > 0) SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, gl_major);
   if (gl_minor > 0) SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, gl_minor);
   if (gl_profile == "core" || gl_profile == "CORE")
@@ -108,8 +113,10 @@ void SdlWindow::initialize() {
 
   GM_INF("SdlWindow", "Requesting GL context " << gl_major << "." << gl_minor << " " << gl_profile);
   gl_context = SDL_GL_CreateContext(window);
-  if (!gl_context)
-    throw std::runtime_error("Cannot create GL context");
+  if (!gl_context) {
+    GM_ERR("SdlWindow", SDL_GetError());
+    throw std::runtime_error("Could not create GL context");
+  }
 
   int real_major, real_minor, real_profile;
   SDL_GL_GetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, &real_major);
