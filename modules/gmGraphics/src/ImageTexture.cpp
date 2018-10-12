@@ -3,6 +3,8 @@
 
 #ifdef gramods_ENABLE_FreeImage
 
+#include <gmGraphics/FreeImage.hh>
+
 #include <FreeImage.h>
 
 BEGIN_NAMESPACE_GMGRAPHICS;
@@ -11,18 +13,6 @@ GM_OFI_DEFINE(ImageTexture);
 GM_OFI_PARAM(ImageTexture, file, std::string, ImageTexture::setFile);
 GM_OFI_PARAM(ImageTexture, range, gmTypes::size2, ImageTexture::setRange);
 GM_OFI_PARAM(ImageTexture, loop, bool, ImageTexture::setLoop);
-
-
-namespace {
-  struct FreeImage {
-    FreeImage();
-    ~FreeImage();
-  };
-
-  void freeimage_output(FREE_IMAGE_FORMAT fif, const char *msg) {
-    GM_ERR("FreeImage", msg);
-  }
-}
 
 struct ImageTexture::Impl {
 
@@ -41,19 +31,8 @@ struct ImageTexture::Impl {
   bool animate = false;
   bool loop = false;
 
-  static FreeImage free_image;
+  std::shared_ptr<FreeImage> free_image;
 };
-
-FreeImage ImageTexture::Impl::free_image;
-
-FreeImage::FreeImage() {
-  FreeImage_Initialise();
-  FreeImage_SetOutputMessage(freeimage_output);
-}
-
-FreeImage::~FreeImage() {
-  FreeImage_DeInitialise();
-}
 
 ImageTexture::ImageTexture()
   : _impl(new Impl) {}
@@ -76,7 +55,9 @@ void ImageTexture::setLoop(bool on) {
   _impl->loop = on;
 }
 
-ImageTexture::Impl::Impl() {}
+ImageTexture::Impl::Impl() {
+  free_image = FreeImage::get();
+}
 
 void ImageTexture::Impl::update() {
 
