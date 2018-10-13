@@ -28,6 +28,12 @@ public:
   */
   void setCubeMapResolution(int res);
 
+  /**
+     Turn on or off linear interpolation in the projection from linear
+     graphics to non-linear projection space. Default is off.
+  */
+  void setLinearInterpolation(bool on);
+
   GM_OFI_DECLARE;
 
 private:

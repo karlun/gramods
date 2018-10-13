@@ -13,6 +13,7 @@ BEGIN_NAMESPACE_GMGRAPHICS;
 
 GM_OFI_DEFINE_SUB(EquirectangularView, View);
 GM_OFI_PARAM(EquirectangularView, cubeMapResolution, int, EquirectangularView::setCubeMapResolution);
+GM_OFI_PARAM(EquirectangularView, linearInterpolation, bool, EquirectangularView::setLinearInterpolation);
 
 struct EquirectangularView::Impl {
 
@@ -35,6 +36,7 @@ struct EquirectangularView::Impl {
   bool is_functional = false;
 
   int resolution = 2048;
+  bool use_linear = false;
 
   GLuint fb_id[SIDE_COUNT] = { 0 };
   GLuint tex_id[SIDE_COUNT] = { 0 };
@@ -86,8 +88,13 @@ void EquirectangularView::Impl::setup() {
 
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    if (use_linear) {
+      glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+      glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    } else {
+      glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+      glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    }
 
     glFramebufferTexture2D(GL_DRAW_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, tex_id[idx], 0);
 
@@ -306,6 +313,10 @@ void EquirectangularView::Impl::renderSide(ViewSettings settings, size_t side) {
 
 void EquirectangularView::setCubeMapResolution(int res) {
   _impl->resolution = res;
+}
+
+void EquirectangularView::setLinearInterpolation(bool on) {
+  _impl->use_linear = on;
 }
 
 END_NAMESPACE_GMGRAPHICS;
