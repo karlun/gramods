@@ -1,10 +1,10 @@
 
 #include <gmGraphics/SimpleAnaglyphsMultiplexer.hh>
 
+#include <gmGraphics/GLUtils.hh>
+
 #include <GL/glew.h>
 #include <GL/gl.h>
-
-#include <gmGraphics/maths.hh>
 
 BEGIN_NAMESPACE_GMGRAPHICS;
 
@@ -40,7 +40,6 @@ struct SimpleAnaglyphsMultiplexer::Impl {
 
   void setup();
   void teardown();
-  bool verify_framebuffer();
 
   void prepare();
   void setupRendering(Eye eye);
@@ -78,24 +77,6 @@ void SimpleAnaglyphsMultiplexer::setSaturation(float s) {
   _impl->saturation = s;
 }
 
-bool SimpleAnaglyphsMultiplexer::Impl::verify_framebuffer() {
-	GLenum status;
-	status = glCheckFramebufferStatus(GL_DRAW_FRAMEBUFFER);
-	switch(status) {
-	case GL_FRAMEBUFFER_COMPLETE:
-    GM_INF("SimpleAnaglyphsMultiplexer", "Frame buffer complete");
-		return true;
-
-	case GL_FRAMEBUFFER_UNSUPPORTED:
-    GM_ERR("SimpleAnaglyphsMultiplexer", "Frame buffer unsupported");
-		break;
-
-	default:
-    GM_ERR("SimpleAnaglyphsMultiplexer", "Frame buffer incomplete");
-	}
-  return false;
-}
-
 void SimpleAnaglyphsMultiplexer::Impl::setup() {
   is_setup = true;
   is_functional = false;
@@ -120,7 +101,7 @@ void SimpleAnaglyphsMultiplexer::Impl::setup() {
     glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT32F, 32, 32);
     glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, rb_depth_id);
 
-    if (!verify_framebuffer())
+    if (!GLUtils::check_framebuffer())
       return;
   }
 
@@ -190,13 +171,8 @@ void main() {
   glLinkProgram(program_id);
   glBindAttribLocation(program_id, 0, "in_Position");
 
-  {
-    GLsizei msg_len;
-    GLchar msg_data[1024];
-    glGetProgramInfoLog(program_id, 1024, &msg_len, msg_data);
-    msg_data[1023] = '\0';
-    GM_INF("SimpleAnaglyphsMultiplexer", "GL program status: " << msg_data);
-  }
+  if (!GLUtils::check_shader_program(program_id))
+    return;
 
   GM_VINF("SimpleAnaglyphsMultiplexer", "Creating vertex array");
   glGenVertexArrays(1, &vao_id);
@@ -253,9 +229,9 @@ void SimpleAnaglyphsMultiplexer::Impl::prepare() {
 
   glGetIntegerv(GL_VIEWPORT, viewport);
   port_width = viewport[2];
-  tex_width = gmGraphics::nextPowerOfTwo(port_width);
+  tex_width = GLUtils::nextPowerOfTwo(port_width);
   port_height = viewport[3];
-  tex_height = gmGraphics::nextPowerOfTwo(port_height);
+  tex_height = GLUtils::nextPowerOfTwo(port_height);
 }
 
 void SimpleAnaglyphsMultiplexer::Impl::setupRendering(Eye eye) {

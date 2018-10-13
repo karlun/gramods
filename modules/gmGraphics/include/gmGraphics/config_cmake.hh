@@ -6,6 +6,10 @@
 #define END_NAMESPACE_GMGRAPHICS }}//
 #define USING_NAMESPACE_GMGRAPHICS using namespace gramods::gmGraphics;//
 
+#define gramods_PI   (            std::acos(-1))
+#define gramods_PI_2 (            std::asin( 1))
+#define gramods_PI_4 ((1.0/2.0) * std::asin( 1))
+
 
 #cmakedefine HAVE_SDL2
 #ifdef HAVE_SDL2

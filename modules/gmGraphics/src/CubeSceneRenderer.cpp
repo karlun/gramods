@@ -1,6 +1,8 @@
 
 #include <gmGraphics/CubeSceneRenderer.hh>
 
+#include <gmGraphics/GLUtils.hh>
+
 #include <GL/glew.h>
 #include <GL/gl.h>
 
@@ -30,7 +32,9 @@ struct CubeSceneRenderer::Impl {
   float cube_size = 0.1;
   float cube_set_size = 1.0;
   Eigen::Vector3f cube_set_center;
-  bool has_been_setup = false;
+
+  bool is_setup = false;
+  bool is_functional = false;
 };
 
 CubeSceneRenderer::CubeSceneRenderer()
@@ -48,13 +52,22 @@ uniform mat4 Mp;
 uniform mat4 Mv;
 uniform mat4 Mm;
 
+vec3 light1 = vec3(0.5773, 0.5773, -0.5773);
+vec3 light2 = vec3(0, 0.7071, 0.7071);
+
 in vec4 vertex_position;
 in vec3 vertex_normal;
 
 out vec3 normal;
+out vec3 local_light1;
+out vec3 local_light2;
 
 void main() {
   gl_Position = Mp * Mv * Mm * vertex_position;
+
+  local_light1 = normalize(mat3(Mv) * light1);
+  local_light2 = normalize(mat3(Mv) * light1);
+
   normal = normalize(mat3(Mv * Mm) * vertex_normal);
 }
 )";
@@ -65,18 +78,22 @@ void main() {
 uniform vec3 color;
 
 in vec3 normal;
-vec3 lightDirection = vec3(1,0,0);
+in vec3 local_light1;
+in vec3 local_light2;
 
 out vec4 fragColor;
 
 void main() {
-  float diffuse = max(0.5, dot(normal, lightDirection));
+  float diffuse = 0.2 +
+    max(0, dot(normal, local_light1)) +
+    max(0, dot(normal, local_light2));
   fragColor = vec4(diffuse * color.rgb, 1);
 }
 )";
 }
 
 void CubeSceneRenderer::Impl::setup() {
+  is_setup = true;
 
   std::vector<GLfloat> vertices;
   std::vector<GLfloat> normals;
@@ -133,13 +150,8 @@ void CubeSceneRenderer::Impl::setup() {
   glLinkProgram(program_id);
   glBindAttribLocation(program_id, 0, "in_Position");
 
-  {
-    GLsizei msg_len;
-    GLchar msg_data[1024];
-    glGetProgramInfoLog(program_id, 1024, &msg_len, msg_data);
-    msg_data[1023] = '\0';
-    GM_INF("CubeSceneRenderer", "GL program status: " << msg_data);
-  }
+  if (!GLUtils::check_shader_program(program_id))
+    return;
 
   GM_VINF("CubeSceneRenderer", "Creating vertex array");
   glGenVertexArrays(1, &vao_id);
@@ -165,18 +177,22 @@ void CubeSceneRenderer::Impl::setup() {
   glBindVertexArray(0);
 
   GM_INF("CubeSceneRenderer", "initialized");
-  has_been_setup = true;
+  is_functional = true;
 }
 
 void CubeSceneRenderer::Impl::render(Camera camera) {
-  if (!has_been_setup) setup();
+  if (!is_setup)
+    setup();
+  if (!is_functional)
+    return;
+
   GM_VINF("CubeSceneRenderer", "rendering");
 
   auto Mv = camera.getViewMatrix();
   float near = 0.1 * cube_size;
   float far =
     (Mv.translation() - cube_set_center).norm()
-    + 0.5 * (cube_set_size + cube_size);
+    + 0.87 * (cube_set_size + cube_size);
   auto Mp = camera.getProjectionMatrix(near, far);
 
   size_t N = (size_t)(cube_set_size / (3.0 * cube_size));
@@ -215,9 +231,9 @@ void CubeSceneRenderer::Impl::render(Camera camera) {
            Eigen::Vector3f(idx_z + 1, idx_y, idx_x).normalized());
         glUniformMatrix4fv(Mm_id, 1, false, Mm.data());
 
-        Eigen::Vector3f color(0.5 + 0.5 * step * idx_x,
-                              0.5 + 0.5 * step * idx_y - 0.5,
-                              0.5 + 0.5 * step * idx_z - 0.5);
+        Eigen::Vector3f color(0.2 + 0.8 * step * idx_x,
+                              0.2 + 0.8 * step * idx_y,
+                              0.2 + 0.8 * step * idx_z);
         glUniform3fv(color_id, 1, color.data());
 
         glDrawArrays(GL_TRIANGLES, 0, N_VERTICES);
@@ -234,6 +250,7 @@ CubeSceneRenderer::Impl::~Impl() {
 }
 
 void CubeSceneRenderer::Impl::teardown() {
+  is_functional = false;
 
   if (program_id) glDeleteProgram(program_id);
   if (vertex_shader_id) glDeleteShader(vertex_shader_id);
@@ -247,7 +264,7 @@ void CubeSceneRenderer::Impl::teardown() {
   vao_id = 0;
   vbo_id[0] = 0;
 
-  has_been_setup = false;
+  is_setup = false;
 }
 
 void CubeSceneRenderer::setCubeSize(float d) {

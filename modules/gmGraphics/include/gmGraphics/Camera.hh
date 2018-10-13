@@ -57,7 +57,7 @@ private:
   /**
      Frustum planes at distance of 1.0 (meters, typically).
   */
-  float left = 1.f, right = 1.f, bottom = 1.f, top = 1.f;
+  float left = -1.f, right = 1.f, bottom = -1.f, top = 1.f;
 
   /**
      The position of the camera.

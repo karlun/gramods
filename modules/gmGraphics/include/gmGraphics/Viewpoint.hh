@@ -74,9 +74,8 @@ public:
      updates of the position value.
    */
   virtual void setAxisAngle(gmTypes::float4 rot) {
-    orientation = Eigen::Quaternionf
-      (Eigen::Quaternionf::AngleAxisType
-       (rot[3], Eigen::Vector3f(rot[0], rot[1], rot[2]).normalized()));
+    orientation = Eigen::Quaternionf::AngleAxisType
+      (rot[3], Eigen::Vector3f(rot[0], rot[1], rot[2]).normalized());
   }
 
   /**
