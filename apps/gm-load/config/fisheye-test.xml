@@ -1,0 +1,35 @@
+<config>
+
+  <OStreamMessageSink stream="err" useAnsiColor="1" level="1"/>
+  <LogFileMessageSink logFilePath="gramod.log" append="0"/>
+
+  <ImportLibrary lib="libgmGraphics.so"/>
+
+  <SdlWindow
+      size="1024 1024"
+      title="Angular"
+      GLMajor="3" GLMinor="3">
+
+    <SdlContext
+        AS="context"
+        DEF="SDLContext"
+        useVideo="1"/>
+
+    <CubeSceneRenderer
+        AS="renderer"
+        cubeSize="0.01"
+        cubeSetSize="0.2"/>
+
+    <AngularFisheyeView
+        cubeMapResolution="1024"
+        linearInterpolation="1"
+        coverageAngle="6.283"
+        AS="view">
+      <VelocityViewpoint
+          axisAngleVelocity="1 0 0 0"
+          AS="viewpoint"/>
+    </AngularFisheyeView>
+
+  </SdlWindow>
+
+</config>

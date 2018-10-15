@@ -1,5 +1,5 @@
 
-#include <gmGraphics/EquirectangularView.hh>
+#include <gmGraphics/AngularFisheyeView.hh>
 
 #include <gmGraphics/CubeMap.hh>
 #include <gmGraphics/GLUtils.hh>
@@ -12,13 +12,15 @@
 
 BEGIN_NAMESPACE_GMGRAPHICS;
 
-GM_OFI_DEFINE_SUB(EquirectangularView, View);
-GM_OFI_PARAM(EquirectangularView, cubeMapResolution, int, EquirectangularView::setCubeMapResolution);
-GM_OFI_PARAM(EquirectangularView, linearInterpolation, bool, EquirectangularView::setLinearInterpolation);
+GM_OFI_DEFINE_SUB(AngularFisheyeView, View);
+GM_OFI_PARAM(AngularFisheyeView, cubeMapResolution, int, AngularFisheyeView::setCubeMapResolution);
+GM_OFI_PARAM(AngularFisheyeView, linearInterpolation, bool, AngularFisheyeView::setLinearInterpolation);
+GM_OFI_PARAM(AngularFisheyeView, coverageAngle, float, AngularFisheyeView::setCoverageAngle);
 
-struct EquirectangularView::Impl {
+struct AngularFisheyeView::Impl {
 
   static const std::string fragment_code;
+  float coverage_angle = gramods_PI;
 
   std::unique_ptr<CubeMap> cube_map;
 
@@ -26,7 +28,7 @@ struct EquirectangularView::Impl {
 
 };
 
-const std::string EquirectangularView::Impl::fragment_code = R"(
+const std::string AngularFisheyeView::Impl::fragment_code = R"(
 #version 330 core
 
 uniform sampler2D texLeft;
@@ -36,6 +38,8 @@ uniform sampler2D texTop;
 uniform sampler2D texBack;
 uniform sampler2D texFront;
 
+uniform float coverageAngle;
+
 in vec2 pos;
 out vec4 fragColor;
 
@@ -44,11 +48,17 @@ void colorFromTex(float x, float y, float z, sampler2D tex) {
 }
 
 void main() {
-  
-  float ay = pos.y * 1.57079632679489661923;
-  float ax = pos.x * 3.14159265358979323846;
 
-  vec3 pix = vec3(cos(ay) * sin(ax), sin(ay), -cos(ay) * cos(ax));
+  float r = sqrt(dot(pos.xy, pos.xy));
+  if (r > 1) {
+    fragColor = vec4(0, 0, 0, 1);
+    return;
+  }
+
+  float phi = 0.5 * r * coverageAngle;
+  float theta = atan(pos.y, pos.x);
+
+  vec3 pix = vec3(cos(theta) * sin(phi), cos(phi), sin(theta) * sin(phi));
 
   if (pix.x < -abs(pix.y) && pix.x < -abs(pix.z)) {
     colorFromTex(-pix.z,  pix.y, -pix.x, texLeft);
@@ -84,20 +94,31 @@ void main() {
 }
 )";
 
-EquirectangularView::EquirectangularView()
+AngularFisheyeView::AngularFisheyeView()
   : _impl(std::make_unique<Impl>()) {}
 
-void EquirectangularView::renderFullPipeline(ViewSettings settings) {
+void AngularFisheyeView::renderFullPipeline(ViewSettings settings) {
   populateViewSettings(settings);
+
+  GLint program_id = _impl->cube_map->getProgram();
+  if (program_id) {
+    glUseProgram(program_id);
+    glUniform1f(glGetUniformLocation(program_id, "coverageAngle"), _impl->coverage_angle);
+  }
+
   _impl->cube_map->renderFullPipeline(settings);
 }
 
-void EquirectangularView::setCubeMapResolution(int res) {
+void AngularFisheyeView::setCubeMapResolution(int res) {
   _impl->cube_map->setCubeMapResolution(res);
 }
 
-void EquirectangularView::setLinearInterpolation(bool on) {
+void AngularFisheyeView::setLinearInterpolation(bool on) {
   _impl->cube_map->setLinearInterpolation(on);
+}
+
+void AngularFisheyeView::setCoverageAngle(float a) {
+  _impl->coverage_angle = a;
 }
 
 END_NAMESPACE_GMGRAPHICS;
