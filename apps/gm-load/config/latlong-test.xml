@@ -24,8 +24,8 @@
         cubeMapResolution="256"
         linearInterpolation="1"
         AS="view">
-      <Viewpoint
-          axisAngle="1 0 0 0.1"
+      <VelocityViewpoint
+          axisAngleVelocity="1 0 0 1"
           AS="viewpoint"/>
     </EquirectangularView>
 

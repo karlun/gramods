@@ -3,6 +3,7 @@
 #include <gmCore/Configuration.hh>
 #include <gmCore/CommandLineParser.hh>
 #include <gmCore/OStreamMessageSink.hh>
+#include <gmCore/Updateable.hh>
 
 #include <gmGraphics/Window.hh>
 #include <gmGraphics/CallbackRenderer.hh>
@@ -79,6 +80,8 @@ int main(int argc, char *argv[]) {
 
       alive |= true;
     }
+
+    gmCore::Updateable::updateAll();
   }
 
   return 0;
