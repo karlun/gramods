@@ -65,27 +65,27 @@ void main() {
     return;
   }
 
-  if (pix.x >  abs(pix.y) && pix.x >  abs(pix.z)) {
+  if (pix.x >=  abs(pix.y) && pix.x >=  abs(pix.z)) {
     colorFromTex( pix.z,  pix.y,  pix.x, texRight);
     return;
   }
 
-  if (pix.y < -abs(pix.x) && pix.y < -abs(pix.z)) {
+  if (pix.y <= -abs(pix.x) && pix.y <= -abs(pix.z)) {
     colorFromTex( pix.x, -pix.z, -pix.y, texBottom);
     return;
   }
 
-  if (pix.y >  abs(pix.x) && pix.y >  abs(pix.z)) {
+  if (pix.y >=  abs(pix.x) && pix.y >=  abs(pix.z)) {
     colorFromTex( pix.x,  pix.z,  pix.y, texTop);
     return;
   }
 
-  if (pix.z >  abs(pix.x) && pix.z >  abs(pix.y)) {
+  if (pix.z >=  abs(pix.x) && pix.z >=  abs(pix.y)) {
     colorFromTex(-pix.x,  pix.y,  pix.z, texBack);
     return;
   }
 
-  if (pix.z < -abs(pix.x) && pix.z < -abs(pix.y)) {
+  if (pix.z <= -abs(pix.x) && pix.z <= -abs(pix.y)) {
     colorFromTex( pix.x,  pix.y, -pix.z, texFront);
     return;
   }
