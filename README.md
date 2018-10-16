@@ -17,27 +17,28 @@ int main(int argc, char *argv[]) {
 
   gmCore::Configuration config(argc, argv);
 
-  std::shared_ptr<gmNetwork::NetSync> cluster_sync;
-  if (! config.getObject(cluster_sync)) {
-    ERROR("Cannot run without cluster synchronization settings!");
+  std::shared_ptr<gmNetwork::ExecutionSynchronization> sync;
+  if (! config.getObject(sync)) {
+    GM_ERR("main", "Cannot run without cluster synchronization settings!");
     return -1;
   }
 
-  std::shared_ptr<gmGraphics::Window> graphics;
-  if (! config.getObject(graphics)) {
-    ERROR("Cannot run without graphics pipeline!");
+  std::vector<std::shared_ptr<gmGraphics::Window>> windows;
+  config->getAllObjects(windows);
+  if (windows.empty()) {
+    GM_ERR("main", "Cannot run without graphics pipeline!");
     return -1;
   }
 
   GM_INF("main", "Configuration loaded");
 
-  std::shared_ptr<gmTracking::Tracker> head_tracker;
+  std::shared_ptr<gmTracking::SinglePoseTracker> head_tracker;
   config.getObject("head tracker", head_tracker);
   GM_INF("main", "Head tracker: " << head_tracker);
 
-  std::shared_ptr<gmTracking::Tracker> wand_primary;
+  std::shared_ptr<gmTracking::Wand> wand_primary;
   config.getObject("primary controller", wand_primary);
-  GM_INF("main", "Primary controller: " << head_tracker);
+  GM_INF("main", "Primary controller: " << wand_primary);
 
   ...
 
@@ -45,20 +46,22 @@ int main(int argc, char *argv[]) {
       myInitFunction(info.getGLContextIndex());
     });
 
-  while (cluster_sync->isAlive()) {
+  bool alive = true;
+  while (alive) {
 
-    if (cluster_sync->isMaster())
-      update_master_states();
-    cluster_sync->synchronizeAllStates();
-    update_dependent_states();
+    alive = false;
+    for (auto window : windows) {
 
-    graphics->renderFullPipeline([=] (gmGraphics::FrameData info) {
-        myRenderFunction(info.getFrustum(), info.getViewMatrix());
-      });
+      window->processEvents();
+      if (!window->isOpen()) continue;
 
-    cluster_sync->waitForAll();
-    graphics->swap();
-    ...
+      window->renderFullPipeline();
+      window->swap();
+
+      alive |= true;
+    }
+
+    Updateable::updateAll();
   }
 ```
 
@@ -152,25 +155,26 @@ Optional dependencies:
 
 A Window creates a graphics context and makes it current before any subsequent calls. The Window calls a View, twice if there is a StereoTechnique available. A View will make one or more calls to the specified callback, to render the scene. A View may call multiple other Views at different viewports, to create a tiled layout within the Window.
 
-If the Window has a StereoTechnique, it will set up frame buffer targets for the view to render the left and right eye images to. It will then send these buffers to the StereoTechnique to be rendered to the designated buffers. Thus, the StereoTechnique does not know how the eyes are physically oriented and offset, which may be different depending on the View, but only knows if the graphics should be rendered to quad buffers or interlaced or anaglyphic to the back buffer. A smart interlaced technique can therefore combine the masked out lines with the closest shown lines.
+If a SterescopicView has a StereoscopicMultiplexer, it will call this to set up rendering to the left and right eye. Thus, the StereoscopicMultiplexer does not know how the eyes are physically oriented and offsetted, which even may be different depending on the View, but only knows if the graphics should be rendered to quad buffers or interlaced or anaglyphic to the back buffer. A smart interlaced technique can therefore combine the masked out lines with the closest shown lines.
 
 ```plantuml
-GraphicsContext <|-- Window
-GraphicsContext : render(callback)
+RendererDispatcher <|-- Window
+RendererDispatcher : renderFullPipeline(ViewSettings)
+RendererDispatcher <|-- View
 Window - View
-note top of View : View sets texture as render target\nand calls callback.
-View : render(callback)
-View <|-- Tiler
-View <|-- SkewedView
-View <|-- FisheyeView
-View <|-- LatLongView
+View <|-- TiledView
+View <|-- StereoscopicView
+StereoscopicView <|-- SpatialPlanarView
+StereoscopicView <|-- SpatialDomeView
+View <|-- AngularFisheyeView
+View <|-- EquirectangularView
 View - Viewpoint
-note top of Viewpoint : View may ignore orientation.
+note top of Viewpoint : a View may not be affected by\nViewpoint orientation
 Viewpoint : position
 Viewpoint : orientation
-Window <|-- Sdl2Window
-StereoTechnique - Window
-note top of StereoTechnique : Window lets a stereo technique render to\nthe back buffer(s), if available.
-StereoTechnique <|-- AnaglyphsStereo
-StereoTechnique <|-- QuadBufferStereo
+Window <|-- SdlWindow
+StereoscopicView - StereoscopicMultiplexer
+note top of StereoscopicMultiplexer : StereoscopicView lets a StereoscopicMultiplexer set up\ntargets for the left and right eye rendering.
+StereoscopicMultiplexer <|-- SimpleAnaglyphsMultiplexer
+StereoscopicMultiplexer <|-- QuadBufferMultiplexer
 ```
