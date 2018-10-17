@@ -4,6 +4,7 @@
 
 #include <gmGraphics/config.hh>
 #include <gmGraphics/RendererDispatcher.hh>
+#include <gmGraphics/StereoscopicView.hh>
 
 #include <memory>
 
@@ -26,7 +27,9 @@ public:
   /**
      Renders the cube map.
   */
-  void renderFullPipeline(RendererDispatcher::ViewSettings settings);
+  void renderFullPipeline(std::vector<std::shared_ptr<Renderer>> renderers,
+                          Eigen::Vector3f pos,
+                          Eigen::Quaternionf rot);
 
   /**
      Returns the shader program, for setting uniforms.
@@ -44,6 +47,12 @@ public:
      graphics to non-linear projection space. Default is off.
   */
   void setLinearInterpolation(bool on);
+
+  /**
+     Sets the position and dimensions of a spatial cube map, for
+     example for a spatial dome rendering.
+  */
+  void setSpatialCubeMap(Eigen::Vector3f c, float side);
 
 private:
 

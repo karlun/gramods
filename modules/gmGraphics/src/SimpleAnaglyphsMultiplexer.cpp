@@ -33,6 +33,7 @@ struct SimpleAnaglyphsMultiplexer::Impl {
   GLuint tex_width, tex_height;
   GLuint port_width, port_height;
   GLint viewport[4] = { 0, 0, 0, 0 };
+  GLint target_framebuffer;
 
   gmTypes::float3 left_color = { 1, 0, 0 };
   gmTypes::float3 right_color = { 0, 1, 1 };
@@ -104,8 +105,6 @@ void SimpleAnaglyphsMultiplexer::Impl::setup() {
     if (!GLUtils::check_framebuffer())
       return;
   }
-
-  glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
   static const char * vertex_shader_code = R"(
 #version 330 core
@@ -222,16 +221,19 @@ void SimpleAnaglyphsMultiplexer::Impl::teardown() {
 }
 
 void SimpleAnaglyphsMultiplexer::Impl::prepare() {
-  if (!is_setup)
-    setup();
-  if (!is_functional)
-    return;
 
+  glGetIntegerv(GL_FRAMEBUFFER_BINDING, &target_framebuffer);
   glGetIntegerv(GL_VIEWPORT, viewport);
+
   port_width = viewport[2];
   tex_width = GLUtils::nextPowerOfTwo(port_width);
   port_height = viewport[3];
   tex_height = GLUtils::nextPowerOfTwo(port_height);
+
+  if (!is_setup)
+    setup();
+  if (!is_functional)
+    return;
 }
 
 void SimpleAnaglyphsMultiplexer::Impl::setupRendering(Eye eye) {
@@ -259,7 +261,7 @@ void SimpleAnaglyphsMultiplexer::Impl::setupRendering(Eye eye) {
 void SimpleAnaglyphsMultiplexer::Impl::finalize() {
   GM_VINF("SimpleAnaglyphsMultiplexer", "finalizing");
 
-  glBindFramebuffer(GL_FRAMEBUFFER, 0);
+  glBindFramebuffer(GL_FRAMEBUFFER, target_framebuffer);
   glViewport(viewport[0], viewport[1], viewport[2], viewport[3]);
 
   glActiveTexture(GL_TEXTURE0);

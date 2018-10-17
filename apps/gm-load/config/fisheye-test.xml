@@ -17,18 +17,30 @@
 
     <CubeSceneRenderer
         AS="renderer"
-        cubeSize="0.01"
-        cubeSetSize="0.2"/>
+        cubeSize="0.2"
+        cubeSetSize="10.0"/>
 
-    <AngularFisheyeView
+    <AngularFisheyeSpatialDomeView
         cubeMapResolution="1024"
         linearInterpolation="1"
         coverageAngle="6.283"
+        domeRadius="7.4"
+        eyeSeparation="0.265"
         AS="view">
+
+      <SimpleAnaglyphsMultiplexer
+          leftColor="1 0 0"
+          rightColor="0 1 1"
+          saturation="0.5"
+          AS="stereoscopicMultiplexer"/>
+
       <VelocityViewpoint
+          position="0 0 0"
+          velocity="0 0 0"
           axisAngleVelocity="1 0 0 0"
           AS="viewpoint"/>
-    </AngularFisheyeView>
+
+    </AngularFisheyeSpatialDomeView>
 
   </SdlWindow>
 

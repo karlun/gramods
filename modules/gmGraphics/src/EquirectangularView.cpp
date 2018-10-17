@@ -20,9 +20,9 @@ struct EquirectangularView::Impl {
 
   static const std::string fragment_code;
 
-  std::unique_ptr<CubeMap> cube_map;
+  std::unique_ptr<CubeMap> cubemap;
 
-  Impl() : cube_map(std::make_unique<CubeMap>(fragment_code)) {}
+  Impl() : cubemap(std::make_unique<CubeMap>(fragment_code)) {}
 
 };
 
@@ -89,15 +89,24 @@ EquirectangularView::EquirectangularView()
 
 void EquirectangularView::renderFullPipeline(ViewSettings settings) {
   populateViewSettings(settings);
-  _impl->cube_map->renderFullPipeline(settings);
+
+  Eigen::Vector3f pos = Eigen::Vector3f::Zero();
+  Eigen::Quaternionf rot = Eigen::Quaternionf::Identity();
+
+  if (settings.viewpoint) {
+    pos = settings.viewpoint->getPosition();
+    rot = settings.viewpoint->getOrientation();
+  }
+
+  _impl->cubemap->renderFullPipeline(settings.renderers, pos, rot);
 }
 
 void EquirectangularView::setCubeMapResolution(int res) {
-  _impl->cube_map->setCubeMapResolution(res);
+  _impl->cubemap->setCubeMapResolution(res);
 }
 
 void EquirectangularView::setLinearInterpolation(bool on) {
-  _impl->cube_map->setLinearInterpolation(on);
+  _impl->cubemap->setLinearInterpolation(on);
 }
 
 END_NAMESPACE_GMGRAPHICS;

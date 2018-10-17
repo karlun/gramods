@@ -1,5 +1,5 @@
 
-#include <gmGraphics/AngularFisheyeView.hh>
+#include <gmGraphics/AngularFisheyeSpatialDomeView.hh>
 
 #include <gmGraphics/CubeMap.hh>
 #include <gmGraphics/GLUtils.hh>
@@ -12,23 +12,31 @@
 
 BEGIN_NAMESPACE_GMGRAPHICS;
 
-GM_OFI_DEFINE_SUB(AngularFisheyeView, View);
-GM_OFI_PARAM(AngularFisheyeView, cubeMapResolution, int, AngularFisheyeView::setCubeMapResolution);
-GM_OFI_PARAM(AngularFisheyeView, linearInterpolation, bool, AngularFisheyeView::setLinearInterpolation);
-GM_OFI_PARAM(AngularFisheyeView, coverageAngle, float, AngularFisheyeView::setCoverageAngle);
+GM_OFI_DEFINE_SUB(AngularFisheyeSpatialDomeView, StereoscopicView);
+GM_OFI_PARAM(AngularFisheyeSpatialDomeView, cubeMapResolution, int, AngularFisheyeSpatialDomeView::setCubeMapResolution);
+GM_OFI_PARAM(AngularFisheyeSpatialDomeView, linearInterpolation, bool, AngularFisheyeSpatialDomeView::setLinearInterpolation);
+GM_OFI_PARAM(AngularFisheyeSpatialDomeView, coverageAngle, float, AngularFisheyeSpatialDomeView::setCoverageAngle);
+GM_OFI_PARAM(AngularFisheyeSpatialDomeView, domePosition, gmTypes::float3, AngularFisheyeSpatialDomeView::setDomePosition);
+GM_OFI_PARAM(AngularFisheyeSpatialDomeView, domeRadius, float, AngularFisheyeSpatialDomeView::setDomeRadius);
 
-struct AngularFisheyeView::Impl {
+struct AngularFisheyeSpatialDomeView::Impl {
 
   static const std::string fragment_code;
   float coverage_angle = gramods_PI;
+
+  Eigen::Vector3f dome_position = Eigen::Vector3f::Zero();
+  float dome_radius = 10;
+  float eye_separation = 0;
 
   std::unique_ptr<CubeMap> cubemap;
 
   Impl() : cubemap(std::make_unique<CubeMap>(fragment_code)) {}
 
+  void renderFullPipeline(ViewSettings settings, Eye eye);
+
 };
 
-const std::string AngularFisheyeView::Impl::fragment_code = R"(
+const std::string AngularFisheyeSpatialDomeView::Impl::fragment_code = R"(
 #version 330 core
 
 uniform sampler2D texLeft;
@@ -94,17 +102,24 @@ void main() {
 }
 )";
 
-AngularFisheyeView::AngularFisheyeView()
+AngularFisheyeSpatialDomeView::AngularFisheyeSpatialDomeView()
   : _impl(std::make_unique<Impl>()) {}
 
-void AngularFisheyeView::renderFullPipeline(ViewSettings settings) {
+void AngularFisheyeSpatialDomeView::renderFullPipeline(ViewSettings settings, Eye eye) {
   populateViewSettings(settings);
+  _impl->eye_separation = eye_separation;
+  _impl->renderFullPipeline(settings, eye);
+}
 
-  GLint program_id = _impl->cubemap->getProgram();
+void AngularFisheyeSpatialDomeView::Impl::renderFullPipeline(ViewSettings settings, Eye eye) {
+
+  GLint program_id = cubemap->getProgram();
   if (program_id) {
     glUseProgram(program_id);
-    glUniform1f(glGetUniformLocation(program_id, "coverageAngle"), _impl->coverage_angle);
+    glUniform1f(glGetUniformLocation(program_id, "coverageAngle"), coverage_angle);
   }
+
+  cubemap->setSpatialCubeMap(dome_position, 1.707 * dome_radius);
 
   Eigen::Vector3f pos = Eigen::Vector3f::Zero();
   Eigen::Quaternionf rot = Eigen::Quaternionf::Identity();
@@ -114,19 +129,36 @@ void AngularFisheyeView::renderFullPipeline(ViewSettings settings) {
     rot = settings.viewpoint->getOrientation();
   }
 
-  _impl->cubemap->renderFullPipeline(settings.renderers, pos, rot);
+  switch (eye) {
+  case Eye::LEFT:
+    pos -= rot * Eigen::Vector3f(0.5f * eye_separation, 0.f, 0.f);
+    break;
+  case Eye::RIGHT:
+    pos += rot * Eigen::Vector3f(0.5f * eye_separation, 0.f, 0.f);
+  }
+
+  cubemap->renderFullPipeline(settings.renderers, pos, rot);
 }
 
-void AngularFisheyeView::setCubeMapResolution(int res) {
+void AngularFisheyeSpatialDomeView::setCubeMapResolution(int res) {
   _impl->cubemap->setCubeMapResolution(res);
 }
 
-void AngularFisheyeView::setLinearInterpolation(bool on) {
+void AngularFisheyeSpatialDomeView::setLinearInterpolation(bool on) {
   _impl->cubemap->setLinearInterpolation(on);
 }
 
-void AngularFisheyeView::setCoverageAngle(float a) {
+void AngularFisheyeSpatialDomeView::setCoverageAngle(float a) {
   _impl->coverage_angle = a;
 }
+
+void AngularFisheyeSpatialDomeView::setDomePosition(gmTypes::float3 c) {
+  _impl->dome_position = Eigen::Vector3f(c[0], c[1], c[2]);
+}
+
+void AngularFisheyeSpatialDomeView::setDomeRadius(float r) {
+  _impl->dome_radius = r;
+}
+
 
 END_NAMESPACE_GMGRAPHICS;
