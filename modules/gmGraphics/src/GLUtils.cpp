@@ -10,12 +10,6 @@ BEGIN_NAMESPACE_GMGRAPHICS;
 
 bool GLUtils::check_shader_program(GLuint program_id) {
 
-  GLint status;
-  glValidateProgram(program_id);
-  glGetProgramiv(program_id, GL_VALIDATE_STATUS, &status);
-  if (status)
-    return true;
-
   GLint msg_data_len;
   glGetProgramiv(program_id, GL_INFO_LOG_LENGTH, &msg_data_len);
 
@@ -24,9 +18,23 @@ bool GLUtils::check_shader_program(GLuint program_id) {
 
   GLchar * msg_data = new GLchar[msg_data_len];
   
-  glGetProgramInfoLog(program_id, msg_data_len, NULL, msg_data);
+  GLint msg_len;
+  glGetProgramInfoLog(program_id, msg_data_len, &msg_len, msg_data);
 
-  GM_ERR("OpenGL", msg_data);
+  GLint status;
+  glValidateProgram(program_id);
+  glGetProgramiv(program_id, GL_VALIDATE_STATUS, &status);
+
+  if (status) {
+    if (msg_len)
+      GM_INF("OpenGL", msg_data);
+    return true;
+  }
+
+  if (!msg_len)
+    GM_ERR("OpenGL", "shader program not valid");
+  else
+    GM_ERR("OpenGL", msg_data);
   delete[] msg_data;
 
   return false;
