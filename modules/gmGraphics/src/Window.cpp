@@ -19,9 +19,10 @@ Window::Window()
     size(gmTypes::size2({640, 480})) {}
 
 void Window::renderFullPipeline(ViewSettings settings) {
-  makeGLContextCurrent();
   populateViewSettings(settings);
 
+  makeGLContextCurrent();
+  glBindFramebuffer(GL_FRAMEBUFFER, 0);
   glViewport(0, 0, getSize()[0], getSize()[1]);
 
   glClearColor(0, 0, 0, 0);
@@ -39,6 +40,7 @@ void Window::renderFullPipeline(ViewSettings settings) {
     for (auto renderer : settings.renderers)
       renderer->render(c);
   }
+  glFlush();
 }
 
 END_NAMESPACE_GMGRAPHICS;
