@@ -47,12 +47,27 @@ uniform sampler2D texBack;
 uniform sampler2D texFront;
 
 uniform float coverageAngle;
+uniform vec3 eye_position;
+uniform float dome_radius;
+uniform float cubemap_radius;
 
 in vec2 pos;
 out vec4 fragColor;
 
 void colorFromTex(float x, float y, float z, sampler2D tex) {
   fragColor = vec4(texture(tex, 0.5 * vec2(x/z, y/z) + 0.5).rgb, 1);
+}
+
+vec3 tex_coord_direction(vec3 line) {
+  vec3 pos_on_sphere = dome_radius * normalize(line);
+  return normalize(pos_on_sphere - eye_position);
+}
+
+float plane_line_d(vec3 line, vec3 n) {
+  if (dot(line, n) <= 0) return 1e10;
+  vec3 plane_position = cubemap_radius * n;
+  float d = dot(plane_position - eye_position, n) / dot(line, n);
+  return d;
 }
 
 void main() {
@@ -66,34 +81,45 @@ void main() {
   float phi = 0.5 * r * coverageAngle;
   float theta = atan(pos.y, pos.x);
 
-  vec3 pix = vec3(cos(theta) * sin(phi), cos(phi), sin(theta) * sin(phi));
+  vec3 pix_dir = vec3(cos(theta) * sin(phi), cos(phi), sin(theta) * sin(phi));
+  vec3 tex_dir = tex_coord_direction(pix_dir);
 
-  if (pix.x < -abs(pix.y) && pix.x < -abs(pix.z)) {
+  float d_left = plane_line_d(tex_dir, vec3(-1, 0, 0));
+  float d_right = plane_line_d(tex_dir, vec3(1, 0, 0));
+  float d_bottom = plane_line_d(tex_dir, vec3(0, -1, 0));
+  float d_top = plane_line_d(tex_dir, vec3(0, 1, 0));
+  float d_back = plane_line_d(tex_dir, vec3(0, 0, 1));
+  float d_front = plane_line_d(tex_dir, vec3(0, 0, -1));
+
+  float min_d = min(min(min(d_left, d_right), min(d_bottom, d_top)), min(d_back, d_front));
+  vec3 pix = eye_position + min_d * tex_dir;
+
+  if (min_d == d_left) {
     colorFromTex(-pix.z,  pix.y, -pix.x, texLeft);
     return;
   }
 
-  if (pix.x >=  abs(pix.y) && pix.x >=  abs(pix.z)) {
+  if (min_d == d_right) {
     colorFromTex( pix.z,  pix.y,  pix.x, texRight);
     return;
   }
 
-  if (pix.y <= -abs(pix.x) && pix.y <= -abs(pix.z)) {
+  if (min_d == d_bottom) {
     colorFromTex( pix.x, -pix.z, -pix.y, texBottom);
     return;
   }
 
-  if (pix.y >=  abs(pix.x) && pix.y >=  abs(pix.z)) {
+  if (min_d == d_top) {
     colorFromTex( pix.x,  pix.z,  pix.y, texTop);
     return;
   }
 
-  if (pix.z >=  abs(pix.x) && pix.z >=  abs(pix.y)) {
+  if (min_d == d_back) {
     colorFromTex(-pix.x,  pix.y,  pix.z, texBack);
     return;
   }
 
-  if (pix.z <= -abs(pix.x) && pix.z <= -abs(pix.y)) {
+  if (min_d == d_front) {
     colorFromTex( pix.x,  pix.y, -pix.z, texFront);
     return;
   }
@@ -113,14 +139,6 @@ void AngularFisheyeSpatialDomeView::renderFullPipeline(ViewSettings settings, Ey
 
 void AngularFisheyeSpatialDomeView::Impl::renderFullPipeline(ViewSettings settings, Eye eye) {
 
-  GLint program_id = cubemap->getProgram();
-  if (program_id) {
-    glUseProgram(program_id);
-    glUniform1f(glGetUniformLocation(program_id, "coverageAngle"), coverage_angle);
-  }
-
-  cubemap->setSpatialCubeMap(dome_position, 1.707 * dome_radius);
-
   Eigen::Vector3f pos = Eigen::Vector3f::Zero();
   Eigen::Quaternionf rot = Eigen::Quaternionf::Identity();
 
@@ -136,6 +154,17 @@ void AngularFisheyeSpatialDomeView::Impl::renderFullPipeline(ViewSettings settin
   case Eye::RIGHT:
     pos += rot * Eigen::Vector3f(0.5f * eye_separation, 0.f, 0.f);
   }
+
+  GLint program_id = cubemap->getProgram();
+  if (program_id) {
+    glUseProgram(program_id);
+    glUniform1f(glGetUniformLocation(program_id, "coverageAngle"), coverage_angle);
+    glUniform3fv(glGetUniformLocation(program_id, "eye_position"), 1, pos.data());
+    glUniform1f(glGetUniformLocation(program_id, "dome_radius"), dome_radius);
+    glUniform1f(glGetUniformLocation(program_id, "cubemap_radius"), dome_radius);
+  }
+
+  cubemap->setSpatialCubeMap(dome_position, 2 * dome_radius);
 
   cubemap->renderFullPipeline(settings.renderers, pos, rot);
 }
@@ -153,6 +182,7 @@ void AngularFisheyeSpatialDomeView::setCoverageAngle(float a) {
 }
 
 void AngularFisheyeSpatialDomeView::setDomePosition(gmTypes::float3 c) {
+  assert(0);
   _impl->dome_position = Eigen::Vector3f(c[0], c[1], c[2]);
 }
 
