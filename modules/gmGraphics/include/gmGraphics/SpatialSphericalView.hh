@@ -47,8 +47,8 @@ public:
   void setCoverageAngle(float a);
 
   /**
-     Selects projection between equirectangular (0) and angular
-     fisheye (1). Default is 0.
+     Selects projection between equirectangular (0), angular
+     fisheye (1) and square angular fisheye (2). Default is 0.
   */
   void setProjection(int p);
 

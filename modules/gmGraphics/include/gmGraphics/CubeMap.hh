@@ -29,7 +29,8 @@ public:
   */
   void renderFullPipeline(std::vector<std::shared_ptr<Renderer>> renderers,
                           Eigen::Vector3f pos,
-                          Eigen::Quaternionf rot);
+                          Eigen::Quaternionf rot,
+                          bool make_square = false);
 
   /**
      Returns the shader program, for setting uniforms.

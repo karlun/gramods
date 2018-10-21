@@ -30,6 +30,7 @@ struct SpatialSphericalView::Impl {
   void setProjection(int a);
 
   float coverage_angle = 2 * gramods_PI;
+  bool make_square = false;
   Eigen::Vector3f dome_position = Eigen::Vector3f::Zero();
   float dome_radius = 10;
   float eye_separation = 0;
@@ -203,7 +204,7 @@ void SpatialSphericalView::Impl::renderFullPipeline(ViewSettings settings, Eye e
 
   cubemap->setSpatialCubeMap(dome_position, 2 * dome_radius);
 
-  cubemap->renderFullPipeline(settings.renderers, pos, rot);
+  cubemap->renderFullPipeline(settings.renderers, pos, rot, make_square);
 }
 
 void SpatialSphericalView::Impl::setProjection(int a) {
@@ -216,12 +217,21 @@ void SpatialSphericalView::Impl::setProjection(int a) {
     GM_WRN("PosedSphericalView", "Unavailable projection " << a);
   case 0:
     GM_VINF("PosedSphericalView", "Projection set to equirectangular");
+    make_square = false;
     fragment_code.replace(fragment_code.find(mapper_pattern),
                           mapper_pattern.length(),
                           equirectangular_mapper_code);
     break;
   case 1:
     GM_VINF("PosedSphericalView", "Projection set to angular fisheye");
+    make_square = false;
+    fragment_code.replace(fragment_code.find(mapper_pattern),
+                          mapper_pattern.length(),
+                          fisheye_mapper_code);
+    break;
+  case 2:
+    GM_VINF("PosedSphericalView", "Projection set to angular fisheye");
+    make_square = true;
     fragment_code.replace(fragment_code.find(mapper_pattern),
                           mapper_pattern.length(),
                           fisheye_mapper_code);

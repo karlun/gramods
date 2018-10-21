@@ -28,6 +28,7 @@ struct PosedSphericalView::Impl {
   void setProjection(int a);
 
   float coverage_angle = 2 * gramods_PI;
+  bool make_square = false;
 
   std::unique_ptr<CubeMap> cubemap;
 
@@ -151,7 +152,7 @@ void PosedSphericalView::renderFullPipeline(ViewSettings settings) {
     rot = settings.viewpoint->getOrientation();
   }
 
-  _impl->cubemap->renderFullPipeline(settings.renderers, pos, rot);
+  _impl->cubemap->renderFullPipeline(settings.renderers, pos, rot, _impl->make_square);
 }
 
 void PosedSphericalView::Impl::setProjection(int a) {
@@ -164,12 +165,21 @@ void PosedSphericalView::Impl::setProjection(int a) {
     GM_WRN("PosedSphericalView", "Unavailable projection " << a);
   case 0:
     GM_VINF("PosedSphericalView", "Projection set to equirectangular");
+    make_square = false;
     fragment_code.replace(fragment_code.find(mapper_pattern),
                           mapper_pattern.length(),
                           equirectangular_mapper_code);
     break;
   case 1:
     GM_VINF("PosedSphericalView", "Projection set to angular fisheye");
+    make_square = false;
+    fragment_code.replace(fragment_code.find(mapper_pattern),
+                          mapper_pattern.length(),
+                          fisheye_mapper_code);
+    break;
+  case 2:
+    GM_VINF("PosedSphericalView", "Projection set to angular fisheye");
+    make_square = true;
     fragment_code.replace(fragment_code.find(mapper_pattern),
                           mapper_pattern.length(),
                           fisheye_mapper_code);

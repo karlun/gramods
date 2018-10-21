@@ -56,7 +56,8 @@ struct CubeMap::Impl {
 
   void renderFullPipeline(std::vector<std::shared_ptr<Renderer>> renderers,
                           Eigen::Vector3f pos,
-                          Eigen::Quaternionf rot);
+                          Eigen::Quaternionf rot,
+                          bool make_square);
   void renderSide(std::vector<std::shared_ptr<Renderer>> renderers,
                   Eigen::Vector3f pos,
                   Eigen::Quaternionf rot,
@@ -77,8 +78,9 @@ CubeMap::~CubeMap() {
 
 void CubeMap::renderFullPipeline(std::vector<std::shared_ptr<Renderer>> renderers,
                                  Eigen::Vector3f pos,
-                                 Eigen::Quaternionf rot) {
-  _impl->renderFullPipeline(renderers, pos, rot);
+                                 Eigen::Quaternionf rot,
+                                 bool make_square) {
+  _impl->renderFullPipeline(renderers, pos, rot, make_square);
 }
 
 void CubeMap::Impl::setup() {
@@ -206,7 +208,9 @@ GLint CubeMap::getProgram() {
 
 void CubeMap::Impl::renderFullPipeline(std::vector<std::shared_ptr<Renderer>> renderers,
                                        Eigen::Vector3f pos,
-                                       Eigen::Quaternionf rot) {
+                                       Eigen::Quaternionf rot,
+                                       bool make_square) {
+
   GLint previous_viewport[4] = { 0, 0, 0, 0 };
   glGetIntegerv(GL_VIEWPORT, previous_viewport);
 
@@ -224,7 +228,25 @@ void CubeMap::Impl::renderFullPipeline(std::vector<std::shared_ptr<Renderer>> re
   GM_VINF("CubeMap", "finalizing");
 
   glBindFramebuffer(GL_FRAMEBUFFER, previous_framebuffer);
-  glViewport(previous_viewport[0], previous_viewport[1], previous_viewport[2], previous_viewport[3]);
+
+  if (make_square) {
+
+    GLint x0 = previous_viewport[0];
+    GLint y0 = previous_viewport[1];
+    GLint width = previous_viewport[2];
+    GLint height = previous_viewport[3];
+
+    if (width > height) {
+      glViewport(x0 + (width - height) / 2, y0, height, height);
+    } else if (width < height) {
+      glViewport(x0, y0 + (height - width)/2, width, width);
+    } else {
+      glViewport(x0, y0, width, height);
+    }
+  } else {
+    glViewport(previous_viewport[0], previous_viewport[1],
+               previous_viewport[2], previous_viewport[3]);
+  }
 
   for (size_t idx = 0; idx < SIDE_COUNT; ++idx) {
     glActiveTexture(GL_TEXTURE0 + idx);
@@ -253,6 +275,10 @@ void CubeMap::Impl::renderFullPipeline(std::vector<std::shared_ptr<Renderer>> re
     glActiveTexture(GL_TEXTURE0 + idx);
     glBindTexture( GL_TEXTURE_2D, 0);
   }
+
+  if (make_square)
+    glViewport(previous_viewport[0], previous_viewport[1],
+               previous_viewport[2], previous_viewport[3]);
 }
 
 void CubeMap::Impl::renderSide(std::vector<std::shared_ptr<Renderer>> renderers,
