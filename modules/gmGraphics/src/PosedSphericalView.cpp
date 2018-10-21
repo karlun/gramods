@@ -28,7 +28,6 @@ struct PosedSphericalView::Impl {
   void setProjection(int a);
 
   float coverage_angle = 2 * gramods_PI;
-  int projection_type = 0;
 
   std::unique_ptr<CubeMap> cubemap;
 

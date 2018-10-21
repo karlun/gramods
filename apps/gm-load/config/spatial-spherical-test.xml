@@ -20,7 +20,7 @@
         cubeSize="0.2"
         cubeSetSize="10.0"/>
 
-    <PosedSphericalView
+    <SpatialSphericalView
         cubeMapResolution="1024"
         linearInterpolation="1"
         coverageAngle="6.283"
@@ -33,7 +33,7 @@
           axisAngleVelocity="1 0 0 0"
           AS="viewpoint"/>
 
-    </PosedSphericalView>
+    </SpatialSphericalView>
 
   </SdlWindow>
 
