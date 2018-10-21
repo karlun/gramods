@@ -48,7 +48,7 @@ vec3 mapper(vec2 pos) {
     return vec3(0, 0, 0);
   }
 
-  float phi = 0.5 * r * coverageAngle;
+  float phi = 0.5 * r * min(coverageAngle, 6.28318530717958647693);
   float theta = atan(pos.y, pos.x);
 
   vec3 pix = vec3(cos(theta) * sin(phi), cos(phi), sin(theta) * sin(phi));
@@ -61,7 +61,7 @@ const std::string PosedSphericalView::Impl::equirectangular_mapper_code = R"(
 vec3 mapper(vec2 pos) {
 
   float ay = pos.y * 1.57079632679489661923;
-  float ax = pos.x * 0.5 * coverageAngle;
+  float ax = pos.x * 0.5 * min(coverageAngle, 6.28318530717958647693);
 
   vec3 pix = vec3(cos(ay) * sin(ax), sin(ay), -cos(ay) * cos(ax));
 
@@ -93,6 +93,10 @@ void colorFromTex(float x, float y, float z, sampler2D tex) {
 void main() {
 
   vec3 pix = mapper(pos);
+  if (pix.x == 0 && pix.y == 0 && pix.z == 0) {
+    fragColor = vec4(0, 0, 0, 1);
+    return;
+  }
 
   if (pix.x < -abs(pix.y) && pix.x < -abs(pix.z)) {
     colorFromTex(-pix.z,  pix.y, -pix.x, texLeft);
@@ -160,14 +164,16 @@ void PosedSphericalView::Impl::setProjection(int a) {
   default:
     GM_WRN("PosedSphericalView", "Unavailable projection " << a);
   case 0:
-    fragment_code.replace(fragment_code.find(mapper_pattern),
-                          mapper_pattern.length(),
-                          fisheye_mapper_code);
-    break;
-  case 1:
+    GM_VINF("PosedSphericalView", "Projection set to equirectangular");
     fragment_code.replace(fragment_code.find(mapper_pattern),
                           mapper_pattern.length(),
                           equirectangular_mapper_code);
+    break;
+  case 1:
+    GM_VINF("PosedSphericalView", "Projection set to angular fisheye");
+    fragment_code.replace(fragment_code.find(mapper_pattern),
+                          mapper_pattern.length(),
+                          fisheye_mapper_code);
     break;
   }
 

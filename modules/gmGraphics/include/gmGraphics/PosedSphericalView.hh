@@ -37,14 +37,15 @@ public:
   void setLinearInterpolation(bool on);
 
   /**
-     Sets the vertical coverage of the angular fisheye, in
-     radians. Default is π.
+     Sets the vertical coverage of the angular fisheye or horizontal
+     for the equirectangular projection, in radians. Default is
+     2π.
   */
   void setCoverageAngle(float a);
 
   /**
-     Selects projection between angular fisheye (0) and
-     equirectangular (1). Default is 0.
+     Selects projection between equirectangular (0) and angular
+     fisheye (1). Default is 0.
   */
   void setProjection(int p);
 
