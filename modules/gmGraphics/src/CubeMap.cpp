@@ -13,9 +13,6 @@ BEGIN_NAMESPACE_GMGRAPHICS;
 
 struct CubeMap::Impl {
 
-  Impl(std::string fragment_code)
-    : fragment_code(fragment_code) {}
-
   ~Impl() {
     teardown();
   }
@@ -70,9 +67,8 @@ struct CubeMap::Impl {
   float cubemap_side = 1.0;
 };
 
-CubeMap::CubeMap(std::string fragment_code) {
-  _impl = new Impl(fragment_code);
-}
+CubeMap::CubeMap()
+  : _impl(new Impl()) {}
 
 CubeMap::~CubeMap() {
   delete _impl;
@@ -320,6 +316,10 @@ void CubeMap::Impl::renderSide(std::vector<std::shared_ptr<Renderer>> renderers,
 
   for (auto renderer : renderers)
     renderer->render(camera);
+}
+
+void CubeMap::setFragmentCode(std::string code) {
+  _impl->fragment_code = code;
 }
 
 void CubeMap::setCubeMapResolution(int res) {

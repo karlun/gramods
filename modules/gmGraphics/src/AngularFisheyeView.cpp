@@ -24,7 +24,9 @@ struct AngularFisheyeView::Impl {
 
   std::unique_ptr<CubeMap> cubemap;
 
-  Impl() : cubemap(std::make_unique<CubeMap>(fragment_code)) {}
+  Impl() : cubemap(std::make_unique<CubeMap>()) {
+    cubemap->setFragmentCode(fragment_code);
+  }
 
 };
 

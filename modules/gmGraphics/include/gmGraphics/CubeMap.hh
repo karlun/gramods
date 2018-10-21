@@ -21,7 +21,7 @@ class CubeMap {
 
 public:
 
-  CubeMap(std::string fragment_code);
+  CubeMap();
   ~CubeMap();
 
   /**
@@ -35,6 +35,11 @@ public:
      Returns the shader program, for setting uniforms.
   */
   int getProgram();
+
+  /**
+     Sets the fragment code
+  */
+  void setFragmentCode(std::string code);
 
   /**
      Sets the resolution of the intermediate cube map, in
