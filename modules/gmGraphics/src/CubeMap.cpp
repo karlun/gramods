@@ -13,9 +13,6 @@ BEGIN_NAMESPACE_GMGRAPHICS;
 
 struct CubeMap::Impl {
 
-  Impl(std::string fragment_code)
-    : fragment_code(fragment_code) {}
-
   ~Impl() {
     teardown();
   }
@@ -23,11 +20,16 @@ struct CubeMap::Impl {
   static const size_t SIDE_COUNT = 6;
 
   Eigen::Quaternionf side_orientation[SIDE_COUNT] = {
-    Eigen::Quaternionf(Eigen::Quaternionf::AngleAxisType( gramods_PI_2, Eigen::Vector3f::UnitY())),
-    Eigen::Quaternionf(Eigen::Quaternionf::AngleAxisType(-gramods_PI_2, Eigen::Vector3f::UnitY())),
-    Eigen::Quaternionf(Eigen::Quaternionf::AngleAxisType(-gramods_PI_2, Eigen::Vector3f::UnitX())),
-    Eigen::Quaternionf(Eigen::Quaternionf::AngleAxisType( gramods_PI_2, Eigen::Vector3f::UnitX())),
-    Eigen::Quaternionf(Eigen::Quaternionf::AngleAxisType( gramods_PI  , Eigen::Vector3f::UnitY())),
+    Eigen::Quaternionf(Eigen::Quaternionf::AngleAxisType
+                       ( gramods_PI_2, Eigen::Vector3f::UnitY())),
+    Eigen::Quaternionf(Eigen::Quaternionf::AngleAxisType
+                       (-gramods_PI_2, Eigen::Vector3f::UnitY())),
+    Eigen::Quaternionf(Eigen::Quaternionf::AngleAxisType
+                       (-gramods_PI_2, Eigen::Vector3f::UnitX())),
+    Eigen::Quaternionf(Eigen::Quaternionf::AngleAxisType
+                       ( gramods_PI_2, Eigen::Vector3f::UnitX())),
+    Eigen::Quaternionf(Eigen::Quaternionf::AngleAxisType
+                       ( gramods_PI  , Eigen::Vector3f::UnitY())),
     Eigen::Quaternionf::Identity()
   };
 
@@ -49,28 +51,36 @@ struct CubeMap::Impl {
   GLuint vertexarray_id = 0;
   GLuint vertexbuffer_id = 0;
 
-  GLint viewport[4] = { 0, 0, 0, 0 };
-
   void setup();
   void teardown();
 
-  void renderFullPipeline(RendererDispatcher::ViewSettings settings);
-  void renderSide(RendererDispatcher::ViewSettings settings, size_t side);
+  void renderFullPipeline(std::vector<std::shared_ptr<Renderer>> renderers,
+                          Eigen::Vector3f pos,
+                          Eigen::Quaternionf rot,
+                          bool make_square);
+  void renderSide(std::vector<std::shared_ptr<Renderer>> renderers,
+                  Eigen::Vector3f pos,
+                  Eigen::Quaternionf rot,
+                  size_t side);
 
-  Eigen::Vector3f position = Eigen::Vector3f::Zero();
+  bool spatial_cubemap = false;
+  Eigen::Vector3f cubemap_position = Eigen::Vector3f::Zero();
+  float cubemap_side = 1.0;
 };
 
-CubeMap::CubeMap(std::string fragment_code) {
-  _impl = new Impl(fragment_code);
-}
+CubeMap::CubeMap()
+  : _impl(new Impl()) {}
 
 CubeMap::~CubeMap() {
   delete _impl;
   _impl = nullptr;
 }
 
-void CubeMap::renderFullPipeline(RendererDispatcher::ViewSettings settings) {
-  _impl->renderFullPipeline(settings);
+void CubeMap::renderFullPipeline(std::vector<std::shared_ptr<Renderer>> renderers,
+                                 Eigen::Vector3f pos,
+                                 Eigen::Quaternionf rot,
+                                 bool make_square) {
+  _impl->renderFullPipeline(renderers, pos, rot, make_square);
 }
 
 void CubeMap::Impl::setup() {
@@ -111,8 +121,6 @@ void CubeMap::Impl::setup() {
     if (!GLUtils::check_framebuffer())
       return;
   }
-
-  glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
   static const char * vertex_shader_code = R"(
 #version 330 core
@@ -198,21 +206,47 @@ GLint CubeMap::getProgram() {
   return _impl->program_id;
 }
 
-void CubeMap::Impl::renderFullPipeline(RendererDispatcher::ViewSettings settings) {
+void CubeMap::Impl::renderFullPipeline(std::vector<std::shared_ptr<Renderer>> renderers,
+                                       Eigen::Vector3f pos,
+                                       Eigen::Quaternionf rot,
+                                       bool make_square) {
+
+  GLint previous_viewport[4] = { 0, 0, 0, 0 };
+  glGetIntegerv(GL_VIEWPORT, previous_viewport);
+
+  GLint previous_framebuffer;
+  glGetIntegerv(GL_FRAMEBUFFER_BINDING, &previous_framebuffer);
+
   if (!is_setup)
     setup();
   if (!is_functional)
     return;
 
-  glGetIntegerv(GL_VIEWPORT, viewport);
-
   for (size_t idx = 0; idx < SIDE_COUNT; ++idx)
-    renderSide(settings, idx);
+    renderSide(renderers, pos, rot, idx);
 
   GM_VINF("CubeMap", "finalizing");
 
-  glBindFramebuffer(GL_FRAMEBUFFER, 0);
-  glViewport(viewport[0], viewport[1], viewport[2], viewport[3]);
+  glBindFramebuffer(GL_FRAMEBUFFER, previous_framebuffer);
+
+  if (make_square) {
+
+    GLint x0 = previous_viewport[0];
+    GLint y0 = previous_viewport[1];
+    GLint width = previous_viewport[2];
+    GLint height = previous_viewport[3];
+
+    if (width > height) {
+      glViewport(x0 + (width - height) / 2, y0, height, height);
+    } else if (width < height) {
+      glViewport(x0, y0 + (height - width)/2, width, width);
+    } else {
+      glViewport(x0, y0, width, height);
+    }
+  } else {
+    glViewport(previous_viewport[0], previous_viewport[1],
+               previous_viewport[2], previous_viewport[3]);
+  }
 
   for (size_t idx = 0; idx < SIDE_COUNT; ++idx) {
     glActiveTexture(GL_TEXTURE0 + idx);
@@ -241,28 +275,77 @@ void CubeMap::Impl::renderFullPipeline(RendererDispatcher::ViewSettings settings
     glActiveTexture(GL_TEXTURE0 + idx);
     glBindTexture( GL_TEXTURE_2D, 0);
   }
+
+  if (make_square)
+    glViewport(previous_viewport[0], previous_viewport[1],
+               previous_viewport[2], previous_viewport[3]);
 }
 
-void CubeMap::Impl::renderSide(RendererDispatcher::ViewSettings settings,
+void CubeMap::Impl::renderSide(std::vector<std::shared_ptr<Renderer>> renderers,
+                               Eigen::Vector3f pos,
+                               Eigen::Quaternionf rot,
                                size_t side) {
 
   glBindFramebuffer(GL_FRAMEBUFFER, framebuffer_id[side]);
   glViewport(0, 0, resolution, resolution);
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-  Eigen::Vector3f pos = Eigen::Vector3f::Zero();
-  Eigen::Quaternionf rot = Eigen::Quaternionf::Identity();
-
-  if (settings.viewpoint) {
-    pos = settings.viewpoint->getPosition();
-    rot = settings.viewpoint->getOrientation();
-  }
-
   Camera camera;
   camera.setPose(pos, rot * side_orientation[side]);
 
-  for (auto renderer : settings.renderers)
+  if (spatial_cubemap) {
+
+    Eigen::Vector3f O = pos - cubemap_position;
+    float W = 0.5 * cubemap_side;
+
+    switch (side) {
+    case 0: // left
+      camera.setPlanes((-W + O.z()) / (W + O.x()),
+                       (+W + O.z()) / (W + O.x()),
+                       (-W - O.y()) / (W + O.x()),
+                       (+W - O.y()) / (W + O.x()));
+      break;
+    case 1: // right
+      camera.setPlanes((-W - O.z()) / (W - O.x()),
+                       (+W - O.z()) / (W - O.x()),
+                       (-W + O.y()) / (W - O.x()),
+                       (+W + O.y()) / (W - O.x()));
+      break;
+    case 2: // bottom
+      camera.setPlanes((-W - O.x()) / (W + O.y()),
+                       (+W - O.x()) / (W + O.y()),
+                       (-W + O.z()) / (W + O.y()),
+                       (+W + O.z()) / (W + O.y()));
+      break;
+    case 3: // top
+      camera.setPlanes((-W - O.x()) / (W - O.y()),
+                       (+W - O.x()) / (W - O.y()),
+                       (-W - O.z()) / (W - O.y()),
+                       (+W - O.z()) / (W - O.y()));
+      break;
+    case 4: // back
+      camera.setPlanes((-W + O.x()) / (W - O.z()),
+                       (+W + O.x()) / (W - O.z()),
+                       (-W + O.y()) / (W - O.z()),
+                       (+W + O.y()) / (W - O.z()));
+      break;
+    case 5: // front
+      camera.setPlanes((-W - O.x()) / (W + O.z()),
+                       (+W - O.x()) / (W + O.z()),
+                       (-W - O.y()) / (W + O.z()),
+                       (+W - O.y()) / (W + O.z()));
+      break;
+    default: // only six sides - this should not happen
+      assert(0);
+    }
+  }
+
+  for (auto renderer : renderers)
     renderer->render(camera);
+}
+
+void CubeMap::setFragmentCode(std::string code) {
+  _impl->fragment_code = code;
 }
 
 void CubeMap::setCubeMapResolution(int res) {
@@ -271,6 +354,12 @@ void CubeMap::setCubeMapResolution(int res) {
 
 void CubeMap::setLinearInterpolation(bool on) {
   _impl->use_linear = on;
+}
+
+void CubeMap::setSpatialCubeMap(Eigen::Vector3f c, float side) {
+  _impl->spatial_cubemap = true;
+  _impl->cubemap_position = c;
+  _impl->cubemap_side = side;
 }
 
 END_NAMESPACE_GMGRAPHICS;

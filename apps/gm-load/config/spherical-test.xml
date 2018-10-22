@@ -1,0 +1,88 @@
+<config>
+
+  <OStreamMessageSink stream="err" useAnsiColor="1" level="1"/>
+  <LogFileMessageSink logFilePath="gramod.log" append="0"/>
+
+  <ImportLibrary lib="libgmGraphics.so"/>
+
+  <SdlWindow
+      size="1536 1024"
+      title="Spherical"
+      GLMajor="3" GLMinor="3">
+
+    <SdlContext
+        AS="context"
+        DEF="SDLContext"
+        useVideo="1"/>
+
+    <CubeSceneRenderer
+        AS="renderer"
+        cubeSize="0.2"
+        cubeSetSize="10.0"/>
+
+    <TiledView
+        AS="view">
+
+      <param name="tileLocation" value="0 1 1 2"/>
+      <SpatialSphericalView
+          cubeMapResolution="1024"
+          linearInterpolation="1"
+          coverageAngle="6.283"
+          projection="0"
+          AS="view">
+
+        <VelocityViewpoint
+            position="0 0 7"
+            velocity="0 0 -0.5"
+            axisAngleVelocity="1 0 0 0"
+            DEF="viewpoint"
+            AS="viewpoint"/>
+
+      </SpatialSphericalView>
+
+      <param name="tileLocation" value="0 0 1 1"/>
+      <SpatialSphericalView
+          cubeMapResolution="1024"
+          linearInterpolation="1"
+          coverageAngle="6.283"
+          projection="2"
+          AS="view">
+
+        <VelocityViewpoint
+            USE="viewpoint"
+            AS="viewpoint"/>
+
+      </SpatialSphericalView>
+
+      <param name="tileLocation" value="1 1 1 2"/>
+      <PosedSphericalView
+          cubeMapResolution="1024"
+          linearInterpolation="1"
+          coverageAngle="6.283"
+          projection="0"
+          AS="view">
+
+        <VelocityViewpoint
+            USE="viewpoint"
+            AS="viewpoint"/>
+
+      </PosedSphericalView>
+
+      <param name="tileLocation" value="1 0 1 1"/>
+      <PosedSphericalView
+          cubeMapResolution="1024"
+          linearInterpolation="1"
+          coverageAngle="6.283"
+          projection="2" 
+          AS="view">
+
+        <VelocityViewpoint
+            USE="viewpoint"
+            AS="viewpoint"/>
+
+      </PosedSphericalView>
+    </TiledView>
+
+  </SdlWindow>
+
+</config>

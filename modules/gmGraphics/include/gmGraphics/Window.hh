@@ -86,10 +86,20 @@ public:
   virtual bool isOpen() { return false; }
 
   /**
-     Finalizes the rendering and swaps the render buffers to show the
-     newly rendered material.
+     Posts a swap buffers command to the underlying windowing system,
+     to show the newly rendered material. Most drivers allow this
+     command to return immediately, however subsequent calls to render
+     to the same context may stall to wait for vertical scan
+     synchronization (v-sync).
   */
   virtual void swap() {}
+
+  /**
+     Calls glFinish on the GL context. The only reason to call this
+     method is if the application needs to wait for vertical scan
+     synchronization (v-sync), for example for timing reasons.
+  */
+  virtual void sync() {}
 
   GM_OFI_DECLARE;
 

@@ -6,8 +6,8 @@
   <ImportLibrary lib="libgmGraphics.so"/>
 
   <SdlWindow
-      size="1024 512"
-      title="Lat-Long"
+      size="1024 1024"
+      title="Spherical"
       GLMajor="3" GLMinor="3">
 
     <SdlContext
@@ -17,17 +17,23 @@
 
     <CubeSceneRenderer
         AS="renderer"
-        cubeSize="0.01"
-        cubeSetSize="0.2"/>
+        cubeSize="0.2"
+        cubeSetSize="10.0"/>
 
-    <EquirectangularView
-        cubeMapResolution="256"
+    <PosedSphericalView
+        cubeMapResolution="1024"
         linearInterpolation="1"
+        coverageAngle="6.283"
+        projection="0"
         AS="view">
+
       <VelocityViewpoint
-          axisAngleVelocity="1 0 0 1"
+          position="0 0 7"
+          velocity="0 0 -0.5"
+          axisAngleVelocity="1 0 0 0"
           AS="viewpoint"/>
-    </EquirectangularView>
+
+    </PosedSphericalView>
 
   </SdlWindow>
 

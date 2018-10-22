@@ -86,6 +86,13 @@ public:
   */
   void swap();
 
+  /**
+     Calls glFinish on the GL context. The only reason to call this
+     method is if the application needs to wait for vertical scan
+     synchronization (v-sync), for example for timing reasons.
+  */
+  void sync();
+
   GM_OFI_DECLARE;
 
 private:

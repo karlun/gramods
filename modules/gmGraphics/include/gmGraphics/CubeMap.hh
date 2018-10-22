@@ -4,6 +4,7 @@
 
 #include <gmGraphics/config.hh>
 #include <gmGraphics/RendererDispatcher.hh>
+#include <gmGraphics/StereoscopicView.hh>
 
 #include <memory>
 
@@ -20,18 +21,26 @@ class CubeMap {
 
 public:
 
-  CubeMap(std::string fragment_code);
+  CubeMap();
   ~CubeMap();
 
   /**
      Renders the cube map.
   */
-  void renderFullPipeline(RendererDispatcher::ViewSettings settings);
+  void renderFullPipeline(std::vector<std::shared_ptr<Renderer>> renderers,
+                          Eigen::Vector3f pos,
+                          Eigen::Quaternionf rot,
+                          bool make_square = false);
 
   /**
      Returns the shader program, for setting uniforms.
   */
   int getProgram();
+
+  /**
+     Sets the fragment code
+  */
+  void setFragmentCode(std::string code);
 
   /**
      Sets the resolution of the intermediate cube map, in
@@ -44,6 +53,12 @@ public:
      graphics to non-linear projection space. Default is off.
   */
   void setLinearInterpolation(bool on);
+
+  /**
+     Sets the position and dimensions of a spatial cube map, for
+     example for a spatial dome rendering.
+  */
+  void setSpatialCubeMap(Eigen::Vector3f c, float side);
 
 private:
 
