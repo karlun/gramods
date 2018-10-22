@@ -308,8 +308,8 @@ void CubeMap::Impl::renderSide(std::vector<std::shared_ptr<Renderer>> renderers,
     case 1: // right
       camera.setPlanes((-W - O.z()) / (W - O.x()),
                        (+W - O.z()) / (W - O.x()),
-                       (-W + O.y()) / (W - O.x()),
-                       (+W + O.y()) / (W - O.x()));
+                       (-W - O.y()) / (W - O.x()),
+                       (+W - O.y()) / (W - O.x()));
       break;
     case 2: // bottom
       camera.setPlanes((-W - O.x()) / (W + O.y()),
@@ -326,8 +326,8 @@ void CubeMap::Impl::renderSide(std::vector<std::shared_ptr<Renderer>> renderers,
     case 4: // back
       camera.setPlanes((-W + O.x()) / (W - O.z()),
                        (+W + O.x()) / (W - O.z()),
-                       (-W + O.y()) / (W - O.z()),
-                       (+W + O.y()) / (W - O.z()));
+                       (-W - O.y()) / (W - O.z()),
+                       (+W - O.y()) / (W - O.z()));
       break;
     case 5: // front
       camera.setPlanes((-W - O.x()) / (W + O.z()),
