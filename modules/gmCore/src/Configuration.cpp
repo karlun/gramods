@@ -155,9 +155,9 @@ void Configuration::load(tinyxml2::XMLNode *node) {
     
     std::string type = std::string(node_it->Value());
     
-    const char* name_attribute = node_element->Attribute("AS");
-    std::string name = name_attribute != NULL
-      ? std::string(name_attribute) : type;
+    const char* as_attribute = node_element->Attribute("AS");
+    std::string name = as_attribute != NULL
+      ? std::string(as_attribute) : type;
     
     const char* def_attribute = node_element->Attribute("DEF");
     std::string DEF = def_attribute != NULL
@@ -168,11 +168,17 @@ void Configuration::load(tinyxml2::XMLNode *node) {
       ? std::string(use_attribute) : "";
 
     if (USE != "") {
+
       if (def_objects->count(USE) == 0) {
         GM_ERR("Configuration", "no DEF to match USE " << USE << " in " << type);
         throw std::invalid_argument("no DEF to match USE");
       }
-      addObject(name, (*def_objects)[USE]);
+
+      if (as_attribute != NULL)
+        addObject(std::string(as_attribute), (*def_objects)[USE]);
+      else
+        addObject((*def_objects)[USE]->getDefaultKey(), (*def_objects)[USE]);
+
       continue;
     }
 
@@ -236,28 +242,33 @@ void Configuration::load(tinyxml2::XMLNode *node) {
       }
     }
 
-    std::vector<std::string> child_names;
-    node_conf.getAllObjectNames(child_names);
+    std::vector<std::string> child_keys;
+    node_conf.getAllObjectNames(child_keys);
 
-    for (auto child_name : child_names) {
+    for (auto child_key : child_keys) {
       std::vector<std::shared_ptr<Object>> ptrs;
-      node_conf.getAllObjects(child_name, ptrs);
+      node_conf.getAllObjects(child_key, ptrs);
       assert(ptrs.size() > 0);
       for (auto ptr : ptrs) {
-        GM_INF("Configuration", name << " -> " << type << "::" << child_name << " = ptr");
-        bool good = OFactory::getOFI(type)->setPointerValue(nn.get(), child_name, ptr);
+        GM_INF("Configuration", name << " -> " << type << "::" << child_key << " = ptr");
+        bool good = OFactory::getOFI(type)->setPointerValue(nn.get(), child_key, ptr);
         if (!good) {
-          GM_ERR("Configuration", "no pointer " << child_name << " available in " << type);
+          GM_ERR("Configuration", "no pointer '" << child_key << "' to match instance of '" << typeid(*ptr).name() << "' available in " << type);
           throw std::invalid_argument("no parameter to match xml attribute");
         }
       }
     }
 
     nn->initialize();
-    if (!nn->isInitialized())
+    if (!nn->isInitialized()) {
       GM_ERR("Configuration", "Could not initialize instance of " << type);
+      continue;
+    }
+
+    if (as_attribute != NULL)
+      addObject(std::string(as_attribute), nn);
     else
-      addObject(name, nn);
+      addObject(nn->getDefaultKey(), nn);
   }
 }
 

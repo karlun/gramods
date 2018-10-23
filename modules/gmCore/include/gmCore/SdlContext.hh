@@ -42,6 +42,12 @@ public:
 
   void initialize();
 
+  /**
+     Returns the default key, in Configuration, for the
+     Object.
+  */
+  virtual std::string getDefaultKey() { return "context"; }
+
 private:
 
   static bool has_video;

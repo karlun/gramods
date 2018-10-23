@@ -11,55 +11,46 @@
       GLMajor="3" GLMinor="3">
 
     <SdlContext
-        AS="context" DEF="SDLContext"
+        DEF="SDLContext"
         useVideo="1"/>
 
     <CubeSceneRenderer
-        AS="renderer"
         cubeSize="0.1"
         cubeSetSize="2.0"/>
 
-    <TiledView AS="view">
+    <TiledView>
 
       <param name="tileLocation" value="1 0 1 1"/>
       <SpatialPlanarView
-          AS="view"
           topLeftCorner="-2.0 2.0 0.0"
           bottomRightCorner="2.0 -2.0 0.0"
           upDirection="0.0 1.0 0.0">
         <Viewpoint
-            AS="viewpoint"
             position="0.0 0.0 3.0"/>
       </SpatialPlanarView>
 
       <param name="tileLocation" value="1 1 1 1"/>
       <SpatialPlanarView
-          AS="view"
           topLeftCorner="0.0 2.0 2.0"
           bottomRightCorner="0.0 -2.0 -2.0"
           upDirection="0.0 1.0 0.0">
         <Viewpoint
-            AS="viewpoint"
             position="3.0 0.0 0.0"/>
       </SpatialPlanarView>
 
       <param name="tileLocation" value="0 0 1 1"/>
       <SpatialPlanarView
-          AS="view"
           topLeftCorner="-2.0 0.0 -2.0"
           bottomRightCorner="2.0 0.0 2.0"
           upDirection="0.0 0.0 -1.0">
         <Viewpoint
-            AS="viewpoint"
             position="0.0 3.0 0.0"/>
       </SpatialPlanarView>
 
       <param name="tileLocation" value="0 1 1 1"/>
       <PosedPlanarView
-          AS="view"
           fieldOfView="1">
         <Viewpoint
-            AS="viewpoint"
             position="2.0 2.0 2.0"
             lookAt="0.0 0.0 0.0"/>
       </PosedPlanarView>

@@ -118,7 +118,7 @@ TEST(gmTrackVRPN, VRPNPoseTrackerConfigurationAndMultiToSinglePoseTracker) {
       std::string xml = ""
         "<config>"
         "  <MultiToSinglePoseTracker sensor=\"0\">"
-        "    <VRPNPoseTracker AS=\"tracker\" connectionString=\"TEST_DEVICE@localhost\"/>"
+        "    <VRPNPoseTracker connectionString=\"TEST_DEVICE@localhost\"/>"
         "  </MultiToSinglePoseTracker>"
         "</config>";
       gmCore::Configuration config(xml);

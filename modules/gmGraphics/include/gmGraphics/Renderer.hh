@@ -22,6 +22,12 @@ public:
   */
   virtual void render(Camera camera) = 0;
 
+  /**
+     Returns the default key, in Configuration, for the
+     Object.
+  */
+  virtual std::string getDefaultKey() { return "renderer"; }
+
 };
 
 END_NAMESPACE_GMGRAPHICS;

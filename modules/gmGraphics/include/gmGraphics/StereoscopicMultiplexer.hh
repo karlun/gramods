@@ -54,6 +54,12 @@ public:
   */
   virtual void finalize() = 0;
 
+  /**
+     Returns the default key, in Configuration, for the
+     Object.
+  */
+  virtual std::string getDefaultKey() { return "stereoscopicMultiplexer"; }
+
 };
 
 END_NAMESPACE_GMGRAPHICS;

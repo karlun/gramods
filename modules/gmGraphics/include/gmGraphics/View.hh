@@ -13,6 +13,12 @@ BEGIN_NAMESPACE_GMGRAPHICS;
 class View
   : public RendererDispatcher {
 
+  /**
+     Returns the default key, in Configuration, for the
+     Object.
+  */
+  virtual std::string getDefaultKey() { return "view"; }
+
 public:
 
   GM_OFI_DECLARE;

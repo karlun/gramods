@@ -12,17 +12,15 @@
       GLMajor="3" GLMinor="3">
 
     <SdlContext
-        AS="context" DEF="SDLContext"
+        DEF="SDLContext"
         useVideo="1"/>
 
     <CubeSceneRenderer
-        AS="renderer"
         cubeSize="0.01"
         cubeSetSize="0.2"/>
 
     <!-- -0.3 +0.165 +0.0 -->
     <SpatialPlanarView
-        AS="view"
         topLeftCorner    ="-0.3 +0.165 +0.0"
         bottomRightCorner="+0.3 -0.165 +0.0"
         upDirection="0.0 1.0 0.0"
@@ -31,11 +29,9 @@
       <SimpleAnaglyphsMultiplexer
           leftColor="1 0 0"
           rightColor="0 1 1"
-          saturation="0.5"
-          AS="stereoscopicMultiplexer"/>
+          saturation="0.5"/>
 
       <Viewpoint
-          AS="viewpoint"
           position="0 0 0.7"/>
 
     </SpatialPlanarView>

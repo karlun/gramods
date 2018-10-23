@@ -19,7 +19,6 @@ struct Peer {
     ss_xml << "<config>" << std::endl;
     ss_xml << "  <ExecutionSynchronization>" << std::endl;
     ss_xml << "    <PeersConnection" << std::endl;
-    ss_xml << "        AS=\"connection\"" << std::endl;
     ss_xml << "        DEF=\"PEERS\"" << std::endl;
     ss_xml << "        localPeerIdx=\"" << host_idx << "\">" << std::endl;
     ss_xml << "      <param name=\"peer\" value=\"127.0.0.1:20400\"/>" << std::endl;

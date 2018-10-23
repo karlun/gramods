@@ -101,6 +101,12 @@ public:
 
   void sendMessage(Protocol::Message mess);
 
+  /**
+     Returns the default key, in Configuration, for the
+     Object.
+  */
+  virtual std::string getDefaultKey() { return "connection"; }
+
   GM_OFI_DECLARE;
 
 private:

@@ -10,11 +10,10 @@
       title="UVCstream"
       GLMajor="3" GLMinor="3">
     <SdlContext
-        AS="context" DEF="SDLContext"
+        DEF="SDLContext"
         useVideo="1"/>
-    <TextureRenderer AS="renderer">
+    <TextureRenderer>
       <UvcTexture
-          AS="texture"
           resolution="640 480"
           framerate="30"
           format="mjpeg"/>
@@ -26,21 +25,20 @@
       title="images"
       GLMajor="3" GLMinor="3">
     <SdlContext
-        AS="context" USE="SDLContext"/>
-    <TextureRenderer AS="renderer">
+        USE="SDLContext"/>
+    <TextureRenderer>
       <ImageTexture
-          AS="texture"
           file="tmp/video_frame_%05d.jpg"
           range="1 339"
           loop="1"/>
     </TextureRenderer>
-    <TiledView AS="view">
+    <TiledView>
       <param name="tileLocation" value="0 2 1 1"/>
-      <View AS="view"/>
+      <View/>
       <param name="tileLocation" value="1 2 1 1"/>
-      <View AS="view"/>
+      <View/>
       <param name="tileLocation" value="0 0 2 2"/>
-      <View AS="view"/>
+      <View/>
     </TiledView>
   </SdlWindow>
 

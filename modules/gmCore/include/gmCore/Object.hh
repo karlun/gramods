@@ -60,6 +60,26 @@ struct Object
   virtual void initialize() { is_initialized = true; }
 
   /**
+     Returns the default key, in Configuration, for the
+     Object. Default is "object", but this can be overridden in XML by
+     using the attribute `AS`, as in `AS="view"`.
+
+     The key is both the name under which the object will be stored in
+     the Configuration instance, and the pointer in the parent (in the
+     XML file) to which the object will be assigned to:
+     \code
+     gmCore::Configuration config(argc, argv);
+
+     std::shared_ptr<MyClass> my_object;
+     if (! config.getObject("view", my_object)) {
+       GM_ERR("MyCode", "Cannot run without MyClass instance");
+       exit(-1);
+     }
+     \endcode
+  */
+  virtual std::string getDefaultKey() { return "object"; }
+
+  /**
      Returns true if the Object is initialized. Sub classes must call
      Object::initialize() if and only if the initialization succeeded.
   */

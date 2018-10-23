@@ -97,6 +97,12 @@ public:
   */
   virtual void setLookAt(gmTypes::float3 pt);
 
+  /**
+     Returns the default key, in Configuration, for the
+     Object.
+  */
+  virtual std::string getDefaultKey() { return "viewpoint"; }
+
   GM_OFI_DECLARE;
 
 protected:
