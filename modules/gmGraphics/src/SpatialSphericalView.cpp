@@ -194,16 +194,30 @@ void SpatialSphericalView::Impl::renderFullPipeline(ViewSettings settings, Eye e
   }
 
   GLint program_id = cubemap->getProgram();
-  if (program_id) {
-    glUseProgram(program_id);
-    glUniform1f(glGetUniformLocation(program_id, "coverageAngle"), coverage_angle);
-    glUniform3fv(glGetUniformLocation(program_id, "eye_position"), 1, pos.data());
-    glUniform1f(glGetUniformLocation(program_id, "dome_radius"), dome_radius);
-    glUniform1f(glGetUniformLocation(program_id, "cubemap_radius"), dome_radius);
+  if (!program_id) {
+
+    std::vector<std::shared_ptr<Renderer>> no_renderers;
+    cubemap->renderFullPipeline(no_renderers, pos, rot, make_square);
+    program_id = cubemap->getProgram();
+
+    if (!program_id) {
+      static bool message_shown = false;
+      if (!message_shown)
+        GM_WRN("SpatialSphericalView", "Could not initialize cubemap");
+      message_shown = true;
+      return;
+    }
   }
 
-  cubemap->setSpatialCubeMap(dome_position, 2 * dome_radius);
 
+  glUseProgram(program_id);
+  glUniform1f(glGetUniformLocation(program_id, "coverageAngle"), coverage_angle);
+  glUniform3fv(glGetUniformLocation(program_id, "eye_position"), 1, pos.data());
+  glUniform1f(glGetUniformLocation(program_id, "dome_radius"), dome_radius);
+  glUniform1f(glGetUniformLocation(program_id, "cubemap_radius"), dome_radius);
+  glUseProgram(0);
+
+  cubemap->setSpatialCubeMap(position, 2 * dome_radius);
   cubemap->renderFullPipeline(settings.renderers, pos, rot, make_square);
 }
 

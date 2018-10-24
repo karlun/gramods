@@ -221,6 +221,8 @@ void CubeMap::Impl::renderFullPipeline(std::vector<std::shared_ptr<Renderer>> re
     setup();
   if (!is_functional)
     return;
+  if (renderers.empty())
+    return;
 
   for (size_t idx = 0; idx < SIDE_COUNT; ++idx)
     renderSide(renderers, pos, rot, idx);
