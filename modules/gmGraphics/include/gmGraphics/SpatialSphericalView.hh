@@ -53,14 +53,21 @@ public:
   void setProjection(int p);
 
   /**
-     Sets the location of the dome center, in meters. Default is zero.
+     Sets the location of the center of the spherical projection
+     surface, in meters. Default is zero.
   */
-  void setDomePosition(gmTypes::float3 c);
+  void setPosition(gmTypes::float3 c);
 
   /**
-     Set the radius of the dome, in meters. Default is 10.
+     Set the radius of the projection surface, in meters. Default is 10.
    */
-  void setDomeRadius(float r);
+  void setRadius(float r);
+
+  /**
+     Set the forward tilt (towards -z) of the projection surface, in
+     radians. Default is 0.
+   */
+  void setTiltAngle(float a);
 
   GM_OFI_DECLARE;
 

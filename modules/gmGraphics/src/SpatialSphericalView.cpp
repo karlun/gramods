@@ -17,8 +17,9 @@ GM_OFI_PARAM(SpatialSphericalView, cubeMapResolution, int, SpatialSphericalView:
 GM_OFI_PARAM(SpatialSphericalView, linearInterpolation, bool, SpatialSphericalView::setLinearInterpolation);
 GM_OFI_PARAM(SpatialSphericalView, coverageAngle, float, SpatialSphericalView::setCoverageAngle);
 GM_OFI_PARAM(SpatialSphericalView, projection, int, SpatialSphericalView::setProjection);
-GM_OFI_PARAM(SpatialSphericalView, domePosition, gmTypes::float3, SpatialSphericalView::setDomePosition);
-GM_OFI_PARAM(SpatialSphericalView, domeRadius, float, SpatialSphericalView::setDomeRadius);
+GM_OFI_PARAM(SpatialSphericalView, position, gmTypes::float3, SpatialSphericalView::setPosition);
+GM_OFI_PARAM(SpatialSphericalView, radius, float, SpatialSphericalView::setRadius);
+GM_OFI_PARAM(SpatialSphericalView, tiltAngle, float, SpatialSphericalView::setTiltAngle);
 
 struct SpatialSphericalView::Impl {
 
@@ -31,8 +32,9 @@ struct SpatialSphericalView::Impl {
 
   float coverage_angle = 2 * gramods_PI;
   bool make_square = false;
-  Eigen::Vector3f dome_position = Eigen::Vector3f::Zero();
-  float dome_radius = 10;
+  Eigen::Vector3f position = Eigen::Vector3f::Zero();
+  float radius = 10;
+  float tilt_angle = 0;
   float eye_separation = 0;
 
   std::unique_ptr<CubeMap> cubemap;
@@ -88,7 +90,7 @@ uniform sampler2D texFront;
 
 uniform float coverageAngle;
 uniform vec3 eye_position;
-uniform float dome_radius;
+uniform float radius;
 uniform float cubemap_radius;
 
 in vec2 pos;
@@ -101,7 +103,7 @@ void colorFromTex(float x, float y, float z, sampler2D tex) {
 }
 
 vec3 tex_coord_direction(vec3 line) {
-  vec3 pos_on_sphere = dome_radius * normalize(line);
+  vec3 pos_on_sphere = radius * normalize(line);
   return normalize(pos_on_sphere - eye_position);
 }
 
@@ -179,6 +181,8 @@ void SpatialSphericalView::Impl::renderFullPipeline(ViewSettings settings, Eye e
 
   Eigen::Vector3f pos = Eigen::Vector3f::Zero();
   Eigen::Quaternionf rot = Eigen::Quaternionf::Identity();
+  Eigen::Quaternionf tilt
+    (Eigen::AngleAxis<float>(tilt_angle, Eigen::Vector3f(-1, 0, 0)));
 
   if (settings.viewpoint) {
     pos = settings.viewpoint->getPosition();
@@ -197,7 +201,7 @@ void SpatialSphericalView::Impl::renderFullPipeline(ViewSettings settings, Eye e
   if (!program_id) {
 
     std::vector<std::shared_ptr<Renderer>> no_renderers;
-    cubemap->renderFullPipeline(no_renderers, pos, rot, make_square);
+    cubemap->renderFullPipeline(no_renderers, pos, tilt, make_square);
     program_id = cubemap->getProgram();
 
     if (!program_id) {
@@ -209,16 +213,17 @@ void SpatialSphericalView::Impl::renderFullPipeline(ViewSettings settings, Eye e
     }
   }
 
+  Eigen::Vector3f offset = pos - position;
 
   glUseProgram(program_id);
   glUniform1f(glGetUniformLocation(program_id, "coverageAngle"), coverage_angle);
-  glUniform3fv(glGetUniformLocation(program_id, "eye_position"), 1, pos.data());
-  glUniform1f(glGetUniformLocation(program_id, "dome_radius"), dome_radius);
-  glUniform1f(glGetUniformLocation(program_id, "cubemap_radius"), dome_radius);
+  glUniform3fv(glGetUniformLocation(program_id, "eye_position"), 1, offset.data());
+  glUniform1f(glGetUniformLocation(program_id, "radius"), radius);
+  glUniform1f(glGetUniformLocation(program_id, "cubemap_radius"), radius);
   glUseProgram(0);
 
-  cubemap->setSpatialCubeMap(position, 2 * dome_radius);
-  cubemap->renderFullPipeline(settings.renderers, pos, rot, make_square);
+  cubemap->setSpatialCubeMap(position, 2 * radius);
+  cubemap->renderFullPipeline(settings.renderers, pos, tilt, make_square);
 }
 
 void SpatialSphericalView::Impl::setProjection(int a) {
@@ -244,7 +249,7 @@ void SpatialSphericalView::Impl::setProjection(int a) {
                           fisheye_mapper_code);
     break;
   case 2:
-    GM_VINF("PosedSphericalView", "Projection set to angular fisheye");
+    GM_VINF("PosedSphericalView", "Projection set to square angular fisheye");
     make_square = true;
     fragment_code.replace(fragment_code.find(mapper_pattern),
                           mapper_pattern.length(),
@@ -271,14 +276,17 @@ void SpatialSphericalView::setProjection(int a) {
   _impl->setProjection(a);
 }
 
-void SpatialSphericalView::setDomePosition(gmTypes::float3 c) {
+void SpatialSphericalView::setPosition(gmTypes::float3 c) {
   assert(0);
-  _impl->dome_position = Eigen::Vector3f(c[0], c[1], c[2]);
+  _impl->position = Eigen::Vector3f(c[0], c[1], c[2]);
 }
 
-void SpatialSphericalView::setDomeRadius(float r) {
-  _impl->dome_radius = r;
+void SpatialSphericalView::setRadius(float r) {
+  _impl->radius = r;
 }
 
+void SpatialSphericalView::setTiltAngle(float a) {
+  _impl->tilt_angle = a;
+}
 
 END_NAMESPACE_GMGRAPHICS;
