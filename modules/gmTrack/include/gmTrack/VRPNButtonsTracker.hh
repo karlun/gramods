@@ -23,6 +23,10 @@ public:
   VRPNButtonsTracker();
   ~VRPNButtonsTracker();
 
+  /**
+     The address to the button tracker at the VRPN server, such as
+     "tracker@localhost".
+  */
   void setConnectionString(std::string id);
 
   /**

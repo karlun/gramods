@@ -32,7 +32,7 @@ public:
   /**
      Sets the tracker to read pose data from.
   */
-  void setTracker(std::shared_ptr<gmTrack::SinglePoseTracker> t);
+  void setPoseTracker(std::shared_ptr<gmTrack::SinglePoseTracker> t);
 
   GM_OFI_DECLARE;
 

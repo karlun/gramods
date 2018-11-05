@@ -67,6 +67,12 @@ public:
   */
   void setAnalogsTracker(std::shared_ptr<AnalogsTracker> at);
 
+  /**
+     Returns the default key, in Configuration, for the
+     Object.
+  */
+  virtual std::string getDefaultKey() { return "controller"; }
+
   GM_OFI_DECLARE;
 
 private:

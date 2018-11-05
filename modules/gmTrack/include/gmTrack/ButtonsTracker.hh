@@ -26,6 +26,12 @@ public:
   };
 
   /**
+     Returns the default key, in Configuration, for the
+     Object.
+  */
+  virtual std::string getDefaultKey() { return "buttonsTracker"; }
+
+  /**
      Replaces the contents of p with button data.
   */
   virtual bool getButtons(ButtonsSample &b) = 0;

@@ -20,7 +20,7 @@ class PoseTracker
      Returns the default key, in Configuration, for the
      Object.
   */
-  virtual std::string getDefaultKey() { return "tracker"; }
+  virtual std::string getDefaultKey() { return "poseTracker"; }
 
 public:
 

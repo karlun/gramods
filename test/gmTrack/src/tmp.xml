@@ -1,0 +1,37 @@
+<config>
+  <BaseEstimator>
+
+    <param name="point" value="1 0 0"/>
+    <param name="point" value="0 1 0"/>
+    <param name="point" value="0 0 1"/>
+    <param name="point" value="0 0 0"/>
+
+    <Controller>
+
+      <TimeSamplePoseTracker>
+        <param name="position" value="1 0 0"/>
+        <param name="position" value="1 0 0"/>
+        <param name="position" value="0 1 0"/>
+        <param name="position" value="0 1 0"/>
+        <param name="position" value="0 0 1"/>
+        <param name="position" value="0 0 1"/>
+        <param name="position" value="0 0 0"/>
+        <param name="position" value="0 0 0"/>
+        <param name="position" value="0 0 0"/>
+      </TimeSamplePoseTracker>
+
+      <TimeSampleButtonTracker>
+        <param name="buttonStates" value="0"/>
+        <param name="buttonStates" value="1"/>
+        <param name="buttonStates" value="0"/>
+        <param name="buttonStates" value="1"/>
+        <param name="buttonStates" value="0"/>
+        <param name="buttonStates" value="1"/>
+        <param name="buttonStates" value="0"/>
+        <param name="buttonStates" value="1"/>
+        <param name="buttonStates" value="0"/>
+      </TimeSampleButtonTracker>
+    </Controller>
+    
+  </BaseEstimator>
+</config>
