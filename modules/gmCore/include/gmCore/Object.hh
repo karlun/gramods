@@ -5,6 +5,7 @@
 #include <gmCore/config.hh>
 
 #include <memory>
+#include <string>
 
 BEGIN_NAMESPACE_GMCORE;
 
@@ -37,8 +38,10 @@ BEGIN_NAMESPACE_GMCORE;
    All three steps are performed by the Configuration tool and an
    Object extracted therefrom will be ready to be used.
 */
-struct gmCore_API Object
+class gmCore_API Object
   : public std::enable_shared_from_this<Object> {
+
+public:
 
   /**
      Initializes internal data.
