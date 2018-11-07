@@ -1,6 +1,8 @@
 
 #include <gmCore/SdlContext.hh>
 
+#ifdef gramods_ENABLE_SDL2
+
 BEGIN_NAMESPACE_GMCORE;
 
 GM_OFI_DEFINE(SdlContext);
@@ -47,3 +49,4 @@ void SdlContext::initialize() {
 }
 
 END_NAMESPACE_GMCORE;
+#endif
