@@ -4,7 +4,7 @@
 #include <gmCore/OFactory.hh>
 #include <gmCore/CommandLineParser.hh>
 
-#include <tinyxml2.h>
+#include <gmCore/tinyxml2.h>
 
 BEGIN_NAMESPACE_GMCORE;
 
