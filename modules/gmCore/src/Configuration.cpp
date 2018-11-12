@@ -4,8 +4,6 @@
 #include <gmCore/OFactory.hh>
 #include <gmCore/CommandLineParser.hh>
 
-#include <gmCore/tinyxml2.h>
-
 BEGIN_NAMESPACE_GMCORE;
 
 Configuration::Configuration()

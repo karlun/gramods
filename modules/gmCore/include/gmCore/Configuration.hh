@@ -11,10 +11,7 @@
 #include <algorithm>
 #include <memory>
 
-namespace tinyxml2 {
-  struct XMLNode;
-  struct XMLElement;
-}
+#include <tinyxml2.h>
 
 BEGIN_NAMESPACE_GMCORE;
 
