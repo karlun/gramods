@@ -34,7 +34,7 @@ public:
   */
   bool getButtons(ButtonsSample &p);
 
-  GM_OFI_DECLARE(VRPNButtonsTracker);
+  GM_OFI_DECLARE;
 
 private:
 
