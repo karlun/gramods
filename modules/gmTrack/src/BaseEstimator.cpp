@@ -41,7 +41,9 @@ struct BaseEstimator::Impl {
   float planar_sphericity;
   std::shared_ptr<gramods::gmTrack::Controller> controller;
 
-  Eigen::Matrix4f base;
+  Eigen::Matrix4f registration_raw;
+  Eigen::Matrix4f registration_unit;
+  bool successful_registration = false;
 };
 
 BaseEstimator::BaseEstimator()
@@ -68,8 +70,18 @@ void BaseEstimator::setSamplesPerSecond(float n) {
   _impl->samples_per_second = n;
 }
 
-Eigen::Matrix4f BaseEstimator::getBase() {
-  return _impl->base;
+bool BaseEstimator::getRegistration(Eigen::Matrix4f * RAW, Eigen::Matrix4f * UNIT) {
+
+  if (!_impl->successful_registration)
+    return false;
+
+  if (RAW)
+    *RAW = _impl->registration_raw;
+
+  if (UNIT)
+    *UNIT = _impl->registration_unit;
+
+  return true;
 }
 
 void BaseEstimator::Impl::update(clock::time_point now) {
@@ -171,18 +183,22 @@ void BaseEstimator::Impl::update(clock::time_point now) {
 
     GM_INF("BaseEstimator", "Poor third axis sphericity (" << tracker_data_sph << " and " << actual_data_sph << ") - automatically correcting by expanding samples");
 
-    expandPlanar(tracker_data);
     expandPlanar(actual_data);
+    expandPlanar(tracker_data);
   }
 
   Eigen::Matrix4f M_reg;
   if (!estimateRegistration(tracker_data, actual_data, M_reg))
     return;
 
-  GM_VINF("BaseEstimator", "Raw registration matrix: " << M_reg);
+  registration_raw = M_reg;
+  successful_registration = true;
+
+  GM_VINF("BaseEstimator", "Raw registration matrix:\n" << M_reg);
 
   Eigen::Matrix4f M_unit;
   estimateUnitRegistration(tracker_data, actual_data, M_reg, M_unit);
+  registration_unit = M_unit;
 
   GM_VINF("BaseEstimator", "Unit registration matrix:\n" << M_unit);
 }
@@ -238,18 +254,17 @@ float BaseEstimator::Impl::estimateSphericity(std::vector<Eigen::Vector3f> data)
     cp += pt;
   cp /= data.size();
 
-  Eigen::MatrixXf sample_set(3, data.size());
+  Eigen::MatrixXf data_matrix(3, data.size());
 
   for (size_t idx = 0; idx < data.size(); ++idx) {
-    sample_set.col(idx) = (data[idx] - cp);
+    data_matrix.col(idx) = (data[idx] - cp);
   }
 
-  Eigen::JacobiSVD<Eigen::MatrixXf> svd(sample_set, Eigen::ComputeThinU | Eigen::ComputeThinV);
+  Eigen::JacobiSVD<Eigen::MatrixXf> svd(data_matrix, Eigen::ComputeThinU | Eigen::ComputeThinV);
   auto singular_values = svd.singularValues();
   assert(singular_values.rows() == 3);
 
-  GM_VINF("BaseEstimator", "sample set: " << sample_set);
-  GM_VINF("BaseEstimator", "singular values: " << singular_values.transpose());
+  GM_VINF("BaseEstimator", "data matrix:\n" << data_matrix);
   GM_VINF("BaseEstimator", "singular values: " << singular_values.transpose());
 
   if (singular_values[1] / singular_values[0] < 0.3) //<< Arbitrarily choosen for warning only
@@ -267,31 +282,25 @@ void BaseEstimator::Impl::expandPlanar(std::vector<Eigen::Vector3f> &data) {
     cp += pt;
   cp /= data.size();
 
-  float data_scale = 0;
-  for (auto pt : data)
-    data_scale = std::max(data_scale, (pt - cp).norm());
-  data_scale *= (sqrt(2)/sqrt(3)); // < dimensionality expansion
+  Eigen::MatrixXf data_matrix(3, data.size());
 
-  Eigen::Vector3f data_normal = Eigen::Vector3f::Zero();
-  for (int idx0 = 0; idx0 < data.size(); ++idx0)
-    for (int idx1 = idx0 + 1; idx1 < data.size(); ++idx1) {
-      Eigen::Vector3f cand = (data[idx0] - cp).cross(data[idx1] - cp);
-      if (cand.norm() < std::numeric_limits<float>::epsilon())
-        continue;
-      cand = cand.normalized();
-      if (cand.dot(data_normal) < 0)
-        cand = -cand;
-      data_normal += cand;
-    }
-  data_normal.normalize();
+  for (size_t idx = 0; idx < data.size(); ++idx) {
+    data_matrix.col(idx) = (data[idx] - cp);
+  }
 
+  Eigen::JacobiSVD<Eigen::MatrixXf> svd(data_matrix, Eigen::ComputeFullU);
+  auto U = svd.matrixU();
+  auto S = svd.singularValues();
+
+  Eigen::Vector3f data_normal = U.col(2);
+  float data_scale = S[0];
   GM_VINF("BaseEstimator", "Estimated data normal: " << data_normal.transpose());
   GM_VINF("BaseEstimator", "Estimated data scale: " << data_scale);
 
   std::vector<Eigen::Vector3f> new_data;
   new_data.reserve(2 * data.size());
 
-  auto offset = data_scale * data_normal;
+  auto offset = (0.5 * data_scale) * data_normal;
   for (auto pt : data)
     new_data.push_back(pt + offset);
   for (auto pt : data)
@@ -346,7 +355,6 @@ bool BaseEstimator::Impl::estimateRegistration(std::vector<Eigen::Vector3f> trac
     auto qr = A.fullPivHouseholderQr();
     auto x = qr.solve(b);
     M = x.transpose();
-    
   }
 
   GM_VINF("BaseEstimator", "Raw registration error: " << ((M * tracker_set) - actual_set).norm());
@@ -361,15 +369,14 @@ void BaseEstimator::Impl::estimateUnitRegistration
  Eigen::Matrix4f M_raw,
  Eigen::Matrix4f &M_unit) {
 
-  auto M_33 = M_raw.block(0,0,3,3);
-
-  Eigen::JacobiSVD<Eigen::MatrixXf> svd(M_33, Eigen::ComputeFullU | Eigen::ComputeFullV);
+  Eigen::JacobiSVD<Eigen::MatrixXf> svd(M_raw.block(0,0,3,3),
+                                        Eigen::ComputeFullU | Eigen::ComputeFullV);
   auto U = svd.matrixU();
   auto S = svd.singularValues();
   auto V = svd.matrixV();
 
   M_unit = Eigen::Matrix4f::Identity();
-  M_unit.block(0,0,3,3) = U * V;
+  M_unit.block(0,0,3,3) = U * V.transpose();
 
   Eigen::Vector3f tracker_cp = Eigen::Vector3f::Zero();
   for (auto pt : tracker_data)

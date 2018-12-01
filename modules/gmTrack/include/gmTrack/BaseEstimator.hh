@@ -51,9 +51,11 @@ public:
   void setSamplesPerSecond(float n);
 
   /**
-     Returns the base matrix.
+     Extract registration matrix, either raw or without
+     scaling. Returns true if there is a registration, false
+     otherwise.
   */
-  Eigen::Matrix4f getBase();
+  bool getRegistration(Eigen::Matrix4f * RAW, Eigen::Matrix4f * UNIT);
 
   GM_OFI_DECLARE;
 
