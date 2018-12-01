@@ -67,7 +67,7 @@ public:
 
   /**
      Explicitly sets the orientation of the Viewpoint as a axis angle
-     rotation in format (x y z a) where angle a is expressed in
+     rotation in format (x y z a) where the angle a is expressed in
      radians. The axis is normalized during the call.
 
      This may be ignored or instantaneously overwritten by dynamic

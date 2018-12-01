@@ -13,8 +13,8 @@
 BEGIN_NAMESPACE_GMTRACK;
 
 /**
-   VRPNPoseTracker
- */
+   Pose tracker reading data off a VRPN server.
+*/
 class VRPNPoseTracker
   : public MultiPoseTracker {
 
@@ -23,6 +23,10 @@ public:
   VRPNPoseTracker();
   ~VRPNPoseTracker();
 
+  /**
+     The address to the pose tracker at the VRPN server, such as
+     "tracker@localhost".
+  */
   void setConnectionString(std::string id);
 
   /**

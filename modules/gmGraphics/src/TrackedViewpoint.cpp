@@ -4,7 +4,7 @@
 BEGIN_NAMESPACE_GMGRAPHICS;
 
 GM_OFI_DEFINE_SUB(TrackedViewpoint, Viewpoint);
-GM_OFI_POINTER(TrackedViewpoint, tracker, gmTrack::SinglePoseTracker, TrackedViewpoint::setTracker);
+GM_OFI_POINTER(TrackedViewpoint, poseTracker, gmTrack::SinglePoseTracker, TrackedViewpoint::setPoseTracker);
 
 struct TrackedViewpoint::Impl {
 
@@ -45,7 +45,7 @@ void TrackedViewpoint::Impl::getOrientation(Eigen::Quaternionf &q) {
     q = pose.orientation;
 }
 
-void TrackedViewpoint::setTracker(std::shared_ptr<gmTrack::SinglePoseTracker> t) {
+void TrackedViewpoint::setPoseTracker(std::shared_ptr<gmTrack::SinglePoseTracker> t) {
   _impl->tracker = t;
 }
 

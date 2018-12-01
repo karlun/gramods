@@ -265,13 +265,13 @@ std::size_t Configuration::getAllObjects(std::string name,
 }
 
 template<class T>
-bool Configuration::getObject(std::string name, std::shared_ptr<T> &ptr) const{
+bool Configuration::getObject(std::string name, std::shared_ptr<T> &ptr) const {
 
   Configuration *_this = const_cast<Configuration*>(this);
 
   auto it = std::find_if(child_objects.begin(),
                          child_objects.end(),
-                         [name](std::pair<std::string, std::shared_ptr<Object>> &pair) {
+                         [name](const std::pair<std::string, std::shared_ptr<Object>> &pair) {
                            return pair.first == name;
                          });
   if (it == child_objects.end())
