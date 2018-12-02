@@ -99,7 +99,7 @@ out vec4 fragColor;
 MAPPER;
 
 void colorFromTex(float x, float y, float z, sampler2D tex) {
-  fragColor = vec4(texture(tex, 0.5 * vec2(x/z, y/z) + 0.5).rgb, 1);
+  fragColor = texture(tex, 0.5 * vec2(x/z, y/z) + 0.5);
 }
 
 vec3 tex_coord_direction(vec3 line) {
@@ -118,7 +118,7 @@ void main() {
 
   vec3 pix_dir = mapper(pos);
   if (pix_dir.x == 0 && pix_dir.y == 0 && pix_dir.z == 0) {
-    fragColor = vec4(0, 0, 0, 1);
+    fragColor = vec4(0, 0, 0, 0);
     return;
   }
 

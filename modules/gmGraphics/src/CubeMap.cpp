@@ -100,7 +100,7 @@ void CubeMap::Impl::setup() {
     glBindFramebuffer(GL_FRAMEBUFFER, framebuffer_id[idx]);
     glBindTexture(GL_TEXTURE_2D, texture_id[idx]);
 
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, resolution, resolution, 0,GL_RGB, GL_UNSIGNED_BYTE, 0);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, resolution, resolution, 0,GL_RGB, GL_UNSIGNED_BYTE, 0);
 
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
@@ -224,6 +224,8 @@ void CubeMap::Impl::renderFullPipeline(std::vector<std::shared_ptr<Renderer>> re
   if (renderers.empty())
     return;
 
+  glEnable(GL_BLEND);
+
   for (size_t idx = 0; idx < SIDE_COUNT; ++idx)
     renderSide(renderers, pos, rot, idx);
 
@@ -290,6 +292,8 @@ void CubeMap::Impl::renderSide(std::vector<std::shared_ptr<Renderer>> renderers,
 
   glBindFramebuffer(GL_FRAMEBUFFER, framebuffer_id[side]);
   glViewport(0, 0, resolution, resolution);
+
+  glClearColor(0, 0, 0, 0);
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
   Camera camera;

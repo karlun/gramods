@@ -87,7 +87,7 @@ out vec4 fragColor;
 MAPPER;
 
 void colorFromTex(float x, float y, float z, sampler2D tex) {
-  fragColor = vec4(texture(tex, 0.5 * vec2(x/z, y/z) + 0.5).rgb, 1);
+  fragColor = texture(tex, 0.5 * vec2(x/z, y/z) + 0.5);
 }
 
 void main() {
