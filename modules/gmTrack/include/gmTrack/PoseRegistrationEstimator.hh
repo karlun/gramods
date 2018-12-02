@@ -1,6 +1,6 @@
 
-#ifndef GM_TRACK_BASE_ESTIMATOR
-#define GM_TRACK_BASE_ESTIMATOR
+#ifndef GM_TRACK_POSEREGISTRATIONESTIMATOR
+#define GM_TRACK_POSEREGISTRATIONESTIMATOR
 
 #include <gmTrack/config.hh>
 
@@ -12,21 +12,21 @@
 BEGIN_NAMESPACE_GMTRACK;
 
 /**
-   The BaseEstimator is a utility for estimating the base of a
-   tracking system's coordinates, i e registration of the tracking
-   system into room or display system coordinates.
+   The PoseRegistrationEstimator is a utility for estimating the base
+   of a tracking system's coordinates, i e registration of the
+   tracking system into room or display system coordinates.
 
    The utility is used by marking, with the tracking device, the
    position of known, pre-specified positions in the room or display
    system.
 */
-class BaseEstimator
+class PoseRegistrationEstimator
   : public gmCore::Object,
     public gmCore::Updateable {
 
 public:
 
-  BaseEstimator();
+  PoseRegistrationEstimator();
 
   /**
      Updates the animation.

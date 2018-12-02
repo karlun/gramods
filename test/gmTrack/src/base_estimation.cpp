@@ -1,5 +1,5 @@
 
-#include <gmTrack/BaseEstimator.hh>
+#include <gmTrack/PoseRegistrationEstimator.hh>
 
 #include <gmTrack/TimeSamplePoseTracker.hh>
 
@@ -26,7 +26,7 @@ TEST(gmTrackBaseEstimation, FullSamplesByInverse) {
 
   <ImportLibrary lib="libgmTrack.so"/>
 
-  <BaseEstimator>
+  <PoseRegistrationEstimator>
 
     <param name="point" value=" 3  0  0"/>
     <param name="point" value=" 0  3  0"/>
@@ -55,12 +55,12 @@ TEST(gmTrackBaseEstimation, FullSamplesByInverse) {
       </TimeSampleButtonsTracker>
     </Controller>
     
-  </BaseEstimator>
+  </PoseRegistrationEstimator>
 </config>
 )XML";
     gmCore::Configuration config(xml);
 
-    std::shared_ptr<gmTrack::BaseEstimator> tracker;
+    std::shared_ptr<gmTrack::PoseRegistrationEstimator> tracker;
     config.getObject(tracker);
 
     std::vector<std::shared_ptr<gmCore::Object>> objects;
@@ -109,7 +109,7 @@ TEST(gmTrackBaseEstimation, OverDeterminedSamplesByQR) {
 
   <ImportLibrary lib="libgmTrack.so"/>
 
-  <BaseEstimator>
+  <PoseRegistrationEstimator>
 
     <param name="point" value=" 3  0  3"/>
     <param name="point" value=" 0  3  3"/>
@@ -138,12 +138,12 @@ TEST(gmTrackBaseEstimation, OverDeterminedSamplesByQR) {
       </TimeSampleButtonsTracker>
     </Controller>
     
-  </BaseEstimator>
+  </PoseRegistrationEstimator>
 </config>
 )XML";
     gmCore::Configuration config(xml);
 
-    std::shared_ptr<gmTrack::BaseEstimator> tracker;
+    std::shared_ptr<gmTrack::PoseRegistrationEstimator> tracker;
     config.getObject(tracker);
 
     std::vector<std::shared_ptr<gmCore::Object>> objects;

@@ -1,16 +1,16 @@
 
-#include <gmTrack/BaseEstimator.hh>
+#include <gmTrack/PoseRegistrationEstimator.hh>
 
 #include <Eigen/LU>
 
 BEGIN_NAMESPACE_GMTRACK;
 
-GM_OFI_DEFINE(BaseEstimator);
-GM_OFI_PARAM(BaseEstimator, samplesPerSecond, float, BaseEstimator::setSamplesPerSecond);
-GM_OFI_PARAM(BaseEstimator, point, gmTypes::float3, BaseEstimator::addPoint);
-GM_OFI_POINTER(BaseEstimator, controller, Controller, BaseEstimator::setController);
+GM_OFI_DEFINE(PoseRegistrationEstimator);
+GM_OFI_PARAM(PoseRegistrationEstimator, samplesPerSecond, float, PoseRegistrationEstimator::setSamplesPerSecond);
+GM_OFI_PARAM(PoseRegistrationEstimator, point, gmTypes::float3, PoseRegistrationEstimator::addPoint);
+GM_OFI_POINTER(PoseRegistrationEstimator, controller, Controller, PoseRegistrationEstimator::setController);
 
-struct BaseEstimator::Impl {
+struct PoseRegistrationEstimator::Impl {
   Impl();
 
   typedef gmCore::Updateable::clock clock;
@@ -46,31 +46,31 @@ struct BaseEstimator::Impl {
   bool successful_registration = false;
 };
 
-BaseEstimator::BaseEstimator()
+PoseRegistrationEstimator::PoseRegistrationEstimator()
   : _impl(std::make_unique<Impl>()) {}
 
-BaseEstimator::Impl::Impl()
+PoseRegistrationEstimator::Impl::Impl()
   : samples_per_second(1),
     last_sample_time(clock::time_point::min()),
     planar_sphericity(0.3) {}
 
-void BaseEstimator::update(clock::time_point t) {
+void PoseRegistrationEstimator::update(clock::time_point t) {
   _impl->update(t);
 }
 
-void BaseEstimator::setController(std::shared_ptr<gramods::gmTrack::Controller> controller) {
+void PoseRegistrationEstimator::setController(std::shared_ptr<gramods::gmTrack::Controller> controller) {
   _impl->controller = controller;
 }
 
-void BaseEstimator::addPoint(gmTypes::float3 p) {
+void PoseRegistrationEstimator::addPoint(gmTypes::float3 p) {
   _impl->actual_positions.push_back(Eigen::Vector3f(p[0], p[1], p[2]));
 }
 
-void BaseEstimator::setSamplesPerSecond(float n) {
+void PoseRegistrationEstimator::setSamplesPerSecond(float n) {
   _impl->samples_per_second = n;
 }
 
-bool BaseEstimator::getRegistration(Eigen::Matrix4f * RAW, Eigen::Matrix4f * UNIT) {
+bool PoseRegistrationEstimator::getRegistration(Eigen::Matrix4f * RAW, Eigen::Matrix4f * UNIT) {
 
   if (!_impl->successful_registration)
     return false;
@@ -84,12 +84,12 @@ bool BaseEstimator::getRegistration(Eigen::Matrix4f * RAW, Eigen::Matrix4f * UNI
   return true;
 }
 
-void BaseEstimator::Impl::update(clock::time_point now) {
+void PoseRegistrationEstimator::Impl::update(clock::time_point now) {
 
   if (!controller) {
     static bool message_shown = false;
     if (!message_shown) {
-      GM_ERR("BaseEstimator", "No controller to calibrate");
+      GM_ERR("PoseRegistrationEstimator", "No controller to calibrate");
       message_shown = true;
     }
     return;
@@ -99,7 +99,7 @@ void BaseEstimator::Impl::update(clock::time_point now) {
   if (! controller->getButtons(buttons)) {
     static bool message_shown = false;
     if (!message_shown) {
-      GM_ERR("BaseEstimator", "Cannot read controller buttons");
+      GM_ERR("PoseRegistrationEstimator", "Cannot read controller buttons");
       message_shown = true;
     }
     return;
@@ -108,7 +108,7 @@ void BaseEstimator::Impl::update(clock::time_point now) {
   if (!collecting) {
     if (buttons.main_button){
       collecting = true;
-      GM_INF("BaseEstimator", "going into collect mode");
+      GM_INF("PoseRegistrationEstimator", "going into collect mode");
     } else {
       return;
     }
@@ -119,7 +119,7 @@ void BaseEstimator::Impl::update(clock::time_point now) {
     if (! controller->getPose(pose)) {
       static bool message_shown = false;
       if (!message_shown) {
-        GM_ERR("BaseEstimator", "Cannot read controller pose");
+        GM_ERR("PoseRegistrationEstimator", "Cannot read controller pose");
         message_shown = true;
       }
       return;
@@ -128,7 +128,7 @@ void BaseEstimator::Impl::update(clock::time_point now) {
     // Zero or less samples per second results in taking only one sample per click
     if (samples_per_second < std::numeric_limits<float>::epsilon()) {
       if (last_sample_time == clock::time_point::min()) {
-        GM_INF("BaseEstimator", "collecting a single sample");
+        GM_INF("PoseRegistrationEstimator", "collecting a single sample");
         samples.push_back(pose.position);
       }
       last_sample_time = now;
@@ -140,7 +140,7 @@ void BaseEstimator::Impl::update(clock::time_point now) {
         (now - last_sample_time) < std::chrono::milliseconds(int(1000.f/samples_per_second)))
       return;
 
-    GM_VINF("BaseEstimator", "collecting sample");
+    GM_VINF("PoseRegistrationEstimator", "collecting sample");
     samples.push_back(pose.position);
     last_sample_time = now;
 
@@ -158,22 +158,22 @@ void BaseEstimator::Impl::update(clock::time_point now) {
   getIQM3D(samples, pos);
   tracker_positions.push_back(pos);
 
-  GM_INF("BaseEstimator", "left collect mode (have " << tracker_positions.size() << " of " << actual_positions.size() << ")");
-  GM_VINF("BaseEstimator", "estimated tracked position (" << pos.transpose() << ") out of " << samples.size() << " samples, for actual position (" << actual_positions[tracker_positions.size() - 1].transpose() << ")");
+  GM_INF("PoseRegistrationEstimator", "left collect mode (have " << tracker_positions.size() << " of " << actual_positions.size() << ")");
+  GM_VINF("PoseRegistrationEstimator", "estimated tracked position (" << pos.transpose() << ") out of " << samples.size() << " samples, for actual position (" << actual_positions[tracker_positions.size() - 1].transpose() << ")");
 
   samples.clear();
 
   if (tracker_positions.size() < actual_positions.size())
     return;
-  GM_INF("BaseEstimator", "have all " << actual_positions.size() << " samples");
+  GM_INF("PoseRegistrationEstimator", "have all " << actual_positions.size() << " samples");
 
   float tracker_data_sph = estimateSphericity(tracker_positions);
   float actual_data_sph = estimateSphericity(actual_positions);
 
   if ((tracker_data_sph <= planar_sphericity) && (actual_data_sph > planar_sphericity)) {
-    GM_WRN("BaseEstimator", "sphericity inconsistency - tracker positions are in a plane but not actual positions");
+    GM_WRN("PoseRegistrationEstimator", "sphericity inconsistency - tracker positions are in a plane but not actual positions");
   } else if ((tracker_data_sph > planar_sphericity) && (actual_data_sph <= planar_sphericity)) {
-    GM_WRN("BaseEstimator", "sphericity inconsistency - actual positions are planar but not tracker positions");
+    GM_WRN("PoseRegistrationEstimator", "sphericity inconsistency - actual positions are planar but not tracker positions");
   }
 
   std::vector<Eigen::Vector3f> tracker_data = tracker_positions;
@@ -181,7 +181,7 @@ void BaseEstimator::Impl::update(clock::time_point now) {
 
   if (std::min(tracker_data_sph, actual_data_sph) <= planar_sphericity) {
 
-    GM_INF("BaseEstimator", "Poor third axis sphericity (" << tracker_data_sph << " and " << actual_data_sph << ") - automatically correcting by expanding samples");
+    GM_INF("PoseRegistrationEstimator", "Poor third axis sphericity (" << tracker_data_sph << " and " << actual_data_sph << ") - automatically correcting by expanding samples");
 
     expandPlanar(actual_data);
     expandPlanar(tracker_data);
@@ -194,16 +194,16 @@ void BaseEstimator::Impl::update(clock::time_point now) {
   registration_raw = M_reg;
   successful_registration = true;
 
-  GM_VINF("BaseEstimator", "Raw registration matrix:\n" << M_reg);
+  GM_VINF("PoseRegistrationEstimator", "Raw registration matrix:\n" << M_reg);
 
   Eigen::Matrix4f M_unit;
   estimateUnitRegistration(tracker_data, actual_data, M_reg, M_unit);
   registration_unit = M_unit;
 
-  GM_VINF("BaseEstimator", "Unit registration matrix:\n" << M_unit);
+  GM_VINF("PoseRegistrationEstimator", "Unit registration matrix:\n" << M_unit);
 }
 
-void BaseEstimator::Impl::getIQM3D(std::vector<Eigen::Vector3f> samples, Eigen::Vector3f &x) {
+void PoseRegistrationEstimator::Impl::getIQM3D(std::vector<Eigen::Vector3f> samples, Eigen::Vector3f &x) {
 
   assert(!samples.empty());
 
@@ -247,7 +247,7 @@ void BaseEstimator::Impl::getIQM3D(std::vector<Eigen::Vector3f> samples, Eigen::
 }
 
 
-float BaseEstimator::Impl::estimateSphericity(std::vector<Eigen::Vector3f> data) {
+float PoseRegistrationEstimator::Impl::estimateSphericity(std::vector<Eigen::Vector3f> data) {
 
   Eigen::Vector3f cp = Eigen::Vector3f::Zero();
   for (auto pt : data)
@@ -264,17 +264,17 @@ float BaseEstimator::Impl::estimateSphericity(std::vector<Eigen::Vector3f> data)
   auto singular_values = svd.singularValues();
   assert(singular_values.rows() == 3);
 
-  GM_VINF("BaseEstimator", "data matrix:\n" << data_matrix);
-  GM_VINF("BaseEstimator", "singular values: " << singular_values.transpose());
+  GM_VINF("PoseRegistrationEstimator", "data matrix:\n" << data_matrix);
+  GM_VINF("PoseRegistrationEstimator", "singular values: " << singular_values.transpose());
 
   if (singular_values[1] / singular_values[0] < 0.3) //<< Arbitrarily choosen for warning only
-    GM_WRN("BaseEstimator", "poor second axis sphericity - points may be too linearly dependent for a good registration estimation");
+    GM_WRN("PoseRegistrationEstimator", "poor second axis sphericity - points may be too linearly dependent for a good registration estimation");
 
   return singular_values[2] / singular_values[0];
 }
 
 
-void BaseEstimator::Impl::expandPlanar(std::vector<Eigen::Vector3f> &data) {
+void PoseRegistrationEstimator::Impl::expandPlanar(std::vector<Eigen::Vector3f> &data) {
   assert(data.size() >= 3);
 
   Eigen::Vector3f cp = Eigen::Vector3f::Zero();
@@ -294,8 +294,8 @@ void BaseEstimator::Impl::expandPlanar(std::vector<Eigen::Vector3f> &data) {
 
   Eigen::Vector3f data_normal = U.col(2);
   float data_scale = S[0];
-  GM_VINF("BaseEstimator", "Estimated data normal: " << data_normal.transpose());
-  GM_VINF("BaseEstimator", "Estimated data scale: " << data_scale);
+  GM_VINF("PoseRegistrationEstimator", "Estimated data normal: " << data_normal.transpose());
+  GM_VINF("PoseRegistrationEstimator", "Estimated data scale: " << data_scale);
 
   std::vector<Eigen::Vector3f> new_data;
   new_data.reserve(2 * data.size());
@@ -306,16 +306,17 @@ void BaseEstimator::Impl::expandPlanar(std::vector<Eigen::Vector3f> &data) {
   for (auto pt : data)
     new_data.push_back(pt - offset);
 
-  GM_VVINF("BaseEstimator", "New data:");
+  GM_VVINF("PoseRegistrationEstimator", "New data:");
   for (auto pt : new_data)
-    GM_VVINF("BaseEstimator", "" << pt.transpose());
+    GM_VVINF("PoseRegistrationEstimator", "" << pt.transpose());
 
   data.swap(new_data);
 }
 
-bool BaseEstimator::Impl::estimateRegistration(std::vector<Eigen::Vector3f> tracker_data,
-                                               std::vector<Eigen::Vector3f> actual_data,
-                                               Eigen::Matrix4f &M) {
+bool PoseRegistrationEstimator::Impl::estimateRegistration
+(std::vector<Eigen::Vector3f> tracker_data,
+ std::vector<Eigen::Vector3f> actual_data,
+ Eigen::Matrix4f &M) {
 
   assert(tracker_data.size() == actual_data.size());
   size_t N = tracker_data.size();
@@ -330,7 +331,7 @@ bool BaseEstimator::Impl::estimateRegistration(std::vector<Eigen::Vector3f> trac
 
   if (N == 4) {
 
-    GM_VINF("BaseEstimator", "Solving complete system by inverse multiplication");
+    GM_VINF("PoseRegistrationEstimator", "Solving complete system by inverse multiplication");
 
     // ACTUAL = M_REG  TRACKER
     // M_REG = ACTUAL / TRACKER
@@ -343,7 +344,7 @@ bool BaseEstimator::Impl::estimateRegistration(std::vector<Eigen::Vector3f> trac
 
   } else {
 
-    GM_VINF("BaseEstimator", "Solving overdetermined system by inverse multiplication");
+    GM_VINF("PoseRegistrationEstimator", "Solving overdetermined system by inverse multiplication");
 
     // M_REG  TRACKER = ACTUAL
     // TRACKER^t M_REG^t = ACTUAL^t
@@ -357,13 +358,13 @@ bool BaseEstimator::Impl::estimateRegistration(std::vector<Eigen::Vector3f> trac
     M = x.transpose();
   }
 
-  GM_VINF("BaseEstimator", "Raw registration error: " << ((M * tracker_set) - actual_set).norm());
+  GM_VINF("PoseRegistrationEstimator", "Raw registration error: " << ((M * tracker_set) - actual_set).norm());
 
   return true;
 }
 
 
-void BaseEstimator::Impl::estimateUnitRegistration
+void PoseRegistrationEstimator::Impl::estimateUnitRegistration
 (std::vector<Eigen::Vector3f> tracker_data,
  std::vector<Eigen::Vector3f> actual_data,
  Eigen::Matrix4f M_raw,
