@@ -19,7 +19,11 @@ GM_OFI_PARAM(SaveView, file, std::string, SaveView::setFile);
 GM_OFI_POINTER(SaveView, view, gmGraphics::View, SaveView::setView);
 
 struct SaveView::Impl {
-  std::string file_template;
+  bool alpha_support = true;
+  std::string file_template = "SaveView.png";
+  FREE_IMAGE_FORMAT fi_format = FIF_PNG;
+  int fi_options = PNG_Z_BEST_SPEED;
+
   std::shared_ptr<View> view;
   int frame = 0;
 
@@ -57,21 +61,23 @@ void SaveView::Impl::renderFullPipeline(ViewSettings settings) {
 
   int width = size[2]-size[0];
   int height = size[3]-size[1];
-  int image_size = 4*width*height;
 
-  FIBITMAP *bitmap = FreeImage_Allocate(width, height, 32);
+  FIBITMAP *bitmap = alpha_support ?
+    FreeImage_Allocate(width, height, 32) :
+    FreeImage_Allocate(width, height, 24);
   BYTE * bytes = FreeImage_GetBits(bitmap);
 
   glReadBuffer(GL_BACK);
   glReadPixels(size[0], size[1], width, height,
-               GL_BGRA, GL_UNSIGNED_BYTE, bytes);
+               alpha_support ? GL_BGRA : GL_BGR,
+               GL_UNSIGNED_BYTE, bytes);
 
   auto t1 = std::chrono::steady_clock::now();
 
   char filename[1024];
   snprintf(filename, 1023, file_template.c_str(), frame++);
 
-  FreeImage_Save(FIF_PNG, bitmap, filename, PNG_Z_BEST_SPEED);
+  FreeImage_Save(fi_format, bitmap, filename, fi_options);
   FreeImage_Unload(bitmap);
 
   auto t2 = std::chrono::steady_clock::now();
@@ -84,13 +90,38 @@ void SaveView::Impl::renderFullPipeline(ViewSettings settings) {
 }
 
 void SaveView::setFile(std::string file) {
+
   if (file.rfind(".png") == file.size() - 4) {
+
+    _impl->alpha_support = true;
     _impl->file_template = file;
+    _impl->fi_format = FIF_PNG;
+    _impl->fi_options = PNG_Z_BEST_SPEED;
+
+    return;
+
+  } else if (file.rfind(".jpg") == file.size() - 4 ||
+             file.rfind(".jpeg") == file.size() - 5) {
+
+    _impl->alpha_support = false;
+    _impl->file_template = file;
+    _impl->fi_format = FIF_JPEG;
+    _impl->fi_options = JPEG_QUALITYBAD;
+
+    return;
+  } else if (file.rfind(".bmp") == file.size() - 4) {
+
+    _impl->alpha_support = false;
+    _impl->file_template = file;
+    _impl->fi_format = FIF_BMP;
+    _impl->fi_options = BMP_SAVE_RLE;
+
     return;
   }
 
-  _impl->file_template = static_cast<std::stringstream&>
-    (std::stringstream() << file << ".png").str();
+  // Could not find supported suffix - add suffix and call again
+  setFile(static_cast<std::stringstream&>
+          (std::stringstream() << file << ".png").str());
 }
 
 void SaveView::setView(std::shared_ptr<View> view) {

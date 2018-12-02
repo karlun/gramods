@@ -24,7 +24,9 @@ public:
 
   /**
      Sets the file path to save the view to. If a sequence of image
-     files should be saved, set this as a fprint formatted template.
+     files should be saved, then set this as a fprint formatted
+     template, for example "frame_%06d.png". Default value is
+     "SaveView.png". Supported suffixes are .png and .jpeg.
   */
   void setFile(std::string file);
 
