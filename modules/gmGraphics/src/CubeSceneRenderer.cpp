@@ -45,7 +45,7 @@ void CubeSceneRenderer::render(Camera camera) {
 }
 
 namespace {
-  const char * vertex_shader_code = R"(
+  const char * vertex_shader_code = R"lang=glsl(
 #version 330 core
 
 uniform mat4 Mp;
@@ -70,9 +70,9 @@ void main() {
 
   normal = normalize(mat3(Mv * Mm) * vertex_normal);
 }
-)";
+)lang=glsl";
 
-  const char * fragment_shader_code = R"(
+  const char * fragment_shader_code = R"lang=glsl(
 #version 330 core
 
 uniform vec3 color;
@@ -89,7 +89,7 @@ void main() {
     max(0, dot(normal, local_light2));
   fragColor = vec4(diffuse * color.rgb, 1);
 }
-)";
+)lang=glsl";
 }
 
 void CubeSceneRenderer::Impl::setup() {

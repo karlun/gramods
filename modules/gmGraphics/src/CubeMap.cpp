@@ -122,7 +122,7 @@ void CubeMap::Impl::setup() {
       return;
   }
 
-  static const char * vertex_shader_code = R"(
+  static const char * vertex_shader_code = R"lang=glsl(
 #version 330 core
 
 in vec2 a_vertex;
@@ -132,7 +132,7 @@ void main() {
   pos = a_vertex;
   gl_Position = vec4(a_vertex, 0.0, 1.0);
 }
-)";
+)lang=glsl";
 
   GM_VINF("CubeMap", "Creating vertex shader");
   vertex_shader_id = glCreateShader(GL_VERTEX_SHADER);

@@ -49,7 +49,7 @@ struct SpatialSphericalView::Impl {
 
 const std::string SpatialSphericalView::Impl::mapper_pattern = "MAPPER;";
 
-const std::string SpatialSphericalView::Impl::fisheye_mapper_code = R"(
+const std::string SpatialSphericalView::Impl::fisheye_mapper_code = R"lang=glsl(
 vec3 mapper(vec2 pos) {
 
   float r = sqrt(dot(pos.xy, pos.xy));
@@ -64,9 +64,9 @@ vec3 mapper(vec2 pos) {
 
   return pix;
 }
-)";
+)lang=glsl";
 
-const std::string SpatialSphericalView::Impl::equirectangular_mapper_code = R"(
+const std::string SpatialSphericalView::Impl::equirectangular_mapper_code = R"lang=glsl(
 vec3 mapper(vec2 pos) {
 
   float ay = pos.y * 1.57079632679489661923;
@@ -76,9 +76,9 @@ vec3 mapper(vec2 pos) {
 
   return pix;
 }
-)";
+)lang=glsl";
 
-const std::string SpatialSphericalView::Impl::fragment_code = R"(
+const std::string SpatialSphericalView::Impl::fragment_code = R"lang=glsl(
 #version 330 core
 
 uniform sampler2D texLeft;
@@ -166,7 +166,7 @@ void main() {
 
   fragColor = vec4(0.6, 0.3, 0.1, 1);
 }
-)";
+)lang=glsl";
 
 SpatialSphericalView::SpatialSphericalView()
   : _impl(std::make_unique<Impl>()) {}

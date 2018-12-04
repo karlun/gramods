@@ -11,7 +11,7 @@ GM_OFI_DEFINE(TextureRenderer);
 GM_OFI_POINTER(TextureRenderer, texture, gmGraphics::Texture, TextureRenderer::setTexture);
 
 namespace {
-  const char * vertex_shader_code = R"(
+  const char * vertex_shader_code = R"lang=glsl(
 #version 330 core
 
 in vec2 a_vertex;
@@ -22,9 +22,9 @@ void main() {
   v_uv.y = 1 - v_uv.y;
   gl_Position = vec4(a_vertex, 0.0, 1.0);
 }
-)";
+)lang=glsl";
 
-  const char * fragment_shader_code = R"(
+  const char * fragment_shader_code = R"lang=glsl(
 #version 330 core
 
 uniform sampler2D tex;
@@ -35,7 +35,7 @@ out vec4 fragColor;
 void main() {
   fragColor = vec4(texture(tex, v_uv).rgb, 1);
 }
-)";
+)lang=glsl";
 }
 
 struct TextureRenderer::Impl {

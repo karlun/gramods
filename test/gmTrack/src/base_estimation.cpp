@@ -21,7 +21,7 @@ TEST(gmTrackBaseEstimation, FullSamplesByInverse) {
 #endif
 
   {
-    std::string xml = R"XML(
+    std::string xml = R"lang=xml(
 <config>
 
   <ImportLibrary lib="libgmTrack.so"/>
@@ -57,7 +57,7 @@ TEST(gmTrackBaseEstimation, FullSamplesByInverse) {
     
   </PoseRegistrationEstimator>
 </config>
-)XML";
+)lang=xml";
     gmCore::Configuration config(xml);
 
     std::shared_ptr<gmTrack::PoseRegistrationEstimator> tracker;
@@ -104,7 +104,7 @@ TEST(gmTrackBaseEstimation, OverDeterminedSamplesByQR) {
 #endif
 
   {
-    std::string xml = R"XML(
+    std::string xml = R"lang=xml(
 <config>
 
   <ImportLibrary lib="libgmTrack.so"/>
@@ -140,7 +140,7 @@ TEST(gmTrackBaseEstimation, OverDeterminedSamplesByQR) {
     
   </PoseRegistrationEstimator>
 </config>
-)XML";
+)lang=xml";
     gmCore::Configuration config(xml);
 
     std::shared_ptr<gmTrack::PoseRegistrationEstimator> tracker;

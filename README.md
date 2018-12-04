@@ -2,15 +2,10 @@
 
 Gramods, short for Graphics Modules, is a collection of weakly inter dependent and useful APIs for Virtual Reality and graphics cluster rendering.
 
-## Repository Structure
-
-The repository divides the software into modules and apps where the modules provide functionality that the apps put together into executables. All modules listed in the modules/ folder will be compiled into separate libraries, and all apps in the apps/ folder will be compiled into executables.
-
-The CMakeLists.txt file will automatically generate a list of modules based on the folders found in the modules/ folder. CMake will make sure that all targets are compiled and linked in the right order, as long as dependencies are specified correctly. If new modules or apps are added after the initialization of the cmake cache, by a git pull or manually, this must be manually added to its list.
 
 ## Purpose
 
-The purpose of the Gramods library is to simplify loading of platform dependent configurations into a pre-compiled application, while also simplifying the implementation of such applications. The aim is to be able to implement an application in a way similar to this example code:
+The purpose of the Gramods library is to simplify loading of platform dependent configurations into a pre-compiled application, while also simplifying the implementation of such applications. The aim is to be able to implement an application that employs execution and data synchronization over network and synchronized multi window rendering in a flexible and configurable way, similar to this example code:
 
 ```c++
 int main(int argc, char *argv[]) {
@@ -65,14 +60,26 @@ int main(int argc, char *argv[]) {
   }
 ```
 
+
+## Repository Structure
+
+The repository divides the software into modules and apps where the modules provide functionality that the apps put together into executables. All modules listed in the modules/ folder will be compiled into separate libraries, and all apps in the apps/ folder will be compiled into executables.
+
+The top level CMakeLists.txt file will automatically make recursive inclusion of the CMakeLists.txt files of the modules and apps. CMake will then make sure that all targets are compiled and linked in the right order, as long as dependencies are specified correctly.
+
+
 # Modules and Dependencies
+
+
+
 
 ## gmCore
 
-Utilities for loading other modules and configure them based on configuration files, and for handling library and application debugging output.
+The gmCore module specifies utilities for loading other modules and configure them based on configuration files, for handling library and application error, warning and debugging output, and possibly also for initialization of third party libraries that may be used by other modules.
 
 Requirements:
  - TinyXML2
+
 
 ### Module Program Design Principles
 
@@ -114,6 +121,7 @@ int main(int argc, char *argv[]) {
 }
 ```
 
+
 ## gmTrack
 
 Pose tracking client classes and filters.
@@ -124,9 +132,11 @@ Required dependences:
 Optional dependences:
  - VRPN, for VRPN support
 
+
 ### Module Program Design Principles
 
 Abstraction of tracking using Decorator design pattern for flexible filtering, calibration and registration with minimal code duplication.
+
 
 ## gmNetwork (to be defined)
 
@@ -135,9 +145,11 @@ Network data and execution synchronization.
 Required dependences:
  - ASIO (at least version 1.12)
 
+
 ### Module Program Design Principles
 
 Thread encapsulation and role agnostic synchronization.
+
 
 ## gmGraphics (work in progress)
 
@@ -150,6 +162,7 @@ Required dependences:
 Optional dependencies:
  - SDL2, for SDL-based window
  - libuvc, for UVC support, reading image data from video class USB devices.
+
 
 ### Module Program Design Principles
 
@@ -177,4 +190,21 @@ StereoscopicView - StereoscopicMultiplexer
 note top of StereoscopicMultiplexer : StereoscopicView lets a StereoscopicMultiplexer set up\ntargets for the left and right eye rendering.
 StereoscopicMultiplexer <|-- SimpleAnaglyphsMultiplexer
 StereoscopicMultiplexer <|-- QuadBufferMultiplexer
+```
+
+Since shaders are tightly coupled with the C++ code together with which they are used, their code reside within their respective class, in string literals. These string literals are specified in the form `std::string code = R"lang=glsl(` so that the editor can detect the language and provide syntax highlighting and automatic indentation. To get language support in the string literals with Emacs, use `polymode` with the following code in your `.emacs` file:
+
+```lisp
+(require 'polymode)
+
+(defcustom  pm-inner/c++-string-literals-lang-code
+  (pm-inner-auto-chunkmode :name "lang-code-string-literal"
+                           :head-matcher "[^a-zA-Z0-9]R\"lang=[^(\n]*("
+                           :tail-matcher ")lang=[^\" \n]*\""
+                           :mode-matcher (cons "R\"lang=\\([^(\n]*\\)(" 1)
+                           :head-mode 'text-mode
+                           :tail-mode 'text-mode)
+  "Auto detect string literal language"
+  :group 'poly-innermodes
+  :type 'object)
 ```

@@ -106,7 +106,7 @@ void SimpleAnaglyphsMultiplexer::Impl::setup() {
       return;
   }
 
-  static const char * vertex_shader_code = R"(
+  static const char * vertex_shader_code = R"lang=glsl(
 #version 330 core
 
 uniform float dx;
@@ -120,14 +120,14 @@ void main() {
               dy * (a_vertex.y * 0.5 + 0.5));
   gl_Position = vec4(a_vertex, 0.0, 1.0);
 }
-)";
+)lang=glsl";
 
   GM_VINF("SimpleAnaglyphsMultiplexer", "Creating vertex shader");
   vertex_shader_id = glCreateShader(GL_VERTEX_SHADER);
   glShaderSource(vertex_shader_id, 1, &vertex_shader_code, nullptr);
   glCompileShader(vertex_shader_id);
 
-  static const char * fragment_shader_code = R"(
+  static const char * fragment_shader_code = R"lang=glsl(
 #version 330 core
 
 uniform sampler2D texL;
@@ -156,7 +156,7 @@ void main() {
 
   fragColor = vec4(L * left_color + R * right_color, 1);
 }
-)";
+)lang=glsl";
 
   GM_VINF("SimpleAnaglyphsMultiplexer", "Creating fragment shader");
   fragment_shader_id = glCreateShader(GL_FRAGMENT_SHADER);
