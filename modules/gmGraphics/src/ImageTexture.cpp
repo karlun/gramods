@@ -83,13 +83,13 @@ void ImageTexture::Impl::update() {
 
 bool ImageTexture::Impl::loadImage(std::string file_template, size_t frame) {
 
-  // Arbitrary padding for numbers
-  char filename[1024];
-  snprintf(filename, 1024, file_template.c_str(), frame);
+  size_t filename_size = snprintf(nullptr, 0, file_template.c_str(), frame) + 1;
+  std::string filename(filename_size, '\0');
+  snprintf(&filename[0], filename_size, file_template.c_str(), frame);
 
-	FREE_IMAGE_FORMAT image_format = FreeImage_GetFileType(filename, 0);
+	FREE_IMAGE_FORMAT image_format = FreeImage_GetFileType(&filename[0], 0);
 	if(image_format == FIF_UNKNOWN)
-		image_format = FreeImage_GetFIFFromFilename(filename);
+		image_format = FreeImage_GetFIFFromFilename(&filename[0]);
 	if(image_format == FIF_UNKNOWN) {
     GM_ERR("ImageTexture", "Unknown image file type of file '" << filename << "'");
 		return false;
@@ -100,7 +100,7 @@ bool ImageTexture::Impl::loadImage(std::string file_template, size_t frame) {
 		return false;
   }
 
-	FIBITMAP *image = FreeImage_Load(image_format, filename);
+	FIBITMAP *image = FreeImage_Load(image_format, &filename[0]);
 	if(!image) {
     GM_ERR("ImageTexture", "Could not load image '" << filename << "'");
 		return false;
