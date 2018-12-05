@@ -77,7 +77,7 @@ void SaveView::Impl::renderFullPipeline(ViewSettings settings) {
   auto t1 = std::chrono::steady_clock::now();
 
   size_t filename_size = snprintf(nullptr, 0, file_template.c_str(), frame) + 1;
-  std::string filename(filename_size, '\0');
+  std::vector<char> filename(filename_size + 1);
   snprintf(&filename[0], filename_size, file_template.c_str(), frame);
   ++frame;
 
@@ -90,7 +90,7 @@ void SaveView::Impl::renderFullPipeline(ViewSettings settings) {
   auto dt1 = std::chrono::duration_cast<d_seconds>(t1 - t0);
   auto dt2 = std::chrono::duration_cast<d_seconds>(t2 - t1);
 
-  GM_VINF("SaveView", "Captured and saved image " << filename << " in " << int(1e3 * dt1.count() + 0.8) << " + " << int(1e3 * dt2.count() + 0.8) << " ms");
+  GM_VINF("SaveView", "Captured and saved image " << &filename[0] << " in " << int(1e3 * dt1.count() + 0.8) << " + " << int(1e3 * dt2.count() + 0.8) << " ms");
 }
 
 void SaveView::setFile(std::string file) {
