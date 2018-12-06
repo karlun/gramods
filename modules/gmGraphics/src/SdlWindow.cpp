@@ -1,6 +1,8 @@
 
 #include <gmGraphics/SdlWindow.hh>
 
+#ifdef gramods_ENABLE_SDL2
+
 #include <GL/glew.h>
 #include <GL/gl.h>
 
@@ -252,3 +254,5 @@ bool SdlWindow::handleEvent(SDL_Event& event) {
 }
 
 END_NAMESPACE_GMGRAPHICS;
+
+#endif

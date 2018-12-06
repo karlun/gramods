@@ -1,5 +1,5 @@
 
-#include <gmGraphics/SdlWindow.hh>
+#include <gmGraphics/Window.hh>
 #include <gmCore/Configuration.hh>
 #include <gmCore/Console.hh>
 #include <gmCore/OStreamMessageSink.hh>
@@ -24,6 +24,8 @@ TEST(gmCore, ImportLibrary) {
     EXPECT_TRUE(importers[0]->isLoaded());
 }
 
+#ifdef gramods_ENABLE_SDL2
+
 TEST(gmGraphics, SdlWindow) {
 
   std::string xml = ""
@@ -42,3 +44,5 @@ TEST(gmGraphics, SdlWindow) {
 
   std::this_thread::sleep_for(std::chrono::seconds(1));
 }
+
+#endif

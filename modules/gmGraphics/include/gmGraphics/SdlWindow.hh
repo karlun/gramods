@@ -2,8 +2,11 @@
 #ifndef GRAMODS_GRAPHICS_SDLWINDOW
 #define GRAMODS_GRAPHICS_SDLWINDOW
 
-#include <gmGraphics/Window.hh>
 #include <gmCore/SdlContext.hh>
+
+#ifdef gramods_ENABLE_SDL2
+
+#include <gmGraphics/Window.hh>
 
 BEGIN_NAMESPACE_GMGRAPHICS;
 
@@ -114,4 +117,5 @@ private:
 
 END_NAMESPACE_GMGRAPHICS;
 
+#endif
 #endif
