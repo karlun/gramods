@@ -5,7 +5,9 @@
 #include <gmTrack/config.hh>
 
 #include <gmCore/Object.hh>
+
 #include <chrono>
+#include <vector>
 
 BEGIN_NAMESPACE_GMTRACK;
 
