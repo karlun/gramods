@@ -33,7 +33,7 @@ public:
      Replaces the contents of p with pose data. Returns true on
      success, false otherwise.
   */
-  bool getPose(SinglePoseTracker::PoseSample &p);
+  bool getPose(PoseTracker::PoseSample &p);
 
   /**
      Replaces the contents of p with buttons data. Returns true on
