@@ -27,6 +27,12 @@ public:
   };
 
   /**
+     Returns the default key, in Configuration, for the
+     Object.
+  */
+  virtual std::string getDefaultKey() { return "analogsTracker"; }
+
+  /**
      Replaces the contents of p with analogs data.
   */
   virtual bool getAnalogs(AnalogsSample &b) = 0;
