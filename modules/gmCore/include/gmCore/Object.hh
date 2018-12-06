@@ -38,7 +38,7 @@ BEGIN_NAMESPACE_GMCORE;
    All three steps are performed by the Configuration tool and an
    Object extracted therefrom will be ready to be used.
 */
-class gmCore_API Object
+class Object
   : public std::enable_shared_from_this<Object> {
 
 public:

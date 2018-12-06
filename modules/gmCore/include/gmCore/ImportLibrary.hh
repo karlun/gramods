@@ -20,7 +20,7 @@ BEGIN_NAMESPACE_GMCORE;
 /**
    Loads a shared library and loads its nodes into the object factory.
 */
-class gmCore_API ImportLibrary
+class ImportLibrary
   : public Object {
 
 public:
