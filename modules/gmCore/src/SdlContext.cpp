@@ -13,6 +13,9 @@ bool SdlContext::has_audio = false;
 bool SdlContext::has_video = false;
 bool SdlContext::has_instance = false;
 
+bool SdlContext::hasVideo() { return has_video; }
+bool SdlContext::hasAudio() { return has_audio; }
+
 SdlContext::SdlContext() {
   if (has_instance)
     throw std::runtime_error("Cannot instantiate SdlContext - SDL already initialized");

@@ -33,12 +33,12 @@ public:
   /**
      Returns true if context has been initialized with video support.
   */
-  static bool hasVideo() { return has_video; }
+  static bool hasVideo();
 
   /**
      Returns true if context has been initialized with audio support.
   */
-  static bool hasAudio() { return has_audio; }
+  static bool hasAudio();
 
   void initialize();
 
