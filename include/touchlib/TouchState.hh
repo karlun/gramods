@@ -104,12 +104,16 @@ namespace touchlib {
        */
       static const unsigned char MULTI = 0x01 << 2;
 
+      /// Touch point is newly down this frame. A multi click touch
+      /// point will also be considered newly down.
+      static const unsigned char TOUCH_DOWN = 0x01 << 3;
+
       /// Touch point was released.
-      static const unsigned char RELEASE = 0x01 << 3;
+      static const unsigned char RELEASE = 0x01 << 4;
 
       /// Touch point was a short click - pressed and depressed at the
       /// same spot within a short period of time.
-      static const unsigned char CLICK = 0x01 << 4;
+      static const unsigned char CLICK = 0x01 << 5;
     };
     
     /**
@@ -680,6 +684,9 @@ namespace touchlib {
     /**
      * Checks if this new touch point is really a multi click, based
      * on historical information.
+     *
+     * @return True if the point is actually multi click, false
+     * otherwise.
      */
     void check_multi(TouchPoint &new_pt);
 

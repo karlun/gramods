@@ -559,18 +559,27 @@ void TouchState::eventsDone() {
     if (history.find(pt.first) == history.end() ||
         history[pt.first].point.state & State::RELEASE) {
       // This is a new point, that has no history
+
       check_multi(pt.second);
+
+      pt.second.state |= State::TOUCH_DOWN;
+
       HistoryState hs = { pt.second, clock::now() };
       history[pt.first] = hs;
       
       pt.second.sx = pt.second.x;
       pt.second.sy = pt.second.y;
+
     } else {
+
       // This is an old point, so check what is happening to it
       check_drag(history[pt.first], pt.second);
       check_hold(history[pt.first], pt.second);
       check_click(history[pt.first], pt.second);
-      
+
+      if (pt.second.state & State::TOUCH_DOWN)
+        pt.second.state &= ~State::TOUCH_DOWN;
+
       assert(previous_state.find(pt.first) != previous_state.end());
       TouchPoint old_pt = previous_state.find(pt.first)->second;
 
@@ -650,7 +659,7 @@ void TouchState::check_multi(TouchPoint &new_pt) {
       new_association[new_pt.id] = association[pt.first];
     new_pt.clicks = point.clicks + 1;
     new_pt.state |= State::MULTI;
-    
+
     break;
   }
 
