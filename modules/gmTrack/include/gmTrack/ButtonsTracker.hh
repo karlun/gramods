@@ -10,8 +10,8 @@
 BEGIN_NAMESPACE_GMTRACK;
 
 /**
-   The base of ButtonsTrackers
- */
+   The base of ButtonsTrackers, reporting button states.
+*/
 class ButtonsTracker
   : public gmCore::Object {
 
@@ -19,9 +19,20 @@ public:
 
   typedef std::chrono::steady_clock clock;
 
+  /**
+     A sample containing the state of potentially up to 32 buttons.
+  */
   struct ButtonsSample {
-    bool main_button;
+
+    /**
+       A bit mask containing all button states. The zeroth button is
+       extracted by (buttons & 1).
+    */
     unsigned int buttons;
+
+    /**
+       The time of the sample.
+    */
     clock::time_point time;
   };
 

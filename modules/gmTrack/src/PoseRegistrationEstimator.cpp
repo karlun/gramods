@@ -1,6 +1,8 @@
 
 #include <gmTrack/PoseRegistrationEstimator.hh>
 
+#include <gmTrack/ButtonsMapper.hh>
+
 #include <Eigen/LU>
 
 BEGIN_NAMESPACE_GMTRACK;
@@ -106,7 +108,7 @@ void PoseRegistrationEstimator::Impl::update(clock::time_point now) {
   }
 
   if (!collecting) {
-    if (buttons.main_button){
+    if (buttons.buttons & ButtonsMapper::ButtonMask::MAIN) {
       collecting = true;
       GM_INF("PoseRegistrationEstimator", "going into collect mode");
     } else {
@@ -114,7 +116,7 @@ void PoseRegistrationEstimator::Impl::update(clock::time_point now) {
     }
   }
 
-  if (buttons.main_button) {
+  if (buttons.buttons & ButtonsMapper::ButtonMask::MAIN){
     gramods::gmTrack::PoseTracker::PoseSample pose;
     if (! controller->getPose(pose)) {
       static bool message_shown = false;

@@ -62,11 +62,9 @@ bool TimeSampleButtonsTracker::Impl::getButtons(ButtonsSample &b) {
 
     if (button_states.size() == 0) {
       b.buttons = 0;
-      b.main_button = false;
     } else {
       assert(sample_idx < button_states.size());
       b.buttons = button_states[sample_idx];
-      b.main_button = button_states[sample_idx] & 0x01;
     }
 
     return true;
@@ -89,13 +87,10 @@ bool TimeSampleButtonsTracker::Impl::getButtons(ButtonsSample &b) {
   }
   assert(last_time >= 0);
 
-  if (button_states.size() == 0) {
+  if (button_states.size() == 0)
     b.buttons = 0;
-    b.main_button = false;
-  } else {
+  else
     b.buttons = button_states[last_time];
-    b.main_button = button_states[last_time] & 0x01;
-  }
 
 }
 
