@@ -17,8 +17,8 @@ public:
   SideBySideMultiplexer();
 
   /**
-     Sets the side-by-side pattern between horizontal (0) and vertical
-     (1). Default is 0.
+     Sets the side-by-side pattern between horizontal (0), vertical
+     (1) and frame packing (2). Default is 0.
   */
   void setPattern(int p);
 

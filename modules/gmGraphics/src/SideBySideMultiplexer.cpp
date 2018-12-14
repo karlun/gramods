@@ -4,8 +4,9 @@
 #include <GL/glew.h>
 #include <GL/gl.h>
 
-#define PATTERN_HORIZONTAL 0
-#define PATTERN_VERTICAL 1
+#define PATTERN_HORIZONTAL    0
+#define PATTERN_VERTICAL      1
+#define PATTERN_FRAME_PACKING 2
 
 BEGIN_NAMESPACE_GMGRAPHICS;
 
@@ -25,30 +26,62 @@ void SideBySideMultiplexer::prepare() {
 }
 
 void SideBySideMultiplexer::setupRendering(Eye eye) {
-  
-  switch(eye) {
 
-  case Eye::LEFT:
+  switch(_impl->pattern) {
 
-    if (_impl->pattern == 0)
+  case PATTERN_HORIZONTAL:
+
+    switch(eye) {
+
+    case Eye::LEFT:
       glViewport(_impl->viewport[0], _impl->viewport[1],
                  _impl->viewport[2] / 2, _impl->viewport[3]);
-    else
-      glViewport(_impl->viewport[0], _impl->viewport[1] + _impl->viewport[3]/2,
-                 _impl->viewport[2], _impl->viewport[3] / 2);
+      break;
 
-    break;
-
-  case Eye::RIGHT:
-
-    if (_impl->pattern == 0)
+    case Eye::RIGHT:
       glViewport(_impl->viewport[0] + _impl->viewport[2] / 2, _impl->viewport[1],
                  _impl->viewport[2] / 2, _impl->viewport[3]);
-    else
-      glViewport(_impl->viewport[0], _impl->viewport[1],
-                 _impl->viewport[2], _impl->viewport[3] / 2);
+      break;
+    }
 
     break;
+
+  case PATTERN_VERTICAL:
+
+    switch(eye) {
+
+    case Eye::LEFT:
+      glViewport(_impl->viewport[0], _impl->viewport[1] + _impl->viewport[3] / 2,
+                 _impl->viewport[2], _impl->viewport[3] / 2);
+      break;
+
+    case Eye::RIGHT:
+      glViewport(_impl->viewport[0], _impl->viewport[1],
+                 _impl->viewport[2], _impl->viewport[3] / 2);
+      break;
+    }
+
+    break;
+
+  case PATTERN_FRAME_PACKING:
+
+    switch(eye) {
+
+    case Eye::LEFT:
+      glViewport(_impl->viewport[0], _impl->viewport[1] + (_impl->viewport[3] - 45) / 2 + 45,
+                 _impl->viewport[2], (_impl->viewport[3] - 45) / 2);
+      break;
+
+    case Eye::RIGHT:
+      glViewport(_impl->viewport[0], _impl->viewport[1],
+                 _impl->viewport[2], (_impl->viewport[3] - 45) / 2);
+      break;
+    }
+
+    break;
+
+  default:
+    assert(0);
   }
 }
 
