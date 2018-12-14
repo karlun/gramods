@@ -1,25 +1,24 @@
 
-#ifndef GRAMODS_GRAPHICS_INTERLACEMULTIPLEXER
-#define GRAMODS_GRAPHICS_INTERLACEMULTIPLEXER
+#ifndef GRAMODS_GRAPHICS_SIDEBYSIDEMULTIPLEXER
+#define GRAMODS_GRAPHICS_SIDEBYSIDEMULTIPLEXER
 
 #include <gmGraphics/StereoscopicMultiplexer.hh>
 
 BEGIN_NAMESPACE_GMGRAPHICS;
 
 /**
-   Interlaced stereoscopic multiplexer.
+   Side-by-side stereoscopic multiplexing implementation.
 */
-class InterlaceMultiplexer
+class SideBySideMultiplexer
   : public gmGraphics::StereoscopicMultiplexer {
 
 public:
 
-  InterlaceMultiplexer();
+  SideBySideMultiplexer();
 
   /**
-     Sets the interlace pattern between horizontal lines (0), vertical
-     lines (1) and checkerboard pattern (2). Default is 0, resulting
-     in every other row being left and right eye, respectively.
+     Sets the side-by-side pattern between horizontal (0) and vertical
+     (1). Default is 0.
   */
   void setPattern(int p);
 
@@ -42,7 +41,7 @@ public:
 
 private:
 
-  class Impl;
+  struct Impl;
   std::unique_ptr<Impl> _impl;
 
 };
