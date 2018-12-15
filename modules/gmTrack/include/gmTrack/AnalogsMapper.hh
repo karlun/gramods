@@ -1,0 +1,62 @@
+
+#ifndef GRAMODS_TRACK_ANALOGSMAPPER
+#define GRAMODS_TRACK_ANALOGSMAPPER
+
+#include <gmTrack/AnalogsTracker.hh>
+
+#include <gmTypes/all.hh>
+
+#include <gmCore/OFactory.hh>
+
+BEGIN_NAMESPACE_GMTRACK;
+
+/**
+   Analogs filter that re-maps analog indices to a standard order for
+   application compatibility between tracker systems. Preferred order
+   is vertical, horizontal and then trigger, followed by any other
+   analog input.
+*/
+class AnalogsMapper
+  : public AnalogsTracker {
+
+public:
+
+  /**
+     Standard analogs indices, for compatibility. Vertical and
+     horizontal may be a joystick, trackpad or touchpad. Positive
+     values should follow right handed convension - positive right for
+     horizontal and positive up/forward for vertical.
+  */
+  struct AnalogIndex {
+    static const size_t VERTICAL   = 0;
+    static const size_t HORIZONTAL = 1;
+    static const size_t TRIGGER    = 2;
+  };
+
+  /**
+     Sets the analogs tracker to re-map.
+  */
+  void setAnalogsTracker(std::shared_ptr<AnalogsTracker> bt);
+
+  /**
+     Adds a mapping in the form of two integer indices: from and to
+     button index, respectively.
+  */
+  void addMapping(gmTypes::size2 m);
+
+  /**
+     Replaces the contents of p with button data.
+  */
+  bool getAnalogs(AnalogsSample &p);
+
+  GM_OFI_DECLARE;
+
+private:
+
+  std::map<size_t, size_t> mappings;
+  std::shared_ptr<AnalogsTracker> analogsTracker;
+};
+
+END_NAMESPACE_GMTRACK;
+
+#endif
