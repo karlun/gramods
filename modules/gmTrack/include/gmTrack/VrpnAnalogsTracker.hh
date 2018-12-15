@@ -15,13 +15,13 @@ BEGIN_NAMESPACE_GMTRACK;
 /**
    Analogs tracker reading data off a VRPN server.
 */
-class VRPNAnalogsTracker
+class VrpnAnalogsTracker
   : public AnalogsTracker {
 
 public:
 
-  VRPNAnalogsTracker();
-  ~VRPNAnalogsTracker();
+  VrpnAnalogsTracker();
+  ~VrpnAnalogsTracker();
 
   /**
      The address to the button tracker at the VRPN server, such as

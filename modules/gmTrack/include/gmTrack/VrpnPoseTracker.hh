@@ -15,13 +15,13 @@ BEGIN_NAMESPACE_GMTRACK;
 /**
    Pose tracker reading data off a VRPN server.
 */
-class VRPNPoseTracker
+class VrpnPoseTracker
   : public MultiPoseTracker {
 
 public:
 
-  VRPNPoseTracker();
-  ~VRPNPoseTracker();
+  VrpnPoseTracker();
+  ~VrpnPoseTracker();
 
   /**
      The address to the pose tracker at the VRPN server, such as

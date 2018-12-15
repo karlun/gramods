@@ -15,13 +15,13 @@ BEGIN_NAMESPACE_GMTRACK;
 /**
    Buttons tracker reading data off a VRPN server.
 */
-class VRPNButtonsTracker
+class VrpnButtonsTracker
   : public ButtonsTracker {
 
 public:
 
-  VRPNButtonsTracker();
-  ~VRPNButtonsTracker();
+  VrpnButtonsTracker();
+  ~VrpnButtonsTracker();
 
   /**
      The address to the button tracker at the VRPN server, such as

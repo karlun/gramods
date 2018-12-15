@@ -1,5 +1,5 @@
 
-#include <gmTrack/VRPNAnalogsTracker.hh>
+#include <gmTrack/VrpnAnalogsTracker.hh>
 
 #ifdef gramods_ENABLE_VRPN
 
@@ -7,29 +7,29 @@
 
 BEGIN_NAMESPACE_GMTRACK;
 
-GM_OFI_DEFINE(VRPNAnalogsTracker);
-GM_OFI_PARAM(VRPNAnalogsTracker, connectionString, std::string, VRPNAnalogsTracker::setConnectionString);
+GM_OFI_DEFINE(VrpnAnalogsTracker);
+GM_OFI_PARAM(VrpnAnalogsTracker, connectionString, std::string, VrpnAnalogsTracker::setConnectionString);
 
-VRPNAnalogsTracker::VRPNAnalogsTracker() {}
+VrpnAnalogsTracker::VrpnAnalogsTracker() {}
 
-VRPNAnalogsTracker::~VRPNAnalogsTracker() {
+VrpnAnalogsTracker::~VrpnAnalogsTracker() {
   tracker = nullptr;
 }
 
-void VRPNAnalogsTracker::setConnectionString(std::string id) {
+void VrpnAnalogsTracker::setConnectionString(std::string id) {
   tracker = std::make_unique<vrpn_Analog_Remote>(id.c_str());
-  tracker->register_change_handler(this, VRPNAnalogsTracker::handler);
+  tracker->register_change_handler(this, VrpnAnalogsTracker::handler);
 }
 
-bool VRPNAnalogsTracker::getAnalogs(AnalogsSample &b) {
+bool VrpnAnalogsTracker::getAnalogs(AnalogsSample &b) {
 
   if (!tracker) {
-    GM_WRN("VRPNAnalogsTracker", "Cannot get buttons - no vrpn connection");
+    GM_WRN("VrpnAnalogsTracker", "Cannot get buttons - no vrpn connection");
     return false;
   }
 
   if (!tracker->connectionPtr()->doing_okay()) {
-    GM_WRN("VRPNAnalogsTracker", "Defunct connection - closing vrpn connection");
+    GM_WRN("VrpnAnalogsTracker", "Defunct connection - closing vrpn connection");
     tracker = nullptr;
     return false;
   }
@@ -44,8 +44,8 @@ bool VRPNAnalogsTracker::getAnalogs(AnalogsSample &b) {
   return true;
 }
 
-void VRPN_CALLBACK VRPNAnalogsTracker::handler(void *data, const vrpn_ANALOGCB info) {
-  VRPNAnalogsTracker *_this = static_cast<VRPNAnalogsTracker*>(data);
+void VRPN_CALLBACK VrpnAnalogsTracker::handler(void *data, const vrpn_ANALOGCB info) {
+  VrpnAnalogsTracker *_this = static_cast<VrpnAnalogsTracker*>(data);
 
   auto secs = std::chrono::duration_cast<clock::duration>
     (std::chrono::seconds(info.msg_time.tv_sec));
@@ -63,7 +63,7 @@ void VRPN_CALLBACK VRPNAnalogsTracker::handler(void *data, const vrpn_ANALOGCB i
   }
 
   _this->got_data = true;
-  GM_VVINF("VRPNAnalogsTracker", "Got vrpn analog data: " << analogs_log.str());
+  GM_VVINF("VrpnAnalogsTracker", "Got vrpn analog data: " << analogs_log.str());
 }
 
 END_NAMESPACE_GMTRACK;

@@ -1,5 +1,5 @@
 
-#include <gmTrack/VRPNPoseTracker.hh>
+#include <gmTrack/VrpnPoseTracker.hh>
 
 #ifdef gramods_ENABLE_VRPN
 
@@ -20,7 +20,7 @@
 
 using namespace gramods;
 
-TEST(gmTrackVRPN, VRPNTracker) {
+TEST(gmTrackVrpn, VrpnTracker) {
 
 #if 1
   gmCore::Console::removeAllSinks();
@@ -54,7 +54,7 @@ TEST(gmTrackVRPN, VRPNTracker) {
 
     std::map<int, gmTrack::PoseTracker::PoseSample> samples;
     {
-      gmTrack::VRPNPoseTracker tracker;
+      gmTrack::VrpnPoseTracker tracker;
       tracker.setConnectionString("TEST_DEVICE@localhost");
       tracker.initialize();
 
@@ -80,7 +80,7 @@ TEST(gmTrackVRPN, VRPNTracker) {
   std::this_thread::sleep_for(std::chrono::milliseconds(10));
 }
 
-TEST(gmTrackVRPN, VRPNPoseTrackerConfigurationAndMultiToSinglePoseTracker) {
+TEST(gmTrackVrpn, VrpnPoseTrackerConfigurationAndMultiToSinglePoseTracker) {
 
 #if 1
   gmCore::Console::removeAllSinks();
@@ -118,7 +118,7 @@ TEST(gmTrackVRPN, VRPNPoseTrackerConfigurationAndMultiToSinglePoseTracker) {
       std::string xml = ""
         "<config>"
         "  <MultiToSinglePoseTracker sensor=\"0\">"
-        "    <VRPNPoseTracker connectionString=\"TEST_DEVICE@localhost\"/>"
+        "    <VrpnPoseTracker connectionString=\"TEST_DEVICE@localhost\"/>"
         "  </MultiToSinglePoseTracker>"
         "</config>";
       gmCore::Configuration config(xml);
