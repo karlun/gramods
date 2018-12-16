@@ -22,7 +22,9 @@ class ButtonsMapper
 public:
 
   /**
-     Standard button indices, for compatibility.
+     Standard button masks, for compatibility. To check, for example,
+     if the main button is down, write ```if (sample.buttons &
+     ButtomMapper::ButtonMask::MAIN)```.
   */
   struct ButtonMask {
     static const unsigned int MAIN      = 1;
@@ -40,6 +42,24 @@ public:
      button index, respectively.
   */
   void addMapping(gmTypes::size2 m);
+
+  /**
+     Sets which button to map to main button, as an index starting at
+     zero.
+  */
+  void setMainButton(int idx);
+
+  /**
+     Sets which button to map to secondary button, as an index
+     starting at zero.
+  */
+  void setSecondaryButton(int idx);
+
+  /**
+     Sets which button to map to menu button, as an index starting at
+     zero.
+  */
+  void setMenuButton(int idx);
 
   /**
      Replaces the contents of p with button data.

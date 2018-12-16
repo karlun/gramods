@@ -31,6 +31,7 @@ public:
     static const size_t VERTICAL   = 0;
     static const size_t HORIZONTAL = 1;
     static const size_t TRIGGER    = 2;
+    static const size_t COUNT      = 3;
   };
 
   /**
@@ -43,6 +44,24 @@ public:
      button index, respectively.
   */
   void addMapping(gmTypes::size2 m);
+
+  /**
+     Sets which analog to map to vertical analog, as an index starting
+     at zero.
+  */
+  void setVerticalAnalog(int idx);
+
+  /**
+     Sets which analog to map to horizontal analog, as an index
+     starting at zero.
+  */
+  void setHorizontalAnalog(int idx);
+
+  /**
+     Sets which analog to map to trigger analog, as an index starting
+     at zero.
+  */
+  void setTriggerAnalog(int idx);
 
   /**
      Replaces the contents of p with button data.

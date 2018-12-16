@@ -43,15 +43,15 @@ TEST(gmTrackBaseEstimation, FullSamplesByInverse) {
       </TimeSamplePoseTracker>
 
       <TimeSampleButtonsTracker>
-        <param name="buttonStates" value="0"/>
-        <param name="buttonStates" value="1"/>
-        <param name="buttonStates" value="0"/>
-        <param name="buttonStates" value="1"/>
-        <param name="buttonStates" value="0"/>
-        <param name="buttonStates" value="1"/>
-        <param name="buttonStates" value="0"/>
-        <param name="buttonStates" value="1"/>
-        <param name="buttonStates" value="0"/>
+        <param name="buttons" value="0"/>
+        <param name="buttons" value="1"/>
+        <param name="buttons" value="0"/>
+        <param name="buttons" value="1"/>
+        <param name="buttons" value="0"/>
+        <param name="buttons" value="1"/>
+        <param name="buttons" value="0"/>
+        <param name="buttons" value="1"/>
+        <param name="buttons" value="0"/>
       </TimeSampleButtonsTracker>
     </Controller>
     
@@ -126,15 +126,15 @@ TEST(gmTrackBaseEstimation, OverDeterminedSamplesByQR) {
       </TimeSamplePoseTracker>
 
       <TimeSampleButtonsTracker>
-        <param name="buttonStates" value="0"/>
-        <param name="buttonStates" value="1"/>
-        <param name="buttonStates" value="0"/>
-        <param name="buttonStates" value="1"/>
-        <param name="buttonStates" value="0"/>
-        <param name="buttonStates" value="1"/>
-        <param name="buttonStates" value="0"/>
-        <param name="buttonStates" value="1"/>
-        <param name="buttonStates" value="0"/>
+        <param name="buttons" value="0"/>
+        <param name="buttons" value="1"/>
+        <param name="buttons" value="0"/>
+        <param name="buttons" value="1"/>
+        <param name="buttons" value="0"/>
+        <param name="buttons" value="1"/>
+        <param name="buttons" value="0"/>
+        <param name="buttons" value="1"/>
+        <param name="buttons" value="0"/>
       </TimeSampleButtonsTracker>
     </Controller>
     

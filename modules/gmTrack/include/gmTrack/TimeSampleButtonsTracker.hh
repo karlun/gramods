@@ -30,7 +30,7 @@ public:
      Adds a button states sample as an integer where the least
      significant bit represents the main button.
   */
-  void addButtonStates(int b);
+  void addButtons(int b);
 
   /**
      Replaces the contents of p with button data.

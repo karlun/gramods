@@ -9,7 +9,7 @@ BEGIN_NAMESPACE_GMTRACK;
 
 GM_OFI_DEFINE(TimeSampleButtonsTracker);
 GM_OFI_PARAM(TimeSampleButtonsTracker, time, double, TimeSampleButtonsTracker::addTime);
-GM_OFI_PARAM(TimeSampleButtonsTracker, buttonStates, int, TimeSampleButtonsTracker::addButtonStates);
+GM_OFI_PARAM(TimeSampleButtonsTracker, buttons, int, TimeSampleButtonsTracker::addButtons);
 
 
 struct TimeSampleButtonsTracker::Impl {
@@ -17,7 +17,7 @@ struct TimeSampleButtonsTracker::Impl {
   Impl();
 
   void addTime(double t);
-  void addButtonStates(int b);
+  void addButtons(int b);
 
   bool getButtons(ButtonsSample &b);
 
@@ -38,7 +38,7 @@ TimeSampleButtonsTracker::Impl::Impl()
 
 void TimeSampleButtonsTracker::Impl::addTime(double t) { time.push_back(t); }
 
-void TimeSampleButtonsTracker::Impl::addButtonStates(int b) { button_states.push_back(b); }
+void TimeSampleButtonsTracker::Impl::addButtons(int b) { button_states.push_back(b); }
 
 bool TimeSampleButtonsTracker::Impl::getButtons(ButtonsSample &b) {
 
@@ -99,8 +99,8 @@ void TimeSampleButtonsTracker::addTime(double t) {
   _impl->addTime(t);
 }
 
-void TimeSampleButtonsTracker::addButtonStates(int b) {
-  _impl->addButtonStates(b);
+void TimeSampleButtonsTracker::addButtons(int b) {
+  _impl->addButtons(b);
 }
 
 bool TimeSampleButtonsTracker::getButtons(ButtonsSample &b) {
