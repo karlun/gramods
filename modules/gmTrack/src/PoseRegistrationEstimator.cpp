@@ -29,7 +29,19 @@ struct PoseRegistrationEstimator::Impl {
   void getIQM3D(std::vector<Eigen::Vector3f> samples, Eigen::Vector3f &x);
   float estimateSphericity(std::vector<Eigen::Vector3f> samples);
 
-  void expandPlanar(std::vector<Eigen::Vector3f> &data);
+  /**
+     Identifies the degenerate dimension and copies the data into two
+     sets distributed in this dimension.
+
+     @param idx0 If larger than or equal to zero, specifies the index
+     of the first data point that should be used to identify the
+     orientation of the data, otherwise set to that index.
+
+     @param idx1 Specifies the index of the second data point that
+     should be used to identify the orientation of the data,
+     alternatively set to that index.
+  */
+  void expandPlanar(std::vector<Eigen::Vector3f> &data, int &idx0, int &idx1);
 
   bool estimateRegistration(std::vector<Eigen::Vector3f> tracker_data,
                             std::vector<Eigen::Vector3f> actual_data,
@@ -185,8 +197,9 @@ void PoseRegistrationEstimator::Impl::update(clock::time_point now) {
 
     GM_INF("PoseRegistrationEstimator", "Poor third axis sphericity (" << tracker_data_sph << " and " << actual_data_sph << ") - automatically correcting by expanding samples");
 
-    expandPlanar(actual_data);
-    expandPlanar(tracker_data);
+    int idx0 = -1, idx1;
+    expandPlanar(actual_data, idx0, idx1);
+    expandPlanar(tracker_data, idx0, idx1);
   }
 
   Eigen::Matrix4f M_reg;
@@ -276,7 +289,8 @@ float PoseRegistrationEstimator::Impl::estimateSphericity(std::vector<Eigen::Vec
 }
 
 
-void PoseRegistrationEstimator::Impl::expandPlanar(std::vector<Eigen::Vector3f> &data) {
+void PoseRegistrationEstimator::Impl::expandPlanar(std::vector<Eigen::Vector3f> &data,
+                                                   int &idx0, int &idx1) {
   assert(data.size() >= 3);
 
   Eigen::Vector3f cp = Eigen::Vector3f::Zero();
@@ -294,10 +308,47 @@ void PoseRegistrationEstimator::Impl::expandPlanar(std::vector<Eigen::Vector3f> 
   auto U = svd.matrixU();
   auto S = svd.singularValues();
 
+  Eigen::Vector3f data_X = U.col(0);
+  Eigen::Vector3f data_Y = U.col(1);
   Eigen::Vector3f data_normal = U.col(2);
   float data_scale = S[0];
   GM_VINF("PoseRegistrationEstimator", "Estimated data normal: " << data_normal.transpose());
   GM_VINF("PoseRegistrationEstimator", "Estimated data scale: " << data_scale);
+
+  if (idx0 < 0) {
+
+    float best_value0 = 0.f;
+    for (int idx = 0; idx < data.size(); ++idx) {
+      float value = fabsf(data_X.dot((data[idx] - cp)));
+      if (value > best_value0) {
+        best_value0 = value;
+        idx0 = idx;
+      }
+    }
+
+    float best_value1 = 0.f;
+    for (int idx = 0; idx < data.size(); ++idx) {
+      if (idx == idx0) continue;
+      float value = fabsf(data_Y.dot((data[idx] - cp)));
+      if (value > best_value1) {
+        best_value1 = value;
+        idx1 = idx;
+      }
+    }
+
+    GM_VINF("PoseRegistrationEstimator", "Estimated primary samples: " << idx0 << " (" << best_value0 << ") and " << idx1 << "(" << best_value1 << ")");
+
+    if ((data[idx0] - cp).cross(data[idx1] - cp).dot(data_normal) < 0) {
+      GM_VINF("PoseRegistrationEstimator", "Flipping");
+      data_normal = -data_normal;
+    }
+
+  } else {
+    if ((data[idx0] - cp).cross(data[idx1] - cp).dot(data_normal) < 0) {
+      GM_VINF("PoseRegistrationEstimator", "Flipping");
+      data_normal = -data_normal;
+    }
+  }
 
   std::vector<Eigen::Vector3f> new_data;
   new_data.reserve(2 * data.size());
