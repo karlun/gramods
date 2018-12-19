@@ -31,6 +31,12 @@ public:
   */
   virtual GLuint getGLTextureID() = 0;
 
+  /**
+     Returns the default key, in Configuration, for the
+     Object.
+  */
+  virtual std::string getDefaultKey() { return "texture"; }
+
 };
 
 END_NAMESPACE_GMGRAPHICS;
