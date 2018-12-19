@@ -10,6 +10,7 @@ GM_OFI_DEFINE_SUB(SdlWindow, Window);
 GM_OFI_PARAM(SdlWindow, useQuadBuffers, bool, SdlWindow::setUseQuadBuffers);
 GM_OFI_PARAM(SdlWindow, GLMajor, int, SdlWindow::setGLMajor);
 GM_OFI_PARAM(SdlWindow, GLMinor, int, SdlWindow::setGLMinor);
+GM_OFI_PARAM(SdlWindow, GLProfile, std::string, SdlWindow::setGLProfile);
 GM_OFI_POINTER(SdlWindow, context, gmCore::SdlContext, SdlWindow::setContext);
 
 std::map<unsigned int, std::weak_ptr<SdlWindow>> SdlWindow::sdl_windows;
