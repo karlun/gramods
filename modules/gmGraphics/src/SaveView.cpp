@@ -67,7 +67,12 @@ void SaveView::Impl::renderFullPipeline(ViewSettings settings) {
     FreeImage_Allocate(width, height, 24);
   BYTE * bytes = FreeImage_GetBits(bitmap);
 
-  glReadBuffer(GL_BACK);
+  {
+    GLint current;
+    glGetIntegerv(GL_DRAW_BUFFER, &current);
+    glReadBuffer(current);
+  }
+
   glReadPixels(size[0], size[1], width, height,
                alpha_support ? GL_BGRA : GL_BGR,
                GL_UNSIGNED_BYTE, bytes);
