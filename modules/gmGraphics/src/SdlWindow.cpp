@@ -84,22 +84,6 @@ void SdlWindow::initialize() {
   if (!gmCore::SdlContext::hasVideo())
     throw std::runtime_error("Cannot open SDL window - no SDL video context initialized");
 
-  int video_flags = SDL_WINDOW_OPENGL;
-  if (fullscreen)
-    video_flags |= SDL_WINDOW_FULLSCREEN_DESKTOP;
-  video_flags |= SDL_WINDOW_RESIZABLE;
-
-  GM_INF("SdlWindow", "Requesting window (" << title << ") " << size[0] << "x" << size[1] << " " << (fullscreen?"fullscreen":""));
-  window = SDL_CreateWindow(title.c_str(),
-                            SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED,
-                            size[0], size[1], video_flags);
-  if (!window) {
-    GM_ERR("SdlWindow", SDL_GetError());
-    throw std::runtime_error("Could not create SDL window");
-  }
-
-  sdl_windows[SDL_GetWindowID(window)] = std::static_pointer_cast<SdlWindow>(shared_from_this());
-
   SDL_GL_SetAttribute(SDL_GL_RED_SIZE, 8);
   SDL_GL_SetAttribute(SDL_GL_GREEN_SIZE, 8);
   SDL_GL_SetAttribute(SDL_GL_BLUE_SIZE, 8);
@@ -118,6 +102,22 @@ void SdlWindow::initialize() {
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_COMPATIBILITY);
   else if (gl_profile.size() > 0)
     GM_WRN("SdlWindow", "Unknown GL profile '" << gl_profile << "' - using default");
+
+  int video_flags = SDL_WINDOW_OPENGL;
+  if (fullscreen)
+    video_flags |= SDL_WINDOW_FULLSCREEN_DESKTOP;
+  video_flags |= SDL_WINDOW_RESIZABLE;
+
+  GM_INF("SdlWindow", "Requesting window (" << title << ") " << size[0] << "x" << size[1] << " " << (fullscreen?"fullscreen":""));
+  window = SDL_CreateWindow(title.c_str(),
+                            SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED,
+                            size[0], size[1], video_flags);
+  if (!window) {
+    GM_ERR("SdlWindow", SDL_GetError());
+    throw std::runtime_error("Could not create SDL window");
+  }
+
+  sdl_windows[SDL_GetWindowID(window)] = std::static_pointer_cast<SdlWindow>(shared_from_this());
 
   GM_INF("SdlWindow", "Requesting GL context " << gl_major << "." << gl_minor << " " << gl_profile);
   gl_context = SDL_GL_CreateContext(window);
