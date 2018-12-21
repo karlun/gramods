@@ -96,6 +96,9 @@ void CubeMap::Impl::setup() {
   glGenTextures(SIDE_COUNT, texture_id);
   glGenRenderbuffers(1, &depth_renderbuffer_id);
 
+  GLint previous_framebuffer;
+  glGetIntegerv(GL_FRAMEBUFFER_BINDING, &previous_framebuffer);
+
   for (size_t idx = 0; idx < SIDE_COUNT; ++idx) {
     glBindFramebuffer(GL_FRAMEBUFFER, framebuffer_id[idx]);
     glBindTexture(GL_TEXTURE_2D, texture_id[idx]);
@@ -118,8 +121,12 @@ void CubeMap::Impl::setup() {
     glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT32F, resolution, resolution);
     glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, depth_renderbuffer_id);
 
-    if (!GLUtils::check_framebuffer())
+    if (!GLUtils::check_framebuffer()) {
+      glBindFramebuffer(GL_FRAMEBUFFER, previous_framebuffer);
       return;
+    }
+
+    glBindFramebuffer(GL_FRAMEBUFFER, previous_framebuffer);
   }
 
   static const char * vertex_shader_code = R"lang=glsl(
