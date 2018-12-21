@@ -2,6 +2,7 @@
 #include <gmGraphics/TextureRenderer.hh>
 
 #include <gmCore/Console.hh>
+#include <gmCore/RunOnce.hh>
 
 #define TEXTURE_IDX 0
 
@@ -63,10 +64,7 @@ void TextureRenderer::render(Camera camera) {
 
 void TextureRenderer::Impl::render(Texture *texture, Camera &camera) {
   if (!texture) {
-    static bool message_shown = false;
-    if (!message_shown)
-      GM_WRN("TextureRenderer", "No texture to render");
-    message_shown = true;
+    GM_RUNONCE(GM_WRN("TextureRenderer", "No texture to render"));
     return;
   }
 

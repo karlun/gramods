@@ -1,5 +1,6 @@
 
 #include <gmGraphics/SpatialPlanarView.hh>
+#include <gmCore/RunOnce.hh>
 
 BEGIN_NAMESPACE_GMGRAPHICS;
 
@@ -17,10 +18,7 @@ void SpatialPlanarView::renderFullPipeline(ViewSettings settings, Eye eye) {
     x_VP = settings.viewpoint->getPosition();
     q_VP = settings.viewpoint->getOrientation();
   } else {
-    static bool message_shown = false;
-    if (!message_shown)
-      GM_WRN("SpatialPlanarView", "No viewpoint available - using zero position and rotation");
-    message_shown = true;
+    GM_RUNONCE(GM_WRN("SpatialPlanarView", "No viewpoint available - using zero position and rotation"));
   }
 
   switch (eye) {

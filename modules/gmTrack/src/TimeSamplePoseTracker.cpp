@@ -2,6 +2,7 @@
 #include <gmTrack/TimeSamplePoseTracker.hh>
 
 #include <gmCore/Console.hh>
+#include <gmCore/RunOnce.hh>
 
 #include <chrono>
 
@@ -52,11 +53,7 @@ bool TimeSamplePoseTracker::Impl::getPose(PoseSample &p) {
       ((position.size() >= 2 && time.size() != position.size()) ||
        (orientation.size() >= 2 && time.size() != orientation.size()))) {
 
-    static bool message_shown = false;
-    if (!message_shown) {
-      GM_ERR("TimeSamplePoseTracker", "cannot calculate pose - sample count mismatch (" << time.size() << ", " << position.size() << " and " << orientation.size() << ")");
-      message_shown = true;
-    }
+    GM_RUNONCE(GM_ERR("TimeSamplePoseTracker", "cannot calculate pose - sample count mismatch (" << time.size() << ", " << position.size() << " and " << orientation.size() << ")"));
 
     return false;
   }

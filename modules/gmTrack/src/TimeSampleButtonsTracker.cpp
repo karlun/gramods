@@ -2,6 +2,7 @@
 #include <gmTrack/TimeSampleButtonsTracker.hh>
 
 #include <gmCore/Console.hh>
+#include <gmCore/RunOnce.hh>
 
 #include <chrono>
 
@@ -44,11 +45,7 @@ bool TimeSampleButtonsTracker::Impl::getButtons(ButtonsSample &b) {
 
   if (!time.empty() && button_states.size() >= 2 && time.size() != button_states.size()) {
 
-    static bool message_shown = false;
-    if (!message_shown) {
-      GM_ERR("TimeSampleButtonsTracker", "cannot find button state - sample count mismatch (" << time.size() << " and " << button_states.size() << ")");
-      message_shown = true;
-    }
+    GM_RUNONCE(GM_ERR("TimeSampleButtonsTracker", "cannot find button state - sample count mismatch (" << time.size() << " and " << button_states.size() << ")"));
 
     return false;
   }

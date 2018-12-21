@@ -4,6 +4,7 @@
 #ifdef gramods_ENABLE_FreeImage
 
 #include <gmGraphics/FreeImage.hh>
+#include <gmCore/RunOnce.hh>
 
 #include <FreeImage.h>
 
@@ -46,11 +47,7 @@ void SaveView::Impl::renderFullPipeline(ViewSettings settings) {
   view->renderFullPipeline(settings);
 
   if (file_template.size() == 0) {
-    static bool message_shown = false;
-    if (!message_shown) {
-      GM_ERR("SaveView", "Could not save - empty filename");
-      message_shown = true;
-    }
+    GM_RUNONCE(GM_ERR("SaveView", "Could not save - empty filename"));
     return;
   }
 

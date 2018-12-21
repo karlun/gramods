@@ -2,6 +2,7 @@
 #include <gmTrack/PoseRegistrationEstimator.hh>
 
 #include <gmTrack/ButtonsMapper.hh>
+#include <gmCore/RunOnce.hh>
 
 #include <Eigen/LU>
 
@@ -101,21 +102,13 @@ bool PoseRegistrationEstimator::getRegistration(Eigen::Matrix4f * RAW, Eigen::Ma
 void PoseRegistrationEstimator::Impl::update(clock::time_point now) {
 
   if (!controller) {
-    static bool message_shown = false;
-    if (!message_shown) {
-      GM_ERR("PoseRegistrationEstimator", "No controller to calibrate");
-      message_shown = true;
-    }
+    GM_RUNONCE(GM_ERR("PoseRegistrationEstimator", "No controller to calibrate"));
     return;
   }
 
   gramods::gmTrack::ButtonsTracker::ButtonsSample buttons;
   if (! controller->getButtons(buttons)) {
-    static bool message_shown = false;
-    if (!message_shown) {
-      GM_ERR("PoseRegistrationEstimator", "Cannot read controller buttons");
-      message_shown = true;
-    }
+    GM_RUNONCE(GM_ERR("PoseRegistrationEstimator", "Cannot read controller buttons"));
     return;
   }
 
@@ -131,11 +124,7 @@ void PoseRegistrationEstimator::Impl::update(clock::time_point now) {
   if (buttons.buttons & ButtonsMapper::ButtonMask::MAIN){
     gramods::gmTrack::PoseTracker::PoseSample pose;
     if (! controller->getPose(pose)) {
-      static bool message_shown = false;
-      if (!message_shown) {
-        GM_ERR("PoseRegistrationEstimator", "Cannot read controller pose");
-        message_shown = true;
-      }
+      GM_RUNONCE(GM_ERR("PoseRegistrationEstimator", "Cannot read controller pose"));
       return;
     }
 

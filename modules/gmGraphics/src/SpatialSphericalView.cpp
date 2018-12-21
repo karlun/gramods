@@ -3,6 +3,7 @@
 
 #include <gmGraphics/CubeMap.hh>
 #include <gmGraphics/GLUtils.hh>
+#include <gmCore/RunOnce.hh>
 
 #include <GL/glew.h>
 #include <GL/gl.h>
@@ -205,10 +206,7 @@ void SpatialSphericalView::Impl::renderFullPipeline(ViewSettings settings, Eye e
     program_id = cubemap->getProgram();
 
     if (!program_id) {
-      static bool message_shown = false;
-      if (!message_shown)
-        GM_WRN("SpatialSphericalView", "Could not initialize cubemap");
-      message_shown = true;
+      GM_RUNONCE(GM_WRN("SpatialSphericalView", "Could not initialize cubemap"));
       return;
     }
   }

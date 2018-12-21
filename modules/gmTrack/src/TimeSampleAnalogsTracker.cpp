@@ -2,6 +2,7 @@
 #include <gmTrack/TimeSampleAnalogsTracker.hh>
 
 #include <gmCore/Console.hh>
+#include <gmCore/RunOnce.hh>
 
 #include <chrono>
 
@@ -43,12 +44,7 @@ void TimeSampleAnalogsTracker::Impl::addAnalogs(gmTypes::float3 a) { states.push
 bool TimeSampleAnalogsTracker::Impl::getAnalogs(AnalogsSample &b) {
 
   if (!time.empty() && states.size() >= 2 && time.size() != states.size()) {
-
-    static bool message_shown = false;
-    if (!message_shown) {
-      GM_ERR("TimeSampleAnalogsTracker", "cannot find state - sample count mismatch (" << time.size() << " and " << states.size() << ")");
-      message_shown = true;
-    }
+    GM_RUNONCE(GM_ERR("TimeSampleAnalogsTracker", "cannot find state - sample count mismatch (" << time.size() << " and " << states.size() << ")"));
 
     return false;
   }

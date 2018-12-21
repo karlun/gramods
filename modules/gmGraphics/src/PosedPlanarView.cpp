@@ -1,5 +1,6 @@
 
 #include <gmGraphics/PosedPlanarView.hh>
+#include <gmCore/RunOnce.hh>
 
 #include <GL/glew.h>
 #include <GL/gl.h>
@@ -20,10 +21,7 @@ void PosedPlanarView::renderFullPipeline(ViewSettings settings) {
     x_VP = settings.viewpoint->getPosition();
     q_VP = settings.viewpoint->getOrientation();
   } else {
-    static bool message_shown = false;
-    if (!message_shown)
-      GM_WRN("PosedPlanarView", "No viewpoint available - using zero position and rotation");
-    message_shown = true;
+    GM_RUNONCE(GM_WRN("PosedPlanarView", "No viewpoint available - using zero position and rotation"));
   }
 
   GLint cvp[4] = { 0, 0, 0, 0 };
