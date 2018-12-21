@@ -91,7 +91,8 @@ void SaveView::Impl::renderFullPipeline(ViewSettings settings) {
 
 void SaveView::setFile(std::string file) {
 
-  if (file.rfind(".png") == file.size() - 4) {
+  if (file.rfind(".png") != std::string::npos &&
+      file.rfind(".png") == file.size() - 4) {
 
     _impl->alpha_support = true;
     _impl->file_template = file;
@@ -100,8 +101,10 @@ void SaveView::setFile(std::string file) {
 
     return;
 
-  } else if (file.rfind(".jpg") == file.size() - 4 ||
-             file.rfind(".jpeg") == file.size() - 5) {
+  } else if ((file.rfind(".jpg") != std::string::npos &&
+              file.rfind(".jpg") == file.size() - 4) ||
+             (file.rfind(".jpeg") != std::string::npos &&
+              file.rfind(".jpeg") == file.size() - 5)) {
 
     _impl->alpha_support = false;
     _impl->file_template = file;
@@ -109,7 +112,9 @@ void SaveView::setFile(std::string file) {
     _impl->fi_options = JPEG_QUALITYBAD;
 
     return;
-  } else if (file.rfind(".bmp") == file.size() - 4) {
+
+  } else if (file.rfind(".bmp") != std::string::npos &&
+             file.rfind(".bmp") == file.size() - 4) {
 
     _impl->alpha_support = false;
     _impl->file_template = file;
