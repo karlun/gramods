@@ -16,10 +16,10 @@ bool GLUtils::check_shader_program(GLuint program_id) {
   if (!msg_data_len)
     msg_data_len = 64;
 
-  GLchar * msg_data = new GLchar[msg_data_len];
+  std::vector<GLchar> msg_data(msg_data_len, '\0');
   
   GLint msg_len;
-  glGetProgramInfoLog(program_id, msg_data_len, &msg_len, msg_data);
+  glGetProgramInfoLog(program_id, msg_data_len, &msg_len, &msg_data[0]);
 
   GLint status;
   glValidateProgram(program_id);
@@ -27,15 +27,14 @@ bool GLUtils::check_shader_program(GLuint program_id) {
 
   if (status) {
     if (msg_len)
-      GM_INF("OpenGL", msg_data);
+      GM_INF("OpenGL", &msg_data[0]);
     return true;
   }
 
   if (!msg_len)
     GM_ERR("OpenGL", "shader program not valid");
   else
-    GM_ERR("OpenGL", msg_data);
-  delete[] msg_data;
+    GM_ERR("OpenGL", &msg_data[0]);
 
   return false;
 }
