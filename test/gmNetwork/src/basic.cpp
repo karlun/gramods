@@ -2,6 +2,8 @@
 #include <gmNetwork/PeersConnection.hh>
 #include <gmNetwork/ExecutionSynchronization.hh>
 
+#include <gmCore/Console.hh>
+#include <gmCore/OStreamMessageSink.hh>
 #include <gmCore/Configuration.hh>
 
 #include <memory>
@@ -15,24 +17,29 @@ struct Peer {
     : delay_ms(delay_ms),
       count(count) {
 
-    std::stringstream ss_xml;
-    ss_xml << "<config>" << std::endl;
-    ss_xml << "  <ExecutionSynchronization>" << std::endl;
-    ss_xml << "    <PeersConnection" << std::endl;
-    ss_xml << "        DEF=\"PEERS\"" << std::endl;
-    ss_xml << "        localPeerIdx=\"" << host_idx << "\">" << std::endl;
-    ss_xml << "      <param name=\"peer\" value=\"127.0.0.1:20400\"/>" << std::endl;
-    ss_xml << "      <param name=\"peer\" value=\"127.0.0.1:20401\"/>" << std::endl;
-    ss_xml << "      <param name=\"peer\" value=\"127.0.0.1:20402\"/>" << std::endl;
-    ss_xml << "    </PeersConnection>" << std::endl;
-    ss_xml << "  </ExecutionSynchronization>" << std::endl;
-    //ss_xml << "  <VariableSynchronization>" << std::endl;
-    //ss_xml << "    <PeersConnection" << std::endl;
-    //ss_xml << "        USE=\"PEERS\"/>" << std::endl;
-    //ss_xml << "  </VariableSynchronization>" << std::endl;
-    ss_xml << "</config>" << std::endl;
+    std::string xml_tmpl = R"lang=xml(
+<config>
+  <ExecutionSynchronization>
+    <PeersConnection
+        DEF="PEERS"
+        localPeerIdx="%d">
+      <param name="peer" value="127.0.0.1:20400"/>
+      <param name="peer" value="127.0.0.1:20401"/>
+      <param name="peer" value="127.0.0.1:20402"/>
+    </PeersConnection>
+  </ExecutionSynchronization>
+  <!--VariableSynchronization>
+    <PeersConnection
+        USE="PEERS"/>
+  </VariableSynchronization-->
+</config>
+)lang=xml";
 
-    gmCore::Configuration config(ss_xml.str());
+    size_t xml_size = snprintf(nullptr, 0, xml_tmpl.c_str(), host_idx) + 1;
+    std::vector<char> xml_str(xml_size);
+    snprintf(&xml_str[0], xml_size, xml_tmpl.c_str(), host_idx);
+
+    gmCore::Configuration config(&xml_str[0]);
 
     EXPECT_TRUE(config.getObject(sync));
 
@@ -42,8 +49,8 @@ struct Peer {
 
   ~Peer() {
     {
+      std::lock_guard<std::mutex> guard(sync_lock);
       sync->getConnection()->close();
-      std::lock_guard<std::mutex> guard(lock);
       sync = 0;
     }
     thread->join();
@@ -51,13 +58,14 @@ struct Peer {
 
   std::shared_ptr<gmNetwork::ExecutionSynchronization> sync;
   std::unique_ptr<std::thread> thread;
-  std::mutex lock;
+  std::mutex sync_lock;
+  std::mutex count_lock;
   int delay_ms;
   int &count;
 
   void run() {
     {
-      std::lock_guard<std::mutex> guard(lock);
+      std::lock_guard<std::mutex> guard(sync_lock);
       sync->waitForConnection();
     }
 
@@ -66,18 +74,30 @@ struct Peer {
       {
         std::shared_ptr<gmNetwork::ExecutionSynchronization> tmp_sync;
         {
-          std::lock_guard<std::mutex> guard(lock);
+          std::lock_guard<std::mutex> guard(sync_lock);
           tmp_sync = sync;
         }
         if (!tmp_sync) break;
         tmp_sync->waitForAll();
       }
-      ++count;
+
+      {
+        std::lock_guard<std::mutex> guard(count_lock);
+        ++count;
+      }
     }
   }
 };
 
 TEST(gmNetworkPeersConnection, waitForAll) {
+
+  gmCore::Console::removeAllSinks();
+#if 0
+  std::shared_ptr<gmCore::OStreamMessageSink> osms =
+    std::make_shared<gmCore::OStreamMessageSink>();
+  osms->initialize();
+#endif
+
   int count0 = 0;
   int count1 = 0;
   int count2 = 0;
@@ -88,7 +108,14 @@ TEST(gmNetworkPeersConnection, waitForAll) {
     peers.push_back(std::make_shared<Peer>(1, 2, std::ref(count1)));
     peers.push_back(std::make_shared<Peer>(2, 5, std::ref(count2)));
 
-    std::this_thread::sleep_for(std::chrono::milliseconds(5000));
+    while (true) {
+      std::this_thread::sleep_for(std::chrono::milliseconds(10));
+      {
+        std::lock_guard<std::mutex> guard(peers.back()->count_lock);
+        if (peers.back()->count > 100)
+          break;
+      }
+    }
   }
 
   EXPECT_GT(count0, 10);
