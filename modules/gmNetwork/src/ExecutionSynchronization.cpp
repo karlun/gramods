@@ -46,16 +46,16 @@ void ExecutionSynchronization::waitForAll() {
 
 void ExecutionSynchronization::close() {
 
-  std::unique_lock<std::mutex> lck(waiting_lock);
-  if (closing) return;
-  closing = true;
+  {
+    std::unique_lock<std::mutex> lck(waiting_lock);
 
-  if (waiting) {
-    waiting = false;
-    lck.unlock();
-    waiting_condition.notify_all();
-  } else {
-    lck.unlock();
+    if (closing) return;
+    closing = true;
+
+    if (waiting) {
+      waiting = false;
+      waiting_condition.notify_all();
+    }
   }
 
   Protocol::close();
@@ -93,7 +93,6 @@ void ExecutionSynchronization::processMessage(Message m) {
     GM_VINF("ExecutionSynchronization", "Enough peers have notified " << (int)peer);
     waiting_peers.clear();
     waiting = false;
-    lck.unlock();
     waiting_condition.notify_all();
   }
 }
