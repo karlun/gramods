@@ -13,15 +13,118 @@ GM_OFI_PARAM(PeersConnection, localPeerIdx, int, PeersConnection::setLocalPeerId
 #define FIRST_CONNECT_DELAY_MS boost::posix_time::milliseconds(20)
 #define RECONNECT_DELAY_MS boost::posix_time::milliseconds(2000)
 
-PeersConnection::PeersConnection()
-  : closing(false) {}
+struct PeersConnection::Impl : public std::enable_shared_from_this<PeersConnection::Impl> {
 
-PeersConnection::~PeersConnection() {
+  /**
+     A connection and communication handler for one single peer.
+  */
+  struct Peer
+    : std::enable_shared_from_this<Peer> {
+
+    Peer (asio::io_context &io_context,
+          std::shared_ptr<PeersConnection::Impl> parent,
+          std::string address,
+          asio::ip::tcp::resolver::results_type endpoints)
+      : io_context(io_context),
+        parent(parent),
+        socket(io_context),
+        address(address),
+        endpoints(endpoints),
+        is_connected(false) {}
+
+    Peer (asio::io_context &io_context,
+          std::shared_ptr<PeersConnection::Impl> parent,
+          asio::ip::tcp::socket socket)
+      : io_context(io_context),
+        parent(parent),
+        socket(std::move(socket)),
+        is_connected(false) {}
+
+    bool connect();
+
+    bool isConnected();
+
+    void sendMessage(Protocol::Message mess);
+    void readData();
+
+    void sendHandshake();
+    void readHandshake();
+
+  private:
+
+    asio::io_context &io_context;
+    std::weak_ptr<PeersConnection::Impl> parent;
+    asio::ip::tcp::socket socket;
+    bool is_connected;
+    std::mutex lock;
+
+    std::unique_ptr<Protocol::Message> message;
+    std::size_t message_length;
+
+    std::string address;
+    asio::ip::tcp::resolver::results_type endpoints;
+  };
+  
+  ~Impl();
+
+  void split_address_service(std::string comb, std::string &host, std::string &port);
+
+  void initialize();
+  void close();
+
+  void addPeer(std::string address);
+  void setLocalPeerIdx(int idx);
+  int getLocalPeerIdx();
+  std::size_t getPeersCount();
+
+  void waitForConnection();
+  void sendMessage(Protocol::Message mess);
+  void addProtocol(std::shared_ptr<Protocol> p);
+  void removeProtocol(std::shared_ptr<Protocol> p);
+
+  void runContext();
+  void accept();
+
+  void routeMessage(Protocol::Message mess);
+
+  asio::io_context io_context;
+  std::thread io_thread;
+  bool closing = false;
+  std::mutex system_lock;
+
+  std::vector<std::shared_ptr<Peer>> alpha_peers;
+  std::vector<std::shared_ptr<Peer>> beta_peers;
+  std::vector<std::string> peer_addresses;
+  int local_peer_idx = -1;
+  std::mutex peers_lock;
+
+  std::shared_ptr<asio::ip::tcp::acceptor> server_acceptor;
+
+  std::vector<std::weak_ptr<Protocol>> protocols;
+  std::mutex protocols_lock;
+};
+
+
+namespace {
+
+}
+
+
+PeersConnection::Impl::~Impl() {
   close();
   io_thread.join();
 }
 
+PeersConnection::PeersConnection()
+  : _impl(std::make_unique<Impl>()) {}
+
+PeersConnection::~PeersConnection() {}
+
 void PeersConnection::close() {
+  _impl->close();
+}
+
+void PeersConnection::Impl::close() {
   {
     std::lock_guard<std::mutex> guard(system_lock);
     if (closing) return;
@@ -57,7 +160,10 @@ void PeersConnection::close() {
 void PeersConnection::addPeer(std::string address) {
   if (isInitialized())
     throw std::logic_error("Adding peer after initialization is not supported");
+  _impl->addPeer(address);
+}
 
+void PeersConnection::Impl::addPeer(std::string address) {
   std::lock_guard<std::mutex> guard(peers_lock);
   peer_addresses.push_back(address);
 }
@@ -65,22 +171,33 @@ void PeersConnection::addPeer(std::string address) {
 void PeersConnection::setLocalPeerIdx(int idx) {
   if (isInitialized())
     throw std::logic_error("Setting local peer after initialization is not supported");
+  _impl->setLocalPeerIdx(idx);
+}
 
+void PeersConnection::Impl::setLocalPeerIdx(int idx) {
   std::lock_guard<std::mutex> guard(peers_lock);
   local_peer_idx = idx;
 }
 
 int PeersConnection::getLocalPeerIdx() {
+  return _impl->getLocalPeerIdx();
+}
+
+int PeersConnection::Impl::getLocalPeerIdx() {
   std::lock_guard<std::mutex> guard(peers_lock);
   return local_peer_idx;
 }
 
 std::size_t PeersConnection::getPeersCount() {
+  return _impl->getPeersCount();
+}
+
+std::size_t PeersConnection::Impl::getPeersCount() {
   std::lock_guard<std::mutex> guard(peers_lock);
   return peer_addresses.size();
 }
 
-void PeersConnection::split_address_service
+void PeersConnection::Impl::split_address_service
 (std::string comb, std::string &host, std::string &port) {
 
   if (comb.find_first_of(":") != comb.find_last_of(":")) {
@@ -120,7 +237,7 @@ void PeersConnection::split_address_service
   }
 }
 
-bool PeersConnection::Peer::connect() {
+bool PeersConnection::Impl::Peer::connect() {
 
   std::weak_ptr<Peer> weak_self(shared_from_this());
 
@@ -158,7 +275,7 @@ bool PeersConnection::Peer::connect() {
                       });
 }
 
-void PeersConnection::Peer::sendHandshake() {
+void PeersConnection::Impl::Peer::sendHandshake() {
 
   std::stringstream string_data;
   string_data << GRAMODS_NETWORK_VERSION << " " << address << " ";
@@ -172,7 +289,7 @@ void PeersConnection::Peer::sendHandshake() {
   int N = asio::write(socket, asio::buffer(data, HANDSHAKE_LENGTH));
 }
 
-void PeersConnection::Peer::readHandshake() {
+void PeersConnection::Impl::Peer::readHandshake() {
 
   std::weak_ptr<Peer> weak_self(shared_from_this());
 
@@ -214,7 +331,7 @@ void PeersConnection::Peer::readHandshake() {
                    });
 }
 
-void PeersConnection::Peer::readData() {
+void PeersConnection::Impl::Peer::readData() {
 
   std::weak_ptr<Peer> weak_self(shared_from_this());
 
@@ -253,7 +370,8 @@ void PeersConnection::Peer::readData() {
                          GM_VVINF("PeersConnection",
                                   "Message complete (" << self->message->data.size() << ")");
                          auto _parent = self->parent.lock();
-                         if (_parent) PeersConnection::routeMessage(_parent, *self->message);
+                         if (_parent)
+                           _parent->routeMessage(*self->message);
 
                          self->message = nullptr;
                          self->message_length = 0;
@@ -280,6 +398,10 @@ void PeersConnection::Peer::readData() {
 
 
 void PeersConnection::sendMessage(Protocol::Message mess) {
+  _impl->sendMessage(mess);
+}
+
+void PeersConnection::Impl::sendMessage(Protocol::Message mess) {
   mess.peer_idx = local_peer_idx;
   GM_VINF("PeersConnection", "Sending message "
           "(" << (int)mess.peer_idx << ", " << (int)mess.protocol << ", " << (int)mess.data.size() << ")");
@@ -292,28 +414,27 @@ void PeersConnection::sendMessage(Protocol::Message mess) {
   }
 }
 
-void PeersConnection::routeMessage(std::shared_ptr<PeersConnection> self,
-                                   Protocol::Message mess) {
+void PeersConnection::Impl::routeMessage(Protocol::Message mess) {
   std::vector<std::shared_ptr<Protocol>> locked_protocols;
   {
-    std::lock_guard<std::mutex> guard(self->protocols_lock);
-    for (auto protocol : self->protocols) {
+    std::lock_guard<std::mutex> guard(protocols_lock);
+    for (auto protocol : protocols) {
       auto _protocol = protocol.lock();
-      if (_protocol)
-        if (mess.protocol == _protocol->getProtocolFlag())
-          locked_protocols.push_back(_protocol);
+      if (_protocol &&
+          mess.protocol == _protocol->getProtocolFlag())
+        locked_protocols.push_back(_protocol);
     }
   }
   for (auto protocol : locked_protocols)
     protocol->processMessage(mess);
 }
 
-bool PeersConnection::Peer::isConnected() {
+bool PeersConnection::Impl::Peer::isConnected() {
   std::lock_guard<std::mutex> guard(lock);
   return is_connected;
 }
 
-void PeersConnection::Peer::sendMessage(Protocol::Message mess) {
+void PeersConnection::Impl::Peer::sendMessage(Protocol::Message mess) {
 
   std::weak_ptr<Peer> weak_self(shared_from_this());
 
@@ -346,9 +467,16 @@ void PeersConnection::Peer::sendMessage(Protocol::Message mess) {
 }
 
 void PeersConnection::initialize() {
+
   if (isInitialized())
     return;
 
+  _impl->initialize();
+
+  Object::initialize();
+}
+
+void PeersConnection::Impl::initialize() {
   std::lock_guard<std::mutex> guard(peers_lock);
 
   if (peer_addresses.size() == 0)
@@ -357,7 +485,7 @@ void PeersConnection::initialize() {
   if (local_peer_idx < 0 || local_peer_idx >= peer_addresses.size())
     return;
 
-  auto self = std::static_pointer_cast<PeersConnection>(shared_from_this());
+  auto self = std::static_pointer_cast<PeersConnection::Impl>(shared_from_this());
   asio::ip::tcp::resolver resolver(io_context);
 
   for (int idx = local_peer_idx + 1; idx < peer_addresses.size(); ++idx) {
@@ -413,14 +541,12 @@ void PeersConnection::initialize() {
   }
 
   io_thread = std::thread([this](){ this->runContext(); });
-
-  Object::initialize();
 }
 
-void PeersConnection::accept() {
+void PeersConnection::Impl::accept() {
 
-  std::weak_ptr<PeersConnection>
-    weak_self(std::static_pointer_cast<PeersConnection>(shared_from_this()));
+  std::weak_ptr<PeersConnection::Impl>
+    weak_self(std::static_pointer_cast<PeersConnection::Impl>(shared_from_this()));
 
   GM_INF("PeersConnection", "Listening to incoming connections");
   server_acceptor->async_accept
@@ -451,6 +577,10 @@ void PeersConnection::accept() {
 }
 
 void PeersConnection::waitForConnection() {
+  _impl->waitForConnection();
+}
+
+void PeersConnection::Impl::waitForConnection() {
   GM_INF("PeersConnection", "Waiting for connection (" << getLocalPeerIdx() << ")");
   while (true) {
 
@@ -491,7 +621,7 @@ void PeersConnection::waitForConnection() {
   GM_INF("PeersConnection", "All peers connected - done waiting");
 }
 
-void PeersConnection::runContext() {
+void PeersConnection::Impl::runContext() {
   while (true) {
     try {
       GM_INF("PeersConnection", "Running ASIO io context");
@@ -506,11 +636,19 @@ void PeersConnection::runContext() {
 }
 
 void PeersConnection::addProtocol(std::shared_ptr<Protocol> p) {
+  _impl->addProtocol(p);
+}
+
+void PeersConnection::Impl::addProtocol(std::shared_ptr<Protocol> p) {
   std::lock_guard<std::mutex> guard(protocols_lock);
   protocols.push_back(p);
 }
 
 void PeersConnection::removeProtocol(std::shared_ptr<Protocol> p) {
+  _impl->removeProtocol(p);
+}
+
+void PeersConnection::Impl::removeProtocol(std::shared_ptr<Protocol> p) {
   std::lock_guard<std::mutex> guard(protocols_lock);
   std::remove_if(protocols.begin(),
                  protocols.end(),

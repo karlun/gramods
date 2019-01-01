@@ -111,81 +111,9 @@ public:
 
 private:
 
-  /**
-     A connection and communication handler for one single peer.
-  */
-  struct Peer
-    : std::enable_shared_from_this<Peer> {
+  struct Impl;
+  std::shared_ptr<Impl> _impl;
 
-    Peer (asio::io_context &io_context,
-          std::shared_ptr<PeersConnection> parent,
-          std::string address,
-          asio::ip::tcp::resolver::results_type endpoints)
-      : io_context(io_context),
-        parent(parent),
-        socket(io_context),
-        address(address),
-        endpoints(endpoints),
-        is_connected(false) {}
-
-    Peer (asio::io_context &io_context,
-          std::shared_ptr<PeersConnection> parent,
-          asio::ip::tcp::socket socket)
-      : io_context(io_context),
-        parent(parent),
-        socket(std::move(socket)),
-        is_connected(false) {}
-
-    bool connect();
-
-    bool isConnected();
-
-    void sendMessage(Protocol::Message mess);
-    void readData();
-
-    void sendHandshake();
-    void readHandshake();
-
-  private:
-
-    asio::io_context &io_context;
-    std::weak_ptr<PeersConnection> parent;
-    asio::ip::tcp::socket socket;
-    bool is_connected;
-    std::mutex lock;
-
-    std::unique_ptr<Protocol::Message> message;
-    std::size_t message_length;
-
-    std::string address;
-    asio::ip::tcp::resolver::results_type endpoints;
-  };
-
-  void split_address_service(std::string comb, std::string &host, std::string &port);
-
-  void runContext();
-  void accept();
-
-  static void routeMessage(std::shared_ptr<PeersConnection> self,
-                           Protocol::Message mess);
-
-  asio::io_context io_context;
-  std::thread io_thread;
-  bool closing;
-  std::mutex system_lock;
-
-  std::vector<std::shared_ptr<Peer>> alpha_peers;
-  std::vector<std::shared_ptr<Peer>> beta_peers;
-  std::vector<std::string> peer_addresses;
-  int local_peer_idx;
-  std::mutex peers_lock;
-
-  std::shared_ptr<asio::ip::tcp::acceptor> server_acceptor;
-
-  std::vector<std::weak_ptr<Protocol>> protocols;
-  std::mutex protocols_lock;
-
-  friend Peer;
 };
 
 END_NAMESPACE_GMNETWORK;
