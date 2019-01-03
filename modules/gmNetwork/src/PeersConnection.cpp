@@ -69,7 +69,7 @@ struct PeersConnection::Impl : public std::enable_shared_from_this<PeersConnecti
 
   void split_address_service(std::string comb, std::string &host, std::string &port);
 
-  void initialize();
+  bool initialize();
   void close();
 
   void addPeer(std::string address);
@@ -471,19 +471,22 @@ void PeersConnection::initialize() {
   if (isInitialized())
     return;
 
-  _impl->initialize();
-
-  Object::initialize();
+  if (_impl->initialize())
+    Object::initialize();
 }
 
-void PeersConnection::Impl::initialize() {
+bool PeersConnection::Impl::initialize() {
   std::lock_guard<std::mutex> guard(peers_lock);
 
-  if (peer_addresses.size() == 0)
-    return;
+  if (peer_addresses.size() == 0) {
+    GM_WRN("PeersConnection", "Cannot connect - no addresses");
+    return false;
+  }
 
-  if (local_peer_idx < 0 || local_peer_idx >= peer_addresses.size())
-    return;
+  if (local_peer_idx < 0 || local_peer_idx >= peer_addresses.size()) {
+    GM_ERR("PeersConnection", "Invalid local peer idx, " << local_peer_idx);
+    throw std::invalid_argument("invalid local peer idx");
+  }
 
   auto self = std::static_pointer_cast<PeersConnection::Impl>(shared_from_this());
   asio::ip::tcp::resolver resolver(io_context);
@@ -517,10 +520,11 @@ void PeersConnection::Impl::initialize() {
     bind_endpoints = resolver.resolve(host, port);
 
     for (auto end : bind_endpoints)
-      GM_INF("PeersConnection", "Resolved "
+      GM_VINF("PeersConnection", "Resolved "
              << end.host_name()
              << " : "
-             << end.service_name());
+             << end.service_name()
+             << " for tcp acceptor.");
 
     server_acceptor =
       std::make_shared<asio::ip::tcp::acceptor>
@@ -541,6 +545,8 @@ void PeersConnection::Impl::initialize() {
   }
 
   io_thread = std::thread([this](){ this->runContext(); });
+
+  return true;
 }
 
 void PeersConnection::Impl::accept() {
