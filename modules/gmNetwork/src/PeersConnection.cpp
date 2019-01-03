@@ -98,7 +98,7 @@ struct PeersConnection::Impl : public std::enable_shared_from_this<PeersConnecti
   int local_peer_idx = -1;
   std::mutex peers_lock;
 
-  std::shared_ptr<asio::ip::tcp::acceptor> server_acceptor;
+  std::unique_ptr<asio::ip::tcp::acceptor> server_acceptor;
 
   std::vector<std::weak_ptr<Protocol>> protocols;
   std::mutex protocols_lock;
@@ -527,7 +527,7 @@ bool PeersConnection::Impl::initialize() {
              << " for tcp acceptor.");
 
     server_acceptor =
-      std::make_shared<asio::ip::tcp::acceptor>
+      std::make_unique<asio::ip::tcp::acceptor>
       (io_context, *bind_endpoints.begin());
   }
 
@@ -622,9 +622,7 @@ void PeersConnection::Impl::waitForConnection() {
 
     std::this_thread::sleep_for(std::chrono::milliseconds(50));
   }
-  GM_VINF("PeersConnection", "All peers connected - waiting a bit");
-  std::this_thread::sleep_for(std::chrono::milliseconds(500));
-  GM_INF("PeersConnection", "All peers connected - done waiting");
+  GM_INF("PeersConnection", "All peers connected");
 }
 
 void PeersConnection::Impl::runContext() {
