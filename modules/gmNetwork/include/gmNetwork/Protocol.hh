@@ -23,6 +23,8 @@ class Protocol
 
 public:
 
+  ~Protocol();
+
   /**
      Data entity communicated by the connection to the designated
      protocol.

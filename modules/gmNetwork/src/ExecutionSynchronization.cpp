@@ -11,10 +11,6 @@ ExecutionSynchronization::ExecutionSynchronization()
   : waiting(false),
     closing(false) {}
 
-ExecutionSynchronization::~ExecutionSynchronization() {
-  close();
-}
-
 void ExecutionSynchronization::waitForAll() {
   std::shared_ptr<PeersConnection> _connection = getConnection();
   if (!_connection)
@@ -26,7 +22,9 @@ void ExecutionSynchronization::waitForAll() {
   assert(_connection->getLocalPeerIdx() < 256);
   data.push_back((char)_connection->getLocalPeerIdx());
 
-  GM_VINF("ExecutionSynchronization", "Notifying peers about waiting");
+  GM_VINF("ExecutionSynchronization",
+          "Notifying peers about waiting ("
+          << _connection->getLocalPeerIdx() << " -> all)");
   sendMessage(data);
 
   {
@@ -44,20 +42,21 @@ void ExecutionSynchronization::waitForAll() {
   }
 }
 
-void ExecutionSynchronization::close() {
+void ExecutionSynchronization::cancelWait() {
 
-  {
-    std::unique_lock<std::mutex> lck(waiting_lock);
+  std::unique_lock<std::mutex> lck(waiting_lock);
 
-    if (closing) return;
-    closing = true;
+  if (closing) return;
+  closing = true;
 
-    if (waiting) {
-      waiting = false;
-      waiting_condition.notify_all();
-    }
+  if (waiting) {
+    waiting = false;
+    waiting_condition.notify_all();
   }
+}
 
+void ExecutionSynchronization::close() {
+  cancelWait();
   Protocol::close();
 }
 
@@ -79,12 +78,12 @@ void ExecutionSynchronization::processMessage(Message m) {
   std::unique_lock<std::mutex> lck(waiting_lock);
 
   if (waiting_peers.count(peer) != 0) {
-    GM_ERR("ExecutionSynchronization", "Peer notifies multiple times that it is waiting.");
+    GM_ERR("ExecutionSynchronization", "Peer " << int(peer) << " notifies (" << int(peer) << " -> " << _connection->getLocalPeerIdx() << ") multiple times that it is waiting.");
     return;
   }
 
   waiting_peers.insert(peer);
-  GM_VINF("ExecutionSynchronization", "Waiting notification from peer " << (int)peer << " (got " << waiting_peers.size() << " of " << (_connection->getPeersCount() - 1) << ")");
+  GM_VINF("ExecutionSynchronization", "Waiting notification (" << (int)peer << " -> " << _connection->getLocalPeerIdx() << " (got " << waiting_peers.size() << " of " << (_connection->getPeersCount() - 1) << ")");
 
   if (closing || !waiting)
     return;

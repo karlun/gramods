@@ -8,6 +8,10 @@ BEGIN_NAMESPACE_GMNETWORK;
 GM_OFI_DEFINE(Protocol);
 GM_OFI_POINTER(Protocol, connection, PeersConnection, Protocol::setConnection);
 
+Protocol::~Protocol() {
+  close();
+}
+
 void Protocol::setConnection(std::shared_ptr<PeersConnection> conn) {
 
   std::lock_guard<std::mutex> guard(connection_lock);

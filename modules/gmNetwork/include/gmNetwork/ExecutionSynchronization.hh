@@ -19,7 +19,6 @@ class ExecutionSynchronization
 public:
 
   ExecutionSynchronization();
-  ~ExecutionSynchronization();
 
   /**
      Waits until all peers have called this method. It is up to the
@@ -27,6 +26,12 @@ public:
      it is the same call that synchronizes.
    */
   void waitForAll();
+
+  /**
+     Cancels current waiting. If the synchronization is not currently
+     waiting, then nothing happens.
+  */
+  void cancelWait();
 
   /**
      Closes the protocol and releases waiting threads.

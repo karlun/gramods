@@ -356,7 +356,7 @@ void PeersConnection::Impl::Peer::readData() {
                      if (!self) return;
 
                      GM_VVINF("PeersConnection",
-                              "Got message (" << length << ")");
+                              "Got message (len = " << length << ")");
 
                      if (self->message) {
                        // In process of reading message data
@@ -368,7 +368,7 @@ void PeersConnection::Impl::Peer::readData() {
                        if (self->message->data.size() == self->message_length) {
 
                          GM_VVINF("PeersConnection",
-                                  "Message complete (" << self->message->data.size() << ")");
+                                  "Message complete (len = " << self->message->data.size() << ")");
                          auto _parent = self->parent.lock();
                          if (_parent)
                            _parent->routeMessage(*self->message);
@@ -377,7 +377,7 @@ void PeersConnection::Impl::Peer::readData() {
                          self->message_length = 0;
                        } else {
                          GM_VVINF("PeersConnection",
-                                  "Message incomplete (" << self->message->data.size() << " of " << self->message_length << ")");
+                                  "Message incomplete (got " << self->message->data.size() << " of " << self->message_length << ")");
                        }
 
                      } else {
@@ -404,7 +404,7 @@ void PeersConnection::sendMessage(Protocol::Message mess) {
 void PeersConnection::Impl::sendMessage(Protocol::Message mess) {
   mess.peer_idx = local_peer_idx;
   GM_VINF("PeersConnection", "Sending message "
-          "(" << (int)mess.peer_idx << ", " << (int)mess.protocol << ", " << (int)mess.data.size() << ")");
+          "(from = " << (int)mess.peer_idx << ", type = " << (int)mess.protocol << ", len = " << (int)mess.data.size() << ")");
   {
     std::lock_guard<std::mutex> guard(peers_lock);
     for (auto peer : alpha_peers)
@@ -623,6 +623,7 @@ void PeersConnection::Impl::waitForConnection() {
     std::this_thread::sleep_for(std::chrono::milliseconds(50));
   }
   GM_INF("PeersConnection", "All peers connected");
+    std::this_thread::sleep_for(std::chrono::milliseconds(1000));
 }
 
 void PeersConnection::Impl::runContext() {

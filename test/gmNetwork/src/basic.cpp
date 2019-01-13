@@ -1,6 +1,9 @@
 
 #include <gmNetwork/PeersConnection.hh>
 #include <gmNetwork/ExecutionSynchronization.hh>
+#include <gmNetwork/SyncSData.hh>
+#include <gmNetwork/SimpleDataSynchronization.hh>
+
 
 #include <gmCore/Console.hh>
 #include <gmCore/OStreamMessageSink.hh>
@@ -11,11 +14,11 @@
 
 using namespace gramods;
 
+#if 1
 struct Peer {
 
-  Peer(int host_idx, int delay_ms, int &count)
-    : delay_ms(delay_ms),
-      count(count) {
+  Peer(int host_idx, int delay_ms)
+    : delay_ms(delay_ms) {
 
     std::string xml_tmpl = R"lang=xml(
 <config>
@@ -28,10 +31,10 @@ struct Peer {
       <param name="peer" value="127.0.0.1:20402"/>
     </PeersConnection>
   </ExecutionSynchronization>
-  <!--VariableSynchronization>
+  <SimpleDataSynchronization>
     <PeersConnection
         USE="PEERS"/>
-  </VariableSynchronization-->
+  </SimpleDataSynchronization>
 </config>
 )lang=xml";
 
@@ -41,44 +44,77 @@ struct Peer {
 
     gmCore::Configuration config(&xml_str[0]);
 
-    EXPECT_TRUE(config.getObject(sync));
+    if (!config.getObject(exec_sync))
+      return;
+    if (!config.getObject(data_sync))
+      return;
 
-    if (sync)
-      thread = std::make_unique<std::thread>([this](){ this->run(); });
+    data_int64 = std::make_shared<gmNetwork::SyncSInt64>();
+    data_float64 = std::make_shared<gmNetwork::SyncSFloat64>();
+
+    data_sync->addData(&data_bool);
+    data_sync->addData(&data_int32);
+    data_sync->addData(&data_float32);
+    data_sync->addData(data_int64);
+    data_sync->addData(data_float64);
+    is_master = data_sync->getConnection()->getLocalPeerIdx() == 0;
+
+    thread = std::make_unique<std::thread>([this](){ this->run(); });
   }
 
   ~Peer() {
     {
       std::lock_guard<std::mutex> guard(sync_lock);
-      sync->getConnection()->close();
-      sync = 0;
+      exec_sync->getConnection()->close();
+      exec_sync = 0;
+      data_sync = 0;
     }
     thread->join();
   }
 
-  std::shared_ptr<gmNetwork::ExecutionSynchronization> sync;
+  bool is_master = false;
+  int state = 0;
+
+  std::shared_ptr<gmNetwork::ExecutionSynchronization> exec_sync;
+  std::shared_ptr<gmNetwork::SimpleDataSynchronization> data_sync;
+
+  int count = 0;
+
+  gmNetwork::SyncSBool data_bool = false;
+  gmNetwork::SyncSInt32 data_int32 = 0;
+  gmNetwork::SyncSFloat32 data_float32 = 0;
+  std::shared_ptr<gmNetwork::SyncSInt64> data_int64 = 0;
+  std::shared_ptr<gmNetwork::SyncSFloat64> data_float64 = 0;
+
   std::unique_ptr<std::thread> thread;
   std::mutex sync_lock;
   std::mutex count_lock;
   int delay_ms;
-  int &count;
 
   void run() {
     {
       std::lock_guard<std::mutex> guard(sync_lock);
-      sync->waitForConnection();
+      exec_sync->waitForConnection();
+    }
+
+    if (is_master) {
+      data_bool = true;
+      data_int32 = std::numeric_limits<int32_t>::max() - 41;
+      *data_int64 = std::numeric_limits<int64_t>::max() - 97;
+      data_float32 = 1.f / 3.f;
+      *data_float64 = 1.0 / 6.0;
     }
 
     while (true) {
       std::this_thread::sleep_for(std::chrono::milliseconds(delay_ms));
       {
-        std::shared_ptr<gmNetwork::ExecutionSynchronization> tmp_sync;
+        std::shared_ptr<gmNetwork::ExecutionSynchronization> tmp_exec_sync;
         {
           std::lock_guard<std::mutex> guard(sync_lock);
-          tmp_sync = sync;
+          tmp_exec_sync = exec_sync;
         }
-        if (!tmp_sync) break;
-        tmp_sync->waitForAll();
+        if (state != 0) break;
+        tmp_exec_sync->waitForAll();
       }
 
       {
@@ -86,6 +122,9 @@ struct Peer {
         ++count;
       }
     }
+
+    data_sync->update();
+    state = 2;
   }
 };
 
@@ -95,34 +134,64 @@ TEST(gmNetworkPeersConnection, waitForAll) {
 #if 0
   std::shared_ptr<gmCore::OStreamMessageSink> osms =
     std::make_shared<gmCore::OStreamMessageSink>();
+  osms->setUseAnsiColor(false);
   osms->initialize();
 #endif
 
-  int count0 = 0;
-  int count1 = 0;
-  int count2 = 0;
+  std::vector<std::shared_ptr<Peer>> peers;
+  peers.push_back(std::make_shared<Peer>(0, 1));
+  peers.push_back(std::make_shared<Peer>(1, 2));
+  peers.push_back(std::make_shared<Peer>(2, 5));
 
-  {
-    std::vector<std::shared_ptr<Peer>> peers;
-    peers.push_back(std::make_shared<Peer>(0, 1, std::ref(count0)));
-    peers.push_back(std::make_shared<Peer>(1, 2, std::ref(count1)));
-    peers.push_back(std::make_shared<Peer>(2, 5, std::ref(count2)));
-
-    while (true) {
-      std::this_thread::sleep_for(std::chrono::milliseconds(10));
-      {
-        std::lock_guard<std::mutex> guard(peers.back()->count_lock);
-        if (peers.back()->count > 100)
-          break;
+  while (true) {
+    std::this_thread::sleep_for(std::chrono::milliseconds(10));
+    {
+      std::lock_guard<std::mutex> guard(peers.back()->count_lock);
+      if (peers.back()->count > 100) {
+        for (auto peer : peers) {
+          peer->state = 1;
+          peer->exec_sync->cancelWait();
+        }
+        break;
       }
     }
   }
 
-  EXPECT_GT(count0, 10);
-  EXPECT_GT(count1, 10);
-  EXPECT_GT(count2, 10);
+  EXPECT_FALSE(peers[0]->data_bool);
+  EXPECT_FALSE(peers[1]->data_bool);
+  EXPECT_FALSE(peers[2]->data_bool);
 
-  EXPECT_LE(abs(count0 - count1), 1);
-  EXPECT_LE(abs(count0 - count2), 1);
-  EXPECT_LE(abs(count1 - count2), 1);
+  while (true) {
+    std::this_thread::sleep_for(std::chrono::milliseconds(10));
+    {
+      std::lock_guard<std::mutex> guard(peers.back()->count_lock);
+      if (peers.front()->state == 2)
+        break;
+    }
+  }
+
+  EXPECT_GT(peers[0]->count, 10);
+  EXPECT_GT(peers[1]->count, 10);
+  EXPECT_GT(peers[2]->count, 10);
+
+  EXPECT_LE(abs(peers[0]->count - peers[1]->count), 1);
+  EXPECT_LE(abs(peers[0]->count - peers[2]->count), 1);
+  EXPECT_LE(abs(peers[1]->count - peers[2]->count), 1);
+
+  EXPECT_TRUE(peers[0]->data_bool);
+  EXPECT_TRUE(peers[1]->data_bool);
+  EXPECT_TRUE(peers[2]->data_bool);
+
+  EXPECT_EQ(peers[0]->data_int32, peers[1]->data_int32);
+  EXPECT_EQ(peers[0]->data_int32, peers[2]->data_int32);
+
+  EXPECT_EQ(*peers[0]->data_int64, *peers[1]->data_int64);
+  EXPECT_EQ(*peers[0]->data_int64, *peers[2]->data_int64);
+
+  EXPECT_EQ(peers[0]->data_float32, peers[1]->data_float32);
+  EXPECT_EQ(peers[0]->data_float32, peers[2]->data_float32);
+
+  EXPECT_EQ(*peers[0]->data_float64, *peers[1]->data_float64);
+  EXPECT_EQ(*peers[0]->data_float64, *peers[2]->data_float64);
 }
+#endif
