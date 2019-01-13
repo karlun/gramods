@@ -12,7 +12,7 @@ BEGIN_NAMESPACE_GMNETWORK;
 class SimpleDataSynchronization;
 
 /**
-   Simple, single value synchronizeable data container.
+   Simple synchronizeable data container.
 */
 class SyncData {
 

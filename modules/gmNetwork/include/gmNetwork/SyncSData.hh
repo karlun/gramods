@@ -7,7 +7,8 @@
 BEGIN_NAMESPACE_GMNETWORK;
 
 /**
-   Simple, single value synchronizeable data container.
+   Simple, single value synchronizeable data container. It does not
+   support pointers or types containing pointers.
 */
 template<class TYPE>
 class SyncSData
