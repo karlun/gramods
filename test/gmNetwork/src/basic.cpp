@@ -2,6 +2,7 @@
 #include <gmNetwork/PeersConnection.hh>
 #include <gmNetwork/ExecutionSynchronization.hh>
 #include <gmNetwork/SyncSData.hh>
+#include <gmNetwork/SyncMData.hh>
 #include <gmNetwork/SimpleDataSynchronization.hh>
 
 
@@ -51,12 +52,15 @@ struct Peer {
 
     data_int64 = std::make_shared<gmNetwork::SyncSInt64>();
     data_float64 = std::make_shared<gmNetwork::SyncSFloat64>();
+    data_vec_float64 = std::make_shared<gmNetwork::SyncMFloat64>();
 
     data_sync->addData(&data_bool);
+    data_sync->addData(&data_vec_bool);
     data_sync->addData(&data_int32);
     data_sync->addData(&data_float32);
     data_sync->addData(data_int64);
     data_sync->addData(data_float64);
+    data_sync->addData(data_vec_float64);
     is_master = data_sync->getConnection()->getLocalPeerIdx() == 0;
 
     thread = std::make_unique<std::thread>([this](){ this->run(); });
@@ -86,6 +90,9 @@ struct Peer {
   std::shared_ptr<gmNetwork::SyncSInt64> data_int64 = 0;
   std::shared_ptr<gmNetwork::SyncSFloat64> data_float64 = 0;
 
+  gmNetwork::SyncMBool data_vec_bool;
+  std::shared_ptr<gmNetwork::SyncMFloat64> data_vec_float64;
+
   std::unique_ptr<std::thread> thread;
   std::mutex sync_lock;
   std::mutex count_lock;
@@ -103,6 +110,12 @@ struct Peer {
       *data_int64 = std::numeric_limits<int64_t>::max() - 97;
       data_float32 = 1.f / 3.f;
       *data_float64 = 1.0 / 6.0;
+
+      std::vector<char> vec_bool = data_vec_bool;
+      vec_bool.push_back(false);
+      vec_bool.push_back(true);
+      vec_bool.push_back(false);
+      data_vec_bool = vec_bool;
     }
 
     while (true) {
@@ -193,5 +206,20 @@ TEST(gmNetworkPeersConnection, waitForAll) {
 
   EXPECT_EQ(*peers[0]->data_float64, *peers[1]->data_float64);
   EXPECT_EQ(*peers[0]->data_float64, *peers[2]->data_float64);
+
+  std::vector<char> vec_bool0 = peers[0]->data_vec_bool;
+  std::vector<char> vec_bool1 = peers[1]->data_vec_bool;
+  std::vector<char> vec_bool2 = peers[2]->data_vec_bool;
+
+  EXPECT_GT(vec_bool0.size(), 1);
+  EXPECT_EQ(vec_bool0.size(), vec_bool1.size());
+  EXPECT_EQ(vec_bool0.size(), vec_bool2.size());
+
+  if (vec_bool0.size() == vec_bool1.size() &&
+      vec_bool0.size() == vec_bool2.size())
+    for (int idx = 0; idx < vec_bool0.size(); ++idx) {
+      EXPECT_EQ(vec_bool0[idx], vec_bool1[idx]);
+      EXPECT_EQ(vec_bool0[idx], vec_bool2[idx]);
+    }
 }
 #endif
