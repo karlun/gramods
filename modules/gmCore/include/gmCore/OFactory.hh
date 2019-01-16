@@ -204,6 +204,28 @@ public:
     void (Node::*method)(T val);
   };
 
+  template<class Node>
+  struct ParamSetter<Node, std::string> : ParamSetterBase {
+
+    ParamSetter(void (Node::*m)(std::string val))
+      : method(m) {}
+
+    void setValueFromString(Object *n, std::string s);
+
+    void (Node::*method)(std::string val);
+  };
+
+  template<class Node>
+  struct ParamSetter<Node, bool> : ParamSetterBase {
+
+    ParamSetter(void (Node::*m)(bool val))
+      : method(m) {}
+
+    void setValueFromString(Object *n, std::string s);
+
+    void (Node::*method)(bool val);
+  };
+
   template<class Node, class T>
   struct PointerSetter : PointerSetterBase {
 
@@ -256,6 +278,38 @@ void OFactory::ParamSetter<Node, T>::setValueFromString
   }
 
   (node->*method)(val);
+}
+
+template<class Node>
+void OFactory::ParamSetter<Node, std::string>::setValueFromString
+(Object *n, std::string s) {
+  assert(dynamic_cast<Node*>(n) != nullptr);
+  Node *node = static_cast<Node*>(n);
+
+  (node->*method)(s);
+}
+
+template<class Node>
+void OFactory::ParamSetter<Node, bool>::setValueFromString
+(Object *n, std::string s) {
+  assert(dynamic_cast<Node*>(n) != nullptr);
+  Node *node = static_cast<Node*>(n);
+
+  if (s == "true" ||
+      s == "True" ||
+      s == "TRUE" ||
+      s == "1") {
+    (node->*method)(true);
+  } else if (s == "false" ||
+             s == "False" ||
+             s == "FALSE" ||
+             s == "0") {
+    (node->*method)(false);
+  } else {
+    std::stringstream ss;
+    ss << "Cannot convert " << s << " to boolean";
+    throw std::invalid_argument(ss.str());
+  }
 }
 
 template<class Node, class T>

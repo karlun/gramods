@@ -223,3 +223,78 @@ TEST(gmCoreBaseFunctionality, MultipleParameters) {
   EXPECT_EQ(multis[1]->a[3], 74);
 
 }
+
+
+struct Types : gmCore::Object {
+  std::vector<std::string> strings;
+  std::vector<bool> bools;
+  void addString(std::string v) { strings.push_back(v); }
+  void addBool(bool v) { bools.push_back(v); }
+  GM_OFI_DECLARE;
+};
+
+GM_OFI_DEFINE(Types);
+GM_OFI_PARAM(Types, string, std::string, Types::addString);
+GM_OFI_PARAM(Types, bool, bool, Types::addBool);
+
+TEST(gmCoreBaseFunctionality, ParameterTypes) {
+
+  char arg0[] = "--xml";
+  char arg1[] = ""
+    "<config>"
+    "  <Types>"
+    "    <param name=\"string\" value=\"1391\"/>"
+    "    <param name=\"string\" value=\"12 12 12\"/>"
+    "    <param name=\"bool\" value=\"true\"/>"
+    "    <param name=\"bool\" value=\"True\"/>"
+    "    <param name=\"bool\" value=\"TRUE\"/>"
+    "    <param name=\"bool\" value=\"1\"/>"
+    "    <param name=\"bool\" value=\"false\"/>"
+    "    <param name=\"bool\" value=\"False\"/>"
+    "    <param name=\"bool\" value=\"FALSE\"/>"
+    "    <param name=\"bool\" value=\"0\"/>"
+    "  </Types>"
+    "</config>";
+
+  char *argv[] = { arg0, arg1 };
+  int argc = 2;
+
+  gmCore::Configuration config(argc, argv);
+
+  std::shared_ptr<Types> types;
+  EXPECT_TRUE(config.getObject(types));
+
+  ASSERT_EQ(types->strings.size(), 2);
+  ASSERT_EQ(types->bools.size(), 8);
+  EXPECT_EQ(types->strings[0], "1391");
+  EXPECT_EQ(types->strings[1], "12 12 12");
+  EXPECT_EQ(types->bools[0], true);
+  EXPECT_EQ(types->bools[1], true);
+  EXPECT_EQ(types->bools[2], true);
+  EXPECT_EQ(types->bools[3], true);
+  EXPECT_EQ(types->bools[4], false);
+  EXPECT_EQ(types->bools[5], false);
+  EXPECT_EQ(types->bools[6], false);
+  EXPECT_EQ(types->bools[7], false);
+
+  char arg2[] = ""
+    "<config>"
+    "  <Types>"
+    "    <param name=\"bool\" value=\"2\"/>"
+    "  </Types>"
+    "</config>";
+  char *argv2[] = { arg0, arg2 };
+  argc = 2;
+  EXPECT_THROW(gmCore::Configuration config(argc, argv2), std::invalid_argument);
+
+  char arg3[] = ""
+    "<config>"
+    "  <Types>"
+    "    <param name=\"bool\" value=\"tRue\"/>"
+    "  </Types>"
+    "</config>";
+  char *argv3[] = { arg0, arg3 };
+  argc = 2;
+  EXPECT_THROW(gmCore::Configuration config(argc, argv3), std::invalid_argument);
+
+}
