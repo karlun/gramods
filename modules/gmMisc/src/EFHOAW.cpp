@@ -234,26 +234,17 @@ EFHOAW::polco EFHOAW::Impl::findBestFit(size_t id, int sample_count, size_t orde
     }
   }
 
-  Eigen::MatrixXd res1(3, order + 1);
+  Eigen::MatrixXd res(3, order + 1);
 
-  auto XtX = poly.transpose() * poly;
+  auto XtX = poly.transpose() * poly; // NxM MxN -> NxN (order + 1)^2
   auto XtXinv = XtX.inverse();
   auto XtXinvXt = XtXinv * poly.transpose();
 
-  res1.row(0) = (XtXinvXt * getPosVector(id, sample_count, order, 0)).transpose();
-  res1.row(1) = (XtXinvXt * getPosVector(id, sample_count, order, 1)).transpose();
-  res1.row(2) = (XtXinvXt * getPosVector(id, sample_count, order, 2)).transpose();
+  res.row(0) = (XtXinvXt * getPosVector(id, sample_count, order, 0)).transpose();
+  res.row(1) = (XtXinvXt * getPosVector(id, sample_count, order, 1)).transpose();
+  res.row(2) = (XtXinvXt * getPosVector(id, sample_count, order, 2)).transpose();
 
-
-  Eigen::MatrixXd res2(3, order + 1);
-
-  // Ax = b
-  auto qr = poly.fullPivHouseholderQr();
-  res2.row(0) = qr.solve(getPosVector(id, sample_count, order, 0)).transpose();
-  res2.row(1) = qr.solve(getPosVector(id, sample_count, order, 1)).transpose();
-  res2.row(2) = qr.solve(getPosVector(id, sample_count, order, 2)).transpose();
-
-  return res1;
+  return res;
 }
 
 Eigen::MatrixXd EFHOAW::Impl::getPosVector(size_t id, int sample_count, size_t order, size_t dim) const {
