@@ -1,7 +1,7 @@
 
 #include <gtest/gtest.h>
 
-#include "effoaw.cpp"
+#include "end-fit.cpp"
 
 int main(int argc, char **argv) {
   ::testing::InitGoogleTest(&argc, argv);

@@ -1,9 +1,10 @@
 
 #include <gmMisc/EFFOAW.hh>
+#include <gmMisc/EFHOAW.hh>
 
 using namespace gramods;
 
-TEST(gmMiscEffoaw, Effoaw) {
+TEST(gmMiscEndFit, Effoaw) {
 
   gmMisc::EFFOAW effoaw;
   effoaw.setHistoryLength(6);
@@ -45,3 +46,29 @@ TEST(gmMiscEffoaw, Effoaw) {
   }
 }
 
+#define SAMPLES 100
+
+TEST(gmMiscEndFit, Efhoaw) {
+
+  gmMisc::EFHOAW efhoaw;
+  efhoaw.setHistoryLength(SAMPLES);
+  efhoaw.setHistoryDuration(10);
+
+  double a = 1.0 / SAMPLES;
+
+  for (int idx = 0; idx < SAMPLES; ++idx) {
+    double t = idx * a;
+    auto X = Eigen::Vector3d(cos(t), sin(t), t);
+    efhoaw.addSample(0, X, a * idx);
+  }
+
+  size_t samples;
+  gmMisc::EFHOAW::polco pc = efhoaw.estimateCoefficients(0, 0.1, 5, &samples);
+  EXPECT_EQ(samples, 10);
+
+  for (int idx = 0; idx < SAMPLES; ++idx) {
+    double t = idx * a;
+    auto X = Eigen::Vector3d(cos(t), sin(t), t);
+    auto P = efhoaw.getPolynomialPosition(0, t);
+  }
+}
