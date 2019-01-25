@@ -7,7 +7,8 @@
 #include <iostream>
 #include <sstream>
 
-#define POLY_ORDER 3
+#define POLY_ORDER  3
+#define POLY_ERROR 20
 
 SDLWindow::SDLWindow() :
   sdl_context(SDLContext::get()) {
@@ -59,7 +60,7 @@ void SDLWindow::update() {
     ef.addSample(0, Eigen::Vector3d(pt.x, pt.y, 0), idx++);
 
   try {
-    auto coeffs = ef.estimateCoefficients(0, 20, POLY_ORDER);
+    auto coeffs = ef.estimateCoefficients(0, POLY_ERROR, POLY_ORDER);
 
     SDL_SetRenderDrawColor(sdl_renderer, 190, 190, 190, 255);
 
