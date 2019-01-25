@@ -53,7 +53,7 @@ protected:
   virtual void renderFullPipeline(ViewSettings settings, Eye eye) = 0;
 
   std::shared_ptr<StereoscopicMultiplexer> stereoscopic_multiplexer;
-  float eye_separation = 0.65;
+  float eye_separation = 0.65f;
 
 };
 

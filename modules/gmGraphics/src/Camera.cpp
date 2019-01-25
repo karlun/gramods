@@ -14,13 +14,13 @@ Eigen::Matrix4f Camera::getProjectionMatrix(float near, float far) {
 
   Eigen::Matrix4f Mp = Eigen::Matrix4f::Zero();
 
-  Mp(0,0) = 2.0 / (right - left);
-  Mp(1,1) = 2.0 / (top - bottom);
+  Mp(0,0) = 2.f / (right - left);
+  Mp(1,1) = 2.f / (top - bottom);
   Mp(0,2) = (right + left) / (right - left);
   Mp(1,2) = (top + bottom) / (top - bottom);
   Mp(2,2) = -(far + near) / (far - near);
-  Mp(3,2) = -1.0;
-  Mp(2,3) = -(2.0 * far * near) / (far - near);
+  Mp(3,2) = -1.f;
+  Mp(2,3) = -(2.f * far * near) / (far - near);
 
   return Mp;
 }
@@ -44,9 +44,9 @@ Eigen::Affine3f Camera::getViewMatrix() {
 }
 
 void Camera::setFieldOfView(float fov_h, float fov_v) {
-  right = atan(0.5 * fov_h);
+  right = atanf(0.5f * fov_h);
   left = -right;
-  top = atan(0.5 * fov_v);
+  top = atanf(0.5f * fov_v);
   bottom = -top;
 }
 

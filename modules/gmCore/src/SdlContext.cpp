@@ -1,6 +1,8 @@
 
 #include <gmCore/SdlContext.hh>
 
+#ifdef gramods_ENABLE_SDL2
+
 BEGIN_NAMESPACE_GMCORE;
 
 GM_OFI_DEFINE(SdlContext);
@@ -10,6 +12,9 @@ GM_OFI_PARAM(SdlContext, useAudio, bool, SdlContext::setUseAudio);
 bool SdlContext::has_audio = false;
 bool SdlContext::has_video = false;
 bool SdlContext::has_instance = false;
+
+bool SdlContext::hasVideo() { return has_video; }
+bool SdlContext::hasAudio() { return has_audio; }
 
 SdlContext::SdlContext() {
   if (has_instance)
@@ -47,3 +52,4 @@ void SdlContext::initialize() {
 }
 
 END_NAMESPACE_GMCORE;
+#endif
