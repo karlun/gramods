@@ -24,7 +24,7 @@ struct EFHOAW::Impl {
 
   polco findBestFit(size_t id, int sample_count, size_t order) const;
 
-  Eigen::MatrixXd getPosVector(size_t id, int sample_count, size_t order, size_t dim) const;
+  Eigen::MatrixXd getPosVector(size_t id, int sample_count, size_t dim) const;
 
   Eigen::Vector3d getPolynomialPosition(int id, double t) const;
   Eigen::Vector3d getPolynomialVelocity(int id, double t) const;
@@ -147,15 +147,15 @@ EFHOAW::polco EFHOAW::Impl::estimateCoefficients
     return polco(3, 0);
   }
 
-  int best_idx = -1;
+  int best_count = 0;
   polco best_coefficients;
 
-  for (int candidate_idx = order + 1; candidate_idx < position_list.size(); ++candidate_idx) {
+  for (int candidate_count = order + 1; candidate_count <= position_list.size(); ++candidate_count) {
 
-    polco coefficients = findBestFit(id, candidate_idx, order);
+    polco coefficients = findBestFit(id, candidate_count, order);
 
     bool is_valid = true;
-    for (int idx = 1; idx <= candidate_idx; ++idx) {
+    for (int idx = 0; idx < candidate_count; ++idx) {
 
       auto pos = getPolynomialPosition(coefficients, time_list.at(idx) - time_list.at(0));
       auto off = pos - position_list.at(idx);
@@ -167,17 +167,20 @@ EFHOAW::polco EFHOAW::Impl::estimateCoefficients
     }
 
     if (is_valid) {
-      best_idx = candidate_idx;
+      best_count = candidate_count;
       best_coefficients = coefficients;
     } else {
       break;
     }
   }
-  if (samples != nullptr)
-    *samples = best_idx + 1;
 
-  coefficients[id] = best_coefficients;
-  return best_coefficients;
+  if (samples != nullptr)
+    *samples = best_count;
+
+  if (best_count == 0)
+    return polco(3, 0);
+
+  return coefficients[id] = best_coefficients;
 }
 
 void EFHOAW::cleanup(double time){
@@ -240,21 +243,20 @@ EFHOAW::polco EFHOAW::Impl::findBestFit(size_t id, int sample_count, size_t orde
   auto XtXinv = XtX.inverse();
   auto XtXinvXt = XtXinv * poly.transpose();
 
-  res.row(0) = (XtXinvXt * getPosVector(id, sample_count, order, 0)).transpose();
-  res.row(1) = (XtXinvXt * getPosVector(id, sample_count, order, 1)).transpose();
-  res.row(2) = (XtXinvXt * getPosVector(id, sample_count, order, 2)).transpose();
+  res.row(0) = (XtXinvXt * getPosVector(id, sample_count, 0)).transpose();
+  res.row(1) = (XtXinvXt * getPosVector(id, sample_count, 1)).transpose();
+  res.row(2) = (XtXinvXt * getPosVector(id, sample_count, 2)).transpose();
 
   return res;
 }
 
-Eigen::MatrixXd EFHOAW::Impl::getPosVector(size_t id, int sample_count, size_t order, size_t dim) const {
+Eigen::MatrixXd EFHOAW::Impl::getPosVector(size_t id, int sample_count, size_t dim) const {
 
   const position_list_t &position_list = history.at(id).second;
   Eigen::MatrixXd res(sample_count, 1);
 
-  for (int sample_idx = 0; sample_idx < sample_count; ++sample_idx) {
+  for (int sample_idx = 0; sample_idx < sample_count; ++sample_idx)
     res(sample_idx, 0) = position_list[sample_idx][dim];
-  }
 
   return res;
 }
