@@ -56,7 +56,7 @@ protected:
   std::vector<Point> points;
 
   bool alive;
-  bool dirty = false;
+  bool dirty;
 
 private:
 

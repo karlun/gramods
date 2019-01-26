@@ -19,6 +19,7 @@ SDLWindow::SDLWindow() :
   SDL_Renderer *renderer = sdl_renderer;
 
   alive = true;
+  dirty = true;
 }
 
 SDLWindow::~SDLWindow() {
