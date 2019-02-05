@@ -1,10 +1,10 @@
 
-#include <touchlib/TouchState.hh>
+#include <gmTouch/TouchState.hh>
 
 #include <stdexcept>
 #include <limits>
 
-using namespace touchlib;
+BEGIN_NAMESPACE_GMTOUCH;
 
 #define DEFAULT_SMOOTHING 0.2f
 #define DEFAULT_MOVE_MAGNITUDE 10
@@ -186,14 +186,14 @@ bool TouchState::setCurrentProjection(osg::Camera * camera) {
   if (!invVPW.invert(VPW))
     return false;
 
-  current_WPV_inv = utm50_utils::Matrix4f::fromArrayCM(invVPW.ptr());
+  current_WPV_inv = Eigen::Matrix4f::fromArrayCM(invVPW.ptr());
   current_WPV_inv_valid = true;
 
   return true;
 }
 #endif
 
-void TouchState::setCurrentProjection(utm50_utils::Matrix4f WPV_inv) {
+void TouchState::setCurrentProjection(Eigen::Matrix4f WPV_inv) {
   assert(state == 1);
   current_WPV_inv = WPV_inv;
   current_WPV_inv_valid = true;
@@ -211,13 +211,13 @@ bool TouchState::getTouchLines(TouchLines &current) const {
 
   for (auto pt : cur_pts) {
     
-    utm50_utils::Vector4f nearPoint =
-      (current_WPV_inv * utm50_utils::Vector4f(pt.sx, current_height - pt.sy, 0.f)).renormalized();
-    utm50_utils::Vector4f farPoint =
-      (current_WPV_inv * utm50_utils::Vector4f(pt.sx, current_height - pt.sy, 1.f)).renormalized();
+    Eigen::Vector4f nearPoint =
+      (current_WPV_inv * Eigen::Vector4f(pt.sx, current_height - pt.sy, 0.f)).renormalized();
+    Eigen::Vector4f farPoint =
+      (current_WPV_inv * Eigen::Vector4f(pt.sx, current_height - pt.sy, 1.f)).renormalized();
 
     TouchLine tl = { nearPoint,
-                     utm50_utils::Vector3f(farPoint - nearPoint).normalized(),
+                     Eigen::Vector3f(farPoint - nearPoint).normalized(),
                      pt.id,
                      pt.state,
                      pt.clicks };
@@ -241,13 +241,13 @@ bool TouchState::getTouchLines(TouchLines &current, TouchLines &previous) const 
   current.reserve(cur_pts.size());
   for (auto pt : cur_pts) {
     
-    utm50_utils::Vector4f nearPoint =
-      (current_WPV_inv * utm50_utils::Vector4f(pt.sx, current_height - pt.sy, 0.f)).renormalized();
-    utm50_utils::Vector4f farPoint =
-      (current_WPV_inv * utm50_utils::Vector4f(pt.sx, current_height - pt.sy, 1.f)).renormalized();
+    Eigen::Vector4f nearPoint =
+      (current_WPV_inv * Eigen::Vector4f(pt.sx, current_height - pt.sy, 0.f)).renormalized();
+    Eigen::Vector4f farPoint =
+      (current_WPV_inv * Eigen::Vector4f(pt.sx, current_height - pt.sy, 1.f)).renormalized();
     
     TouchLine tl = { nearPoint,
-                     utm50_utils::Vector3f(farPoint - nearPoint).normalized(),
+                     Eigen::Vector3f(farPoint - nearPoint).normalized(),
                      pt.id,
                      pt.state,
                      pt.clicks };
@@ -257,13 +257,13 @@ bool TouchState::getTouchLines(TouchLines &current, TouchLines &previous) const 
   previous.reserve(pre_pts.size());
   for (auto pt : pre_pts) {
     
-    utm50_utils::Vector4f nearPoint =
-      (previous_WPV_inv * utm50_utils::Vector4f(pt.sx, previous_height - pt.sy, 0.f)).renormalized();
-    utm50_utils::Vector4f farPoint =
-      (previous_WPV_inv * utm50_utils::Vector4f(pt.sx, previous_height - pt.sy, 1.f)).renormalized();
+    Eigen::Vector4f nearPoint =
+      (previous_WPV_inv * Eigen::Vector4f(pt.sx, previous_height - pt.sy, 0.f)).renormalized();
+    Eigen::Vector4f farPoint =
+      (previous_WPV_inv * Eigen::Vector4f(pt.sx, previous_height - pt.sy, 1.f)).renormalized();
      
     TouchLine tl = { nearPoint,
-                     utm50_utils::Vector3f(farPoint - nearPoint).normalized(),
+                     Eigen::Vector3f(farPoint - nearPoint).normalized(),
                      pt.id,
                      pt.state,
                      pt.clicks };
@@ -288,13 +288,13 @@ bool TouchState::getTouchLines(std::map<void*, TouchLines> &current) const {
     
     for (auto pt : it.second) {
       
-      utm50_utils::Vector4f nearPoint =
-        (current_WPV_inv * utm50_utils::Vector4f(pt.sx, current_height - pt.sy, 0.f)).renormalized();
-      utm50_utils::Vector4f farPoint =
-        (current_WPV_inv * utm50_utils::Vector4f(pt.sx, current_height - pt.sy, 1.f)).renormalized();
+      Eigen::Vector4f nearPoint =
+        (current_WPV_inv * Eigen::Vector4f(pt.sx, current_height - pt.sy, 0.f)).renormalized();
+      Eigen::Vector4f farPoint =
+        (current_WPV_inv * Eigen::Vector4f(pt.sx, current_height - pt.sy, 1.f)).renormalized();
       
       TouchLine tl = { nearPoint,
-                       utm50_utils::Vector3f(farPoint - nearPoint).normalized(),
+                       Eigen::Vector3f(farPoint - nearPoint).normalized(),
                        pt.id,
                        pt.state,
                        pt.clicks };
@@ -326,13 +326,13 @@ bool TouchState::getTouchLines(std::map<void*, TouchLines> &current,
     
     for (auto pt : it.second) {
 
-      utm50_utils::Vector4f nearPoint =
-        (current_WPV_inv * utm50_utils::Vector4f(pt.sx, current_height - pt.sy, 0.f)).renormalized();
-      utm50_utils::Vector4f farPoint =
-        (current_WPV_inv * utm50_utils::Vector4f(pt.sx, current_height - pt.sy, 1.f)).renormalized();
+      Eigen::Vector4f nearPoint =
+        (current_WPV_inv * Eigen::Vector4f(pt.sx, current_height - pt.sy, 0.f)).renormalized();
+      Eigen::Vector4f farPoint =
+        (current_WPV_inv * Eigen::Vector4f(pt.sx, current_height - pt.sy, 1.f)).renormalized();
 
       TouchLine tl = { nearPoint,
-                       utm50_utils::Vector3f(farPoint - nearPoint).normalized(),
+                       Eigen::Vector3f(farPoint - nearPoint).normalized(),
                        pt.id,
                        pt.state,
                        pt.clicks };
@@ -348,13 +348,13 @@ bool TouchState::getTouchLines(std::map<void*, TouchLines> &current,
     
     for (auto pt : it.second) {
       
-      utm50_utils::Vector4f nearPoint =
-        (previous_WPV_inv * utm50_utils::Vector4f(pt.sx, previous_height - pt.sy, 0.f)).renormalized();
-      utm50_utils::Vector4f farPoint =
-        (previous_WPV_inv * utm50_utils::Vector4f(pt.sx, previous_height - pt.sy, 1.f)).renormalized();
+      Eigen::Vector4f nearPoint =
+        (previous_WPV_inv * Eigen::Vector4f(pt.sx, previous_height - pt.sy, 0.f)).renormalized();
+      Eigen::Vector4f farPoint =
+        (previous_WPV_inv * Eigen::Vector4f(pt.sx, previous_height - pt.sy, 1.f)).renormalized();
       
       TouchLine tl = { nearPoint,
-                       utm50_utils::Vector3f(farPoint - nearPoint).normalized(),
+                       Eigen::Vector3f(farPoint - nearPoint).normalized(),
                        pt.id,
                        pt.state,
                        pt.clicks };
@@ -381,20 +381,20 @@ void TouchState::getMousePoint(int &x, int &y) const {
   y = mouse_point_y;
 }
 
-bool TouchState::getMouseLine(utm50_utils::Vector4f &x,
-                              utm50_utils::Vector3f &v) const {
+bool TouchState::getMouseLine(Eigen::Vector4f &x,
+                              Eigen::Vector3f &v) const {
   if (! current_WPV_inv_valid) return false;
 
   int px, py;
   getMousePoint(px, py);
   
-  utm50_utils::Vector4f nearPoint =
-    (current_WPV_inv * utm50_utils::Vector4f(px, current_height - py, 0.f)).renormalized();
-  utm50_utils::Vector4f farPoint =
-    (current_WPV_inv * utm50_utils::Vector4f(px, current_height - py, 1.f)).renormalized();
+  Eigen::Vector4f nearPoint =
+    (current_WPV_inv * Eigen::Vector4f(px, current_height - py, 0.f)).renormalized();
+  Eigen::Vector4f farPoint =
+    (current_WPV_inv * Eigen::Vector4f(px, current_height - py, 1.f)).renormalized();
   
   x = nearPoint;
-  v = utm50_utils::Vector3f(farPoint - nearPoint).normalized();
+  v = Eigen::Vector3f(farPoint - nearPoint).normalized();
   
   return true;
 }
@@ -506,7 +506,7 @@ void TouchState::addState(TouchPointId id, float x, float y, double time) {
     current_state.insert(std::make_pair(id, p));
   }
 
-  velocityEstimator.addSample(id, utm50_utils::Vector3f(x, y, 0), time);
+  velocityEstimator.addSample(id, Eigen::Vector3f(x, y, 0), time);
 }
 
 void TouchState::removeTouchState(TouchPointId id, float x, float y) {
@@ -548,8 +548,8 @@ void TouchState::eventsDone() {
   for (auto &pt : current_state) {
     
     double last_time = velocityEstimator.getLastSampleTime(pt.first);
-    utm50_utils::Vector3f vel = velocityEstimator.estimateVelocity(pt.first, move_magnitude);
-    utm50_utils::Vector3f pos = velocityEstimator.estimatePosition(pt.first, move_magnitude, last_time);
+    Eigen::Vector3f vel = velocityEstimator.estimateVelocity(pt.first, move_magnitude);
+    Eigen::Vector3f pos = velocityEstimator.estimatePosition(pt.first, move_magnitude, last_time);
 
     pt.second.x = pos[0];
     pt.second.y = pos[1];
@@ -698,3 +698,5 @@ void TouchState::check_click(HistoryState hist, TouchPoint &new_pt) {
   
   new_pt.state |= State::CLICK;
 }
+
+END_NAMESPACE_GMTOUCH;

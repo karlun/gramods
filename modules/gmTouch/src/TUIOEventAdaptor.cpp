@@ -1,7 +1,7 @@
 
-#include <touchlib/TUIOEventAdaptor.hh>
+#include <gmTouch/TUIOEventAdaptor.hh>
 
-#ifdef TOUCHLIB_ENABLE_TUIO
+#ifdef gramods_ENABLE_TUIO
 
 #include <UdpReceiver.h>
 #include <TcpReceiver.h>

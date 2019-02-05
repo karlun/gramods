@@ -1,16 +1,16 @@
 
-#ifndef __TOUCHLIB_TOUCHSTATE_HH__
-#define __TOUCHLIB_TOUCHSTATE_HH__
+#ifndef GRAMODS_TOUCH_TOUCHSTATE
+#define GRAMODS_TOUCH_TOUCHSTATE
 
-#include <touchlib/config.hh>
+#include <gmTouch/config.hh>
 
-#ifdef TOUCHLIB_ENABLE_OpenSceneGraph
+#ifdef gramods_ENABLE_OpenSceneGraph
 #include <osg/Camera>
 #endif
 
-#include <touchlib/EFFOAW.hh>
+#include <gmTouch/EFFOAW.hh>
 
-#include <utm50_utils/linearalgebra.hh>
+#include <Eigen/Eigen>
 
 #include <vector>
 #include <chrono>
@@ -21,7 +21,7 @@
 
 #include <assert.h>
 
-namespace touchlib {
+BEGIN_NAMESPACE_GMTOUCH;
 
   /**
    * The TouchState class represent the internal states during touch
@@ -173,10 +173,10 @@ namespace touchlib {
     struct TouchLine {
 
       /// The origin of the 3D line.
-      utm50_utils::Vector4f x;
+      Eigen::Vector3f x;
 
       /// The direction of the 3D line.
-      utm50_utils::Vector3f v;
+      Eigen::Vector3f v;
  
       /// internal id of the touch point.
       TouchPointId id;
@@ -317,7 +317,7 @@ namespace touchlib {
      */
     ///@{
 
-#ifdef TOUCHLIB_ENABLE_OpenSceneGraph
+#ifdef gramods_ENABLE_OpenSceneGraph
     /**
      * Calculates and sets the current projection matrix to use when
      * back-projecting the 2D touch points into 3D, and set the
@@ -354,7 +354,7 @@ namespace touchlib {
      * 
      * \see getCurrent3DTouchLine
      */
-    void setCurrentProjection(utm50_utils::Matrix4f WPV_inv);
+    void setCurrentProjection(Eigen::Matrix4f WPV_inv);
     
     /**
      * Gets the current touch lines and returns true, if lines can be
@@ -449,8 +449,8 @@ namespace touchlib {
      * Get the point point as a touch line. Returns true if the line
      * could be calculated.
      */
-    bool getMouseLine(utm50_utils::Vector4f &x,
-                      utm50_utils::Vector3f &v) const;
+    bool getMouseLine(Eigen::Vector3f &x,
+                      Eigen::Vector3f &v) const;
     
     ///!@}
     
@@ -634,7 +634,7 @@ namespace touchlib {
       clock::time_point time;
     };
 
-    EFFOAW<utm50_utils::Vector3f> velocityEstimator;
+    EFFOAW<Eigen::Vector3f> velocityEstimator;
     
     /**
      * Adds a touch point sample
@@ -725,10 +725,10 @@ namespace touchlib {
 
     int state;
 
-    utm50_utils::Matrix4f current_WPV_inv;
+    Eigen::Matrix4f current_WPV_inv;
     bool current_WPV_inv_valid;
 
-    utm50_utils::Matrix4f previous_WPV_inv;
+    Eigen::Matrix4f previous_WPV_inv;
     bool previous_WPV_inv_valid;
 
     int current_height;
@@ -754,6 +754,7 @@ namespace touchlib {
     assert(dynamic_cast<T*>(event_adaptors[typeid(T)]));
     return *dynamic_cast<T*>(event_adaptors[typeid(T)]);
   }
-}
+
+END_NAMESPACE_GMTOUCH;
 
 #endif

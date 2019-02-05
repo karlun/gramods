@@ -1,12 +1,12 @@
 
-#ifndef __TOUCHLIB_SDLEVENTADAPTOR_HH__
-#define __TOUCHLIB_SDLEVENTADAPTOR_HH__
+#ifndef GRAMODS_TOUCH_SDLEVENTADAPTOR
+#define GRAMODS_TOUCH_SDLEVENTADAPTOR
 
-#include <touchlib/config.hh>
+#include <gmTouch/config.hh>
 
-#ifdef TOUCHLIB_ENABLE_SDL2
+#ifdef gramods_ENABLE_SDL2
 
-#include <touchlib/TouchState.hh>
+#include <gmTouch/TouchState.hh>
 
 #include <SDL.h>
 

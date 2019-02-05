@@ -4,15 +4,19 @@
    <COPYRIGHT NOTICE>
 */
 
-#ifndef __TOUCHLIB_EFFOAW_HH__
-#define __TOUCHLIB_EFFOAW_HH__
+#ifndef GRAMODS_TOUCH_EFFOAW
+#define GRAMODS_TOUCH_EFFOAW
+
+#include <gmTouch/config.hh>
 
 #include <deque>
 #include <map>
 #include <cstddef>
 #include <limits>
 
-namespace touchlib {
+#include <math.h>
+
+BEGIN_NAMESPACE_GMTOUCH;
   
   /**
      This is an end-fitting first-order adaptive window estimator of
@@ -136,12 +140,12 @@ namespace touchlib {
 }
 
 template<class VEC>
-touchlib::EFFOAW<VEC>::EFFOAW()
+gmTouch::EFFOAW<VEC>::EFFOAW()
   : history_length(10),
     history_duration(1.f) {}
 
 template<class VEC>
-void touchlib::EFFOAW<VEC>::addSample(size_t id, VEC position, double time){
+void gmTouch::EFFOAW<VEC>::addSample(size_t id, VEC position, double time){
   
   time_list_t &time_list = history[id].first;
   position_list_t &position_list = history[id].second;
@@ -168,7 +172,7 @@ void touchlib::EFFOAW<VEC>::addSample(size_t id, VEC position, double time){
 
 template<class VEC>
 template<class TYPE>
-VEC touchlib::EFFOAW<VEC>::estimateVelocity(size_t id, TYPE error_threshold, size_t *samples) const {
+VEC gmTouch::EFFOAW<VEC>::estimateVelocity(size_t id, TYPE error_threshold, size_t *samples) const {
 
   typename std::map< size_t, time_position_t >::const_iterator hist = history.find(id);
   if( hist == history.end() ){
@@ -216,7 +220,7 @@ VEC touchlib::EFFOAW<VEC>::estimateVelocity(size_t id, TYPE error_threshold, siz
 
 template<class VEC>
 template<class TYPE>
-VEC touchlib::EFFOAW<VEC>::estimatePosition(size_t id, TYPE error_threshold, double time, size_t *ret_samples) const {
+VEC gmTouch::EFFOAW<VEC>::estimatePosition(size_t id, TYPE error_threshold, double time, size_t *ret_samples) const {
 
   typename std::map< size_t, time_position_t >::const_iterator hist = history.find(id);
   if( hist == history.end() ){
@@ -265,7 +269,7 @@ VEC touchlib::EFFOAW<VEC>::estimatePosition(size_t id, TYPE error_threshold, dou
 }
 
 template<class VEC>
-void touchlib::EFFOAW<VEC>::cleanup(double time){
+void gmTouch::EFFOAW<VEC>::cleanup(double time){
 
   if (time < 0)
     for (auto it : history)
@@ -295,6 +299,7 @@ void touchlib::EFFOAW<VEC>::cleanup(double time){
       history.erase(current_it);
     }
   }
-}
+
+END_NAMESPACE_GMTOUCH;
 
 #endif

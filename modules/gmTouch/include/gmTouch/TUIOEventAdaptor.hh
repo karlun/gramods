@@ -1,12 +1,12 @@
 
-#ifndef __TOUCHLIB_TUIOEVENTADAPTOR_HH__
-#define __TOUCHLIB_TUIOEVENTADAPTOR_HH__
+#ifndef GRAMODS_TOUCH_TUIOEVENTADAPTOR
+#define GRAMODS_TOUCH_TUIOEVENTADAPTOR
 
-#include <touchlib/config.hh>
+#include <gmTouch/config.hh>
 
-#ifdef TOUCHLIB_ENABLE_TUIO
+#ifdef gramods_ENABLE_TUIO
 
-#include <touchlib/TouchState.hh>
+#include <gmTouch/TouchState.hh>
 
 #include <TuioListener.h>
 #include <TuioClient.h>

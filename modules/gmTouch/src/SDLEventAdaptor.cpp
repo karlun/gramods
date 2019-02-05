@@ -1,7 +1,7 @@
 
-#include <touchlib/SDLEventAdaptor.hh>
+#include <gmTouch/SDLEventAdaptor.hh>
 
-#ifdef TOUCHLIB_ENABLE_SDL2
+#ifdef gramods_ENABLE_SDL2
 
 using namespace touchlib;
 
