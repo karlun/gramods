@@ -11,53 +11,53 @@
 #include <SDL.h>
 
 BEGIN_NAMESPACE_GMTOUCH;
-  
+
+/**
+ * Event adaptor for SDL2, providing means to input events into
+ * TouchState.
+ *
+ * Typical use:
+ * \code{.cpp}
+ * int width, height;
+ * SDL_GetWindowSize(sdl_window, &width, &height);
+ *
+ * touchState.eventsInit(width, height);
+ *
+ * SDL_Event event;
+ * while(SDL_PollEvent(&event)) {
+ *   touchState.getEventAdaptor<touchlib::SDLEventAdaptor>().handleEvent(event);
+ * }
+ * touchState.eventsDone();
+ * \endcode
+ */
+class SDLEventAdaptor
+  : public TouchState::EventAdaptor {
+
+public:
+
   /**
-   * Event adaptor for SDL2, providing means to input events into
-   * TouchState.
-   * 
-   * Typical use:
-   * \code{.cpp}
-   * int width, height;
-   * SDL_GetWindowSize(sdl_window, &width, &height);
-   * 
-   * touchState.eventsInit(width, height);
-   *
-   * SDL_Event event;
-   * while(SDL_PollEvent(&event)) {
-   *   touchState.getEventAdaptor<touchlib::SDLEventAdaptor>().handleEvent(event);
-   * }
-   * touchState.eventsDone();
-   * \endcode
+   * Called by the owner (TouchState) when eventsInit is called.
    */
-  class SDLEventAdaptor
-    : public TouchState::EventAdaptor {
-    
-  public:
+  void init(int width, int height);
 
-    /**
-     * Called by the owner (TouchState) when eventsInit is called.
-     */
-    void init(int width, int height);
-    
-    /**
-     * Called by the owner (TouchState) when eventsDone is called.
-     */
-    void done();
+  /**
+   * Called by the owner (TouchState) when eventsDone is called.
+   */
+  void done();
 
-    /**
-     * Updates the internal touch states based on the provided
-     * event. Call this once for each incoming event and finish with a
-     * call to eventsDone.
-     */
-    void handleEvent(const SDL_Event& event);
+  /**
+   * Updates the internal touch states based on the provided
+   * event. Call this once for each incoming event and finish with a
+   * call to eventsDone.
+   */
+  void handleEvent(const SDL_Event& event);
 
-  private:
+private:
 
-    int width, height;
-    bool mouse_down = false;
-  };
-  
+  int width, height;
+  bool mouse_down = false;
+};
+
 END_NAMESPACE_GMTOUCH;
 
 #endif
