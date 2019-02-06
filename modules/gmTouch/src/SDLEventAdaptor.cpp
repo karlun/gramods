@@ -3,7 +3,7 @@
 
 #ifdef gramods_ENABLE_SDL2
 
-using namespace touchlib;
+BEGIN_NAMESPACE_GMTOUCH;
 
 void SDLEventAdaptor::init(int width, int height) {
   this->width = width;
@@ -54,4 +54,7 @@ void SDLEventAdaptor::handleEvent(const SDL_Event& event) {
     return;
   }
 }
+
+END_NAMESPACE_GMTOUCH;
+
 #endif

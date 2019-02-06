@@ -10,7 +10,7 @@
 
 #include <SDL.h>
 
-namespace touchlib {
+BEGIN_NAMESPACE_GMTOUCH;
   
   /**
    * Event adaptor for SDL2, providing means to input events into
@@ -58,7 +58,7 @@ namespace touchlib {
     bool mouse_down = false;
   };
   
-}
+END_NAMESPACE_GMTOUCH;
 
 #endif
 #endif
