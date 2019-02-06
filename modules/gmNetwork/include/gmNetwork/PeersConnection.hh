@@ -9,7 +9,12 @@
 #include <gmCore/Object.hh>
 #include <gmCore/OFactory.hh>
 
+#ifndef ASIO_STANDALONE
+#define ASIO_STANDALONE
+#endif
+
 #include <asio.hpp>
+
 #include <map>
 #include <vector>
 #include <deque>
