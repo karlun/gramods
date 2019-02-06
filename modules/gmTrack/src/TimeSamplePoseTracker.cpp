@@ -127,6 +127,7 @@ bool TimeSamplePoseTracker::Impl::getPose(PoseSample &p) {
     p.orientation = orientation[from_time].slerp(a, orientation[to_time]);
   }
 
+  return true;
 }
 
 

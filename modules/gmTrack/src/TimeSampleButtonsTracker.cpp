@@ -89,6 +89,7 @@ bool TimeSampleButtonsTracker::Impl::getButtons(ButtonsSample &b) {
   else
     b.buttons = button_states[last_time];
 
+  return true;
 }
 
 
