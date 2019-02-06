@@ -211,10 +211,10 @@ bool TouchState::getTouchLines(TouchLines &current) const {
 
   for (auto pt : cur_pts) {
     
-    Eigen::Vector4f nearPoint =
-      (current_WPV_inv * Eigen::Vector4f(pt.sx, current_height - pt.sy, 0.f)).renormalized();
-    Eigen::Vector4f farPoint =
-      (current_WPV_inv * Eigen::Vector4f(pt.sx, current_height - pt.sy, 1.f)).renormalized();
+    Eigen::Vector3f nearPoint =
+      (current_WPV_inv * Eigen::Vector3f(pt.sx, current_height - pt.sy, 0.f)).normalized();
+    Eigen::Vector3f farPoint =
+      (current_WPV_inv * Eigen::Vector3f(pt.sx, current_height - pt.sy, 1.f)).normalized();
 
     TouchLine tl = { nearPoint,
                      Eigen::Vector3f(farPoint - nearPoint).normalized(),
@@ -241,10 +241,10 @@ bool TouchState::getTouchLines(TouchLines &current, TouchLines &previous) const 
   current.reserve(cur_pts.size());
   for (auto pt : cur_pts) {
     
-    Eigen::Vector4f nearPoint =
-      (current_WPV_inv * Eigen::Vector4f(pt.sx, current_height - pt.sy, 0.f)).renormalized();
-    Eigen::Vector4f farPoint =
-      (current_WPV_inv * Eigen::Vector4f(pt.sx, current_height - pt.sy, 1.f)).renormalized();
+    Eigen::Vector3f nearPoint =
+      (current_WPV_inv * Eigen::Vector3f(pt.sx, current_height - pt.sy, 0.f)).normalized();
+    Eigen::Vector3f farPoint =
+      (current_WPV_inv * Eigen::Vector3f(pt.sx, current_height - pt.sy, 1.f)).normalized();
     
     TouchLine tl = { nearPoint,
                      Eigen::Vector3f(farPoint - nearPoint).normalized(),
@@ -257,10 +257,10 @@ bool TouchState::getTouchLines(TouchLines &current, TouchLines &previous) const 
   previous.reserve(pre_pts.size());
   for (auto pt : pre_pts) {
     
-    Eigen::Vector4f nearPoint =
-      (previous_WPV_inv * Eigen::Vector4f(pt.sx, previous_height - pt.sy, 0.f)).renormalized();
-    Eigen::Vector4f farPoint =
-      (previous_WPV_inv * Eigen::Vector4f(pt.sx, previous_height - pt.sy, 1.f)).renormalized();
+    Eigen::Vector3f nearPoint =
+      (previous_WPV_inv * Eigen::Vector3f(pt.sx, previous_height - pt.sy, 0.f)).normalized();
+    Eigen::Vector3f farPoint =
+      (previous_WPV_inv * Eigen::Vector3f(pt.sx, previous_height - pt.sy, 1.f)).normalized();
      
     TouchLine tl = { nearPoint,
                      Eigen::Vector3f(farPoint - nearPoint).normalized(),
@@ -288,10 +288,10 @@ bool TouchState::getTouchLines(std::map<void*, TouchLines> &current) const {
     
     for (auto pt : it.second) {
       
-      Eigen::Vector4f nearPoint =
-        (current_WPV_inv * Eigen::Vector4f(pt.sx, current_height - pt.sy, 0.f)).renormalized();
-      Eigen::Vector4f farPoint =
-        (current_WPV_inv * Eigen::Vector4f(pt.sx, current_height - pt.sy, 1.f)).renormalized();
+      Eigen::Vector3f nearPoint =
+        (current_WPV_inv * Eigen::Vector3f(pt.sx, current_height - pt.sy, 0.f)).normalized();
+      Eigen::Vector3f farPoint =
+        (current_WPV_inv * Eigen::Vector3f(pt.sx, current_height - pt.sy, 1.f)).normalized();
       
       TouchLine tl = { nearPoint,
                        Eigen::Vector3f(farPoint - nearPoint).normalized(),
@@ -326,10 +326,10 @@ bool TouchState::getTouchLines(std::map<void*, TouchLines> &current,
     
     for (auto pt : it.second) {
 
-      Eigen::Vector4f nearPoint =
-        (current_WPV_inv * Eigen::Vector4f(pt.sx, current_height - pt.sy, 0.f)).renormalized();
-      Eigen::Vector4f farPoint =
-        (current_WPV_inv * Eigen::Vector4f(pt.sx, current_height - pt.sy, 1.f)).renormalized();
+      Eigen::Vector3f nearPoint =
+        (current_WPV_inv * Eigen::Vector3f(pt.sx, current_height - pt.sy, 0.f)).normalized();
+      Eigen::Vector3f farPoint =
+        (current_WPV_inv * Eigen::Vector3f(pt.sx, current_height - pt.sy, 1.f)).normalized();
 
       TouchLine tl = { nearPoint,
                        Eigen::Vector3f(farPoint - nearPoint).normalized(),
@@ -348,10 +348,10 @@ bool TouchState::getTouchLines(std::map<void*, TouchLines> &current,
     
     for (auto pt : it.second) {
       
-      Eigen::Vector4f nearPoint =
-        (previous_WPV_inv * Eigen::Vector4f(pt.sx, previous_height - pt.sy, 0.f)).renormalized();
-      Eigen::Vector4f farPoint =
-        (previous_WPV_inv * Eigen::Vector4f(pt.sx, previous_height - pt.sy, 1.f)).renormalized();
+      Eigen::Vector3f nearPoint =
+        (previous_WPV_inv * Eigen::Vector3f(pt.sx, previous_height - pt.sy, 0.f)).normalized();
+      Eigen::Vector3f farPoint =
+        (previous_WPV_inv * Eigen::Vector3f(pt.sx, previous_height - pt.sy, 1.f)).normalized();
       
       TouchLine tl = { nearPoint,
                        Eigen::Vector3f(farPoint - nearPoint).normalized(),
@@ -381,17 +381,17 @@ void TouchState::getMousePoint(int &x, int &y) const {
   y = mouse_point_y;
 }
 
-bool TouchState::getMouseLine(Eigen::Vector4f &x,
+bool TouchState::getMouseLine(Eigen::Vector3f &x,
                               Eigen::Vector3f &v) const {
   if (! current_WPV_inv_valid) return false;
 
   int px, py;
   getMousePoint(px, py);
   
-  Eigen::Vector4f nearPoint =
-    (current_WPV_inv * Eigen::Vector4f(px, current_height - py, 0.f)).renormalized();
-  Eigen::Vector4f farPoint =
-    (current_WPV_inv * Eigen::Vector4f(px, current_height - py, 1.f)).renormalized();
+  Eigen::Vector3f nearPoint =
+    (current_WPV_inv * Eigen::Vector3f(px, current_height - py, 0.f)).normalized();
+  Eigen::Vector3f farPoint =
+    (current_WPV_inv * Eigen::Vector3f(px, current_height - py, 1.f)).normalized();
   
   x = nearPoint;
   v = Eigen::Vector3f(farPoint - nearPoint).normalized();
@@ -548,8 +548,8 @@ void TouchState::eventsDone() {
   for (auto &pt : current_state) {
     
     double last_time = velocityEstimator.getLastSampleTime(pt.first);
-    Eigen::Vector3f vel = velocityEstimator.estimateVelocity(pt.first, move_magnitude);
-    Eigen::Vector3f pos = velocityEstimator.estimatePosition(pt.first, move_magnitude, last_time);
+    Eigen::Vector3f vel = Eigen::Map<const Eigen::VectorXd>(&velocityEstimator.estimateVelocity(pt.first, move_magnitude)[0], 3).cast<float>();
+    Eigen::Vector3f pos = Eigen::Map<const Eigen::VectorXd>(&velocityEstimator.estimatePosition(pt.first, move_magnitude, last_time)[0], 3).cast<float>();
 
     pt.second.x = pos[0];
     pt.second.y = pos[1];
