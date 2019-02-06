@@ -25,7 +25,7 @@ BEGIN_NAMESPACE_GMTOUCH;
  *
  * SDL_Event event;
  * while(SDL_PollEvent(&event)) {
- *   touchState.getEventAdaptor<touchlib::SDLEventAdaptor>().handleEvent(event);
+ *   touchState.getEventAdaptor<gmTouch::SDLEventAdaptor>().handleEvent(event);
  * }
  * touchState.eventsDone();
  * \endcode

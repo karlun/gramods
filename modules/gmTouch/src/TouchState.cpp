@@ -176,7 +176,7 @@ bool TouchState::getAssociation(TouchPointId id, void* pt) const {
 }
 
 
-#ifdef TOUCHLIB_ENABLE_OpenSceneGraph
+#ifdef gramods_ENABLE_OpenSceneGraph
 bool TouchState::setCurrentProjection(osg::Camera * camera) {
   assert(state == 1);
   osg::Matrix VPW = (camera->getViewMatrix()
@@ -186,7 +186,7 @@ bool TouchState::setCurrentProjection(osg::Camera * camera) {
   if (!invVPW.invert(VPW))
     return false;
 
-  current_WPV_inv = Eigen::Matrix4f::fromArrayCM(invVPW.ptr());
+  current_WPV_inv = Eigen::Map<Eigen::Matrix4d>(invVPW.ptr()).cast<float>();
   current_WPV_inv_valid = true;
 
   return true;
