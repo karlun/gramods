@@ -506,7 +506,7 @@ void TouchState::addState(TouchPointId id, float x, float y, double time) {
     current_state.insert(std::make_pair(id, p));
   }
 
-  velocityEstimator.addSample(id, Eigen::Vector3f(x, y, 0), time);
+  velocityEstimator.addSample(id, {x, y, 0}, time);
 }
 
 void TouchState::removeTouchState(TouchPointId id, float x, float y) {

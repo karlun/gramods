@@ -8,7 +8,7 @@
 #include <osg/Camera>
 #endif
 
-#include <gmTouch/EFFOAW.hh>
+#include <gmMisc/EFFOAW.hh>
 
 #include <Eigen/Eigen>
 
@@ -634,7 +634,7 @@ BEGIN_NAMESPACE_GMTOUCH;
       clock::time_point time;
     };
 
-    EFFOAW<Eigen::Vector3f> velocityEstimator;
+    gmMisc::EFFOAW velocityEstimator;
     
     /**
      * Adds a touch point sample
