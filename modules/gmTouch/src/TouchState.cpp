@@ -34,6 +34,8 @@ TouchState::TouchState()
 TouchState::~TouchState() {
   for (auto it : event_adaptors)
     delete it.second;
+  for (auto it : camera_adaptors)
+    delete it.second;
 }
 
 int TouchState::getTouchPoints(TouchPoints &current) const {
@@ -175,23 +177,6 @@ bool TouchState::getAssociation(TouchPointId id, void* pt) const {
   return true;
 }
 
-
-#ifdef gramods_ENABLE_OpenSceneGraph
-bool TouchState::setCurrentProjection(osg::Camera * camera) {
-  assert(state == 1);
-  osg::Matrix VPW = (camera->getViewMatrix()
-                     * camera->getProjectionMatrix()
-                     * camera->getViewport()->computeWindowMatrix());
-  osg::Matrix invVPW;
-  if (!invVPW.invert(VPW))
-    return false;
-
-  current_WPV_inv = Eigen::Map<Eigen::Matrix4d>(invVPW.ptr()).cast<float>();
-  current_WPV_inv_valid = true;
-
-  return true;
-}
-#endif
 
 void TouchState::setCurrentProjection(Eigen::Matrix4f WPV_inv) {
   assert(state == 1);
@@ -470,6 +455,11 @@ void TouchState::EventAdaptor::addMouseWheel(float s) {
   owner->addMouseWheel(s);
 }
 
+void TouchState::CameraAdaptor::setCurrentProjection(Eigen::Matrix4f WPV_inv) {
+  assert(owner);
+  owner->setCurrentProjection(WPV_inv);
+}
+
 void TouchState::eventsInit(int width, int height) {
   assert(state == 0);
   state = 1;
@@ -485,6 +475,8 @@ void TouchState::eventsInit(int width, int height) {
   previous_WPV_inv_valid = current_WPV_inv_valid;
   
   for (auto it : event_adaptors)
+    it.second->init(width, height);
+  for (auto it : camera_adaptors)
     it.second->init(width, height);
   
   mouse_wheel = 0.f;
@@ -542,6 +534,8 @@ void TouchState::eventsDone() {
   assert(state == 1);
   
   for (auto it : event_adaptors)
+    it.second->done();
+  for (auto it : camera_adaptors)
     it.second->done();
   
   

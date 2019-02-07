@@ -4,10 +4,6 @@
 
 #include <gmTouch/config.hh>
 
-#ifdef gramods_ENABLE_OpenSceneGraph
-#include <osg/Camera>
-#endif
-
 #include <gmMisc/EFFOAW.hh>
 
 #include <Eigen/Eigen>
@@ -33,7 +29,7 @@ BEGIN_NAMESPACE_GMTOUCH;
  * point. For example, an object may choose to associate a touch
  * point to itself only if it represents a tripple
  * click-and-hold-then-drag.
- * 
+ *
  * Typical usage:
  * \code{.cpp}
  * // Copy event data into TouchState object (in SDL window handler) ---
@@ -45,9 +41,9 @@ BEGIN_NAMESPACE_GMTOUCH;
  *   touchState.getEventAdaptor<gmTouch::SDLEventAdaptor>().handleEvent(event);
  * }
  * touchState.eventsDone();
- * 
+ *
  * ...
- * 
+ *
  * // Associate touch points with this object (in interaction object class) ---
  * TouchPoints touchPoints;
  * if (touchState.getTouchPoints(this, touchPoints) < REQUIRED_POINTS) {
@@ -57,11 +53,11 @@ BEGIN_NAMESPACE_GMTOUCH;
  *     if (isInside(pt.x, pt.y)) // Checks if the point hits this object
  *       touchState.setAssociation(pt.id, this);
  * }
- * 
+ *
  * TouchPoints currentTouchPoints, previousTouchPoints;
  * if (touchState.getTouchPoints(this, currentTouchPoints, previousTouchPoints) < REQUIRED_POINTS)
  *   return;
- * 
+ *
  * // Use touch points here
  * \endcode
  */
@@ -150,9 +146,9 @@ public:
 
     /**
      * State of the touch point expressed as a bitwise combination.
-     * 
+     *
      * \see State
-     */ 
+     */
     unsigned char state;
 
     /**
@@ -183,9 +179,9 @@ public:
 
     /**
      * State of the touch point expressed as a bitwise combination.
-     * 
+     *
      * \see State
-     */ 
+     */
     unsigned char state;
 
     /**
@@ -212,7 +208,7 @@ public:
 
   /**
    * Gets the current touch points, and returns the point count.
-   * 
+   *
    * @param[out] current The resulting touch points.
    * @return The number of touch points extracted.
    */
@@ -222,7 +218,7 @@ public:
    * Gets the current touch points and their corresponding previous
    * positions, and returns the point count. This will only provide
    * touch points with both current and previous states available.
-   * 
+   *
    * @param[out] current The most current touch points.
    * @param[out] previous The touch points from the previous time frame.
    * @return The number of touch points extracted.
@@ -233,12 +229,12 @@ public:
    * Gets the current touch points associated to the specified
    * pointer, and returns the point count. Unassociated touch points
    * can be extraced with nullptr as first argument.
-   * 
+   *
    * @param[in] ass The association to extract touch points for, or
    * nullptr for unassociated points.
-   * 
+   *
    * @param[out] current The resulting touch points.
-   * 
+   *
    * @return The number of touch points extracted.
    */
   int getTouchPoints(void *ass, TouchPoints &current) const;
@@ -249,14 +245,14 @@ public:
    * returns the point count. This will only provide touch points
    * with both current and previous states available. Unassociated
    * touch points can be extraced with nullptr as first argument.
-   * 
+   *
    * @param[in] ass The association to extract touch points for, or
    * nullptr for unassociated points.
-   * 
+   *
    * @param[out] current The resulting touch points.
-   * 
+   *
    * @param[out] previous The touch points from the previous time frame.
-   * 
+   *
    * @return The number of touch points extracted.
    */
   int getTouchPoints(void *ass, TouchPoints &current, TouchPoints &previous) const;
@@ -264,7 +260,7 @@ public:
   /**
    * Gets the current touch points as an association
    * map. Unassociated touch points will be associated with nullptr.
-   * 
+   *
    * @param[out] current The association map between objects (or
    * nullptr) and their associated touch points.
    */
@@ -273,7 +269,7 @@ public:
   /**
    * Gets the current touch points as an association
    * map. Unassociated touch points will be associated with nullptr.
-   * 
+   *
    * @param[out] current The association map between objects (or
    * nullptr) and their associated touch points.
    * @param[out] previous The association map between objects (or
@@ -283,8 +279,8 @@ public:
                      std::map<void*, TouchPoints> &previous) const;
 
   /**
-   * Associates an unassociated touch point id with an object. 
-   * 
+   * Associates an unassociated touch point id with an object.
+   *
    * @param[in] id The touch point id that should be associated.
    * @param[in] pt A void pointer to the object to associate with.
    * @return True iff an association was successfully created.
@@ -294,7 +290,7 @@ public:
   /**
    * Removes the association of the specified touch point id with
    * the specified object.
-   * 
+   *
    * @param[in] id The touch point id that should be unassociated.
    * @param[in] pt A void pointer to the currently associated object.
    * @return True iff an association was successfully removed.
@@ -317,41 +313,19 @@ public:
    */
   ///@{
 
-#ifdef gramods_ENABLE_OpenSceneGraph
-  /**
-   * Calculates and sets the current projection matrix to use when
-   * back-projecting the 2D touch points into 3D, and set the
-   * previously current to be used when back-projecting "previous"
-   * touch points.
-   * 
-   * If the view changes over time, one of these methods needs to be
-   * called every frame, between calling eventsInit and eventsDone
-   * and before extrating 3D lines. If the view is static, it needs
-   * to be called at least twice, to make the current matrix be
-   * copied to previous state. The frame copying is performed even
-   * when the valid project cannot be extracted.
-   * 
-   * @return True if a valid projection could be extracted from the
-   * specified camera, false otherwise.
-   * 
-   * \see getCurrent3DTouchLine
-   */
-  bool setCurrentProjection(osg::Camera * camera);
-#endif
-
   /**
    * Sets the current (inverted) projection matrix to use when
    * back-projecting the 2D touch points into 3D. This can be
    * calculated by inverting the matrix product of 1) viewport
    * window matrix, 2) projection matrix and 3) view matrix
    * (W*P*V)^-1, when using column vector matrices.
-   * 
+   *
    * If the view changes changing over time, one of these methods
    * needs to be called every frame, between calling eventsInit and
    * eventsDone and before extrating 3D lines. If the view is
    * static, the method needs to be called at least twice, to make
    * the current matrix be copied to previous state.
-   * 
+   *
    * \see getCurrent3DTouchLine
    */
   void setCurrentProjection(Eigen::Matrix4f WPV_inv);
@@ -360,7 +334,7 @@ public:
    * Gets the current touch lines and returns true, if lines can be
    * extracted from the current touch points. False is returned
    * otherwise.
-   * 
+   *
    * @param[out] current The resulting 3D lines, originating at the near plane.
    * @return True if current lines could be extracted.
    */
@@ -370,7 +344,7 @@ public:
    * Gets the current and previous touch lines and returns true, if
    * lines can be extracted from the current and previous touch
    * points. False is returned otherwise.
-   * 
+   *
    * @param[out] current The current 3D lines, originating at the near plane.
    * @param[out] previous The previous 3D lines, originating at the near plane.
    * @return True if both current and previous lines could be extracted.
@@ -381,7 +355,7 @@ public:
    * Gets the current touch lines and returns true, if lines can be
    * extracted from the current touch points. False is returned
    * otherwise.
-   * 
+   *
    * @param[in] ass
    * @param[out] current The resulting 3D lines, originating at the near plane.
    * @return True if current lines could be extracted.
@@ -392,8 +366,8 @@ public:
    * Gets the current and previous touch lines and returns true, if
    * lines can be extracted from the current and previous touch
    * points. False is returned otherwise.
-   * 
-   * @param[in] ass 
+   *
+   * @param[in] ass
    * @param[out] current The current 3D lines, originating at the near plane.
    * @param[out] previous The previous 3D lines, originating at the near plane.
    * @return True if both current and previous lines could be extracted.
@@ -403,7 +377,7 @@ public:
   /**
    * Gets the current touch lines as an association
    * map. Unassociated touch lines will be associated with nullptr.
-   * 
+   *
    * @param[out] current The association map between objects (or
    * nullptr) and their associated touch lines.
    * @return True if both current lines could be extracted.
@@ -413,7 +387,7 @@ public:
   /**
    * Gets the current touch lines as an association
    * map. Unassociated touch lines will be associated with nullptr.
-   * 
+   *
    * @param[out] current The association map between objects (or
    * nullptr) and their associated touch lines.
    * @param[out] previous The association map between objects (or
@@ -490,7 +464,7 @@ public:
    * Sets the magnitude of movement (Euclidean distance in pixels,
    * default 10) that is allowed before the touch point is
    * considered to be moved.
-   * 
+   *
    * This affects when the states State::DRAG and State::MULTI are
    * applied. Also, velocity estimation uses this value as a measure
    * of touch noise.
@@ -552,7 +526,7 @@ public:
   /**
    * Base type for event adaptors providing means to input events
    * from different platforms and window libraries.
-   * 
+   *
    * Get the platform/library dependent adaptor by calling
    * getEventAdaptor.
    */
@@ -611,9 +585,62 @@ public:
   T & getEventAdaptor();
 
   /**
+   * Base type for camera adaptors providing means to input camera data
+   * from different scenegraph or graphics platforms.
+   *
+   * Get the platform/library dependent adaptor by calling
+   * getCameraAdaptor.
+   */
+  struct CameraAdaptor {
+
+    /**
+     * Called by the owner (TouchState) when eventsInit is called.
+     */
+    virtual void init(int width, int height) {}
+
+    /**
+     * Called by the owner (TouchState) when eventsDone is called.
+     */
+    virtual void done() {}
+
+  protected:
+
+    /**
+     * Sets the current (inverted) projection matrix to use when
+     * back-projecting the 2D touch points into 3D. This can be
+     * calculated by inverting the matrix product of 1) viewport
+     * window matrix, 2) projection matrix and 3) view matrix
+     * (W*P*V)^-1, when using column vector matrices.
+     *
+     * If the view changes changing over time, one of these methods
+     * needs to be called every frame, between calling eventsInit and
+     * eventsDone and before extrating 3D lines. If the view is
+     * static, the method needs to be called at least twice, to make
+     * the current matrix be copied to previous state.
+     *
+     * \see getCurrent3DTouchLine
+     */
+    void setCurrentProjection(Eigen::Matrix4f WPV_inv);
+
+  private:
+
+    TouchState *owner;
+    friend TouchState;
+  };
+  friend EventAdaptor;
+
+  /**
+   * Returns a reference to the internal camera adaptor for the
+   * specified type. The adaptor is instantiated upon the first call
+   * to this method and deleted when the TouchState is destroyed.
+   */
+  template<class T>
+  T & getCameraAdaptor();
+
+  /**
    * Initializes the event handling. Call this before calling
    * handleEvents.
-   * 
+   *
    * @param[in] width The current view width in pixels
    * @param[in] height The current view height in pixels
    */
@@ -693,7 +720,7 @@ private:
   /**
    * Checks if the hist/new_pt pair represents a drag motion, and
    * sets the corresponding flag in new_pt.
-   * 
+   *
    * @param[in] hist The history data of the touch point to check
    * @param[in,out] The touch point to check and update
    */
@@ -702,7 +729,7 @@ private:
   /**
    * Checks if the hist/new_pt pair represents a hold action, and
    * sets the corresponding flag in new_pt.
-   * 
+   *
    * @param[in] hist The history data of the touch point to check
    * @param[in,out] The touch point to check and update
    */
@@ -711,7 +738,7 @@ private:
   /**
    * Checks if the hist/new_pt pair represents a click action, and
    * sets the corresponding flag in new_pt.
-   * 
+   *
    * @param[in] hist The history data of the touch point to check
    * @param[in,out] The touch point to check and update
    */
@@ -742,6 +769,7 @@ private:
   int mouse_point_y;
 
   std::unordered_map<std::type_index, EventAdaptor*> event_adaptors;
+  std::unordered_map<std::type_index, CameraAdaptor*> camera_adaptors;
 };
 
 
@@ -753,6 +781,16 @@ T & TouchState::getEventAdaptor() {
   }
   assert(dynamic_cast<T*>(event_adaptors[typeid(T)]));
   return *dynamic_cast<T*>(event_adaptors[typeid(T)]);
+}
+
+template<class T>
+T & TouchState::getCameraAdaptor() {
+  if (camera_adaptors.find(typeid(T)) == camera_adaptors.end()) {
+    camera_adaptors[typeid(T)] = new T;
+    camera_adaptors[typeid(T)]->owner = this;
+  }
+  assert(dynamic_cast<T*>(camera_adaptors[typeid(T)]));
+  return *dynamic_cast<T*>(camera_adaptors[typeid(T)]);
 }
 
 END_NAMESPACE_GMTOUCH;
