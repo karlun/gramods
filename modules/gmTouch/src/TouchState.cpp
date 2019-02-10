@@ -542,13 +542,17 @@ void TouchState::eventsDone() {
   for (auto &pt : current_state) {
     
     double last_time = velocityEstimator.getLastSampleTime(pt.first);
-    Eigen::Vector3f vel = Eigen::Map<const Eigen::VectorXd>(&velocityEstimator.estimateVelocity(pt.first, move_magnitude)[0], 3).cast<float>();
-    Eigen::Vector3f pos = Eigen::Map<const Eigen::VectorXd>(&velocityEstimator.estimatePosition(pt.first, move_magnitude, last_time)[0], 3).cast<float>();
 
-    pt.second.x = pos[0];
-    pt.second.y = pos[1];
-    pt.second.vx = vel[0];
-    pt.second.vy = vel[1];
+    size_t samples;
+    auto pos = velocityEstimator.estimatePosition(pt.first, move_magnitude, last_time, &samples);
+    if (samples > 0) {
+      pt.second.x = float(pos[0]);
+      pt.second.y = float(pos[1]);
+    }
+
+    auto vel = velocityEstimator.estimateVelocity(pt.first, move_magnitude);
+    pt.second.vx = float(vel[0]);
+    pt.second.vy = float(vel[1]);
 
     if (history.find(pt.first) == history.end() ||
         history[pt.first].point.state & State::RELEASE) {
