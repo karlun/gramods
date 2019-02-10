@@ -40,7 +40,7 @@ struct PeersConnection::Impl : public std::enable_shared_from_this<PeersConnecti
         socket(std::move(socket)),
         is_connected(false) {}
 
-    bool connect();
+    void connect();
 
     bool isConnected();
 
@@ -237,7 +237,7 @@ void PeersConnection::Impl::split_address_service
   }
 }
 
-bool PeersConnection::Impl::Peer::connect() {
+void PeersConnection::Impl::Peer::connect() {
 
   std::weak_ptr<Peer> weak_self(shared_from_this());
 
