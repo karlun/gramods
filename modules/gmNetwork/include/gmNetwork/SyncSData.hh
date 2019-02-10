@@ -53,6 +53,7 @@ public:
       back = val;
     }
     SyncData::pushValue();
+    return *this;
   }
 
 protected:
