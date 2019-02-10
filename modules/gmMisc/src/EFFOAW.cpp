@@ -86,16 +86,6 @@ void EFFOAW::Impl::addSample(size_t id, Eigen::Vector3d position, double time){
 
   position_list.push_front(position);
   time_list.push_front(time);
-
-  while (position_list.size() > history_length) {
-    position_list.pop_back();
-    time_list.pop_back();
-  }
-
-  while (!time_list.empty() && time - time_list.back() > history_duration) {
-    position_list.pop_back();
-    time_list.pop_back();
-  }
 }
 
 Eigen::Vector3d EFFOAW::estimateVelocity
@@ -222,7 +212,7 @@ void EFFOAW::Impl::cleanup(double time) {
     time_list_t &time_list = it->second.first;
     position_list_t &position_list = it->second.second;
 
-    while (!time_list.empty() && time_list.size() > history_length) {
+    while (time_list.size() > history_length) {
       position_list.pop_back();
       time_list.pop_back();
     }
