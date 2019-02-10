@@ -11,11 +11,12 @@
 #include <map>
 #include <cstddef>
 #include <limits>
-#include <valarray>
 #include <numeric>
 #include <memory>
 
 #include <math.h>
+
+#include <Eigen/Eigen>
 
 BEGIN_NAMESPACE_GMMISC
 
@@ -73,7 +74,7 @@ public:
      @param[in] position The position value to use as sample.
      @param[in] time The time at which the sample was taken.
   */
-  void addSample(size_t id, VEC position, double time);
+  void addSample(size_t id, Eigen::Vector3d position, double time);
 
   /**
      Estimate and return the velocity using samples associated to
@@ -85,7 +86,7 @@ public:
      @param[out] samples The number of history samples used in the
      estimation.
   */
-  VEC estimateVelocity(size_t id, double error, size_t *samples = nullptr) const;
+  Eigen::Vector3d estimateVelocity(size_t id, double error, size_t *samples = nullptr) const;
 
   /**
      Estimate and return the position using samples associated to
@@ -101,7 +102,7 @@ public:
      @param[out] samples The number of history samples used in the
      estimation.
   */
-  VEC estimatePosition(size_t id, double error, double time, size_t *samples = nullptr) const;
+  Eigen::Vector3d estimatePosition(size_t id, double error, double time, size_t *samples = nullptr) const;
 
   /**
      Clean-up old samples and unused ids. This function should be
