@@ -10,13 +10,14 @@ TEST(gmMiscEndFit, Effoaw) {
   effoaw.setHistoryLength(6);
   effoaw.setHistoryDuration(10);
 
-  effoaw.addSample(0, { 9, 0 }, 1);
-  effoaw.addSample(0, { 0, 1 }, 2);
-  effoaw.addSample(0, { 5, 2 }, 3);
-  effoaw.addSample(0, { 0, 3 }, 4);
-  effoaw.addSample(0, { 1, 4 }, 5);
-  effoaw.addSample(0, { 0, 5 }, 6);
-  effoaw.addSample(0, { 0, 6 }, 7);
+  effoaw.addSample(0, { 9, 0, 0 }, 1);
+  effoaw.addSample(0, { 0, 1, 0 }, 2);
+  effoaw.addSample(0, { 5, 2, 0 }, 3);
+  effoaw.addSample(0, { 0, 3, 0 }, 4);
+  effoaw.addSample(0, { 1, 4, 0 }, 5);
+  effoaw.addSample(0, { 0, 5, 0 }, 6);
+  effoaw.addSample(0, { 0, 6, 0 }, 7);
+  effoaw.cleanup();
 
   {
     size_t samples;
@@ -57,14 +58,15 @@ TEST(gmMiscEndFit, Efhoaw) {
   double a = 1.0 / SAMPLES;
 
   for (int idx = 0; idx < SAMPLES; ++idx) {
-    double t = idx * a;
+    double t = 2 * 3.141592 * idx * a;
     auto X = Eigen::Vector3d(cos(t), sin(t), t);
     efhoaw.addSample(0, X, a * idx);
   }
+  efhoaw.cleanup();
 
   size_t samples;
-  gmMisc::EFHOAW::polco pc = efhoaw.estimateCoefficients(0, 0.1, 5, &samples);
-  EXPECT_EQ(samples, 10);
+  gmMisc::EFHOAW::polco pc = efhoaw.estimateCoefficients(0, 0.1, 2, &samples);
+  EXPECT_EQ(samples, 39);
 
   for (int idx = 0; idx < SAMPLES; ++idx) {
     double t = idx * a;
