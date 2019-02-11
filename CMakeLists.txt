@@ -65,7 +65,7 @@ INCLUDE(InstallRequiredSystemLibraries)
 SET(CPACK_PACKAGE_DESCRIPTION_SUMMARY "The gramods package is a collection of modules for graphics rendering.")
 SET(CPACK_PACKAGE_NAME "libgramods")
 SET(CPACK_PACKAGE_VENDOR "Linköping University")
-SET(CPACK_PACKAGE_DESCRIPTION_FILE "${CMAKE_CURRENT_SOURCE_DIR}/README.md")
+SET(CPACK_PACKAGE_DESCRIPTION_FILE "${CMAKE_CURRENT_SOURCE_DIR}/DESCRIPTION.txt")
 SET(CPACK_PACKAGE_CONTACT "Karljohan Lundin Palmerius <karljohan.lundin.palmerius@liu.se>")
 
 INCLUDE(CPack)

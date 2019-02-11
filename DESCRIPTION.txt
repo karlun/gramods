@@ -1,0 +1,3 @@
+Gramods, short for Graphics Modules, is a collection of weakly inter dependent and useful APIs for Virtual Reality and graphics cluster rendering.
+
+The main purpose of the Gramods library is to simplify loading of platform dependent configurations into a pre-compiled application, while also simplifying the implementation of such applications. The aim is to be able to implement an application that employs execution and data synchronization over network and synchronized multi window rendering in a flexible and configurable way.
