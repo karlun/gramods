@@ -88,6 +88,8 @@ bool TimeSampleAnalogsTracker::Impl::getAnalogs(AnalogsSample &b) {
 
   for (auto s : states[sample_idx])
     b.analogs.push_back(s);
+
+  return true;
 }
 
 
