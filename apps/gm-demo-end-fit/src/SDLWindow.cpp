@@ -48,7 +48,7 @@ void SDLWindow::update() {
   SDL_SetRenderDrawColor(sdl_renderer, 0, 0, 0, 255);
   SDL_RenderClear(sdl_renderer);
 
-  SDL_SetRenderDrawColor(sdl_renderer, 0, 255, 0, 255);
+  SDL_SetRenderDrawColor(sdl_renderer, 170, 170, 170, 255);
   for (auto pt : points)
     drawPoint(pt.x, pt.y);
 
@@ -61,15 +61,16 @@ void SDLWindow::update() {
     ef.addSample(0, Eigen::Vector3d(pt.x, pt.y, 0), idx++);
 
   try {
-    auto coeffs = ef.estimateCoefficients(0, POLY_ERROR, POLY_ORDER);
+    size_t sample_count;
+    auto coeffs = ef.estimateCoefficients(0, POLY_ERROR, POLY_ORDER, &sample_count);
 
     SDL_SetRenderDrawColor(sdl_renderer, 190, 190, 190, 255);
 
-    auto pt = ef.getPolynomialPosition(0, 0);
+    auto pt = ef.getPolynomialPosition(0, points.size() - sample_count);
     int x0 = int(pt[0]);
     int y0 = int(pt[1]);
 
-    for (int idx = 0; idx < 2 * points.size(); ++idx) {
+    for (int idx = points.size() - sample_count; idx < points.size() + 2; ++idx) {
 
       if (idx + 1 < points.size())
         SDL_SetRenderDrawColor(sdl_renderer, 190, 255, 190, 255);
@@ -90,6 +91,11 @@ void SDLWindow::update() {
         y0 = y1;
       }
     }
+
+    SDL_SetRenderDrawColor(sdl_renderer, 0, 255, 0, 255);
+    for (size_t idx = points.size() - sample_count; idx < points.size(); ++idx)
+      drawPoint(points[idx].x, points[idx].y);
+
   }
   catch(std::invalid_argument e) {
     std::cerr << e.what() << std::endl;
