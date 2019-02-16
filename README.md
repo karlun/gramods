@@ -185,6 +185,7 @@ Required dependences:
 Optional dependences:
 
  - VRPN, for VRPN support
+ - OpenCV (version 4) with aruco module, for marker-based tracking
 
 
 ### Module Program Design Principles

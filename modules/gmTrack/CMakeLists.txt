@@ -35,6 +35,20 @@ IF(VRPN_FOUND)
   ENDIF(gramods_ENABLE_VRPN)
 ENDIF(VRPN_FOUND)
 
+FIND_PACKAGE(OpenCV QUIET OPTIONAL_COMPONENTS aruco)
+IF(OpenCV_FOUND AND NOT OPENCV_ARUCO_FOUND)
+  MESSAGE(STATUS "Found OpenCV without aruco module")
+ENDIF()
+IF(OPENCV_ARUCO_FOUND)
+  IF (NOT OpenCV_VERSION_MAJOR EQUAL 4)
+    MESSAGE(WARNING "OpenCV version is not 4 - errors may occur")
+  ENDIF()
+  SET(HAVE_aruco 1)
+  OPTION(gramods_ENABLE_aruco "Enable functionality that requires aruco" ON)
+  IF (gramods_ENABLE_aruco)
+    SET (MODULE_LIBS ${MODULE_LIBS} ${OpenCV_LIBS})
+  ENDIF()
+ENDIF()
 
 CONFIGURE_FILE(
   ${CMAKE_CURRENT_SOURCE_DIR}/include/gmTrack/config_cmake.hh
