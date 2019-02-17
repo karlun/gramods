@@ -30,6 +30,10 @@ public:
     */
     unsigned int buttons;
 
+    bool getButton(size_t idx) {
+      return ((buttons >> idx) & 1) != 0;
+    }
+
     /**
        The time of the sample.
     */

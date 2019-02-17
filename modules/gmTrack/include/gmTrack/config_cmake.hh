@@ -7,6 +7,11 @@
 #cmakedefine gramods_ENABLE_VRPN
 #endif
 
+#cmakedefine HAVE_VRPN_server
+#ifdef HAVE_VRPN_server
+#cmakedefine gramods_ENABLE_VRPN_server
+#endif
+
 #cmakedefine HAVE_aruco
 #ifdef HAVE_aruco
 #cmakedefine gramods_ENABLE_aruco
