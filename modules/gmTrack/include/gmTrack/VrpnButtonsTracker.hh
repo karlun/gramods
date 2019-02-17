@@ -9,19 +9,30 @@
 #include <vrpn_Button.h>
 
 #include <gmCore/OFactory.hh>
+#include <gmCore/Updateable.hh>
 
 BEGIN_NAMESPACE_GMTRACK;
 
 /**
    Buttons tracker reading data off a VRPN server.
+
+   This class configures as an Updateable with a priority of
+   10. Either Updateable::updateAll or update must be called at even
+   intervals. This is done automatically by gm-load.
 */
 class VrpnButtonsTracker
-  : public ButtonsTracker {
+  : public ButtonsTracker,
+    public gmCore::Updateable {
 
 public:
 
   VrpnButtonsTracker();
   ~VrpnButtonsTracker();
+
+  /**
+     Updates the animation.
+  */
+  void update(gmCore::Updateable::clock::time_point t);
 
   /**
      The address to the button tracker at the VRPN server, such as
@@ -43,6 +54,7 @@ private:
 
   ButtonsSample latest_sample;
   bool got_data;
+  bool have_data = false;
 };
 
 END_NAMESPACE_GMTRACK;

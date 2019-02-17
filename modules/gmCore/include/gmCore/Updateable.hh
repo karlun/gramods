@@ -20,7 +20,14 @@ public:
 
   typedef std::chrono::steady_clock clock;
 
-  Updateable();
+  /**
+   * Configures the Updateable properties to the specified
+   * priority. Upon call to updateAll all instances of Updateable will
+   * be called in turn based on their priority. Highest priority will
+   * be called first and lowest last. Instances with the same priority
+   * will be called in the order of instantiation.
+   */
+  Updateable(int priority = 0);
 
   virtual ~Updateable();
 

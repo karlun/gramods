@@ -33,7 +33,9 @@ public:
   virtual std::string getDefaultKey() { return "analogsTracker"; }
 
   /**
-     Replaces the contents of p with analogs data.
+     Replaces the contents of p with analogs data. Returns true if
+     data could be read, false otherwise. Use sample time to check if
+     data are fresh.
   */
   virtual bool getAnalogs(AnalogsSample &b) = 0;
 };

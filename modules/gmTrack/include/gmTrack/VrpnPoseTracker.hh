@@ -9,19 +9,30 @@
 #include <vrpn_Tracker.h>
 
 #include <gmCore/OFactory.hh>
+#include <gmCore/Updateable.hh>
 
 BEGIN_NAMESPACE_GMTRACK;
 
 /**
    Pose tracker reading data off a VRPN server.
+
+   This class configures as an Updateable with a priority of
+   10. Either Updateable::updateAll or update must be called at even
+   intervals. This is done automatically by gm-load.
 */
 class VrpnPoseTracker
-  : public MultiPoseTracker {
+  : public MultiPoseTracker,
+    public gmCore::Updateable {
 
 public:
 
   VrpnPoseTracker();
   ~VrpnPoseTracker();
+
+  /**
+     Updates the animation.
+  */
+  void update(gmCore::Updateable::clock::time_point t);
 
   /**
      The address to the pose tracker at the VRPN server, such as
@@ -43,6 +54,7 @@ private:
 
   std::map<int, PoseSample> latest_samples;
   bool got_data;
+  bool have_data = false;
 };
 
 END_NAMESPACE_GMTRACK;

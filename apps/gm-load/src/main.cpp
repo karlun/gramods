@@ -85,10 +85,10 @@ int main(int argc, char *argv[]) {
 
     auto t0 = std::chrono::steady_clock::now();
 
-    gmCore::Updateable::updateAll();
     for (auto window : windows) {
       window->processEvents();
     }
+    gmCore::Updateable::updateAll();
 
     auto t1 = std::chrono::steady_clock::now();
 

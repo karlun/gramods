@@ -64,6 +64,7 @@ TEST(gmTrackVrpn, VrpnTracker) {
         conn->mainloop();
 
         std::this_thread::sleep_for(std::chrono::milliseconds(10));
+        gmCore::Updateable::updateAll();
 
         tracker.getPose(samples);
         GM_INF("Test", samples[0].position);
@@ -138,6 +139,7 @@ TEST(gmTrackVrpn, VrpnPoseTrackerConfigurationAndMultiToSinglePoseTracker) {
         conn->mainloop();
 
         std::this_thread::sleep_for(std::chrono::milliseconds(10));
+        gmCore::Updateable::updateAll();
 
         got_sample = tracker->getPose(sample);
       }

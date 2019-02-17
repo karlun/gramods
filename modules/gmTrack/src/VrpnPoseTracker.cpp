@@ -10,10 +10,31 @@ BEGIN_NAMESPACE_GMTRACK;
 GM_OFI_DEFINE(VrpnPoseTracker);
 GM_OFI_PARAM(VrpnPoseTracker, connectionString, std::string, VrpnPoseTracker::setConnectionString);
 
-VrpnPoseTracker::VrpnPoseTracker() {}
+VrpnPoseTracker::VrpnPoseTracker()
+  : Updateable(10) {}
 
 VrpnPoseTracker::~VrpnPoseTracker() {
   tracker = nullptr;
+}
+
+void VrpnPoseTracker::update(gmCore::Updateable::clock::time_point t) {
+
+  if (!tracker) {
+    GM_WRN("VrpnPoseTracker", "Cannot get pose - no vrpn connection");
+    return;
+  }
+
+  if (!tracker->connectionPtr()->doing_okay()) {
+    GM_WRN("VrpnPoseTracker", "Defunct connection - closing vrpn connection");
+    tracker = nullptr;
+    have_data = false;
+    return;
+  }
+
+  do {
+    got_data = false;
+    tracker->mainloop();
+  } while (got_data);
 }
 
 void VrpnPoseTracker::setConnectionString(std::string id) {
@@ -23,21 +44,8 @@ void VrpnPoseTracker::setConnectionString(std::string id) {
 
 bool VrpnPoseTracker::getPose(std::map<int, PoseSample> &p) {
 
-  if (!tracker) {
-    GM_WRN("VrpnPoseTracker", "Cannot get pose - no vrpn connection");
+  if (!have_data)
     return false;
-  }
-
-  if (!tracker->connectionPtr()->doing_okay()) {
-    GM_WRN("VrpnPoseTracker", "Defunct connection - closing vrpn connection");
-    tracker = nullptr;
-    return false;
-  }
-
-  do {
-    got_data = false;
-    tracker->mainloop();
-  } while (got_data);
 
   p = latest_samples;
 
@@ -46,6 +54,8 @@ bool VrpnPoseTracker::getPose(std::map<int, PoseSample> &p) {
 
 void VRPN_CALLBACK VrpnPoseTracker::handler(void *data, const vrpn_TRACKERCB info) {
   VrpnPoseTracker *_this = static_cast<VrpnPoseTracker*>(data);
+
+  typedef std::chrono::steady_clock clock;
 
   auto secs = std::chrono::duration_cast<clock::duration>
     (std::chrono::seconds(info.msg_time.tv_sec));
@@ -60,6 +70,7 @@ void VRPN_CALLBACK VrpnPoseTracker::handler(void *data, const vrpn_TRACKERCB inf
     Eigen::Quaternionf(info.quat[0], info.quat[1], info.quat[2], info.quat[3]);
 
   _this->got_data = true;
+  _this->have_data = true;
   GM_VINF("VrpnPoseTracker", "Got vrpn tracker data for sensor " << info.sensor);
 }
 

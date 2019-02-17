@@ -64,7 +64,9 @@ public:
   void setTriggerAnalog(int idx);
 
   /**
-     Replaces the contents of p with button data.
+     Replaces the contents of p with button data. Returns true if data
+     could be read, false otherwise. Use sample time to check if data
+     are fresh.
   */
   bool getAnalogs(AnalogsSample &p);
 

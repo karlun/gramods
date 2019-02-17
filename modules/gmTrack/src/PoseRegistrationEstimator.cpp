@@ -61,7 +61,8 @@ struct PoseRegistrationEstimator::Impl {
 };
 
 PoseRegistrationEstimator::PoseRegistrationEstimator()
-  : _impl(std::make_unique<Impl>()) {}
+  : Updateable(-1000),
+    _impl(std::make_unique<Impl>()) {}
 
 PoseRegistrationEstimator::~PoseRegistrationEstimator() {}
 

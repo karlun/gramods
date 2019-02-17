@@ -43,7 +43,9 @@ public:
   virtual std::string getDefaultKey() { return "buttonsTracker"; }
 
   /**
-     Replaces the contents of p with button data.
+     Replaces the contents of p with button data. Returns true if data
+     could be read, false otherwise. Use sample time to check if data
+     are fresh.
   */
   virtual bool getButtons(ButtonsSample &b) = 0;
 };

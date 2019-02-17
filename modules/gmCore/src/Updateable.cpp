@@ -1,52 +1,58 @@
 
 #include <gmCore/Updateable.hh>
 
-#include <set>
+#include <map>
+#include <algorithm>
 
 BEGIN_NAMESPACE_GMCORE;
 
 struct Updateable::Impl {
 
-  Impl(Updateable * _this);
+  Impl(Updateable * _this, int priority);
   ~Impl();
 
   Updateable * _this;
 
   static void updateAll(clock::time_point t);
 
-  static std::set<Updateable*>& getList();
+  static std::multimap<int, Updateable*>& getList();
 
 };
 
-Updateable::Updateable()
-  : _impl(new Impl(this)) {}
+Updateable::Updateable(int priority)
+  : _impl(new Impl(this, priority)) {}
 
 Updateable::~Updateable() {
   delete _impl;
   _impl = nullptr;
 }
 
-Updateable::Impl::Impl(Updateable * _this)
+Updateable::Impl::Impl(Updateable * _this, int priority)
   : _this(_this) {
-  getList().insert(_this);
+  // Negate to sort highest priority first
+  getList().insert(std::make_pair(-priority, _this));
 }
 
 Updateable::Impl::~Impl() {
-  getList().erase(_this);
+  for(auto it = getList().begin(); it != getList().end(); )
+    if (_this == it->second)
+      it = getList().erase(it++);
+    else
+      ++it;
 }
 
 void Updateable::updateAll(clock::time_point t) {
   Impl::updateAll(t);
 }
 
-std::set<Updateable*>& Updateable::Impl::getList() {
-  static std::set<Updateable*> list;
+std::multimap<int, Updateable*>& Updateable::Impl::getList() {
+  static std::multimap<int, Updateable*> list;
   return list;
 }
 
 void Updateable::Impl::updateAll(clock::time_point t) {
   for (auto it : getList())
-    it->update(t);
+    it.second->update(t);
 }
 
 END_NAMESPACE_GMCORE;

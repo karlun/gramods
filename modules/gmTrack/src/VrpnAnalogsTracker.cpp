@@ -10,10 +10,31 @@ BEGIN_NAMESPACE_GMTRACK;
 GM_OFI_DEFINE(VrpnAnalogsTracker);
 GM_OFI_PARAM(VrpnAnalogsTracker, connectionString, std::string, VrpnAnalogsTracker::setConnectionString);
 
-VrpnAnalogsTracker::VrpnAnalogsTracker() {}
+VrpnAnalogsTracker::VrpnAnalogsTracker()
+  : Updateable(10) {}
 
 VrpnAnalogsTracker::~VrpnAnalogsTracker() {
   tracker = nullptr;
+}
+
+void VrpnAnalogsTracker::update(gmCore::Updateable::clock::time_point t) {
+
+  if (!tracker) {
+    GM_WRN("VrpnAnalogsTracker", "Cannot get buttons - no vrpn connection");
+    return;
+  }
+
+  if (!tracker->connectionPtr()->doing_okay()) {
+    GM_WRN("VrpnAnalogsTracker", "Defunct connection - closing vrpn connection");
+    tracker = nullptr;
+    have_data = false;
+    return;
+  }
+
+  do {
+    got_data = false;
+    tracker->mainloop();
+  } while (got_data);
 }
 
 void VrpnAnalogsTracker::setConnectionString(std::string id) {
@@ -23,21 +44,8 @@ void VrpnAnalogsTracker::setConnectionString(std::string id) {
 
 bool VrpnAnalogsTracker::getAnalogs(AnalogsSample &b) {
 
-  if (!tracker) {
-    GM_WRN("VrpnAnalogsTracker", "Cannot get buttons - no vrpn connection");
+  if (!have_data)
     return false;
-  }
-
-  if (!tracker->connectionPtr()->doing_okay()) {
-    GM_WRN("VrpnAnalogsTracker", "Defunct connection - closing vrpn connection");
-    tracker = nullptr;
-    return false;
-  }
-
-  do {
-    got_data = false;
-    tracker->mainloop();
-  } while (got_data);
 
   b = latest_sample;
 
@@ -46,6 +54,8 @@ bool VrpnAnalogsTracker::getAnalogs(AnalogsSample &b) {
 
 void VRPN_CALLBACK VrpnAnalogsTracker::handler(void *data, const vrpn_ANALOGCB info) {
   VrpnAnalogsTracker *_this = static_cast<VrpnAnalogsTracker*>(data);
+
+  typedef std::chrono::steady_clock clock;
 
   auto secs = std::chrono::duration_cast<clock::duration>
     (std::chrono::seconds(info.msg_time.tv_sec));
@@ -63,6 +73,7 @@ void VRPN_CALLBACK VrpnAnalogsTracker::handler(void *data, const vrpn_ANALOGCB i
   }
 
   _this->got_data = true;
+  _this->have_data = true;
   GM_VVINF("VrpnAnalogsTracker", "Got vrpn analog data: " << analogs_log.str());
 }
 
