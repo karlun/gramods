@@ -258,6 +258,13 @@ bool TouchState::getTouchLines(TouchLines &current, TouchLines &previous) const 
   return true;
 }
 
+bool TouchState::getTouchLines(void *ass, TouchLines &current) const {
+  std::map<void*, TouchLines> ass_map;
+  if (!getTouchLines(ass_map)) return false;
+  current = ass_map[ass];
+  return true;
+}
+
 bool TouchState::getTouchLines(std::map<void*, TouchLines> &current) const {
   assert(state == 0);
   if (!current_WPV_inv_valid) return false;
@@ -289,6 +296,14 @@ bool TouchState::getTouchLines(std::map<void*, TouchLines> &current) const {
     current[it.first].swap(lines);
   }
   
+  return true;
+}
+
+bool TouchState::getTouchLines(void *ass, TouchLines &current, TouchLines &previous) const {
+  std::map<void*, TouchLines> ass_map_cur, ass_map_pre;
+  if (!getTouchLines(ass_map_cur, ass_map_pre)) return false;
+  current = ass_map_cur[ass];
+  previous = ass_map_pre[ass];
   return true;
 }
 
