@@ -301,10 +301,14 @@ public:
    * Gets the touch point id associated with a specified object.
    *
    * @param[in] id The id of the touch point that is associated.
-   * @param[out] pt A void pointer to the object that is associated with.
+   *
+   * @param[out] pt A pointer to a void pointer, set to the pointer
+   * that is associated with the provided id, or nullptr if only
+   * found/not found is of interest.
+   *
    * @return True iff an association was found.
    */
-  bool getAssociation(TouchPointId id, void* pt) const;
+  bool getAssociation(TouchPointId id, void** pt) const;
 
   ///!@}
 

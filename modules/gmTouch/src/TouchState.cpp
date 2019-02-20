@@ -170,10 +170,10 @@ bool TouchState::unsetAssociation(TouchPointId id, void* pt) {
   return true;
 }
 
-bool TouchState::getAssociation(TouchPointId id, void* pt) const {
+bool TouchState::getAssociation(TouchPointId id, void** pt) const {
   assert(state == 0);
   if (association.find(id) == association.end()) return false;
-  pt = association.find(id)->second;
+  if (pt) *pt = association.find(id)->second;
   return true;
 }
 
