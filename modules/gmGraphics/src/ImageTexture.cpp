@@ -85,24 +85,24 @@ bool ImageTexture::Impl::loadImage(std::string file_template, size_t frame) {
 
   size_t filename_size = snprintf(nullptr, 0, file_template.c_str(), frame) + 1;
   std::vector<char> filename(filename_size + 1);
-  snprintf(&filename[0], filename_size, file_template.c_str(), frame);
+  snprintf(filename.data(), filename_size, file_template.c_str(), frame);
 
-	FREE_IMAGE_FORMAT image_format = FreeImage_GetFileType(&filename[0], 0);
+	FREE_IMAGE_FORMAT image_format = FreeImage_GetFileType(filename.data(), 0);
 	if(image_format == FIF_UNKNOWN)
-		image_format = FreeImage_GetFIFFromFilename(&filename[0]);
+		image_format = FreeImage_GetFIFFromFilename(filename.data());
 	if(image_format == FIF_UNKNOWN) {
-    GM_ERR("ImageTexture", "Unknown image file type of file '" << &filename[0] << "'");
+    GM_ERR("ImageTexture", "Unknown image file type of file '" << filename.data() << "'");
 		return false;
   }
 
   if (!FreeImage_FIFSupportsReading(image_format)) {
-    GM_ERR("ImageTexture", "No read support for image '" << &filename[0] << "'");
+    GM_ERR("ImageTexture", "No read support for image '" << filename.data() << "'");
 		return false;
   }
 
-	FIBITMAP *image = FreeImage_Load(image_format, &filename[0]);
+	FIBITMAP *image = FreeImage_Load(image_format, filename.data());
 	if(!image) {
-    GM_ERR("ImageTexture", "Could not load image '" << &filename[0] << "'");
+    GM_ERR("ImageTexture", "Could not load image '" << filename.data() << "'");
 		return false;
   }
 
@@ -163,7 +163,7 @@ bool ImageTexture::Impl::loadImage(std::string file_template, size_t frame) {
     gl_type = GL_FLOAT;
     break;
   default:
-    GM_ERR("ImageTexture", "Unknown pixel type (" << image_type << ") of image '" << &filename[0] << "'");
+    GM_ERR("ImageTexture", "Unknown pixel type (" << image_type << ") of image '" << filename.data() << "'");
     FreeImage_Unload(image);
     return false;
   }
@@ -191,7 +191,7 @@ bool ImageTexture::Impl::loadImage(std::string file_template, size_t frame) {
 	FreeImage_Unload(image);
 
   GM_VINF("ImageTexture", "Loaded"
-          << " image " << &filename[0]
+          << " image " << filename.data()
           << " " << image_width << "x" << image_height
           );
 	return true;

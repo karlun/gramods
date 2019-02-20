@@ -78,10 +78,10 @@ void SaveView::Impl::renderFullPipeline(ViewSettings settings) {
 
   size_t filename_size = snprintf(nullptr, 0, file_template.c_str(), frame) + 1;
   std::vector<char> filename(filename_size + 1);
-  snprintf(&filename[0], filename_size, file_template.c_str(), frame);
+  snprintf(filename.data(), filename_size, file_template.c_str(), frame);
   ++frame;
 
-  FreeImage_Save(fi_format, bitmap, &filename[0], fi_options);
+  FreeImage_Save(fi_format, bitmap, filename.data(), fi_options);
   FreeImage_Unload(bitmap);
 
   auto t2 = std::chrono::steady_clock::now();
