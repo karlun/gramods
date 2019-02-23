@@ -132,7 +132,7 @@ public:
     /// x velocity in pixels per second from left edge.
     float vx;
 
-    /// x velocity in pixels per second from left edge.
+    /// y velocity in pixels per second from top edge.
     float vy;
 
     /// smoothed version of the x position.
@@ -197,7 +197,7 @@ public:
   typedef std::vector<TouchLine> TouchLines;
 
   /** @name Get touch points
-   * Methods used to extract current touch points the their states.
+   * Methods used to extract current touch points and the their states.
    */
   ///@{
 
@@ -324,15 +324,70 @@ public:
    * window matrix, 2) projection matrix and 3) view matrix
    * (W*P*V)^-1, when using column vector matrices.
    *
+   * It is more convenient to use a TouchState::CameraAdaptor.
+   *
    * If the view changes changing over time, one of these methods
    * needs to be called every frame, between calling eventsInit and
    * eventsDone and before extrating 3D lines. If the view is
    * static, the method needs to be called at least twice, to make
    * the current matrix be copied to previous state.
    *
-   * \see getCurrent3DTouchLine
+   * \see TouchState::getTouchLines
    */
   void setCurrentProjection(Eigen::Matrix4f WPV_inv);
+
+  /**
+   * Base type for camera adaptors providing means to input camera data
+   * from different scenegraph or graphics platforms.
+   *
+   * Get the platform/library dependent adaptor by calling
+   * TouchState::getCameraAdaptor.
+   */
+  struct CameraAdaptor {
+
+    /**
+     * Called by the owner (TouchState) when eventsInit is called.
+     */
+    virtual void init(int width, int height) {}
+
+    /**
+     * Called by the owner (TouchState) when eventsDone is called.
+     */
+    virtual void done() {}
+
+  protected:
+
+    /**
+     * Sets the current (inverted) projection matrix to use when
+     * back-projecting the 2D touch points into 3D. This can be
+     * calculated by inverting the matrix product of 1) viewport
+     * window matrix, 2) projection matrix and 3) view matrix
+     * (W*P*V)^-1, when using column vector matrices.
+     *
+     * If the view changes changing over time, one of these methods
+     * needs to be called every frame, between calling eventsInit and
+     * eventsDone and before extrating 3D lines. If the view is
+     * static, the method needs to be called at least twice, to make
+     * the current matrix be copied to previous state.
+     *
+     * \see TouchState::getTouchLines
+     */
+    void setCurrentProjection(Eigen::Matrix4f WPV_inv);
+
+  private:
+
+    TouchState *owner;
+    friend TouchState;
+  };
+  friend CameraAdaptor;
+
+  /**
+   * Returns a reference to the internal camera adaptor for the
+   * specified type. The adaptor is instantiated upon the first call
+   * to this method and deleted when the TouchState is destroyed.
+   */
+  template<class T>
+  T & getCameraAdaptor();
 
   /**
    * Gets the current touch lines and returns true, if lines can be
@@ -587,59 +642,6 @@ public:
    */
   template<class T>
   T & getEventAdaptor();
-
-  /**
-   * Base type for camera adaptors providing means to input camera data
-   * from different scenegraph or graphics platforms.
-   *
-   * Get the platform/library dependent adaptor by calling
-   * getCameraAdaptor.
-   */
-  struct CameraAdaptor {
-
-    /**
-     * Called by the owner (TouchState) when eventsInit is called.
-     */
-    virtual void init(int width, int height) {}
-
-    /**
-     * Called by the owner (TouchState) when eventsDone is called.
-     */
-    virtual void done() {}
-
-  protected:
-
-    /**
-     * Sets the current (inverted) projection matrix to use when
-     * back-projecting the 2D touch points into 3D. This can be
-     * calculated by inverting the matrix product of 1) viewport
-     * window matrix, 2) projection matrix and 3) view matrix
-     * (W*P*V)^-1, when using column vector matrices.
-     *
-     * If the view changes changing over time, one of these methods
-     * needs to be called every frame, between calling eventsInit and
-     * eventsDone and before extrating 3D lines. If the view is
-     * static, the method needs to be called at least twice, to make
-     * the current matrix be copied to previous state.
-     *
-     * \see getCurrent3DTouchLine
-     */
-    void setCurrentProjection(Eigen::Matrix4f WPV_inv);
-
-  private:
-
-    TouchState *owner;
-    friend TouchState;
-  };
-  friend EventAdaptor;
-
-  /**
-   * Returns a reference to the internal camera adaptor for the
-   * specified type. The adaptor is instantiated upon the first call
-   * to this method and deleted when the TouchState is destroyed.
-   */
-  template<class T>
-  T & getCameraAdaptor();
 
   /**
    * Initializes the event handling. Call this before calling
