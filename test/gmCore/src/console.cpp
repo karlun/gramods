@@ -38,16 +38,22 @@ TEST(gmCoreConsole, OStreamMessageSink_sstream) {
   GM_VINF("d", "E");
   GM_VVINF("e", "E");
 
+#ifdef NDEBUG
+#  define DEBUG_ONLY(X) ((void)0)
+#else
+#  define DEBUG_ONLY(X) X
+#endif
+
   std::stringstream result;
-  result << "II (a) console.cpp:" << base_row + 1 << " (TestBody)" << std::endl;
+  DEBUG_ONLY(result << "II (a) console.cpp:" << base_row + 1 << " (TestBody)" << std::endl);
   result << "II (a) A" << std::endl;
-  result << "WW (b) console.cpp:" << base_row + 2 << " (TestBody)" << std::endl;
+  DEBUG_ONLY(result << "WW (b) console.cpp:" << base_row + 2 << " (TestBody)" << std::endl);
   result << "WW (b) B" << std::endl;
-  result << "EE (c) console.cpp:" << base_row + 3 << " (TestBody)" << std::endl;
+  DEBUG_ONLY(result << "EE (c) console.cpp:" << base_row + 3 << " (TestBody)" << std::endl);
   result << "EE (c) C" << std::endl;
-  result << "I2 (d) console.cpp:" << base_row + 4 << " (TestBody)" << std::endl;
+  DEBUG_ONLY(result << "I2 (d) console.cpp:" << base_row + 4 << " (TestBody)" << std::endl);
   result << "I2 (d) E" << std::endl;
-  result << "I3 (e) console.cpp:" << base_row + 5 << " (TestBody)" << std::endl;
+  DEBUG_ONLY(result << "I3 (e) console.cpp:" << base_row + 5 << " (TestBody)" << std::endl);
   result << "I3 (e) E" << std::endl;
 
   EXPECT_EQ(result.str(), ss.str());
@@ -76,7 +82,7 @@ TEST(gmCoreConsole, OStreamMessageSink_stdcout) {
   }
 
   std::stringstream result;
-  result << "II (a) console.cpp:" << base_row + 1 << " (TestBody)" << std::endl;
+  DEBUG_ONLY(result << "II (a) console.cpp:" << base_row + 1 << " (TestBody)" << std::endl);
   result << "II (a) A" << std::endl;
 
   EXPECT_EQ(result.str(), ss.str());
