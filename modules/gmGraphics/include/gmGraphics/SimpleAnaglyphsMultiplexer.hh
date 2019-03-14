@@ -37,6 +37,22 @@ public:
   void setSaturation(float s);
 
   /**
+     Sets the saturation of color to use for the left eye, in the
+     range 0-1. Removing some saturation reduces the problem that an
+     object with the same color as the eye filter becomes invisible
+     for that eye. Default is 0.8.
+  */
+  void setLeftSaturation(float s);
+
+  /**
+     Sets the saturation of color to use for the right eye, in the
+     range 0-1. Removing some saturation reduces the problem that an
+     object with the same color as the eye filter becomes invisible
+     for that eye. Default is 0.8.
+  */
+  void setRightSaturation(float s);
+
+  /**
      Prepares the multiplexer for rendering to the two eyes.
   */
   void prepare();

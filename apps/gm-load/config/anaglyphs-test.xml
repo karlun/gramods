@@ -27,9 +27,10 @@
         eyeSeparation="0.065">
 
       <SimpleAnaglyphsMultiplexer
-          leftColor="1 0 0"
-          rightColor="0 1 1"
-          saturation="0.5"/>
+          leftColor="1 1 0"
+          rightColor="0 0 1"
+          leftSaturation="1.0"
+          rightSaturation="0.0"/>
 
       <Viewpoint
           position="0 0 0.7"/>
