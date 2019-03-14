@@ -26,7 +26,7 @@
         upDirection="0.0 1.0 0.0"
         eyeSeparation="0.065">
 
-      <SimpleAnaglyphsMultiplexer
+      <LinearAnaglyphsMultiplexer
           leftColor="1 1 0"
           rightColor="0 0 1"
           leftSaturation="1.0"

@@ -44,15 +44,15 @@ bool GLUtils::check_framebuffer() {
 	status = glCheckFramebufferStatus(GL_DRAW_FRAMEBUFFER);
 	switch(status) {
 	case GL_FRAMEBUFFER_COMPLETE:
-    GM_INF("SimpleAnaglyphsMultiplexer", "Frame buffer complete");
+    GM_INF("OpenGL", "Frame buffer complete");
 		return true;
 
 	case GL_FRAMEBUFFER_UNSUPPORTED:
-    GM_ERR("SimpleAnaglyphsMultiplexer", "Frame buffer unsupported");
+    GM_ERR("OpenGL", "Frame buffer unsupported");
 		break;
 
 	default:
-    GM_ERR("SimpleAnaglyphsMultiplexer", "Frame buffer incomplete");
+    GM_ERR("OpenGL", "Frame buffer incomplete");
 	}
   return false;
 }

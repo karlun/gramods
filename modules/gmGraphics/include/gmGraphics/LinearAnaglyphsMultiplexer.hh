@@ -1,20 +1,21 @@
 
-#ifndef GRAMODS_GRAPHICS_SIMPLEANAGLYPHSMULTIPLEXER
-#define GRAMODS_GRAPHICS_SIMPLEANAGLYPHSMULTIPLEXER
+#ifndef GRAMODS_GRAPHICS_LINEARANAGLYPHSMULTIPLEXER
+#define GRAMODS_GRAPHICS_LINEARANAGLYPHSMULTIPLEXER
 
 #include <gmGraphics/StereoscopicMultiplexer.hh>
 
 BEGIN_NAMESPACE_GMGRAPHICS;
 
 /**
-   Simple anaglyphs implementation.
+   An implementation of anaglyphs stereoscopic multiplexing that is
+   based on linear operations.
 */
-class SimpleAnaglyphsMultiplexer
+class LinearAnaglyphsMultiplexer
   : public gmGraphics::StereoscopicMultiplexer {
 
 public:
 
-  SimpleAnaglyphsMultiplexer();
+  LinearAnaglyphsMultiplexer();
 
   /**
      Sets the color of the left eye filter, in RGB 0-1. Default is red

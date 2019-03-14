@@ -1,5 +1,5 @@
 
-#include <gmGraphics/SimpleAnaglyphsMultiplexer.hh>
+#include <gmGraphics/LinearAnaglyphsMultiplexer.hh>
 
 #include <gmGraphics/GLUtils.hh>
 
@@ -8,14 +8,14 @@
 
 BEGIN_NAMESPACE_GMGRAPHICS;
 
-GM_OFI_DEFINE(SimpleAnaglyphsMultiplexer);
-GM_OFI_PARAM(SimpleAnaglyphsMultiplexer, leftColor, gmTypes::float3, SimpleAnaglyphsMultiplexer::setLeftColor);
-GM_OFI_PARAM(SimpleAnaglyphsMultiplexer, rightColor, gmTypes::float3, SimpleAnaglyphsMultiplexer::setRightColor);
-GM_OFI_PARAM(SimpleAnaglyphsMultiplexer, saturation, float, SimpleAnaglyphsMultiplexer::setSaturation);
-GM_OFI_PARAM(SimpleAnaglyphsMultiplexer, leftSaturation, float, SimpleAnaglyphsMultiplexer::setLeftSaturation);
-GM_OFI_PARAM(SimpleAnaglyphsMultiplexer, rightSaturation, float, SimpleAnaglyphsMultiplexer::setRightSaturation);
+GM_OFI_DEFINE(LinearAnaglyphsMultiplexer);
+GM_OFI_PARAM(LinearAnaglyphsMultiplexer, leftColor, gmTypes::float3, LinearAnaglyphsMultiplexer::setLeftColor);
+GM_OFI_PARAM(LinearAnaglyphsMultiplexer, rightColor, gmTypes::float3, LinearAnaglyphsMultiplexer::setRightColor);
+GM_OFI_PARAM(LinearAnaglyphsMultiplexer, saturation, float, LinearAnaglyphsMultiplexer::setSaturation);
+GM_OFI_PARAM(LinearAnaglyphsMultiplexer, leftSaturation, float, LinearAnaglyphsMultiplexer::setLeftSaturation);
+GM_OFI_PARAM(LinearAnaglyphsMultiplexer, rightSaturation, float, LinearAnaglyphsMultiplexer::setRightSaturation);
 
-struct SimpleAnaglyphsMultiplexer::Impl {
+struct LinearAnaglyphsMultiplexer::Impl {
 
   ~Impl();
 
@@ -50,51 +50,51 @@ struct SimpleAnaglyphsMultiplexer::Impl {
   void finalize();
 };
 
-SimpleAnaglyphsMultiplexer::SimpleAnaglyphsMultiplexer()
-  : _impl(std::make_unique<SimpleAnaglyphsMultiplexer::Impl>()) {}
+LinearAnaglyphsMultiplexer::LinearAnaglyphsMultiplexer()
+  : _impl(std::make_unique<LinearAnaglyphsMultiplexer::Impl>()) {}
 
-SimpleAnaglyphsMultiplexer::Impl::~Impl() {
+LinearAnaglyphsMultiplexer::Impl::~Impl() {
   teardown();
 }
 
-void SimpleAnaglyphsMultiplexer::prepare() {
+void LinearAnaglyphsMultiplexer::prepare() {
   _impl->prepare();
 }
 
-void SimpleAnaglyphsMultiplexer::setupRendering(Eye eye) {
+void LinearAnaglyphsMultiplexer::setupRendering(Eye eye) {
   _impl->setupRendering(eye);
 }
 
-void SimpleAnaglyphsMultiplexer::finalize() {
+void LinearAnaglyphsMultiplexer::finalize() {
   _impl->finalize();
 }
 
-void SimpleAnaglyphsMultiplexer::setLeftColor(gmTypes::float3 c) {
+void LinearAnaglyphsMultiplexer::setLeftColor(gmTypes::float3 c) {
   _impl->left_color = c;
 }
 
-void SimpleAnaglyphsMultiplexer::setRightColor(gmTypes::float3 c) {
+void LinearAnaglyphsMultiplexer::setRightColor(gmTypes::float3 c) {
   _impl->right_color = c;
 }
 
-void SimpleAnaglyphsMultiplexer::setSaturation(float s) {
+void LinearAnaglyphsMultiplexer::setSaturation(float s) {
   _impl->left_saturation = s;
   _impl->right_saturation = s;
 }
 
-void SimpleAnaglyphsMultiplexer::setLeftSaturation(float s) {
+void LinearAnaglyphsMultiplexer::setLeftSaturation(float s) {
   _impl->left_saturation = s;
 }
 
-void SimpleAnaglyphsMultiplexer::setRightSaturation(float s) {
+void LinearAnaglyphsMultiplexer::setRightSaturation(float s) {
   _impl->right_saturation = s;
 }
 
-void SimpleAnaglyphsMultiplexer::Impl::setup() {
+void LinearAnaglyphsMultiplexer::Impl::setup() {
   is_setup = true;
   is_functional = false;
 
-  GM_VINF("SimpleAnaglyphsMultiplexer", "Creating buffers and textures");
+  GM_VINF("LinearAnaglyphsMultiplexer", "Creating buffers and textures");
   glGenFramebuffers((GLsizei)Eye::COUNT, fb_id);
   glGenTextures((GLsizei)Eye::COUNT, tex_id);
   glGenRenderbuffers(1, &rb_depth_id);
@@ -134,7 +134,7 @@ void main() {
 }
 )lang=glsl";
 
-  GM_VINF("SimpleAnaglyphsMultiplexer", "Creating vertex shader");
+  GM_VINF("LinearAnaglyphsMultiplexer", "Creating vertex shader");
   vertex_shader_id = glCreateShader(GL_VERTEX_SHADER);
   glShaderSource(vertex_shader_id, 1, &vertex_shader_code, nullptr);
   glCompileShader(vertex_shader_id);
@@ -171,12 +171,12 @@ void main() {
 }
 )lang=glsl";
 
-  GM_VINF("SimpleAnaglyphsMultiplexer", "Creating fragment shader");
+  GM_VINF("LinearAnaglyphsMultiplexer", "Creating fragment shader");
   fragment_shader_id = glCreateShader(GL_FRAGMENT_SHADER);
   glShaderSource(fragment_shader_id, 1, &fragment_shader_code, nullptr);
   glCompileShader(fragment_shader_id);
 
-  GM_VINF("SimpleAnaglyphsMultiplexer", "Creating and linking program");
+  GM_VINF("LinearAnaglyphsMultiplexer", "Creating and linking program");
   program_id = glCreateProgram();
   glAttachShader(program_id, vertex_shader_id);
   glAttachShader(program_id, fragment_shader_id);
@@ -186,11 +186,11 @@ void main() {
   if (!GLUtils::check_shader_program(program_id))
     return;
 
-  GM_VINF("SimpleAnaglyphsMultiplexer", "Creating vertex array");
+  GM_VINF("LinearAnaglyphsMultiplexer", "Creating vertex array");
   glGenVertexArrays(1, &vao_id);
   glBindVertexArray(vao_id);
 
-  GM_VINF("SimpleAnaglyphsMultiplexer", "Creating and setting up array buffer");
+  GM_VINF("LinearAnaglyphsMultiplexer", "Creating and setting up array buffer");
   glGenBuffers(1, &vbo_id);
   glBindBuffer(GL_ARRAY_BUFFER, vbo_id);
   const GLfloat vertices[4][2] = {
@@ -207,7 +207,7 @@ void main() {
   is_functional = true;
 }
 
-void SimpleAnaglyphsMultiplexer::Impl::teardown() {
+void LinearAnaglyphsMultiplexer::Impl::teardown() {
   is_functional = false;
 
   if (fb_id[0]) glDeleteFramebuffers((GLsizei)Eye::COUNT, fb_id);
@@ -233,7 +233,7 @@ void SimpleAnaglyphsMultiplexer::Impl::teardown() {
   is_setup = false;
 }
 
-void SimpleAnaglyphsMultiplexer::Impl::prepare() {
+void LinearAnaglyphsMultiplexer::Impl::prepare() {
 
   glGetIntegerv(GL_FRAMEBUFFER_BINDING, &target_framebuffer);
   glGetIntegerv(GL_VIEWPORT, viewport);
@@ -249,16 +249,16 @@ void SimpleAnaglyphsMultiplexer::Impl::prepare() {
     return;
 }
 
-void SimpleAnaglyphsMultiplexer::Impl::setupRendering(Eye eye) {
+void LinearAnaglyphsMultiplexer::Impl::setupRendering(Eye eye) {
   if (!is_functional)
     return;
 
-  GM_VINF("SimpleAnaglyphsMultiplexer", "setting up for "
+  GM_VINF("LinearAnaglyphsMultiplexer", "setting up for "
           << (eye == Eye::LEFT ? "left eye" : "right eye"));
 
   glBindFramebuffer(GL_FRAMEBUFFER, fb_id[(size_t)eye]);
 
-  GM_VINF("SimpleAnaglyphsMultiplexer", "Allocating frame buffer texture " << tex_width << "x" << tex_height << " for port " << port_width << "x" << port_height);
+  GM_VINF("LinearAnaglyphsMultiplexer", "Allocating frame buffer texture " << tex_width << "x" << tex_height << " for port " << port_width << "x" << port_height);
   glBindTexture(GL_TEXTURE_2D, tex_id[(size_t)eye]);
   glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, tex_width, tex_height, 0, GL_RGB, GL_UNSIGNED_BYTE, 0);
   glBindTexture(GL_TEXTURE_2D, 0);
@@ -271,8 +271,8 @@ void SimpleAnaglyphsMultiplexer::Impl::setupRendering(Eye eye) {
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 }
 
-void SimpleAnaglyphsMultiplexer::Impl::finalize() {
-  GM_VINF("SimpleAnaglyphsMultiplexer", "finalizing");
+void LinearAnaglyphsMultiplexer::Impl::finalize() {
+  GM_VINF("LinearAnaglyphsMultiplexer", "finalizing");
 
   glBindFramebuffer(GL_FRAMEBUFFER, target_framebuffer);
   glViewport(viewport[0], viewport[1], viewport[2], viewport[3]);
