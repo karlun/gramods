@@ -24,7 +24,7 @@ Gramods, short for Graphics Modules, is a collection of weakly inter dependent a
 
 The main purpose of the Gramods library is to simplify loading of platform dependent configurations into a pre-compiled application, while also simplifying the implementation of such applications. The aim is to be able to implement an application that employs execution and data synchronization over network and synchronized multi window rendering in a flexible and configurable way, similar to this example code:
 
-```c++
+~~~~~~~~~~~~~{.cpp}
 int main(int argc, char *argv[]) {
 
   gmCore::Configuration config(argc, argv);
@@ -75,7 +75,7 @@ int main(int argc, char *argv[]) {
 
     Updateable::updateAll();
   }
-```
+~~~~~~~~~~~~~
 
 
 ## Repository Structure
@@ -95,22 +95,21 @@ Observe that CMake cannot automatically deactivate dependent modules when a modu
 
 Typical build and installation:
 
-```sh
+~~~~~~~~~~~~~{.sh}
 cd gramods
 mkdir build
 cd build
 cmake ..
 make
 make install
-```
+~~~~~~~~~~~~~
 
 
 # Modules and Dependencies
 
 The Gramods package divides the functionality into modules that can be built individually, given that the necessary dependencies are met. Some modules do have inter dependencies, however.
 
-```plantuml
-@startuml
+@startuml component
 component gmCore
 component gmNetwork
 component gmTrack
@@ -120,7 +119,7 @@ gmCore <- gmGraphics
 gmCore <- gmTrack
 gmTrack <-- gmGraphics
 @enduml
-```
+
 
 ## gmCore
 
@@ -137,7 +136,7 @@ Complex object factory instantiation, XML and command line parameter control, an
 
 A Simple example of how configuration works:
 
-```c++
+~~~~~~~~~~~~~{.cpp}
 /// Typically in header (myclass.hh)
 struct MyClass : gramods::gmCore::Object {
   int parameter;
@@ -148,19 +147,19 @@ struct MyClass : gramods::gmCore::Object {
 /// Typically in c++ file (myclass.cpp)
 GM_OFI_DEFINE(MyClass);
 GM_OFI_PARAM(MyClass, parameter, int, MyClass::setParameter);
-```
+~~~~~~~~~~~~~
 
 This class can then be instantiated by loading this configuration file:
 
-```xml
+~~~~~~~~~~~~~{.xml}
 <config>
   <MyClass parameter="5"/>
 </config>
-```
+~~~~~~~~~~~~~
 
 and the `parameter` value can be overridden by command line `--param MyClass.parameter=3`. This is when reading the configuration file using command line arguments, like this:
 
-```c++
+~~~~~~~~~~~~~{.cpp}
 int main(int argc, char *argv[]) {
   gmCore::Configuration config(argc, argv);
 
@@ -169,12 +168,12 @@ int main(int argc, char *argv[]) {
 
   std::cout << node.parameter << std::endl;
 }
-```
+~~~~~~~~~~~~~
 
 
 ## gmTrack
 
-Pose tracking client classes and filters.
+The gmTrack module provides primarily pose tracking clients, servers and filters.
 
 Required dependences:
 
@@ -195,7 +194,7 @@ Abstraction of tracking using Decorator design pattern for flexible filtering, c
 
 ## gmNetwork
 
-Network data and execution synchronization.
+The gmNetwork module provides network data synchronization and execution synchronization.
 
 Required dependences:
 
@@ -211,7 +210,7 @@ Thread encapsulation and role agnostic synchronization.
 
 ## gmGraphics
 
-Graphics rendering pipeline definition and handling.
+The gmGraphics module provides nodes primarily for graphics rendering pipeline definition and handling.
 
 Required dependences:
 
@@ -236,8 +235,7 @@ If a SterescopicView has a StereoscopicMultiplexer, it will call this to set up 
 
 The TiledView node makes use of the *Decorator Design Pattern*, to allow for flexible configurations of graphics output.
 
-```plantuml
-@startuml
+@startuml class
 RendererDispatcher <|-- Window
 RendererDispatcher : renderFullPipeline(ViewSettings)
 RendererDispatcher <|-- View
@@ -258,11 +256,10 @@ note top of StereoscopicMultiplexer : StereoscopicView lets a StereoscopicMultip
 StereoscopicMultiplexer <|-- SimpleAnaglyphsMultiplexer
 StereoscopicMultiplexer <|-- QuadBufferMultiplexer
 @enduml
-```
 
 Since shaders are tightly coupled with the C++ code together with which they are used, their code reside within their respective class, in string literals. These string literals are specified in the form `std::string code = R"lang=glsl(` so that the editor can detect the language and provide syntax highlighting and automatic indentation. To get language support in the string literals with Emacs, use `polymode` with the following code in your `.emacs` file:
 
-```lisp
+~~~~~~~~~~~~~{.el}
 (require 'polymode)
 
 (defcustom  pm-inner/c++-string-literals-lang-code
@@ -275,7 +272,7 @@ Since shaders are tightly coupled with the C++ code together with which they are
   "Auto detect string literal language"
   :group 'poly-innermodes
   :type 'object)
-```
+~~~~~~~~~~~~~
 
 ## gmTouch
 
