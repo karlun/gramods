@@ -1,0 +1,18 @@
+<config>
+
+  <OStreamMessageSink stream="err" useAnsiColor="1" level="1"/>
+  <LogFileMessageSink logFilePath="gramod.log" append="0"/>
+
+  <ImportLibrary lib="libgmTrack.so"/>
+
+  <ArucoPoseTracker cameraConfigurationFile="config/camera-calibration-1c1bb5765ddb.yaml">
+
+    <OpenCvVideoCapture cameraId="0"/>
+
+    <ArucoGridBoard
+        dictionary="4X4_50"
+        rows="5" columns="5"/>
+
+  </ArucoPoseTracker>
+
+</config>
