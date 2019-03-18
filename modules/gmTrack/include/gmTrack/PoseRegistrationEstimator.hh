@@ -27,6 +27,7 @@ class PoseRegistrationEstimator
 public:
 
   PoseRegistrationEstimator();
+  ~PoseRegistrationEstimator();
 
   /**
      Updates the animation.

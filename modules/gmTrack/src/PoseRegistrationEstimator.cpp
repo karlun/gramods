@@ -14,15 +14,14 @@ GM_OFI_PARAM(PoseRegistrationEstimator, point, gmTypes::float3, PoseRegistration
 GM_OFI_POINTER(PoseRegistrationEstimator, controller, Controller, PoseRegistrationEstimator::setController);
 
 struct PoseRegistrationEstimator::Impl {
-  Impl();
 
   typedef gmCore::Updateable::clock clock;
 
   std::vector<Eigen::Vector3f> actual_positions;
   std::vector<Eigen::Vector3f> tracker_positions;
   std::vector<Eigen::Vector3f> samples;
-  clock::time_point last_sample_time;
-  float samples_per_second;
+  clock::time_point last_sample_time = clock::time_point::min();
+  float samples_per_second = 1;
   bool collecting = false;
 
   void update(clock::time_point t);
@@ -53,7 +52,7 @@ struct PoseRegistrationEstimator::Impl {
                                 Eigen::Matrix4f M_raw,
                                 Eigen::Matrix4f &M_unit);
 
-  float planar_sphericity;
+  float planar_sphericity = 0.3;
   std::shared_ptr<gramods::gmTrack::Controller> controller;
 
   Eigen::Matrix4f registration_raw;
@@ -64,10 +63,7 @@ struct PoseRegistrationEstimator::Impl {
 PoseRegistrationEstimator::PoseRegistrationEstimator()
   : _impl(std::make_unique<Impl>()) {}
 
-PoseRegistrationEstimator::Impl::Impl()
-  : samples_per_second(1),
-    last_sample_time(clock::time_point::min()),
-    planar_sphericity(0.3) {}
+PoseRegistrationEstimator::~PoseRegistrationEstimator() {}
 
 void PoseRegistrationEstimator::update(clock::time_point t) {
   _impl->update(t);
