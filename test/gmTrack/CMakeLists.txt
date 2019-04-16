@@ -6,29 +6,26 @@ SET (TEST_LIBS CACHE INTERNAL "The list of libraries that the track test should 
 
 SET (TEST_INCLUDE_DIRS ${TEST_INCLUDE_DIRS} ${CMAKE_CURRENT_SOURCE_DIR}/include)
 
-IF (TARGET gmTrack)
-  SET (TEST_LIBS ${TEST_LIBS} gmTrack)
-ELSE ()
+IF (NOT TARGET gmTrack)
   MESSAGE(STATUS "gmTrack test will not be built without gmTrack module")
   RETURN()
 ENDIF ()
+SET (TEST_LIBS ${TEST_LIBS} gmTrack)
 
 FIND_PACKAGE(GTest)
-IF (GTest_FOUND)
-  SET (TEST_INCLUDE_DIRS ${TEST_INCLUDE_DIRS} ${GTEST_INCLUDE_DIRS})
-  SET (TEST_LIBS ${TEST_LIBS} ${GTEST_BOTH_LIBRARIES})
-ELSE ()
+IF (NOT GTest_FOUND)
   MESSAGE(STATUS "gmTrack test will not be built without gtest")
   RETURN()
 ENDIF ()
+SET (TEST_INCLUDE_DIRS ${TEST_INCLUDE_DIRS} ${GTEST_INCLUDE_DIRS})
+SET (TEST_LIBS ${TEST_LIBS} ${GTEST_BOTH_LIBRARIES})
 
 FIND_PACKAGE(Threads)
-IF (Threads_FOUND)
-  SET (TEST_LIBS ${TEST_LIBS} ${CMAKE_THREAD_LIBS_INIT})
-ELSE ()
+IF (NOT Threads_FOUND)
   MESSAGE(STATUS "gmTrack test will not be built without threads")
   RETURN()
 ENDIF ()
+SET (TEST_LIBS ${TEST_LIBS} Threads::Threads)
 
 ADD_EXECUTABLE(test_gmTrack src/main.cpp)
 

@@ -6,29 +6,26 @@ SET (TEST_LIBS CACHE INTERNAL "The list of libraries that the core test should l
 
 SET (TEST_INCLUDE_DIRS ${TEST_INCLUDE_DIRS} ${CMAKE_CURRENT_SOURCE_DIR}/include)
 
-IF (TARGET gmCore)
-  SET (TEST_LIBS ${TEST_LIBS} gmCore)
-ELSE ()
+IF (NOT TARGET gmCore)
   MESSAGE(STATUS "gmCore test will not be built without gmCore module")
   RETURN()
 ENDIF ()
+SET (TEST_LIBS ${TEST_LIBS} gmCore)
 
 FIND_PACKAGE(GTest)
-IF (GTest_FOUND)
-  SET (TEST_INCLUDE_DIRS ${TEST_INCLUDE_DIRS} ${GTEST_INCLUDE_DIRS})
-  SET (TEST_LIBS ${TEST_LIBS} ${GTEST_BOTH_LIBRARIES})
-ELSE ()
+IF (NOT GTest_FOUND)
   MESSAGE(STATUS "gmCore test will not be built without gtest")
   RETURN()
 ENDIF ()
+SET (TEST_INCLUDE_DIRS ${TEST_INCLUDE_DIRS} ${GTEST_INCLUDE_DIRS})
+SET (TEST_LIBS ${TEST_LIBS} ${GTEST_BOTH_LIBRARIES})
 
 FIND_PACKAGE(Threads)
-IF (Threads_FOUND)
-  SET (TEST_LIBS ${TEST_LIBS} ${CMAKE_THREAD_LIBS_INIT})
-ELSE ()
+IF (NOT Threads_FOUND)
   MESSAGE(STATUS "gmCore test will not be built without threads")
   RETURN()
 ENDIF ()
+SET (TEST_LIBS ${TEST_LIBS} Threads::Threads)
 
 ADD_EXECUTABLE(test_gmCore src/main.cpp)
 

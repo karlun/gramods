@@ -6,29 +6,26 @@ SET (TEST_LIBS CACHE INTERNAL "The list of libraries that the test should link a
 
 SET (TEST_INCLUDE_DIRS ${TEST_INCLUDE_DIRS} ${CMAKE_CURRENT_SOURCE_DIR}/include)
 
-IF (TARGET gmMisc)
-  SET (TEST_LIBS ${TEST_LIBS} gmMisc)
-ELSE ()
+IF (NOT TARGET gmMisc)
   MESSAGE(STATUS "gmMisc test will not be built without gmMisc module")
   RETURN()
 ENDIF ()
+SET (TEST_LIBS ${TEST_LIBS} gmMisc)
 
 FIND_PACKAGE(GTest)
-IF (GTest_FOUND)
-  SET (TEST_INCLUDE_DIRS ${TEST_INCLUDE_DIRS} ${GTEST_INCLUDE_DIRS})
-  SET (TEST_LIBS ${TEST_LIBS} ${GTEST_BOTH_LIBRARIES})
-ELSE ()
+IF (NOT GTest_FOUND)
   MESSAGE(STATUS "gmMisc test will not be built without gtest")
   RETURN()
 ENDIF ()
+SET (TEST_INCLUDE_DIRS ${TEST_INCLUDE_DIRS} ${GTEST_INCLUDE_DIRS})
+SET (TEST_LIBS ${TEST_LIBS} ${GTEST_BOTH_LIBRARIES})
 
 FIND_PACKAGE(Threads)
-IF (Threads_FOUND)
-  SET (TEST_LIBS ${TEST_LIBS} ${CMAKE_THREAD_LIBS_INIT})
-ELSE ()
+IF (NOT Threads_FOUND)
   MESSAGE(STATUS "gmMisc test will not be built without threads")
   RETURN()
 ENDIF ()
+SET (TEST_LIBS ${TEST_LIBS} Threads::Threads)
 
 ADD_EXECUTABLE(test_gmMisc src/main.cpp)
 

@@ -23,7 +23,7 @@ IF (NOT Threads_FOUND)
   MESSAGE (STATUS "Not including gm-load - requires Threads")
   RETURN()
 ENDIF ()
-SET (APP_LIBS ${APP_LIBS} ${CMAKE_THREAD_LIBS_INIT})
+SET (APP_LIBS ${APP_LIBS} Threads::Threads)
 
 
 ADD_EXECUTABLE(gm-load src/main.cpp)
