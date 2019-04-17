@@ -47,7 +47,7 @@ public:
      Selects projection between equirectangular (0), angular
      fisheye (1) and square angular fisheye (2). Default is 0.
   */
-  void setProjection(int p);
+  void setProjectionType(int p);
 
   GM_OFI_DECLARE;
 

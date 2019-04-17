@@ -23,9 +23,9 @@
         cubeMapResolution="1024"
         linearInterpolation="1"
         coverageAngle="3.141592"
-        radius="7.4"
+        sphereRadius="7.4"
         tiltAngle="0.466"
-        projection="2">
+        projectionType="2">
 
       <Viewpoint
           position="0 0 0"/>

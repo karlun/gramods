@@ -25,7 +25,7 @@
           cubeMapResolution="1024"
           linearInterpolation="1"
           coverageAngle="6.283"
-          projection="0">
+          projectionType="0">
 
         <VelocityViewpoint
             position="0 0 7"
@@ -40,7 +40,7 @@
           cubeMapResolution="1024"
           linearInterpolation="1"
           coverageAngle="6.283"
-          projection="2">
+          projectionType="2">
 
         <VelocityViewpoint
             USE="viewpoint"/>
@@ -52,7 +52,7 @@
           cubeMapResolution="1024"
           linearInterpolation="1"
           coverageAngle="6.283"
-          projection="0">
+          projectionType="0">
 
         <VelocityViewpoint
             USE="viewpoint"/>
@@ -64,7 +64,7 @@
           cubeMapResolution="1024"
           linearInterpolation="1"
           coverageAngle="6.283"
-          projection="2">
+          projectionType="2">
 
         <VelocityViewpoint
             USE="viewpoint"/>

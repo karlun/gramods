@@ -22,7 +22,7 @@
         cubeMapResolution="1024"
         linearInterpolation="1"
         coverageAngle="6.283"
-        projection="1">
+        projectionType="1">
 
       <VelocityViewpoint
           position="0 0 7"

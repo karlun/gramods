@@ -50,18 +50,18 @@ public:
      Selects projection between equirectangular (0), angular
      fisheye (1) and square angular fisheye (2). Default is 0.
   */
-  void setProjection(int p);
+  void setProjectionType(int p);
 
   /**
      Sets the location of the center of the spherical projection
      surface, in meters. Default is zero.
   */
-  void setPosition(gmTypes::float3 c);
+  void setSphereCenter(gmTypes::float3 c);
 
   /**
      Set the radius of the projection surface, in meters. Default is 10.
    */
-  void setRadius(float r);
+  void setSphereRadius(float r);
 
   /**
      Set the forward tilt (towards -z) of the projection surface, in

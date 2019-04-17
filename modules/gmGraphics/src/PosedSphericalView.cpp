@@ -16,7 +16,7 @@ GM_OFI_DEFINE_SUB(PosedSphericalView, View);
 GM_OFI_PARAM(PosedSphericalView, cubeMapResolution, int, PosedSphericalView::setCubeMapResolution);
 GM_OFI_PARAM(PosedSphericalView, linearInterpolation, bool, PosedSphericalView::setLinearInterpolation);
 GM_OFI_PARAM(PosedSphericalView, coverageAngle, float, PosedSphericalView::setCoverageAngle);
-GM_OFI_PARAM(PosedSphericalView, projection, int, PosedSphericalView::setProjection);
+GM_OFI_PARAM(PosedSphericalView, projectionType, int, PosedSphericalView::setProjectionType);
 
 struct PosedSphericalView::Impl {
 
@@ -25,7 +25,7 @@ struct PosedSphericalView::Impl {
   static const std::string equirectangular_mapper_code;
   static const std::string mapper_pattern;
 
-  void setProjection(int a);
+  void setProjectionType(int a);
 
   float coverage_angle = 2 * gramods_PI;
   bool make_square = false;
@@ -33,7 +33,7 @@ struct PosedSphericalView::Impl {
   std::unique_ptr<CubeMap> cubemap;
 
   Impl() : cubemap(std::make_unique<CubeMap>()) {
-    setProjection(0);
+    setProjectionType(0);
   }
 
 };
@@ -144,18 +144,18 @@ void PosedSphericalView::renderFullPipeline(ViewSettings settings) {
     glUniform1f(glGetUniformLocation(program_id, "coverageAngle"), _impl->coverage_angle);
   }
 
-  Eigen::Vector3f pos = Eigen::Vector3f::Zero();
-  Eigen::Quaternionf rot = Eigen::Quaternionf::Identity();
+  Eigen::Vector3f eye_pos = Eigen::Vector3f::Zero();
+  Eigen::Quaternionf head_rot = Eigen::Quaternionf::Identity();
 
   if (settings.viewpoint) {
-    pos = settings.viewpoint->getPosition();
-    rot = settings.viewpoint->getOrientation();
+    eye_pos = settings.viewpoint->getPosition();
+    head_rot = settings.viewpoint->getOrientation();
   }
 
-  _impl->cubemap->renderFullPipeline(settings.renderers, pos, rot, _impl->make_square);
+  _impl->cubemap->renderFullPipeline(settings.renderers, eye_pos, head_rot, _impl->make_square);
 }
 
-void PosedSphericalView::Impl::setProjection(int a) {
+void PosedSphericalView::Impl::setProjectionType(int a) {
 
   std::string fragment_code = this->fragment_code;
   assert(fragment_code.find(mapper_pattern) != std::string::npos);
@@ -201,8 +201,8 @@ void PosedSphericalView::setCoverageAngle(float a) {
   _impl->coverage_angle = a;
 }
 
-void PosedSphericalView::setProjection(int a) {
-  _impl->setProjection(a);
+void PosedSphericalView::setProjectionType(int a) {
+  _impl->setProjectionType(a);
 }
 
 END_NAMESPACE_GMGRAPHICS;

@@ -17,9 +17,9 @@ GM_OFI_DEFINE_SUB(SpatialSphericalView, StereoscopicView);
 GM_OFI_PARAM(SpatialSphericalView, cubeMapResolution, int, SpatialSphericalView::setCubeMapResolution);
 GM_OFI_PARAM(SpatialSphericalView, linearInterpolation, bool, SpatialSphericalView::setLinearInterpolation);
 GM_OFI_PARAM(SpatialSphericalView, coverageAngle, float, SpatialSphericalView::setCoverageAngle);
-GM_OFI_PARAM(SpatialSphericalView, projection, int, SpatialSphericalView::setProjection);
-GM_OFI_PARAM(SpatialSphericalView, position, gmTypes::float3, SpatialSphericalView::setPosition);
-GM_OFI_PARAM(SpatialSphericalView, radius, float, SpatialSphericalView::setRadius);
+GM_OFI_PARAM(SpatialSphericalView, projectionType, int, SpatialSphericalView::setProjectionType);
+GM_OFI_PARAM(SpatialSphericalView, sphereCenter, gmTypes::float3, SpatialSphericalView::setSphereCenter);
+GM_OFI_PARAM(SpatialSphericalView, sphereRadius, float, SpatialSphericalView::setSphereRadius);
 GM_OFI_PARAM(SpatialSphericalView, tiltAngle, float, SpatialSphericalView::setTiltAngle);
 
 struct SpatialSphericalView::Impl {
@@ -29,19 +29,19 @@ struct SpatialSphericalView::Impl {
   static const std::string equirectangular_mapper_code;
   static const std::string mapper_pattern;
 
-  void setProjection(int a);
+  void setProjectionType(int a);
 
   float coverage_angle = 2 * gramods_PI;
   bool make_square = false;
-  Eigen::Vector3f position = Eigen::Vector3f::Zero();
-  float radius = 10;
+  Eigen::Vector3f sphere_center = Eigen::Vector3f::Zero();
+  float sphere_radius = 10;
   float tilt_angle = 0;
   float eye_separation = 0;
 
   std::unique_ptr<CubeMap> cubemap;
 
   Impl() : cubemap(std::make_unique<CubeMap>()) {
-    setProjection(0);
+    setProjectionType(0);
   }
 
   void renderFullPipeline(ViewSettings settings, Eye eye);
@@ -180,29 +180,29 @@ void SpatialSphericalView::renderFullPipeline(ViewSettings settings, Eye eye) {
 
 void SpatialSphericalView::Impl::renderFullPipeline(ViewSettings settings, Eye eye) {
 
-  Eigen::Vector3f pos = Eigen::Vector3f::Zero();
-  Eigen::Quaternionf rot = Eigen::Quaternionf::Identity();
+  Eigen::Vector3f eye_pos = Eigen::Vector3f::Zero();
+  Eigen::Quaternionf head_rot = Eigen::Quaternionf::Identity();
   Eigen::Quaternionf tilt
     (Eigen::AngleAxis<float>(tilt_angle, Eigen::Vector3f(-1, 0, 0)));
 
   if (settings.viewpoint) {
-    pos = settings.viewpoint->getPosition();
-    rot = settings.viewpoint->getOrientation();
+    eye_pos = settings.viewpoint->getPosition();
+    head_rot = settings.viewpoint->getOrientation();
   }
 
   switch (eye) {
   case Eye::LEFT:
-    pos -= rot * Eigen::Vector3f(0.5f * eye_separation, 0.f, 0.f);
+    eye_pos -= head_rot * Eigen::Vector3f(0.5f * eye_separation, 0.f, 0.f);
     break;
   case Eye::RIGHT:
-    pos += rot * Eigen::Vector3f(0.5f * eye_separation, 0.f, 0.f);
+    eye_pos += head_rot * Eigen::Vector3f(0.5f * eye_separation, 0.f, 0.f);
   }
 
   GLint program_id = cubemap->getProgram();
   if (!program_id) {
 
     std::vector<std::shared_ptr<Renderer>> no_renderers;
-    cubemap->renderFullPipeline(no_renderers, pos, tilt, make_square);
+    cubemap->renderFullPipeline(no_renderers, eye_pos, tilt, make_square);
     program_id = cubemap->getProgram();
 
     if (!program_id) {
@@ -211,20 +211,20 @@ void SpatialSphericalView::Impl::renderFullPipeline(ViewSettings settings, Eye e
     }
   }
 
-  Eigen::Vector3f offset = pos - position;
+  Eigen::Vector3f offset = eye_pos - sphere_center;
 
   glUseProgram(program_id);
   glUniform1f(glGetUniformLocation(program_id, "coverageAngle"), coverage_angle);
   glUniform3fv(glGetUniformLocation(program_id, "eye_position"), 1, offset.data());
-  glUniform1f(glGetUniformLocation(program_id, "radius"), radius);
-  glUniform1f(glGetUniformLocation(program_id, "cubemap_radius"), radius);
+  glUniform1f(glGetUniformLocation(program_id, "radius"), sphere_radius);
+  glUniform1f(glGetUniformLocation(program_id, "cubemap_radius"), sphere_radius);
   glUseProgram(0);
 
-  cubemap->setSpatialCubeMap(position, 2 * radius);
-  cubemap->renderFullPipeline(settings.renderers, pos, tilt, make_square);
+  cubemap->setSpatialCubeMap(sphere_center, 2 * sphere_radius);
+  cubemap->renderFullPipeline(settings.renderers, eye_pos, tilt, make_square);
 }
 
-void SpatialSphericalView::Impl::setProjection(int a) {
+void SpatialSphericalView::Impl::setProjectionType(int a) {
 
   std::string fragment_code = this->fragment_code;
   assert(fragment_code.find(mapper_pattern) != std::string::npos);
@@ -270,17 +270,17 @@ void SpatialSphericalView::setCoverageAngle(float a) {
   _impl->coverage_angle = a;
 }
 
-void SpatialSphericalView::setProjection(int a) {
-  _impl->setProjection(a);
+void SpatialSphericalView::setProjectionType(int a) {
+  _impl->setProjectionType(a);
 }
 
-void SpatialSphericalView::setPosition(gmTypes::float3 c) {
+void SpatialSphericalView::setSphereCenter(gmTypes::float3 c) {
   assert(0);
-  _impl->position = Eigen::Vector3f(c[0], c[1], c[2]);
+  _impl->sphere_center = Eigen::Vector3f(c[0], c[1], c[2]);
 }
 
-void SpatialSphericalView::setRadius(float r) {
-  _impl->radius = r;
+void SpatialSphericalView::setSphereRadius(float r) {
+  _impl->sphere_radius = r;
 }
 
 void SpatialSphericalView::setTiltAngle(float a) {
