@@ -8,7 +8,7 @@
   <SdlWindow
       fullscreen="0"
       title="Spherical"
-      GLMajor="3" GLMinor="3">
+      GLMajor="3" GLMinor="3" GLProfile="core">
 
     <SdlContext
         DEF="SDLContext"
