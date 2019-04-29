@@ -29,7 +29,7 @@ public:
 
   /**
      Sets the distance between the eyes, in internal units, typically
-     meters.
+     meters. Default is 0.06 m.
   */
   void setEyeSeparation(float e) {
     eye_separation = e;
@@ -53,7 +53,7 @@ protected:
   virtual void renderFullPipeline(ViewSettings settings, Eye eye) = 0;
 
   std::shared_ptr<StereoscopicMultiplexer> stereoscopic_multiplexer;
-  float eye_separation = 0.65f;
+  float eye_separation = 0.06f;
 
 };
 
