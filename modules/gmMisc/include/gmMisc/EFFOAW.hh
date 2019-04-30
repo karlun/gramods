@@ -7,6 +7,8 @@
 
 #include <gmMisc/config.hh>
 
+#ifdef gramods_ENABLE_Eigen3
+
 #include <deque>
 #include <map>
 #include <cstddef>
@@ -123,4 +125,5 @@ private:
 
 END_NAMESPACE_GMMISC
 
+#endif
 #endif

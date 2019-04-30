@@ -4,8 +4,17 @@ CMAKE_MINIMUM_REQUIRED(VERSION 2.8.3)
 SET (APP_INCLUDE_DIRS CACHE INTERNAL "The list of include folders to search for the app.")
 SET (APP_LIBS CACHE INTERNAL "The list of libraries that the app should link against.")
 
+
+IF (NOT TARGET gmMisc)
+  MESSAGE (STATUS "Not including gm-demo-end-fit - requires gmMisc")
+  RETURN()
+ENDIF ()
 SET (APP_LIBS ${APP_LIBS} gmMisc)
 
+IF (NOT gramods_ENABLE_Eigen3)
+  MESSAGE (STATUS "Not including gm-demo-end-fit - requires Eigen3")
+  RETURN()
+ENDIF()
 
 FIND_PACKAGE(SDL2)
 IF(SDL2_FOUND)

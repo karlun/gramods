@@ -4,7 +4,13 @@ CMAKE_MINIMUM_REQUIRED(VERSION 2.8.3)
 SET (APP_INCLUDE_DIRS CACHE INTERNAL "The list of include folders to search for the app.")
 SET (APP_LIBS CACHE INTERNAL "The list of libraries that the app should link against.")
 
+
+IF (NOT TARGET gmTouch)
+  MESSAGE (STATUS "Not including gm-demo-multitouch - requires gmTouch")
+  RETURN()
+ENDIF ()
 SET (APP_LIBS ${APP_LIBS} gmTouch)
+
 
 
 FIND_PACKAGE(SDL2 COMPONENTS ttf)

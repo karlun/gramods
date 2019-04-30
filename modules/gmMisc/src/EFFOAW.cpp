@@ -1,6 +1,8 @@
 
 #include <gmMisc/EFFOAW.hh>
 
+#ifdef gramods_ENABLE_Eigen3
+
 BEGIN_NAMESPACE_GMMISC;
 
 struct EFFOAW::Impl {
@@ -232,3 +234,5 @@ void EFFOAW::Impl::cleanup(double time) {
 }
 
 END_NAMESPACE_GMMISC;
+
+#endif

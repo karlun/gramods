@@ -2,6 +2,8 @@
 #include <gmMisc/EFFOAW.hh>
 #include <gmMisc/EFHOAW.hh>
 
+#ifdef gramods_ENABLE_Eigen3
+
 using namespace gramods;
 
 TEST(gmMiscEndFit, Effoaw) {
@@ -74,3 +76,5 @@ TEST(gmMiscEndFit, Efhoaw) {
     auto P = efhoaw.getPolynomialPosition(0, t);
   }
 }
+
+#endif

@@ -7,7 +7,17 @@ SET (APP_LIBS CACHE INTERNAL "The list of libraries that the app should link aga
 SET (APP_INCLUDE_DIRS ${APP_INCLUDE_DIRS} ${CMAKE_CURRENT_SOURCE_DIR}/include)
 SET (APP_INCLUDE_DIRS ${APP_INCLUDE_DIRS} ${CMAKE_CURRENT_BINARY_DIR}/include)
 
+
+IF (NOT TARGET gmCore)
+  MESSAGE (STATUS "Not including gm-load - requires gmCore")
+  RETURN()
+ENDIF ()
 SET (APP_LIBS ${APP_LIBS} gmCore)
+
+IF (NOT TARGET gmGraphics)
+  MESSAGE (STATUS "Not including gm-load - requires gmGraphics")
+  RETURN()
+ENDIF ()
 SET (APP_LIBS ${APP_LIBS} gmGraphics)
 
 
