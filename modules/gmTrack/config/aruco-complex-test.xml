@@ -5,7 +5,9 @@
 
   <ImportLibrary lib="libgmTrack.so"/>
 
-  <ArucoPoseTracker cameraConfigurationFile="config/camera-calibration-1c1bb5765ddb.yaml">
+  <ArucoPoseTracker
+      showDebug="true"
+      cameraConfigurationFile="config/camera-calibration.yaml">
 
     <OpenCvVideoCapture cameraId="0"/>
 
