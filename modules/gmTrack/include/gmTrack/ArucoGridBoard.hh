@@ -15,6 +15,9 @@ BEGIN_NAMESPACE_GMTRACK;
 
 /**
    The Aruco grid board creates a flat grid of fiducial markers.
+
+   The coordinate system is centered for convenience when used
+   together with ArucoBoardComplex to form complex structures.
 */
 class ArucoGridBoard : public ArucoBoard {
 

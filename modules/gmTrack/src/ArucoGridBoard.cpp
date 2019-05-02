@@ -148,14 +148,26 @@ cv::Ptr<cv::aruco::Board> ArucoGridBoard::Impl::getBoard() {
   cache_board = nullptr;
 
   auto aboard = cv::aruco::GridBoard::create(columns, rows, size, sep, dict, id_0);
-  /*
+
   std::vector<std::vector<cv::Point3f>> objPoints;
   std::vector<int> ids;
 
-  objPoints.insert(objPoints.end(), aboard->objPoints.begin(), aboard->objPoints.end());
+  auto &p0 = aboard->objPoints[0][0];
+  auto &p1 = aboard->objPoints[columns - 1][1];
+  auto &p2 = aboard->objPoints[columns * rows - 1][2];
+  auto &p3 = aboard->objPoints[columns *(rows - 1)][3];
+
+  cv::Point3f cp = 0.25 * (p0 + p1 + p2 + p3);
+
+  for (auto opt : aboard->objPoints) {
+    std::vector<cv::Point3f> pts;
+    for (auto pt : opt)
+      pts.push_back(pt - cp);
+    objPoints.push_back(pts);
+  }
   ids.insert(ids.end(), aboard->ids.begin(), aboard->ids.end());
-*/
-  cache_board = aboard;//cv::aruco::Board::create(objPoints, dict, ids);
+
+  cache_board = cv::aruco::Board::create(objPoints, dict, ids);
   return cache_board;
 }
 
