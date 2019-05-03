@@ -73,10 +73,10 @@ public:
   /**
      Specifies backend to use for reading camera or video stream.
 
-     Default is "ANY" and valid alternatives are, though not all may be supported by the current build of OpenCV:
+     Default is "ANY" and the following are all valid alternatives,
+     though not all may be supported by the current build of OpenCV:
 
      - ANY
-     - VFW
      - V4L
      - V4L2
      - FIREWIRE
@@ -84,8 +84,6 @@ public:
      - IEEE1394
      - DC1394
      - CMU1394
-     - QT
-     - UNICAP
      - DSHOW
      - PVAPI
      - OPENNI

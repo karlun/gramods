@@ -108,7 +108,6 @@ cv::VideoCaptureAPIs OpenCvVideoCapture::Impl::backendFromString(std::string api
 #define BACKEND(NAME) if (api == #NAME) return cv::CAP_##NAME;
 
   BACKEND(ANY);
-  BACKEND(VFW);
   BACKEND(V4L);
   BACKEND(V4L2);
   BACKEND(FIREWIRE);
@@ -116,8 +115,6 @@ cv::VideoCaptureAPIs OpenCvVideoCapture::Impl::backendFromString(std::string api
   BACKEND(IEEE1394);
   BACKEND(DC1394);
   BACKEND(CMU1394);
-  BACKEND(QT);
-  BACKEND(UNICAP);
   BACKEND(DSHOW);
   BACKEND(PVAPI);
   BACKEND(OPENNI);
