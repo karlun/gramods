@@ -2,7 +2,7 @@ CMAKE_MINIMUM_REQUIRED(VERSION 2.8.3)
 
 
 IF (NOT EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/src)
-  MESSAGE(STATUS "To include aruco examples, copy .../aruco/samples to ${CMAKE_CURRENT_SOURCE_DIR}/src or use soft link.")
+  MESSAGE(STATUS "To include aruco examples, copy opencv_contrib/modules/aruco/samples to gramods/apps/aruco/src or use soft link.")
   RETURN()
 ENDIF()
 
@@ -28,19 +28,12 @@ IF (NOT OpenCV_VERSION_MAJOR EQUAL 4)
 ENDIF()
 SET (APP_LIBS ${APP_LIBS} ${OpenCV_LIBS})
 
-FOREACH (APP
-    calibrate_camera_charuco
-    calibrate_camera
-    create_board_charuco
-    create_board
-    create_diamond
-    create_marker
-    detect_board_charuco
-    detect_board
-    detect_diamonds
-    detect_markers)
+FILE(GLOB aruco_sample_files ${CMAKE_CURRENT_SOURCE_DIR}/src/*.cpp)
+FOREACH (FILENAME ${aruco_sample_files})
 
-  ADD_EXECUTABLE(aruco_${APP} "src/${APP}.cpp")
+  GET_FILENAME_COMPONENT(APP ${FILENAME} NAME_WE)
+
+  ADD_EXECUTABLE(aruco_${APP} ${FILENAME})
 
   TARGET_INCLUDE_DIRECTORIES(aruco_${APP} PUBLIC ${APP_INCLUDE_DIRS})
   TARGET_LINK_LIBRARIES(aruco_${APP} ${APP_LIBS})
