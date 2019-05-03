@@ -97,6 +97,12 @@ void ArucoPoseTracker::Impl::update(gmCore::Updateable::clock::time_point t) {
 
   auto board = this->board->getBoard();
 
+  if (!board) {
+    GM_RUNLIMITED(GM_WRN("ArucoPoseTracker", "Board did not return aruco board."), 1);
+    have_pose = false;
+    return;
+  }
+
   cv::Mat image;
   if (!video_source->retrieve(image)) {
     GM_RUNLIMITED(GM_WRN("ArucoPoseTracker", "Video source did not provide image."), 1);
@@ -161,9 +167,10 @@ void ArucoPoseTracker::Impl::update(gmCore::Updateable::clock::time_point t) {
 
 
   if (show_debug_output) {
-    // draw results
+
     cv::Mat imageCopy;
     image.copyTo(imageCopy);
+
     if(ids.size() > 0)
       cv::aruco::drawDetectedMarkers(imageCopy, corners, ids);
 
