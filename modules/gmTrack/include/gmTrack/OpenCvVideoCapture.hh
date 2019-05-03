@@ -39,6 +39,79 @@ public:
   void setCameraId(int id);
 
   /**
+     Sets the width of the resolution to request from the camera.
+
+     If not set the driver default is used.
+  */
+  void setCameraWidth(int W);
+
+  /**
+     Sets the height of the resolution to request from the camera.
+
+     If not set the driver default is used.
+  */
+  void setCameraHeight(int W);
+
+  /**
+     Sets the framerate to request from the camera.
+
+     If not set the driver default is used. This string must be four
+     characters long, so add spaces when necessary.
+
+     @see https://www.fourcc.org/codecs.php
+  */
+  void setCameraFramerate(int R);
+
+  /**
+     Specifies the FourCC for the camera stream.
+
+     If not set the driver default is used. A value supported by many
+     cameras is "MJPG".
+  */
+  void setCameraFourCC(std::string cc);
+
+  /**
+     Specifies backend to use for reading camera or video stream.
+
+     Default is "ANY" and valid alternatives are, though not all may be supported by the current build of OpenCV:
+
+     - ANY
+     - VFW
+     - V4L
+     - V4L2
+     - FIREWIRE
+     - FIREWARE
+     - IEEE1394
+     - DC1394
+     - CMU1394
+     - QT
+     - UNICAP
+     - DSHOW
+     - PVAPI
+     - OPENNI
+     - OPENNI_ASUS
+     - ANDROID
+     - XIAPI
+     - AVFOUNDATION
+     - GIGANETIX
+     - MSMF
+     - WINRT
+     - INTELPERC
+     - REALSENSE
+     - OPENNI2
+     - OPENNI2_ASUS
+     - GPHOTO2
+     - GSTREAMER
+     - FFMPEG
+     - IMAGES
+     - ARAVIS
+     - OPENCV_MJPEG
+     - INTEL_MFX
+     - XINE
+  */
+  void setBackend(std::string b);
+
+  /**
      Updates the video capture to read off the next frame.
   */
   void update(gmCore::Updateable::clock::time_point);
