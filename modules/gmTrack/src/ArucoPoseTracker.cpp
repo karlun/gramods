@@ -23,11 +23,15 @@ struct ArucoPoseTracker::Impl {
   void update(gmCore::Updateable::clock::time_point t);
   bool getPose(PoseSample &p);
 
-  static bool readCameraParameters(std::string filename, cv::Mat &camMatrix, cv::Mat &distCoeffs);
+  static bool readCameraParameters(std::string filename,
+                                   cv::Mat &camMatrix, cv::Mat &distCoeffs,
+                                   int &width, int &height);
 
   std::shared_ptr<ArucoBoard> board;
   std::shared_ptr<OpenCvVideoSource> video_source;
 
+  int camera_width;
+  int camera_height;
   cv::Mat camMatrix;
   cv::Mat distCoeffs;
 
@@ -100,6 +104,25 @@ void ArucoPoseTracker::Impl::update(gmCore::Updateable::clock::time_point t) {
     return;
   }
 
+  if (camera_width != image.cols ||
+      camera_height != image.rows) {
+
+    GM_WRN("ArucoPoseTracker", "Video source image size (" << image.cols << "x" << image.rows << ") did not match camera parameters (" << camera_width << "x" << camera_height << ") - adjusting camera matrix accordingly. The result will be less than optimal.");
+
+    int new_width = image.cols;
+    int new_height = image.rows;
+
+    GM_INF("ArucoPoseTracker", "Provided camera matrix: " << camMatrix);
+    camMatrix.at<double>(0,0) *= new_width / camera_width;
+    camMatrix.at<double>(1,1) *= new_height / camera_height;
+    camMatrix.at<double>(0,2) *= new_width / camera_width;
+    camMatrix.at<double>(1,2) *= new_height / camera_height;
+    GM_INF("ArucoPoseTracker", "New estimate of camera matrix: " << camMatrix);
+
+    camera_width = new_width;
+    camera_height = new_height;
+  }
+
   std::vector<int> ids;
   std::vector<std::vector<cv::Point2f>> corners, rejected;
   cv::Vec3d rvec, tvec;
@@ -155,16 +178,20 @@ bool ArucoPoseTracker::Impl::getPose(PoseSample &p) {
 }
 
 void ArucoPoseTracker::setCameraConfigurationFile(std::string file) {
-  if (!Impl::readCameraParameters(file, _impl->camMatrix, _impl->distCoeffs))
+  if (!Impl::readCameraParameters(file,
+                                  _impl->camMatrix, _impl->distCoeffs,
+                                  _impl->camera_width, _impl->camera_height))
     GM_WRN("ArucoPoseTracker", "Could not read camera configuration file '" << file << "'");
 }
 
 bool ArucoPoseTracker::Impl::readCameraParameters
-(std::string filename, cv::Mat &camMatrix, cv::Mat &distCoeffs) {
+(std::string filename, cv::Mat &camMatrix, cv::Mat &distCoeffs, int &width, int &height) {
 
   cv::FileStorage fs(filename, cv::FileStorage::READ);
   if(!fs.isOpened()) return false;
 
+  fs["image_width"] >> width;
+  fs["image_height"] >> height;
   fs["camera_matrix"] >> camMatrix;
   fs["distortion_coefficients"] >> distCoeffs;
   GM_INF("ArucoPoseTracker", "Read camera matrix: " << camMatrix.total() << " elements.");
