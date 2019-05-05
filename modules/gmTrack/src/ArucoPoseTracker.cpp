@@ -97,7 +97,7 @@ void ArucoPoseTracker::Impl::update(gmCore::Updateable::clock::time_point t) {
 
   auto board = this->board->getBoard();
 
-  cv::Mat image, imageCopy;
+  cv::Mat image;
   if (!video_source->retrieve(image)) {
     GM_RUNLIMITED(GM_WRN("ArucoPoseTracker", "Video source did not provide image."), 1);
     have_pose = false;
@@ -155,15 +155,25 @@ void ArucoPoseTracker::Impl::update(gmCore::Updateable::clock::time_point t) {
 
   if (show_debug_output) {
     // draw results
+    cv::Mat imageCopy;
     image.copyTo(imageCopy);
     if(ids.size() > 0)
       cv::aruco::drawDetectedMarkers(imageCopy, corners, ids);
 
     if(rejected.size() > 0)
-      cv::aruco::drawDetectedMarkers(imageCopy, rejected, cv::noArray(), cv::Scalar(100, 0, 0));
+      cv::aruco::drawDetectedMarkers(imageCopy, rejected, cv::noArray(), cv::Scalar(0, 0, 100));
 
-    if(markersOfBoardDetected > 0)
+    if(markersOfBoardDetected > 0) {
       cv::aruco::drawAxis(imageCopy, camMatrix, distCoeffs, rvec, tvec, 0.1);
+
+      std::vector<std::vector<cv::Point2f>> imagePoints;
+      for (auto mpts : board->objPoints) {
+        std::vector<cv::Point2f> imgpts;
+        cv::projectPoints(mpts, rvec, tvec, camMatrix, distCoeffs, imgpts);
+        imagePoints.push_back(imgpts);
+      }
+      cv::aruco::drawDetectedMarkers(imageCopy, imagePoints, cv::noArray(), cv::Scalar(255, 0, 0));
+    }
 
     cv::imshow("out", imageCopy);
     cv::waitKey(1);
