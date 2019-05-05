@@ -14,9 +14,13 @@
 BEGIN_NAMESPACE_GMTRACK;
 
 /**
-   The Aruco board complex creates a potentially non-flat Aruco board
-   by combinging a set of Aruco boards with different pose relative to
-   the complex base.
+   The Aruco board complex creates a potentially non-flat Aruco
+   "board", or rig, by combinging a set of Aruco boards with different
+   pose relative to the complex base.
+
+   Either only boards and no pose specifications are provided, and the
+   specified boards have different positions and/or orientations, or
+   an equal amount of boards and pose specifications must be provided.
 */
 class ArucoBoardComplex : public ArucoBoard {
 
@@ -27,33 +31,41 @@ public:
   /**
      Add an Aruco board to the complex.
 
-     An equal amount of boards and pose specifications must be
-     provided.
+     Either only boards and no pose specifications are provided, and
+     the specified boards have different positions and/or
+     orientations, or an equal amount of boards and pose
+     specifications must be provided.
   */
   void addArucoBoard(std::shared_ptr<ArucoBoard> b);
 
   /**
      Add a board position of the complex.
 
-     An equal amount of boards and pose specifications must be
-     provided.
+     Either only boards and no pose specifications are provided, and
+     the specified boards have different positions and/or
+     orientations, or an equal amount of boards and pose
+     specifications must be provided.
   */
   void addPosition(gmTypes::float3 p);
 
   /**
      Add a board orientation, as quaternion in format (w x y z).
 
-     An equal amount of boards and pose specifications must be
-     provided.
+     Either only boards and no pose specifications are provided, and
+     the specified boards have different positions and/or
+     orientations, or an equal amount of boards and pose
+     specifications must be provided.
   */
   void addQuaternion(gmTypes::float4 q);
 
   /**
-     Add a board orientation, as an axis angle in format (x y z a)
+     Add a board orientation, as an axis angle in format (x y z a),
      where angle a is expressed in radians.
 
-     An equal amount of boards and pose specifications must be
-     provided.
+     Either only boards and no pose specifications are provided, and
+     the specified boards have different positions and/or
+     orientations, or an equal amount of boards and pose
+     specifications must be provided.
   */
   void addAxisAngle(gmTypes::float4 q);
 

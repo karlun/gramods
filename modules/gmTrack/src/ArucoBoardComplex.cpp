@@ -70,8 +70,8 @@ cv::Ptr<cv::aruco::Board> ArucoBoardComplex::Impl::getBoard() {
     return nullptr;
   }
 
-  if (boards.size() != positions.size() ||
-      boards.size() != orientations.size()) {
+  if ((!positions.empty() && boards.size() != positions.size()) ||
+      (!orientations.empty() && boards.size() != orientations.size())) {
     GM_RUNONCE(GM_ERR("ArucoBoardComplex", "Incorrect data - number of boards, positions and orientations must be identical."));
     return nullptr;
   }
@@ -90,9 +90,27 @@ cv::Ptr<cv::aruco::Board> ArucoBoardComplex::Impl::getBoard() {
   std::vector<std::vector<cv::Point3f>> objPoints;
   std::vector<int> ids;
 
-  for (auto b : aboards) {
-    objPoints.insert(objPoints.end(), b->objPoints.begin(), b->objPoints.end());
-    ids.insert(ids.end(), b->ids.begin(), b->ids.end());
+  for (int idx = 0; idx < aboards.size(); ++idx) {
+
+    auto aboard = aboards[idx];
+    auto position = positions.empty() ?
+      Eigen::Vector3f::Zero() :
+      positions[idx];
+    auto orientation =
+      orientations.empty() ?
+      Eigen::Quaternionf::Identity() :
+      orientations[idx];
+
+    for (auto opt : aboard->objPoints) {
+      std::vector<cv::Point3f> pts;
+      for (auto pt : opt) {
+        Eigen::Vector3f ept(pt.x, pt.y, pt.z);
+        ept = orientation * ept + position;
+        pts.push_back(cv::Point3f(ept.x(), ept.y(), ept.z()));
+      }
+      objPoints.push_back(pts);
+    }
+    ids.insert(ids.end(), aboard->ids.begin(), aboard->ids.end());
   }
 
   cache_board = cv::aruco::Board::create(objPoints, dictionary, ids);

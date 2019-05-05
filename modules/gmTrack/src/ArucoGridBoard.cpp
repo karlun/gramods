@@ -171,8 +171,12 @@ cv::Ptr<cv::aruco::Board> ArucoGridBoard::Impl::getBoard() {
 
   for (auto opt : aboard->objPoints) {
     std::vector<cv::Point3f> pts;
-    for (auto pt : opt)
-      pts.push_back(pt - cp);
+    for (auto pt : opt) {
+      pt -= cp;
+      Eigen::Vector3f ept(pt.x, pt.y, pt.z);
+      ept = orientation * ept + position;
+      pts.push_back(cv::Point3f(ept.x(), ept.y(), ept.z()));
+    }
     objPoints.push_back(pts);
   }
   ids.insert(ids.end(), aboard->ids.begin(), aboard->ids.end());
