@@ -31,8 +31,8 @@ struct ArucoGridBoard::Impl {
 
   size_t columns = 1;
   size_t rows = 1;
-  float size = 0.05;
-  float sep = 0.05;
+  float size = -1;
+  float sep = -1;
   size_t id_0 = 0;
   cv::Ptr<cv::aruco::Dictionary> dict = getDictionary("ARUCO_ORIGINAL");
 
@@ -146,6 +146,16 @@ cv::Ptr<cv::aruco::Board> ArucoGridBoard::Impl::getBoard() {
 
   cache_up_to_date = true;
   cache_board = nullptr;
+
+  if (size <= 0) {
+    GM_WRN("ArucoGridBoard", "Marker size not specified - using 5 cm.");
+    size = 0.05;
+  }
+
+  if (columns * rows > 1 && sep <= 0) {
+    GM_WRN("ArucoGridBoard", "Separation not specified - using 0.5 x marker size.");
+    sep = 0.5 * size;
+  }
 
   auto aboard = cv::aruco::GridBoard::create(columns, rows, size, sep, dict, id_0);
 

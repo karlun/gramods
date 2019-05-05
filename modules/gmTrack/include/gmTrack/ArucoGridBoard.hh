@@ -36,14 +36,13 @@ public:
   void setRows(size_t N);
 
   /**
-     Set the size of the markers, typically in meters. Default is
-     0.05.
+     Set the size of the markers, typically in meters.
   */
   void setMarkerSize(float s);
 
   /**
      Set the distance between the markers, typically in
-     meters. Default is 0.05.
+     meters.
   */
   void setMarkerSeparation(float s);
 
