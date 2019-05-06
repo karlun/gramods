@@ -80,7 +80,9 @@ void ArucoGridBoard::setDictionary(std::string dict) {
 
 cv::Ptr<cv::aruco::Dictionary> ArucoGridBoard::Impl::getDictionary(std::string name) {
 
-#define DICT(CODE) if (name == #CODE) return cv::aruco::Dictionary::get(cv::aruco::DICT_##CODE)
+#define DICT(CODE)                                                    \
+  if (name == #CODE)                                                  \
+    return cv::aruco::getPredefinedDictionary(cv::aruco::DICT_##CODE)
 
   DICT(4X4_50);
   DICT(4X4_100);
