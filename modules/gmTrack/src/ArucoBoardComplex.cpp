@@ -82,7 +82,9 @@ cv::Ptr<cv::aruco::Board> ArucoBoardComplex::Impl::getBoard() {
   
   auto dictionary = aboards[0]->dictionary;
   for (auto b : aboards)
-    if (cv::countNonZero(b->dictionary->bytesList != dictionary->bytesList) != 0) {
+    if (cv::countNonZero(b->dictionary->bytesList != dictionary->bytesList) != 0 ||
+        b->dictionary->markerSize != dictionary->markerSize ||
+        b->dictionary->maxCorrectionBits != dictionary->maxCorrectionBits) {
       GM_RUNONCE(GM_ERR("ArucoBoardComplex", "Incorrect data - cannot create complex of boards that use different dictionaries."));
       return nullptr;
     }
