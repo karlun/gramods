@@ -50,4 +50,11 @@ void Camera::setFieldOfView(float fov_h, float fov_v) {
   bottom = -top;
 }
 
+void Camera::setAngles(float l, float r, float b, float t) {
+  left = -atanf(l);
+  right = atanf(r);
+  bottom = -atanf(b);
+  top = atanf(t);
+}
+
 END_NAMESPACE_GMGRAPHICS;

@@ -26,6 +26,9 @@ typedef std::array<float, 3> float3;
 /// Array of 4 float.
 typedef std::array<float, 4> float4;
 
+/// Array of 12 float.
+typedef std::array<float, 12> float12;
+
 END_NAMESPACE_GMTYPES;
 
 #endif

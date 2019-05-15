@@ -46,6 +46,14 @@ public:
   void setFieldOfView(float fov_h, float fov_v);
 
   /**
+     Sets the frustum planes of an asymmetric frustum for the camera
+     based on left, right, bottom and top field-of-view, expressed in
+     radians. The left field-of-view increase left-wise while the
+     right field-of-view increate right-wise.
+  */
+  void setAngles(float l, float r, float b, float t);
+
+  /**
      Sets the pose of the camera.
   */
   void setPose(Eigen::Vector3f p, Eigen::Quaternionf r) {
