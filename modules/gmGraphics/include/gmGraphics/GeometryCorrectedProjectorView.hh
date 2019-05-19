@@ -32,6 +32,7 @@ class GeometryCorrectedProjectorView
 public:
 
   GeometryCorrectedProjectorView();
+  virtual ~GeometryCorrectedProjectorView();
 
   /**
      Sets the resolution of the intermediate buffer, in

@@ -19,6 +19,7 @@ class OfflineRenderTarget {
 public:
 
   OfflineRenderTarget();
+  virtual ~OfflineRenderTarget();
 
   /**
      Called with GL context to initialize the object. Returns true if
@@ -42,11 +43,6 @@ public:
      target.
   */
   void bind(size_t width, size_t height);
-
-  /**
-     Unbinds the
-  */
-  void unbind();
 
   /**
      Returns the texture id of the offline render buffer.

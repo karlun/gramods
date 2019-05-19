@@ -4,6 +4,9 @@
 #include <gmGraphics/GLUtils.hh>
 #include <gmCore/RunOnce.hh>
 
+#include <gmGraphics/OfflineRenderTarget.hh>
+#include <gmGraphics/RasterProcessor.hh>
+
 #include <Eigen/Eigen>
 
 BEGIN_NAMESPACE_GMGRAPHICS;
@@ -63,6 +66,8 @@ struct GeometryCorrectedProjectorView::Impl {
 
 GeometryCorrectedProjectorView::GeometryCorrectedProjectorView()
   : _impl(std::make_unique<Impl>()) {}
+
+GeometryCorrectedProjectorView::~GeometryCorrectedProjectorView() {}
 
 void GeometryCorrectedProjectorView::setBufferWidth(int W) {
   _impl->buffer_width = W;
@@ -197,7 +202,7 @@ bool GeometryCorrectedProjectorView::Impl::setCameraShapeFromCorners(Camera &c) 
   return true;
 }
 
-std::string GeometryCorrectedProjectorView::createFragmentCode() {
+std::string GeometryCorrectedProjectorView::Impl::createFragmentCode() {
   // TODO: put together fragment code with the mapper from geometry
   return "";
 }
@@ -226,7 +231,7 @@ void GeometryCorrectedProjectorView::Impl::renderFullPipeline(ViewSettings setti
 
   if (!is_setup) {
     is_setup = true;
-    raster_processor.setFragmentCode(createFragmentCode);
+    raster_processor.setFragmentCode(createFragmentCode());
     if (render_target.init() && raster_processor.init()) is_functional = true;
   }
 
@@ -234,6 +239,8 @@ void GeometryCorrectedProjectorView::Impl::renderFullPipeline(ViewSettings setti
     GM_RUNONCE(GM_ERR("GeometryCorrectedProjectorView", "Dysfunctional internal GL workings."));
     return;
   }    
+
+  // Render all renderers to the offscreen buffer
 
   render_target.push();
   render_target.bind(buffer_width, buffer_height);
@@ -243,8 +250,13 @@ void GeometryCorrectedProjectorView::Impl::renderFullPipeline(ViewSettings setti
 
   render_target.pop();
 
+  // Render offscreen buffer to previously active render target
+
   glActiveTexture(GL_TEXTURE0);
   glBindTexture(GL_TEXTURE_2D, render_target.getTexId());
+
+  glUseProgram(raster_processor.getProgramId());
+  geometry->setMapperUniforms(raster_processor.getProgramId());
 
   raster_processor.run();
 

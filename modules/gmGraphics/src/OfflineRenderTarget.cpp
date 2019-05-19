@@ -12,7 +12,6 @@ struct OfflineRenderTarget::Impl {
 
   ~Impl();
 
-  bool is_setup = false;
   bool is_functional = false;
 
   GLuint fb_id = 0;
@@ -28,7 +27,6 @@ struct OfflineRenderTarget::Impl {
   void pop();
 
   void bind(size_t width, size_t height);
-  void unbind();
 
   void teardown();
 };
@@ -36,16 +34,17 @@ struct OfflineRenderTarget::Impl {
 OfflineRenderTarget::OfflineRenderTarget()
   : _impl(std::make_unique<OfflineRenderTarget::Impl>()) {}
 
+OfflineRenderTarget::~OfflineRenderTarget() {}
+
 OfflineRenderTarget::Impl::~Impl() {
   teardown();
 }
 
-void OfflineRenderTarget::init() {
-  _impl->init();
+bool OfflineRenderTarget::init() {
+  return _impl->init();
 }
 
-void OfflineRenderTarget::Impl::init() {
-  is_setup = true;
+bool OfflineRenderTarget::Impl::init() {
   is_functional = false;
 
   GM_VINF("OfflineRenderTarget", "Creating buffers and textures");
@@ -68,9 +67,10 @@ void OfflineRenderTarget::Impl::init() {
   glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, rb_depth_id);
 
   if (!GLUtils::check_framebuffer())
-    return;
+    return false;
 
   is_functional = true;
+  return true;
 }
 
 void OfflineRenderTarget::Impl::teardown() {
@@ -83,16 +83,10 @@ void OfflineRenderTarget::Impl::teardown() {
   fb_id = 0;
   tex_id = 0;
   rb_depth_id = 0;
-
-  is_setup = false;
 }
 
 void OfflineRenderTarget::bind(size_t width, size_t height) {
   _impl->bind(width, height);
-}
-
-void OfflineRenderTarget::unbind() {
-  _impl->unbind();
 }
 
 GLuint OfflineRenderTarget::getTexId() {
@@ -100,8 +94,6 @@ GLuint OfflineRenderTarget::getTexId() {
 }
 
 void OfflineRenderTarget::Impl::bind(size_t width, size_t height) {
-  if (!is_setup)
-    setup();
   if (!is_functional)
     return;
 
@@ -119,6 +111,10 @@ void OfflineRenderTarget::Impl::bind(size_t width, size_t height) {
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 }
 
+void OfflineRenderTarget::push() {
+  _impl->push();
+}
+
 void OfflineRenderTarget::Impl::push() {
 
   GLint target_framebuffer;
@@ -129,6 +125,10 @@ void OfflineRenderTarget::Impl::push() {
   glGetIntegerv(GL_VIEWPORT, viewport.data());
   viewport_stack.push(viewport);
 
+}
+
+void OfflineRenderTarget::pop() {
+  _impl->pop();
 }
 
 void OfflineRenderTarget::Impl::pop() {
