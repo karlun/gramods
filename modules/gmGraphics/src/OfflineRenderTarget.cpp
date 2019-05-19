@@ -22,13 +22,14 @@ struct OfflineRenderTarget::Impl {
   std::stack<std::array<GLint, 4>> viewport_stack;
   std::stack<GLint> target_framebuffer_stack;
 
+  bool init();
+
   void push();
   void pop();
 
   void bind(size_t width, size_t height);
   void unbind();
 
-  void setup();
   void teardown();
 };
 
@@ -39,7 +40,11 @@ OfflineRenderTarget::Impl::~Impl() {
   teardown();
 }
 
-void OfflineRenderTarget::Impl::setup() {
+void OfflineRenderTarget::init() {
+  _impl->init();
+}
+
+void OfflineRenderTarget::Impl::init() {
   is_setup = true;
   is_functional = false;
 

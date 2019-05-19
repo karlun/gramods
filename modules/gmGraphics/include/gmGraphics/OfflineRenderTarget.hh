@@ -1,6 +1,6 @@
 
-#ifndef GRAMODS_GRAPHICS_OFFLINEBUFFER
-#define GRAMODS_GRAPHICS_OFFLINEBUFFER
+#ifndef GRAMODS_GRAPHICS_OFFLINERENDERTARGET
+#define GRAMODS_GRAPHICS_OFFLINERENDERTARGET
 
 #include <gmGraphics/config.hh>
 
@@ -19,6 +19,12 @@ class OfflineRenderTarget {
 public:
 
   OfflineRenderTarget();
+
+  /**
+     Called with GL context to initialize the object. Returns true if
+     the initialization was successful, false otherwise.
+  */
+  bool init();
 
   /**
      saves away current viewport and render target data.
