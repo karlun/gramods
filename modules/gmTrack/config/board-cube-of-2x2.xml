@@ -1,0 +1,57 @@
+<config>
+
+  <OStreamMessageSink stream="err" useAnsiColor="1" level="1"/>
+  <LogFileMessageSink logFilePath="gramod.log" append="0"/>
+
+  <ImportLibrary lib="libgmTrack.so"/>
+
+  <ArucoPoseTracker
+      showDebug="true"
+      cameraConfigurationFile="config/camera-calibration.yaml">
+
+    <OpenCvVideoCapture
+        cameraWidth="640" cameraHeight="480"/>
+
+    <ArucoBoardComplex>
+
+      <param name="axisAngle" value="0 0 1 0"/>
+      <ArucoGridBoard
+          dictionary="4X4_50" rows="2" columns="2"
+          markerSize="0.007" markerSeparation="0.002"
+          firstId="0"/>
+
+      <param name="axisAngle" value="0 0 1 -1.5708"/>
+      <ArucoGridBoard
+          dictionary="4X4_50" rows="2" columns="2"
+          markerSize="0.007" markerSeparation="0.002"
+          firstId="4"/>
+
+      <param name="axisAngle" value="0 1 0 -1.5708"/>
+      <ArucoGridBoard
+          dictionary="4X4_50" rows="2" columns="2"
+          markerSize="0.007" markerSeparation="0.002"
+          firstId="8"/>
+
+      <param name="axisAngle" value="0 1 0 1.5708"/>
+      <ArucoGridBoard
+          dictionary="4X4_50" rows="2" columns="2"
+          markerSize="0.007" markerSeparation="0.002"
+          firstId="12"/>
+
+      <param name="axisAngle" value="0 0 1 1.5708"/>
+      <ArucoGridBoard
+          dictionary="4X4_50" rows="2" columns="2"
+          markerSize="0.007" markerSeparation="0.002"
+          firstId="16"/>
+
+      <param name="axisAngle" value="0 0 1 3.1416"/>
+      <ArucoGridBoard
+          dictionary="4X4_50" rows="2" columns="2"
+          markerSize="0.007" markerSeparation="0.002"
+          firstId="20"/>
+
+    </ArucoBoardComplex>
+
+  </ArucoPoseTracker>
+
+</config>
