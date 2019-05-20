@@ -305,20 +305,8 @@ void Configuration::addParam(std::string name, std::string value) {
 size_t Configuration::getAllParamNames(std::vector<std::string> &name) {
   std::vector<std::string> new_names;
   for (auto param : parameters)
-    new_names.push_back(param.first);
-
-  std::stringstream ss;
-  for (auto name : new_names)
-    ss << name << " ";
-
-  std::vector<std::string>::iterator it;
-  it = std::unique(new_names.begin(), new_names.end());
-  new_names.resize(std::distance(new_names.begin(), it));
-
-  ss << " -> ";
-  for (auto name : new_names)
-    ss << name << " ";
-  GM_VVINF("Configuration", "getAllParameterNames " << ss.str());
+    if (std::find(new_names.begin(), new_names.end(), param.first) == new_names.end())
+      new_names.push_back(param.first);
 
   name.insert(name.end(), new_names.begin(), new_names.end());
 
@@ -328,11 +316,8 @@ size_t Configuration::getAllParamNames(std::vector<std::string> &name) {
 size_t Configuration::getAllObjectNames(std::vector<std::string> &name) {
   std::vector<std::string> new_names;
   for (auto child : child_objects)
-    new_names.push_back(child.first);
-
-  std::vector<std::string>::iterator it;
-  it = std::unique(new_names.begin(), new_names.end());
-  new_names.resize(std::distance(new_names.begin(), it));
+    if (std::find(new_names.begin(), new_names.end(), child.first) == new_names.end())
+      new_names.push_back(child.first);
 
   name.insert(name.end(), new_names.begin(), new_names.end());
 
