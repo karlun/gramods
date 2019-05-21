@@ -4,7 +4,7 @@
 #include <gmGraphics/GLUtils.hh>
 #include <gmCore/RunOnce.hh>
 
-#include <gmGraphics/OfflineRenderTarget.hh>
+#include <gmGraphics/OffscreenRenderTarget.hh>
 #include <gmGraphics/RasterProcessor.hh>
 
 #include <Eigen/Eigen>
@@ -30,7 +30,7 @@ struct GeometryCorrectedProjectorView::Impl {
   static const std::string fragment_code;
   static const std::string mapper_pattern;
 
-  OfflineRenderTarget render_target;
+  OffscreenRenderTarget render_target;
   RasterProcessor raster_processor;
 
   bool is_setup = false;

@@ -1,5 +1,5 @@
 
-#include <gmGraphics/OfflineRenderTarget.hh>
+#include <gmGraphics/OffscreenRenderTarget.hh>
 
 #include <gmGraphics/GLUtils.hh>
 #include <gmCore/Console.hh>
@@ -8,7 +8,7 @@
 
 BEGIN_NAMESPACE_GMGRAPHICS;
 
-struct OfflineRenderTarget::Impl {
+struct OffscreenRenderTarget::Impl {
 
   ~Impl();
 
@@ -31,23 +31,23 @@ struct OfflineRenderTarget::Impl {
   void teardown();
 };
 
-OfflineRenderTarget::OfflineRenderTarget()
-  : _impl(std::make_unique<OfflineRenderTarget::Impl>()) {}
+OffscreenRenderTarget::OffscreenRenderTarget()
+  : _impl(std::make_unique<OffscreenRenderTarget::Impl>()) {}
 
-OfflineRenderTarget::~OfflineRenderTarget() {}
+OffscreenRenderTarget::~OffscreenRenderTarget() {}
 
-OfflineRenderTarget::Impl::~Impl() {
+OffscreenRenderTarget::Impl::~Impl() {
   teardown();
 }
 
-bool OfflineRenderTarget::init() {
+bool OffscreenRenderTarget::init() {
   return _impl->init();
 }
 
-bool OfflineRenderTarget::Impl::init() {
+bool OffscreenRenderTarget::Impl::init() {
   is_functional = false;
 
-  GM_VINF("OfflineRenderTarget", "Creating buffers and textures");
+  GM_VINF("OffscreenRenderTarget", "Creating buffers and textures");
   glGenFramebuffers(1, &fb_id);
   glGenTextures(1, &tex_id);
   glGenRenderbuffers(1, &rb_depth_id);
@@ -73,7 +73,7 @@ bool OfflineRenderTarget::Impl::init() {
   return true;
 }
 
-void OfflineRenderTarget::Impl::teardown() {
+void OffscreenRenderTarget::Impl::teardown() {
   is_functional = false;
 
   if (fb_id) glDeleteFramebuffers(1, &fb_id);
@@ -85,15 +85,15 @@ void OfflineRenderTarget::Impl::teardown() {
   rb_depth_id = 0;
 }
 
-void OfflineRenderTarget::bind(size_t width, size_t height) {
+void OffscreenRenderTarget::bind(size_t width, size_t height) {
   _impl->bind(width, height);
 }
 
-GLuint OfflineRenderTarget::getTexId() {
+GLuint OffscreenRenderTarget::getTexId() {
   return _impl->tex_id;
 }
 
-void OfflineRenderTarget::Impl::bind(size_t width, size_t height) {
+void OffscreenRenderTarget::Impl::bind(size_t width, size_t height) {
   if (!is_functional)
     return;
 
@@ -111,11 +111,11 @@ void OfflineRenderTarget::Impl::bind(size_t width, size_t height) {
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 }
 
-void OfflineRenderTarget::push() {
+void OffscreenRenderTarget::push() {
   _impl->push();
 }
 
-void OfflineRenderTarget::Impl::push() {
+void OffscreenRenderTarget::Impl::push() {
 
   GLint target_framebuffer;
   glGetIntegerv(GL_FRAMEBUFFER_BINDING, &target_framebuffer);
@@ -127,12 +127,12 @@ void OfflineRenderTarget::Impl::push() {
 
 }
 
-void OfflineRenderTarget::pop() {
+void OffscreenRenderTarget::pop() {
   _impl->pop();
 }
 
-void OfflineRenderTarget::Impl::pop() {
-  GM_VINF("OfflineRenderTarget", "finalizing");
+void OffscreenRenderTarget::Impl::pop() {
+  GM_VINF("OffscreenRenderTarget", "finalizing");
 
   auto target_framebuffer = target_framebuffer_stack.top();
   glBindFramebuffer(GL_FRAMEBUFFER, target_framebuffer);

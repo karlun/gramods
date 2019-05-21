@@ -1,6 +1,6 @@
 
-#ifndef GRAMODS_GRAPHICS_OFFLINERENDERTARGET
-#define GRAMODS_GRAPHICS_OFFLINERENDERTARGET
+#ifndef GRAMODS_GRAPHICS_OFFSCREENRENDERTARGET
+#define GRAMODS_GRAPHICS_OFFSCREENRENDERTARGET
 
 #include <gmGraphics/config.hh>
 
@@ -14,12 +14,12 @@ BEGIN_NAMESPACE_GMGRAPHICS;
 /**
    Encapsulation of OpenGL offline buffer.
 */
-class OfflineRenderTarget {
+class OffscreenRenderTarget {
 
 public:
 
-  OfflineRenderTarget();
-  virtual ~OfflineRenderTarget();
+  OffscreenRenderTarget();
+  virtual ~OffscreenRenderTarget();
 
   /**
      Called with GL context to initialize the object. Returns true if
