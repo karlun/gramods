@@ -1,0 +1,29 @@
+diff --git a/modules/aruco/samples/create_board.cpp b/modules/aruco/samples/create_board.cpp
+index 937fe5b5..8d5c6fef 100644
+--- a/modules/aruco/samples/create_board.cpp
++++ b/modules/aruco/samples/create_board.cpp
+@@ -56,6 +56,7 @@ const char* keys  =
+         "DICT_7X7_100=13, DICT_7X7_250=14, DICT_7X7_1000=15, DICT_ARUCO_ORIGINAL = 16}"
+         "{m        |       | Margins size (in pixels). Default is marker separation (-s) }"
+         "{bb       | 1     | Number of bits in marker borders }"
++        "{id       | 0     | First id in the board }"
+         "{si       | false | show generated image }";
+ }
+ 
+@@ -79,6 +80,7 @@ int main(int argc, char *argv[]) {
+     }
+ 
+     int borderBits = parser.get<int>("bb");
++    int id_0 = parser.get<int>("id");
+     bool showImage = parser.get<bool>("si");
+ 
+     String out = parser.get<String>(0);
+@@ -97,7 +99,7 @@ int main(int argc, char *argv[]) {
+         aruco::getPredefinedDictionary(aruco::PREDEFINED_DICTIONARY_NAME(dictionaryId));
+ 
+     Ptr<aruco::GridBoard> board = aruco::GridBoard::create(markersX, markersY, float(markerLength),
+-                                                      float(markerSeparation), dictionary);
++                                                           float(markerSeparation), dictionary, id_0);
+ 
+     // show created board
+     Mat boardImage;
