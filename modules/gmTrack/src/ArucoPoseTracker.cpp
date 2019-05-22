@@ -113,7 +113,10 @@ void ArucoPoseTracker::Impl::update(gmCore::Updateable::clock::time_point t) {
   if (camera_width != image.cols ||
       camera_height != image.rows) {
 
-    GM_WRN("ArucoPoseTracker", "Video source image size (" << image.cols << "x" << image.rows << ") did not match camera parameters (" << camera_width << "x" << camera_height << ") - adjusting camera matrix accordingly. The result will be less than optimal.");
+    if (camera_width * image.rows - camera_height * image.cols)
+      GM_WRN("ArucoPoseTracker", "Video source image size (" << image.cols << "x" << image.rows << ") does not match camera parameters (" << camera_width << "x" << camera_height << ") - adjusting camera matrix accordingly. Even ratio differs, so result will be less than optimal.");
+    else
+      GM_WRN("ArucoPoseTracker", "Video source image size (" << image.cols << "x" << image.rows << ") does not match camera parameters (" << camera_width << "x" << camera_height << ") - adjusting camera matrix accordingly. The ratio is the same, but result may be less than optimal.");
 
     int new_width = image.cols;
     int new_height = image.rows;
