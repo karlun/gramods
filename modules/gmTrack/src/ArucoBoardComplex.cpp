@@ -70,9 +70,13 @@ cv::Ptr<cv::aruco::Board> ArucoBoardComplex::Impl::getBoard() {
     return nullptr;
   }
 
-  if ((!positions.empty() && boards.size() != positions.size()) ||
-      (!orientations.empty() && boards.size() != orientations.size())) {
-    GM_RUNONCE(GM_ERR("ArucoBoardComplex", "Incorrect data - number of boards, positions and orientations must be identical."));
+  if (!positions.empty() && boards.size() != positions.size()) {
+    GM_RUNONCE(GM_ERR("ArucoBoardComplex", "Incorrect data - number of boards and positions must be identical (" << boards.size() << " != " << positions.size() << "."));
+    return nullptr;
+  }
+
+  if (!orientations.empty() && boards.size() != orientations.size()) {
+    GM_RUNONCE(GM_ERR("ArucoBoardComplex", "Incorrect data - number of boards and orientations must be identical (" << boards.size() << " != " << orientations.size() << "."));
     return nullptr;
   }
 
