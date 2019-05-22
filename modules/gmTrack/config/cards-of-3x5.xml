@@ -1,0 +1,40 @@
+<config>
+
+  <OStreamMessageSink stream="err" useAnsiColor="1" level="1"/>
+  <LogFileMessageSink logFilePath="gramod.log" append="0"/>
+
+  <ImportLibrary lib="libgmTrack.so"/>
+
+  <ArucoPoseTracker
+      showDebug="true"
+      cameraConfigurationFile="config/camera-calibration.yaml">
+    <OpenCvVideoCapture
+        DEF="CAP"
+        cameraWidth="640" cameraHeight="480"/>
+    <ArucoGridBoard
+        dictionary="4X4_100" columns="3" rows="5"
+        markerSize="0.011" markerSeparation="0.004"
+        firstId="0"/>
+    <ArucoGridBoard
+        dictionary="4X4_100" columns="3" rows="5"
+        markerSize="0.011" markerSeparation="0.004"
+        firstId="15"/>
+    <ArucoGridBoard
+        dictionary="4X4_100" columns="3" rows="5"
+        markerSize="0.011" markerSeparation="0.004"
+        firstId="30"/>
+    <ArucoGridBoard
+        dictionary="4X4_100" columns="3" rows="5"
+        markerSize="0.011" markerSeparation="0.004"
+        firstId="45"/>
+    <ArucoGridBoard
+        dictionary="4X4_100" columns="3" rows="5"
+        markerSize="0.011" markerSeparation="0.004"
+        firstId="60"/>
+    <ArucoGridBoard
+        dictionary="4X4_100" columns="3" rows="5"
+        markerSize="0.011" markerSeparation="0.004"
+        firstId="75"/>
+  </ArucoPoseTracker>
+
+</config>
