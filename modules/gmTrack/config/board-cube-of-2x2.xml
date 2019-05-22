@@ -49,7 +49,7 @@
           markerSize="0.012" markerSeparation="0.004"
           firstId="16"/>
 
-      <param name="position" value="0 0 0.02"/>
+      <param name="position" value="0 0 -0.02"/>
       <param name="axisAngle" value="1 0 0 3.1416"/>
       <ArucoGridBoard
           dictionary="4X4_50" rows="2" columns="2"
