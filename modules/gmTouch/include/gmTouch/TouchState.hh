@@ -758,10 +758,10 @@ private:
 
   int state;
 
-  Eigen::Affine3f current_WPV_inv;
+  Eigen::Matrix4f current_WPV_inv;
   bool current_WPV_inv_valid;
 
-  Eigen::Affine3f previous_WPV_inv;
+  Eigen::Matrix4f previous_WPV_inv;
   bool previous_WPV_inv_valid;
 
   int current_height;
