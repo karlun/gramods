@@ -58,7 +58,9 @@ public:
   void setVideoSource(std::shared_ptr<OpenCvVideoSource> vs);
 
   /**
-     If set to true... Default is false.
+     If set to true the pose tracker will estimate the camera pose
+     relative the markers. When false the markers' poses are
+     estimated. Default is false.
 
      \gmXmlTag{gmTrack,ArucoPoseTracker,inverted}
   */

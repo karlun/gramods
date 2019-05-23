@@ -159,17 +159,26 @@ void ArucoPoseTracker::Impl::update(gmCore::Updateable::clock::time_point time_n
     int markersOfBoardDetected = 0;
     if(ids.size() > 0) {
       markersOfBoardDetected =
-        cv::aruco::estimatePoseBoard(corners, ids, board, camMatrix, distCoeffs, rvec, tvec);
+        cv::aruco::estimatePoseBoard(corners, ids, board,
+                                     camMatrix, distCoeffs,
+                                     rvec, tvec);
     }
 
     if (markersOfBoardDetected) {
 
       cv::Matx33d rotm;
       cv::Rodrigues(rvec, rotm);
-      Eigen::Map<Eigen::Matrix3f> R(cv::Mat(rotm).ptr<float>());
+      Eigen::Map<Eigen::Matrix3d> R(cv::Mat(rotm).ptr<double>());
+      Eigen::Quaterniond Q(R);
 
-      samples[idx].orientation = Eigen::Quaternionf(R);
-      samples[idx].position = Eigen::Vector3f(tvec[0], tvec[1], tvec[2]);
+      if (inverted) {
+        samples[idx].orientation = Eigen::Quaternionf(Q.conjugate());
+        samples[idx].position = (samples[idx].orientation *
+                                 Eigen::Vector3f(-tvec[0], -tvec[1], -tvec[2]));
+      } else {
+        samples[idx].orientation = Eigen::Quaternionf(Q);
+        samples[idx].position = Eigen::Vector3f(tvec[0], tvec[1], tvec[2]);
+      }
       samples[idx].time = time_now;
 
       have_pose = true;
