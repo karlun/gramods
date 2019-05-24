@@ -168,11 +168,13 @@ void SdlWindow::processEvents() {
       if (_that) _that->handleEvent(event);
     }
       break;
-    case SDL_QUIT:
-      for (auto it : sdl_windows) {
+    case SDL_QUIT: {
+      auto sdl_windows_copy = sdl_windows;
+      for (auto it : sdl_windows_copy) {
         auto _that = it.second.lock();
         if (_that) _that->close();
       }
+    }
     }
   }
 }
