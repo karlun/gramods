@@ -758,6 +758,12 @@ private:
 
   int state;
 
+  /**
+   * Converts the specified touch point into a touch line using the
+   * specified inverse projection matrix.
+   */
+  TouchLine touchPointToTouchLine(TouchPoint pt, Eigen::Matrix4f WPV_inv) const;
+
   Eigen::Matrix4f current_WPV_inv;
   bool current_WPV_inv_valid;
 
