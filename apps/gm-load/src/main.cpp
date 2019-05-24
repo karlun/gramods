@@ -73,10 +73,10 @@ int main(int argc, char *argv[]) {
   auto last_print_time = std::chrono::steady_clock::now();
   size_t frame_count = 0;
 
-  d_seconds update_time;
-  d_seconds render_time;
-  d_seconds swap_time;
-  d_seconds vsync_time;
+  d_seconds update_time = d_seconds();
+  d_seconds render_time = d_seconds();
+  d_seconds swap_time = d_seconds();
+  d_seconds vsync_time = d_seconds();
 
   bool alive = true;
   while (alive) {
