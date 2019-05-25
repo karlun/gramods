@@ -27,7 +27,7 @@ GM_OFI_POINTER(GeometryCorrectedProjectorView, geometry, Geometry, GeometryCorre
 
 struct GeometryCorrectedProjectorView::Impl {
 
-  static const std::string fragment_code;
+  static const std::string fragment_template_code;
   static const std::string mapper_pattern;
 
   OffscreenRenderTargets render_target;
@@ -63,6 +63,51 @@ struct GeometryCorrectedProjectorView::Impl {
 
   std::shared_ptr<Geometry> geometry;
 };
+
+const std::string
+GeometryCorrectedProjectorView::
+Impl::mapper_pattern = "MAPPER;";
+
+const std::string
+GeometryCorrectedProjectorView::
+Impl::fragment_template_code = R"lang=glsl(
+#version 330 core
+
+MAPPER;
+
+// vec3 getIntersection(vec3 pos, vec3 dir)
+
+uniform sampler2D tex;
+
+uniform mat4 pPV_inv;
+uniform mat4 rPV;
+
+in vec2 position;
+out vec4 fragColor;
+
+void main() {
+
+  // projector raster near-point and far-point to projection point
+  vec4 p0_4 = pPV_inv * vec4(position, -1, 1);
+  vec3 p0 = p0_4.xyz / p0_4.w;
+
+  vec4 p1_4 = pPV_inv * vec4(position, 1, 1);
+  vec3 p1 = p1_4.xyz / p1_4.w;
+
+  vec3 dir = normalize(p1 - p0);
+  vec3 p = getIntersection(p0, dir);
+
+  // projection point to render raster coordinate
+  vec4 t = rPV * vec4(p, 1);
+  vec2 uv = (t.xy / t.w) * 0.5 + vec2(0.5, 0.5);
+
+  if (uv.x >= 0 && uv.x <= 1 &&
+      uv.y >= 0 && uv.y <= 1)
+    fragColor = vec4(texture(tex, uv).rgb, 1);
+  else
+    fragColor = vec4(0, 0, 0, 0);
+}
+)lang=glsl";
 
 GeometryCorrectedProjectorView::GeometryCorrectedProjectorView()
   : _impl(std::make_unique<Impl>()) {}
@@ -191,8 +236,8 @@ bool GeometryCorrectedProjectorView::Impl::setCameraShapeFromAngles(Camera &c) {
 
 bool GeometryCorrectedProjectorView::Impl::setCameraShapeFromCorners(Camera &c) {
 
-  Eigen::Vector3f tl = orientation * (shape_corner_tl - position);
-  Eigen::Vector3f br = orientation * (shape_corner_br - position);
+  Eigen::Vector3f tl = orientation.conjugate() * (shape_corner_tl - position);
+  Eigen::Vector3f br = orientation.conjugate() * (shape_corner_br - position);
 
   c.setPlanes(tl[0] / tl[2],
               br[0] / br[2],
@@ -203,8 +248,17 @@ bool GeometryCorrectedProjectorView::Impl::setCameraShapeFromCorners(Camera &c) 
 }
 
 std::string GeometryCorrectedProjectorView::Impl::createFragmentCode() {
-  // TODO: put together fragment code with the mapper from geometry
-  return "";
+  assert(geometry);
+  assert(fragment_template_code.find(mapper_pattern) != std::string::npos);
+
+  std::string mapper_code = geometry->getMapperCode();
+  std::string fragment_code = fragment_template_code;
+
+  fragment_code.replace(fragment_code.find(mapper_pattern),
+                        mapper_pattern.length(),
+                        mapper_code);
+
+  return fragment_code;
 }
 
 void GeometryCorrectedProjectorView::Impl::renderFullPipeline(ViewSettings settings, Eye eye) {
@@ -241,6 +295,7 @@ void GeometryCorrectedProjectorView::Impl::renderFullPipeline(ViewSettings setti
   }    
 
   // Render all renderers to the offscreen buffer
+  GM_VINF("GeometryCorrectedProjectorView", "Render all renderers to the offscreen buffer.");
 
   render_target.push();
   render_target.bind(buffer_width, buffer_height);
@@ -250,13 +305,28 @@ void GeometryCorrectedProjectorView::Impl::renderFullPipeline(ViewSettings setti
 
   render_target.pop();
 
-  // Render offscreen buffer to previously active render target
+  // Render offscreen buffer to active render target
+  GM_VINF("GeometryCorrectedProjectorView", "Render offscreen buffer to active render target");
 
   glActiveTexture(GL_TEXTURE0);
   glBindTexture(GL_TEXTURE_2D, render_target.getTexId());
 
-  glUseProgram(raster_processor.getProgramId());
-  geometry->setMapperUniforms(raster_processor.getProgramId());
+  GLuint program_id = raster_processor.getProgramId();
+  glUseProgram(program_id);
+
+  geometry->setMapperUniforms(program_id);
+
+  glUniform1i(glGetUniformLocation(program_id, "tex"), 0);
+  Eigen::Matrix4f pPV =
+    projector_camera.getProjectionMatrix(1, 2) *
+    projector_camera.getViewMatrix().matrix();
+  Eigen::Matrix4f pPV_inv = pPV.inverse();
+  glUniformMatrix4fv(glGetUniformLocation(program_id, "pPV_inv"), 1, false, pPV_inv.data());
+
+  Eigen::Matrix4f rPV =
+    render_camera.getProjectionMatrix(1, 2) *
+    render_camera.getViewMatrix().matrix();
+  glUniformMatrix4fv(glGetUniformLocation(program_id, "rPV"), 1, false, rPV.data());
 
   raster_processor.run();
 

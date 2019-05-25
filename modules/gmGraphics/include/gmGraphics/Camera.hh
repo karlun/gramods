@@ -30,12 +30,29 @@ public:
   Eigen::Affine3f getViewMatrix();
 
   /**
+     Get the position of the camera.
+  */
+  Eigen::Vector3f getPosition();
+
+  /**
+     Get the orientation of the camera.
+  */
+  Eigen::Quaternionf getOrientation();
+
+  /**
      Explicitly sets the frustum planes at a distance of 1. Near and
      far planes are defined by the renderer that requests a projection
      matrix for the camera.
   */
   void setPlanes(float l, float r, float b, float t) {
     left = l; right = r; top = t; bottom = b;
+  }
+
+  /**
+     Gets the frustum planes at a distance of 1.
+  */
+  void getPlanes(float &l, float &r, float &b, float &t) {
+    l = left; r = right; t = top; b = bottom;
   }
 
   /**

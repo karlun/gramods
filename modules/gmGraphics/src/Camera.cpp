@@ -43,6 +43,14 @@ Eigen::Affine3f Camera::getViewMatrix() {
   return Mv;
 }
 
+Eigen::Vector3f Camera::getPosition() {
+  return position;
+}
+
+Eigen::Quaternionf Camera::getOrientation() {
+  return orientation;
+}
+
 void Camera::setFieldOfView(float fov_h, float fov_v) {
   right = tanf(0.5f * fov_h);
   left = -right;

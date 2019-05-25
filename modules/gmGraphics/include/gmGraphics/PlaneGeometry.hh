@@ -75,9 +75,6 @@ public:
        intersection between the line defined by the specified position
        and direction vector and the PlaneGeometry. Return (0,0) if there is
        no intersection.
-
-     - ```bool isInside(vec3 pos)``` - returns true if and only if the
-       specified position is inside of the PlaneGeometry.
   */
   std::string getMapperCode();
 
@@ -92,7 +89,6 @@ public:
 private:
 
   struct Impl;
-  std::unique_ptr<Impl> _impl;
 
 };
 

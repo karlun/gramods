@@ -66,9 +66,6 @@ public:
        intersection between the line defined by the specified position
        and direction vector and the geometry. Return (0,0) if there is
        no intersection.
-
-     - ```bool isInside(vec3 pos)``` - returns true if and only if the
-       specified position is inside of the geometry.
   */
   virtual std::string getMapperCode() { return ""; }
 
@@ -84,6 +81,12 @@ public:
      is estimated for the outside of the geometry).
   */
   void setInside(bool on);
+
+  /**
+     Returns the default key, in Configuration, for the
+     Object.
+  */
+  virtual std::string getDefaultKey() { return "geometry"; }
 
   GM_OFI_DECLARE;
 

@@ -17,6 +17,8 @@ struct PlaneGeometry::Impl
                              Eigen::Vector3f position,
                              Camera &rfrustum);
 
+  Eigen::Vector3f getIntersection(Eigen::Vector3f pos, Eigen::Vector3f dir);
+
   Eigen::Vector3f position;
   Eigen::Vector3f normal;
 };
@@ -29,14 +31,64 @@ PlaneGeometry::~PlaneGeometry() {}
 bool PlaneGeometry::getCameraFromPosition(Camera vfrustum,
                                           Eigen::Vector3f position,
                                           Camera &rfrustum) {
-  return getCameraFromPosition(vfrustum, position, rfrustum);
+  auto impl = static_cast<Impl*>(_impl.get());
+  return impl->getCameraFromPosition(vfrustum, position, rfrustum);
 }
 
 bool PlaneGeometry::Impl::getCameraFromPosition(Camera vfrustum,
                                                 Eigen::Vector3f position,
                                                 Camera &rfrustum) {
-  // TODO: calculate the render frustum
-  return false;
+
+  if ((position - this->position).dot(normal) <
+      std::numeric_limits<float>::epsilon())
+    return false;
+
+  if ((position - vfrustum.getPosition()).norm() <
+      std::numeric_limits<float>::epsilon()) {
+    rfrustum = vfrustum;
+    return true;
+  }
+
+  // Calculate the render frustum
+
+  // Use view frustum orientation also for render frustum
+  Eigen::Quaternionf orientation = vfrustum.getOrientation();
+
+  float left, right, top, bottom;
+  vfrustum.getPlanes(left, right, bottom, top);
+
+  // Corners of the view frustum on the geometry in world coordinates
+  Eigen::Vector3f TL = getIntersection(vfrustum.getPosition(),
+                                       orientation * Eigen::Vector3f(top, left, -1).normalized());
+  Eigen::Vector3f BL = getIntersection(vfrustum.getPosition(),
+                                       orientation * Eigen::Vector3f(bottom, left, -1).normalized());
+  Eigen::Vector3f TR = getIntersection(vfrustum.getPosition(),
+                                       orientation * Eigen::Vector3f(top, right, -1).normalized());
+  Eigen::Vector3f BR = getIntersection(vfrustum.getPosition(),
+                                       orientation * Eigen::Vector3f(bottom, right, -1).normalized());
+
+  // Corners of the view frustum in render frustum coordinates
+  TL = orientation.conjugate() * (TL - position);
+  BL = orientation.conjugate() * (BL - position);
+  TR = orientation.conjugate() * (TR - position);
+  BR = orientation.conjugate() * (BR - position);
+
+  // Normalize XY with Z to get planes at distance of 1
+  TL *= -1 / TL[2];
+  BL *= -1 / BL[2];
+  TR *= -1 / TR[2];
+  BR *= -1 / BR[2];
+
+  rfrustum.setPose(position, orientation);
+  rfrustum.setPlanes(std::min(TL[0], BL[0]),
+                     std::max(TR[0], BR[0]),
+                     std::min(BL[1], BR[1]),
+                     std::max(TL[1], TR[1]));
+
+  float left2, right2, top2, bottom2;
+  rfrustum.getPlanes(left2, right2, bottom2, top2);
+
+  return true;
 }
 
 std::string PlaneGeometry::getMapperCode() {
@@ -45,37 +97,45 @@ uniform vec3 pg_position;
 uniform vec3 pg_normal;
 
 vec3 getIntersection(vec3 pos, vec3 dir) {
-  return pos + dir * (pg_normal * (pg_position - pos) / (dir * pg_normal));
+  float t = dot(pg_normal, (pg_position - pos)) / dot(dir, pg_normal);
+  return pos + dir * t;
 }
 
-bool isInside(vec3 pos) {
-  return false;
-}
 )lang=glsl";
 }
 
 void PlaneGeometry::setMapperUniforms(GLuint program_id) {
-  glUniform3fv(glGetUniformLocation(program_id, "pg_position"), 1, _impl->position.data());
-  glUniform3fv(glGetUniformLocation(program_id, "pg_normal"), 1, _impl->normal.data());
+  auto impl = static_cast<Impl*>(_impl.get());
+  glUniform3fv(glGetUniformLocation(program_id, "pg_position"), 1, impl->position.data());
+  glUniform3fv(glGetUniformLocation(program_id, "pg_normal"), 1, impl->normal.data());
+}
+
+Eigen::Vector3f PlaneGeometry::Impl::getIntersection(Eigen::Vector3f pos, Eigen::Vector3f dir) {
+  float t = normal.dot(position - pos) / dir.dot(normal);
+  return pos + dir * t;
 }
 
 void PlaneGeometry::setPosition(gmTypes::float3 p) {
-  _impl->position = Eigen::Vector3f(p[0], p[1], p[2]);
+  auto impl = static_cast<Impl*>(_impl.get());
+  impl->position = Eigen::Vector3f(p[0], p[1], p[2]);
 }
 
 void PlaneGeometry::setNormal(gmTypes::float3 n) {
-  _impl->normal = Eigen::Vector3f(n[0], n[1], n[2]).normalized();
+  auto impl = static_cast<Impl*>(_impl.get());
+  impl->normal = Eigen::Vector3f(n[0], n[1], n[2]).normalized();
 }
 
 void PlaneGeometry::setQuaternion(gmTypes::float4 q) {
+  auto impl = static_cast<Impl*>(_impl.get());
   Eigen::Quaternionf Q(q[0], q[1], q[2], q[3]);
-  _impl->normal = Q * Eigen::Vector3f(0, 0, 1);
+  impl->normal = Q * Eigen::Vector3f(0, 0, 1);
 }
 
 void PlaneGeometry::setAxisAngle(gmTypes::float4 aa) {
   Eigen::Quaternionf Q(Eigen::Quaternionf::AngleAxisType
                        (aa[3], Eigen::Vector3f(aa[0], aa[1], aa[2]).normalized()));
-  _impl->normal = Q * Eigen::Vector3f(0, 0, 1);
+  auto impl = static_cast<Impl*>(_impl.get());
+  impl->normal = Q * Eigen::Vector3f(0, 0, 1);
 }
 
 

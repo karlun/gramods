@@ -1,0 +1,36 @@
+<config>
+
+  <OStreamMessageSink stream="err" useAnsiColor="1" level="1"/>
+  <LogFileMessageSink logFilePath="gramod.log" append="0"/>
+
+  <ImportLibrary lib="libgmGraphics.so"/>
+
+  <SdlWindow
+      size="1536 1024"
+      title="Spherical"
+      GLMajor="3" GLMinor="3">
+
+    <SdlContext
+        DEF="SDLContext"
+        useVideo="1"/>
+
+    <CubeSceneRenderer
+        cubeSize="0.2"
+        cubeSetSize="10.0"/>
+
+    <GeometryCorrectedProjectorView
+        position="0 10 10"
+        axisAngle="1 0 0 -0.5"
+        angles="1 1 1 1">
+
+      <Viewpoint
+          position="0.0 0.0 10.0"/>
+
+      <PlaneGeometry
+          position="0 0 0"
+          normal="0 0 1"/>
+
+    </GeometryCorrectedProjectorView>
+  </SdlWindow>
+
+</config>
