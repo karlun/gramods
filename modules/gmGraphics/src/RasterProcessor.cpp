@@ -17,9 +17,11 @@ struct RasterProcessor::Impl {
 #version 330 core
 
 in vec2 a_vertex;
+out vec2 position;
 
 void main() {
   gl_Position = vec4(a_vertex, 0.0, 1.0);
+  position = a_vertex;
 }
 )lang=glsl";
   std::string fragment_shader_code = "";
@@ -87,7 +89,7 @@ bool RasterProcessor::Impl::init() {
 
   GM_VINF("RasterProcessor", "Creating fragment shader");
   fragment_shader_id = glCreateShader(GL_FRAGMENT_SHADER);
-  {const char *p = vertex_shader_code.c_str();
+  {const char *p = fragment_shader_code.c_str();
     glShaderSource(fragment_shader_id, 1, &p, nullptr);}
   glCompileShader(fragment_shader_id);
 
