@@ -59,13 +59,13 @@ bool PlaneGeometry::Impl::getCameraFromPosition(Camera vfrustum,
 
   // Corners of the view frustum on the geometry in world coordinates
   Eigen::Vector3f TL = getIntersection(vfrustum.getPosition(),
-                                       orientation * Eigen::Vector3f(top, left, -1).normalized());
+                                       orientation * Eigen::Vector3f(left, top, -1).normalized());
   Eigen::Vector3f BL = getIntersection(vfrustum.getPosition(),
-                                       orientation * Eigen::Vector3f(bottom, left, -1).normalized());
+                                       orientation * Eigen::Vector3f(left, bottom, -1).normalized());
   Eigen::Vector3f TR = getIntersection(vfrustum.getPosition(),
-                                       orientation * Eigen::Vector3f(top, right, -1).normalized());
+                                       orientation * Eigen::Vector3f(right, top, -1).normalized());
   Eigen::Vector3f BR = getIntersection(vfrustum.getPosition(),
-                                       orientation * Eigen::Vector3f(bottom, right, -1).normalized());
+                                       orientation * Eigen::Vector3f(right, bottom, -1).normalized());
 
   // Corners of the view frustum in render frustum coordinates
   TL = orientation.conjugate() * (TL - position);
