@@ -1,16 +1,14 @@
 
-#include <gmGraphics/PlaneGeometry.hh>
+#include <gmGraphics/SphereGeometry.hh>
 #include "Geometry.impl.hh"
 
 BEGIN_NAMESPACE_GMGRAPHICS;
 
-GM_OFI_DEFINE_SUB(PlaneGeometry, Geometry);
-GM_OFI_PARAM(PlaneGeometry, position, gmTypes::float3, PlaneGeometry::setPosition);
-GM_OFI_PARAM(PlaneGeometry, normal, gmTypes::float3, PlaneGeometry::setNormal);
-GM_OFI_PARAM(PlaneGeometry, quaternion, gmTypes::float4, PlaneGeometry::setQuaternion);
-GM_OFI_PARAM(PlaneGeometry, axisAngle, gmTypes::float4, PlaneGeometry::setAxisAngle);
+GM_OFI_DEFINE_SUB(SphereGeometry, Geometry);
+GM_OFI_PARAM(SphereGeometry, center, gmTypes::float3, SphereGeometry::setCenter);
+GM_OFI_PARAM(SphereGeometry, radius, float, SphereGeometry::setRadius);
 
-struct PlaneGeometry::Impl
+struct SphereGeometry::Impl
   : Geometry::Impl {
 
   bool getCameraFromPosition(Camera vfrustum,
@@ -21,29 +19,25 @@ struct PlaneGeometry::Impl
                        Eigen::Vector3f dir,
                        Eigen::Vector3f &icp);
 
-  Eigen::Vector3f position;
-  Eigen::Vector3f normal;
+  Eigen::Vector3f center;
+  float radius;
 };
 
-PlaneGeometry::PlaneGeometry()
+SphereGeometry::SphereGeometry()
   : Geometry(new Impl) {}
 
-PlaneGeometry::~PlaneGeometry() {}
+SphereGeometry::~SphereGeometry() {}
 
-bool PlaneGeometry::getCameraFromPosition(Camera vfrustum,
-                                          Eigen::Vector3f position,
-                                          Camera &rfrustum) {
+bool SphereGeometry::getCameraFromPosition(Camera vfrustum,
+                                           Eigen::Vector3f position,
+                                           Camera &rfrustum) {
   auto impl = static_cast<Impl*>(_impl.get());
   return impl->getCameraFromPosition(vfrustum, position, rfrustum);
 }
 
-bool PlaneGeometry::Impl::getCameraFromPosition(Camera vfrustum,
-                                                Eigen::Vector3f position,
-                                                Camera &rfrustum) {
-
-  if ((position - this->position).dot(normal) <
-      std::numeric_limits<float>::epsilon())
-    return false;
+bool SphereGeometry::Impl::getCameraFromPosition(Camera vfrustum,
+                                                 Eigen::Vector3f position,
+                                                 Camera &rfrustum) {
 
   if ((position - vfrustum.getPosition()).norm() <
       std::numeric_limits<float>::epsilon()) {
@@ -93,6 +87,9 @@ bool PlaneGeometry::Impl::getCameraFromPosition(Camera vfrustum,
   TR *= -1 / TR[2];
   BR *= -1 / BR[2];
 
+  // TODO: expand the render frustum to include also the circles of
+  // sphere of the view frustum crop planes.
+
   rfrustum.setPose(position, orientation);
   rfrustum.setPlanes(std::min(TL[0], BL[0]),
                      std::max(TR[0], BR[0]),
@@ -102,17 +99,21 @@ bool PlaneGeometry::Impl::getCameraFromPosition(Camera vfrustum,
   return true;
 }
 
-std::string PlaneGeometry::getMapperCode() {
+std::string SphereGeometry::getMapperCode() {
   return R"lang=glsl(
-uniform vec3 pg_position;
-uniform vec3 pg_normal;
+uniform vec3 sg_center;
+uniform float sg_radius;
+uniform bool sg_inside;
 
 vec3 getIntersection(vec3 pos, vec3 dir) {
+  float s = dot(dir, pos - center) * dot(dir, pos - center)
+    - dot(pos - center, pos - center)
+    + sg_radius * sg_radius;
+  if (s < 0) return vec3(0, 0, 0);
 
-  float A = dot(dir, pg_normal);
-  if (A < 1e-10) return vec3(0, 0, 0);
-
-  float t = dot(pg_normal, (pg_position - pos)) / A;
+  float t = inside
+    ? - dot(dir, pos - center) - sqrt(s)
+    : - dot(dir, pos - center) + sqrt(s);
   if (t < 0) return vec3(0, 0, 0);
 
   return pos + dir * t;
@@ -121,49 +122,38 @@ vec3 getIntersection(vec3 pos, vec3 dir) {
 )lang=glsl";
 }
 
-void PlaneGeometry::setMapperUniforms(GLuint program_id) {
+void SphereGeometry::setMapperUniforms(GLuint program_id) {
   auto impl = static_cast<Impl*>(_impl.get());
-  glUniform3fv(glGetUniformLocation(program_id, "pg_position"), 1, impl->position.data());
-  glUniform3fv(glGetUniformLocation(program_id, "pg_normal"), 1, impl->normal.data());
+  glUniform3fv(glGetUniformLocation(program_id, "sg_center"), 1, impl->center.data());
+  glUniform3fv(glGetUniformLocation(program_id, "sg_radius"), 1, &impl->radius);
 }
 
-bool PlaneGeometry::Impl::getIntersection(Eigen::Vector3f pos,
-                                          Eigen::Vector3f dir,
-                                          Eigen::Vector3f &icp) {
+bool SphereGeometry::Impl::getIntersection(Eigen::Vector3f pos,
+                                           Eigen::Vector3f dir,
+                                           Eigen::Vector3f &icp) {
 
-  float A = dir.dot(normal);
-  if (A < std::numeric_limits<float>::epsilon())
-    return false;
+  float s = dir.dot(pos - center) * dir.dot(pos - center)
+    - (pos - center).dot(pos - center)
+    + radius * radius;
+  if (s < 0) return false;
 
-  float t = normal.dot(position - pos) / A;
+  float t = inside
+    ? - dir.dot(pos - center) - sqrt(s)
+    : - dir.dot(pos - center) + sqrt(s);
   if (t < 0) return false;
 
   icp = pos + dir * t;
   return true;
 }
 
-void PlaneGeometry::setPosition(gmTypes::float3 p) {
+void SphereGeometry::setCenter(gmTypes::float3 c) {
   auto impl = static_cast<Impl*>(_impl.get());
-  impl->position = Eigen::Vector3f(p[0], p[1], p[2]);
+  impl->center = Eigen::Vector3f(c[0], c[1], c[2]);
 }
 
-void PlaneGeometry::setNormal(gmTypes::float3 n) {
+void SphereGeometry::setRadius(float r) {
   auto impl = static_cast<Impl*>(_impl.get());
-  impl->normal = Eigen::Vector3f(n[0], n[1], n[2]).normalized();
+  impl->radius = r;
 }
-
-void PlaneGeometry::setQuaternion(gmTypes::float4 q) {
-  auto impl = static_cast<Impl*>(_impl.get());
-  Eigen::Quaternionf Q(q[0], q[1], q[2], q[3]);
-  impl->normal = Q * Eigen::Vector3f(0, 0, 1);
-}
-
-void PlaneGeometry::setAxisAngle(gmTypes::float4 aa) {
-  Eigen::Quaternionf Q(Eigen::Quaternionf::AngleAxisType
-                       (aa[3], Eigen::Vector3f(aa[0], aa[1], aa[2]).normalized()));
-  auto impl = static_cast<Impl*>(_impl.get());
-  impl->normal = Q * Eigen::Vector3f(0, 0, 1);
-}
-
 
 END_NAMESPACE_GMGRAPHICS;
