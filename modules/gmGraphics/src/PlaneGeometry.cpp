@@ -85,9 +85,6 @@ bool PlaneGeometry::Impl::getCameraFromPosition(Camera vfrustum,
                      std::min(BL[1], BR[1]),
                      std::max(TL[1], TR[1]));
 
-  float left2, right2, top2, bottom2;
-  rfrustum.getPlanes(left2, right2, bottom2, top2);
-
   return true;
 }
 
@@ -97,7 +94,9 @@ uniform vec3 pg_position;
 uniform vec3 pg_normal;
 
 vec3 getIntersection(vec3 pos, vec3 dir) {
-  float t = dot(pg_normal, (pg_position - pos)) / dot(dir, pg_normal);
+  float A = dot(dir, pg_normal);
+  if (A < 1e-10) return vec3(0, 0, 0);
+  float t = dot(pg_normal, (pg_position - pos)) / A;
   return pos + dir * t;
 }
 

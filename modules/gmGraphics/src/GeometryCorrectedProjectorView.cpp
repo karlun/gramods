@@ -97,6 +97,11 @@ void main() {
   vec3 dir = normalize(p1 - p0);
   vec3 p = getIntersection(p0, dir);
 
+  if (p.x == 0 && p.y == 0 && p.z == 0) {
+    fragColor = vec4(0, 0, 0, 0);
+    return;
+  }
+
   // projection point to render raster coordinate
   vec4 t = rPV * vec4(p, 1);
   vec2 uv = (t.xy / t.w) * 0.5 + vec2(0.5, 0.5);

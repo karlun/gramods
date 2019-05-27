@@ -64,8 +64,8 @@ public:
 
      - ```vec3 getIntersection(vec3 pos, vec3 dir)``` - returns the
        intersection between the line defined by the specified position
-       and direction vector and the geometry. Return (0,0) if there is
-       no intersection.
+       and direction vector and the geometry. Return (0,0,0) if there
+       is no intersection.
   */
   virtual std::string getMapperCode() { return ""; }
 
