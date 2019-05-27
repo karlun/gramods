@@ -110,7 +110,12 @@ void PlaneGeometry::setMapperUniforms(GLuint program_id) {
 }
 
 Eigen::Vector3f PlaneGeometry::Impl::getIntersection(Eigen::Vector3f pos, Eigen::Vector3f dir) {
-  float t = normal.dot(position - pos) / dir.dot(normal);
+
+  float A = dir.dot(normal);
+  if (A < std::numeric_limits<float>::epsilon())
+    return pos;
+
+  float t = normal.dot(position - pos) / A;
   return pos + dir * t;
 }
 
