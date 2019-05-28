@@ -110,7 +110,7 @@ uniform vec3 pg_normal;
 vec3 getIntersection(vec3 pos, vec3 dir) {
 
   float A = dot(dir, pg_normal);
-  if (A < 1e-10) return vec3(0, 0, 0);
+  if (abs(A) < 1e-10) return vec3(0, 0, 0);
 
   float t = dot(pg_normal, (pg_position - pos)) / A;
   if (t < 0) return vec3(0, 0, 0);
@@ -132,7 +132,7 @@ bool PlaneGeometry::Impl::getIntersection(Eigen::Vector3f pos,
                                           Eigen::Vector3f &icp) {
 
   float A = dir.dot(normal);
-  if (A < std::numeric_limits<float>::epsilon())
+  if (fabsf(A) < std::numeric_limits<float>::epsilon())
     return false;
 
   float t = normal.dot(position - pos) / A;
