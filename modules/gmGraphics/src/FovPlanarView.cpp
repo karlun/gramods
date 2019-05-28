@@ -23,7 +23,7 @@ void FovPlanarView::renderFullPipeline(ViewSettings settings) {
   }
 
   Camera camera;
-  camera.setPlanes(planes[0], planes[1], planes[2], planes[3]);
+  camera.setClipPlanes(planes[0], planes[1], planes[2], planes[3]);
   camera.setPose(x_VP, orientation);
 
   for (auto renderer : settings.renderers)

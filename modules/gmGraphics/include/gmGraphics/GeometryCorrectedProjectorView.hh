@@ -74,10 +74,10 @@ public:
   void setIntrinsics(gmTypes::float4 m);
 
   /**
-     Set the projection shape, as left, right, bottom, top angles, in
-     radians.
+     Set the projection shape, as left, right, bottom, top clip plane
+     angles, in radians.
   */
-  void setAngles(gmTypes::float4 a);
+  void setClipAngles(gmTypes::float4 a);
 
   /**
      Set orientation of the projection, of the extrinsics, as

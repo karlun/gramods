@@ -53,7 +53,7 @@ bool SphereGeometry::Impl::getCameraFromPosition(Camera vfrustum,
   Eigen::Quaternionf orientation = vfrustum.getOrientation();
 
   float left, right, top, bottom;
-  vfrustum.getPlanes(left, right, bottom, top);
+  vfrustum.getClipPlanes(left, right, bottom, top);
 
   // Corners of the view frustum on the geometry in world coordinates
   Eigen::Vector3f TL, BL, TR, BR;
@@ -95,10 +95,10 @@ bool SphereGeometry::Impl::getCameraFromPosition(Camera vfrustum,
   // sphere of the view frustum crop planes.
 
   rfrustum.setPose(position, orientation);
-  rfrustum.setPlanes(std::min(TL[0], BL[0]),
-                     std::max(TR[0], BR[0]),
-                     std::min(BL[1], BR[1]),
-                     std::max(TL[1], TR[1]));
+  rfrustum.setClipPlanes(std::min(TL[0], BL[0]),
+                         std::max(TR[0], BR[0]),
+                         std::min(BL[1], BR[1]),
+                         std::max(TL[1], TR[1]));
 
   return true;
 }

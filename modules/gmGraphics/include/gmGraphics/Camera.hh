@@ -40,18 +40,18 @@ public:
   Eigen::Quaternionf getOrientation();
 
   /**
-     Explicitly sets the frustum planes at a distance of 1. Near and
-     far planes are defined by the renderer that requests a projection
-     matrix for the camera.
+     Explicitly sets the frustum clip planes at a distance of 1. Near
+     and far planes are defined by the renderer that requests a
+     projection matrix for the camera.
   */
-  void setPlanes(float l, float r, float b, float t) {
+  void setClipPlanes(float l, float r, float b, float t) {
     left = l; right = r; top = t; bottom = b;
   }
 
   /**
-     Gets the frustum planes at a distance of 1.
+     Gets the frustum clip planes at a distance of 1.
   */
-  void getPlanes(float &l, float &r, float &b, float &t) {
+  void getClipPlanes(float &l, float &r, float &b, float &t) {
     l = left; r = right; t = top; b = bottom;
   }
 
@@ -68,7 +68,7 @@ public:
      radians. The left field-of-view increase left-wise while the
      right field-of-view increate right-wise.
   */
-  void setAngles(float l, float r, float b, float t);
+  void setClipAngles(float l, float r, float b, float t);
 
   /**
      Sets the pose of the camera.

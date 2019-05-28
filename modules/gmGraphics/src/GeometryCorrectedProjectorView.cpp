@@ -19,7 +19,7 @@ GM_OFI_PARAM(GeometryCorrectedProjectorView, bottomRightCorner, gmTypes::float3,
 GM_OFI_PARAM(GeometryCorrectedProjectorView, position, gmTypes::float3, GeometryCorrectedProjectorView::setPosition);
 GM_OFI_PARAM(GeometryCorrectedProjectorView, extrinsics, gmTypes::float12, GeometryCorrectedProjectorView::setExtrinsics);
 GM_OFI_PARAM(GeometryCorrectedProjectorView, intrinsics, gmTypes::float4, GeometryCorrectedProjectorView::setIntrinsics);
-GM_OFI_PARAM(GeometryCorrectedProjectorView, angles, gmTypes::float4, GeometryCorrectedProjectorView::setAngles);
+GM_OFI_PARAM(GeometryCorrectedProjectorView, clipAngles, gmTypes::float4, GeometryCorrectedProjectorView::setClipAngles);
 GM_OFI_PARAM(GeometryCorrectedProjectorView, quaternion, gmTypes::float4, GeometryCorrectedProjectorView::setQuaternion);
 GM_OFI_PARAM(GeometryCorrectedProjectorView, axisAngle, gmTypes::float4, GeometryCorrectedProjectorView::setAxisAngle);
 GM_OFI_PARAM(GeometryCorrectedProjectorView, eulerAngles, gmTypes::float3, GeometryCorrectedProjectorView::setEulerAngles);
@@ -156,7 +156,7 @@ void GeometryCorrectedProjectorView::setIntrinsics(gmTypes::float4 m) {
   _impl->have_shape_intrinsics = true;
 }
 
-void GeometryCorrectedProjectorView::setAngles(gmTypes::float4 a) {
+void GeometryCorrectedProjectorView::setClipAngles(gmTypes::float4 a) {
   _impl->shape_angles = a;
   _impl->have_shape_angles = true;
 }
@@ -224,18 +224,18 @@ bool GeometryCorrectedProjectorView::Impl::setCamera(Camera &c) {
 }
 
 bool GeometryCorrectedProjectorView::Impl::setCameraShapeFromIntrinsics(Camera &c) {
-  c.setPlanes((1.f - shape_intrinsics[2]) / shape_intrinsics[0],
-              (      shape_intrinsics[2]) / shape_intrinsics[0],
-              (1.f - shape_intrinsics[3]) / shape_intrinsics[1],
-              (      shape_intrinsics[3]) / shape_intrinsics[1]);
+  c.setClipPlanes((1.f - shape_intrinsics[2]) / shape_intrinsics[0],
+                  (      shape_intrinsics[2]) / shape_intrinsics[0],
+                  (1.f - shape_intrinsics[3]) / shape_intrinsics[1],
+                  (      shape_intrinsics[3]) / shape_intrinsics[1]);
   return true;
 }
 
 bool GeometryCorrectedProjectorView::Impl::setCameraShapeFromAngles(Camera &c) {
-  c.setAngles(shape_angles[0],
-              shape_angles[1],
-              shape_angles[2],
-              shape_angles[3]);
+  c.setClipAngles(shape_angles[0],
+                  shape_angles[1],
+                  shape_angles[2],
+                  shape_angles[3]);
   return true;
 }
 
@@ -244,10 +244,10 @@ bool GeometryCorrectedProjectorView::Impl::setCameraShapeFromCorners(Camera &c) 
   Eigen::Vector3f tl = orientation.conjugate() * (shape_corner_tl - position);
   Eigen::Vector3f br = orientation.conjugate() * (shape_corner_br - position);
 
-  c.setPlanes(tl[0] / tl[2],
-              br[0] / br[2],
-              br[1] / br[2],
-              tl[1] / tl[2]);
+  c.setClipPlanes(tl[0] / tl[2],
+                  br[0] / br[2],
+                  br[1] / br[2],
+                  tl[1] / tl[2]);
 
   return true;
 }

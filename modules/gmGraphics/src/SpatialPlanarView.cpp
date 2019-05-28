@@ -52,7 +52,7 @@ void SpatialPlanarView::renderFullPipeline(ViewSettings settings, Eye eye) {
   auto Q1 = Eigen::Quaternionf::FromTwoVectors(Q0 * y, up);
 
   Camera camera;
-  camera.setPlanes(left, right, bottom, top);
+  camera.setClipPlanes(left, right, bottom, top);
   camera.setPose(x_VP, Q1 * Q0);
 
   for (auto renderer : settings.renderers)

@@ -313,40 +313,40 @@ void CubeMap::Impl::renderSide(std::vector<std::shared_ptr<Renderer>> renderers,
 
     switch (side) {
     case 0: // left
-      camera.setPlanes((-W + O.z()) / (W + O.x()),
-                       (+W + O.z()) / (W + O.x()),
-                       (-W - O.y()) / (W + O.x()),
-                       (+W - O.y()) / (W + O.x()));
+      camera.setClipPlanes((-W + O.z()) / (W + O.x()),
+                           (+W + O.z()) / (W + O.x()),
+                           (-W - O.y()) / (W + O.x()),
+                           (+W - O.y()) / (W + O.x()));
       break;
     case 1: // right
-      camera.setPlanes((-W - O.z()) / (W - O.x()),
-                       (+W - O.z()) / (W - O.x()),
-                       (-W - O.y()) / (W - O.x()),
-                       (+W - O.y()) / (W - O.x()));
+      camera.setClipPlanes((-W - O.z()) / (W - O.x()),
+                           (+W - O.z()) / (W - O.x()),
+                           (-W - O.y()) / (W - O.x()),
+                           (+W - O.y()) / (W - O.x()));
       break;
     case 2: // bottom
-      camera.setPlanes((-W - O.x()) / (W + O.y()),
-                       (+W - O.x()) / (W + O.y()),
-                       (-W + O.z()) / (W + O.y()),
-                       (+W + O.z()) / (W + O.y()));
+      camera.setClipPlanes((-W - O.x()) / (W + O.y()),
+                           (+W - O.x()) / (W + O.y()),
+                           (-W + O.z()) / (W + O.y()),
+                           (+W + O.z()) / (W + O.y()));
       break;
     case 3: // top
-      camera.setPlanes((-W - O.x()) / (W - O.y()),
-                       (+W - O.x()) / (W - O.y()),
-                       (-W - O.z()) / (W - O.y()),
-                       (+W - O.z()) / (W - O.y()));
+      camera.setClipPlanes((-W - O.x()) / (W - O.y()),
+                           (+W - O.x()) / (W - O.y()),
+                           (-W - O.z()) / (W - O.y()),
+                           (+W - O.z()) / (W - O.y()));
       break;
     case 4: // back
-      camera.setPlanes((-W + O.x()) / (W - O.z()),
-                       (+W + O.x()) / (W - O.z()),
-                       (-W - O.y()) / (W - O.z()),
-                       (+W - O.y()) / (W - O.z()));
+      camera.setClipPlanes((-W + O.x()) / (W - O.z()),
+                           (+W + O.x()) / (W - O.z()),
+                           (-W - O.y()) / (W - O.z()),
+                           (+W - O.y()) / (W - O.z()));
       break;
     case 5: // front
-      camera.setPlanes((-W - O.x()) / (W + O.z()),
-                       (+W - O.x()) / (W + O.z()),
-                       (-W - O.y()) / (W + O.z()),
-                       (+W - O.y()) / (W + O.z()));
+      camera.setClipPlanes((-W - O.x()) / (W + O.z()),
+                           (+W - O.x()) / (W + O.z()),
+                           (-W - O.y()) / (W + O.z()),
+                           (+W - O.y()) / (W + O.z()));
       break;
     default: // only six sides - this should not happen
       assert(0);
