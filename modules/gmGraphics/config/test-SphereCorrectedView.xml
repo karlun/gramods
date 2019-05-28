@@ -26,9 +26,10 @@
       <Viewpoint
           position="0.0 0.0 10.0"/>
 
-      <PlaneGeometry
-          position="0 0 0"
-          normal="0 0 1"/>
+      <SphereGeometry
+          center="0 0 -5000"
+          radius="5000"
+          inside="0"/>
 
     </GeometryCorrectedProjectorView>
   </SdlWindow>

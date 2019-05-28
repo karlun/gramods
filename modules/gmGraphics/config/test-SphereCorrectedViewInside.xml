@@ -15,20 +15,22 @@
         useVideo="1"/>
 
     <CubeSceneRenderer
-        cubeSize="0.2"
-        cubeSetSize="5.0"/>
+        cubeSize="0.1"
+        cubeSetSize="5.0"
+        cubeSetCenter="0 0 -10"/>
 
     <GeometryCorrectedProjectorView
-        position="0 10 10"
-        axisAngle="1 0 0 -0.7"
+        position="0 0 0"
+        axisAngle="1 0 0 0"
         angles=".5 .5 .5 .5">
 
       <Viewpoint
-          position="0.0 0.0 10.0"/>
+          position="2.0 0.0 0.0"/>
 
-      <PlaneGeometry
-          position="0 0 0"
-          normal="0 0 1"/>
+      <SphereGeometry
+          center="0 0 0"
+          radius="10"
+          inside="1"/>
 
     </GeometryCorrectedProjectorView>
   </SdlWindow>

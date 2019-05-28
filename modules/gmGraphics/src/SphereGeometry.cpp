@@ -2,6 +2,8 @@
 #include <gmGraphics/SphereGeometry.hh>
 #include "Geometry.impl.hh"
 
+#include <gmCore/RunOnce.hh>
+
 BEGIN_NAMESPACE_GMGRAPHICS;
 
 GM_OFI_DEFINE_SUB(SphereGeometry, Geometry);
@@ -72,8 +74,10 @@ bool SphereGeometry::Impl::getCameraFromPosition(Camera vfrustum,
   // geometry.
 
   if (! have_TL || ! have_BL ||
-      ! have_TR || ! have_BR)
+      ! have_TR || ! have_BR) {
+    GM_RUNONCE(GM_ERR("SphereGeometry", "Cannot estimate render frustum when view frustum corners do not intersect the geometry."));
     return false;
+  }
 
   // Corners of the view frustum in render frustum coordinates
   TL = orientation.conjugate() * (TL - position);
@@ -106,14 +110,14 @@ uniform float sg_radius;
 uniform bool sg_inside;
 
 vec3 getIntersection(vec3 pos, vec3 dir) {
-  float s = dot(dir, pos - center) * dot(dir, pos - center)
-    - dot(pos - center, pos - center)
+  float s = dot(dir, pos - sg_center) * dot(dir, pos - sg_center)
+    - dot(pos - sg_center, pos - sg_center)
     + sg_radius * sg_radius;
   if (s < 0) return vec3(0, 0, 0);
 
-  float t = inside
-    ? - dot(dir, pos - center) - sqrt(s)
-    : - dot(dir, pos - center) + sqrt(s);
+  float t = sg_inside
+    ? - dot(dir, pos - sg_center) + sqrt(s)
+    : - dot(dir, pos - sg_center) - sqrt(s);
   if (t < 0) return vec3(0, 0, 0);
 
   return pos + dir * t;
@@ -125,7 +129,8 @@ vec3 getIntersection(vec3 pos, vec3 dir) {
 void SphereGeometry::setMapperUniforms(GLuint program_id) {
   auto impl = static_cast<Impl*>(_impl.get());
   glUniform3fv(glGetUniformLocation(program_id, "sg_center"), 1, impl->center.data());
-  glUniform3fv(glGetUniformLocation(program_id, "sg_radius"), 1, &impl->radius);
+  glUniform1f(glGetUniformLocation(program_id, "sg_radius"), impl->radius);
+  glUniform1i(glGetUniformLocation(program_id, "sg_inside"), impl->inside);
 }
 
 bool SphereGeometry::Impl::getIntersection(Eigen::Vector3f pos,
@@ -138,8 +143,8 @@ bool SphereGeometry::Impl::getIntersection(Eigen::Vector3f pos,
   if (s < 0) return false;
 
   float t = inside
-    ? - dir.dot(pos - center) - sqrt(s)
-    : - dir.dot(pos - center) + sqrt(s);
+    ? - dir.dot(pos - center) + sqrt(s)
+    : - dir.dot(pos - center) - sqrt(s);
   if (t < 0) return false;
 
   icp = pos + dir * t;
