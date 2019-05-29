@@ -191,7 +191,7 @@ void CubeSceneRenderer::Impl::render(Camera camera) {
   auto Mv = camera.getViewMatrix();
   float near = 0.1 * cube_size;
   float far =
-    (Mv.translation() - cube_set_center).norm()
+    (Mv.inverse().translation() - cube_set_center).norm()
     + 0.87 * (cube_set_size + cube_size);
   auto Mp = camera.getProjectionMatrix(near, far);
 
