@@ -53,7 +53,6 @@ bool PlaneGeometry::Impl::getCameraFromPosition(Camera vfrustum,
 
   // Calculate the render frustum
 
-  // Use view frustum orientation also for render frustum
   Eigen::Quaternionf orientation = vfrustum.getOrientation();
 
   float left, right, top, bottom;
@@ -80,6 +79,13 @@ bool PlaneGeometry::Impl::getCameraFromPosition(Camera vfrustum,
   if (! have_TL || ! have_BL ||
       ! have_TR || ! have_BR)
     return false;
+
+  // Rotate view frustum orientation into plane to use as orientation
+  // for render frustum
+  orientation =
+    orientation *
+    Eigen::Quaternionf::FromTwoVectors(orientation * Eigen::Vector3f(0, 0, 1),
+                                       (TR - BR).cross(BL - BR));
 
   // Corners of the view frustum in render frustum coordinates
   TL = orientation.conjugate() * (TL - position);

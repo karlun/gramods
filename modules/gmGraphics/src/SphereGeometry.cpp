@@ -49,7 +49,6 @@ bool SphereGeometry::Impl::getCameraFromPosition(Camera vfrustum,
 
   // Calculate the render frustum
 
-  // Use view frustum orientation also for render frustum
   Eigen::Quaternionf orientation = vfrustum.getOrientation();
 
   float left, right, top, bottom;
@@ -72,6 +71,14 @@ bool SphereGeometry::Impl::getCameraFromPosition(Camera vfrustum,
 
   // TODO: handle cases where a corner does not intersect the
   // geometry.
+
+  // Rotate view frustum orientation into projection (approximate
+  // plane) to use as orientation for render frustum
+  orientation =
+    orientation *
+    Eigen::Quaternionf::FromTwoVectors(orientation * Eigen::Vector3f(0, 0, 1),
+                                       0.5 * (TR - BR).cross(BL - BR) +
+                                       0.5 * (BR - BL).cross(TL - BL));
 
   if (! have_TL || ! have_BL ||
       ! have_TR || ! have_BR) {
