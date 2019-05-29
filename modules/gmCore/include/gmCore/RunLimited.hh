@@ -2,6 +2,8 @@
 #ifndef GRAMODS_CORE_RUNLIMITED
 #define GRAMODS_CORE_RUNLIMITED
 
+#include <chrono>
+
 #define GM_RUNLIMITED(CODE, SECONDS)                                    \
   {                                                                     \
     static std::chrono::steady_clock::time_point _gramods_last_executed; \
