@@ -3,6 +3,7 @@
 #include "Geometry.impl.hh"
 
 #include <gmCore/RunOnce.hh>
+#include <gmCore/RunLimited.hh>
 
 BEGIN_NAMESPACE_GMGRAPHICS;
 
@@ -82,7 +83,7 @@ bool SphereGeometry::Impl::getCameraFromPosition(Camera vfrustum,
 
   if (! have_TL || ! have_BL ||
       ! have_TR || ! have_BR) {
-    GM_RUNONCE(GM_ERR("SphereGeometry", "Cannot estimate render frustum when view frustum corners do not intersect the geometry."));
+    GM_RUNLIMITED(GM_ERR("SphereGeometry", "Cannot estimate render frustum when view frustum corners do not intersect the geometry."), 1);
     return false;
   }
 
@@ -91,6 +92,14 @@ bool SphereGeometry::Impl::getCameraFromPosition(Camera vfrustum,
   BL = orientation.conjugate() * (BL - position);
   TR = orientation.conjugate() * (TR - position);
   BR = orientation.conjugate() * (BR - position);
+
+  if (TL[2] > -std::numeric_limits<float>::epsilon() ||
+      BL[2] > -std::numeric_limits<float>::epsilon() ||
+      TR[2] > -std::numeric_limits<float>::epsilon() ||
+      BR[2] > -std::numeric_limits<float>::epsilon()) {
+    GM_RUNLIMITED(GM_ERR("SphereGeometry", "Cannot estimate render frustum when view frustum is (partially) behind the render position."), 1);
+    return false;
+  }
 
   // Normalize XY with Z to get planes at distance of 1
   TL *= -1 / TL[2];
