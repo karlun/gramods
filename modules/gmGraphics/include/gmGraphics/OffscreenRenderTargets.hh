@@ -38,6 +38,12 @@ public:
   bool getUsePowersOfTwo();
 
   /**
+     Turn on or off linear interpolation in the texture(s). Default is
+     off.
+  */
+  void setLinearInterpolation(bool on);
+
+  /**
      Provides the size of the specified texture from the last bind
      call. This will be the same as the size provided to the last
      ::bind call, unless use powers of two is set to true. This will

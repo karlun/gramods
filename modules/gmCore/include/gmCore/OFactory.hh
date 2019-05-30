@@ -298,11 +298,17 @@ void OFactory::ParamSetter<Node, bool>::setValueFromString
   if (s == "true" ||
       s == "True" ||
       s == "TRUE" ||
+      s == "on" ||
+      s == "On" ||
+      s == "ON" ||
       s == "1") {
     (node->*method)(true);
   } else if (s == "false" ||
              s == "False" ||
              s == "FALSE" ||
+             s == "off" ||
+             s == "Off" ||
+             s == "OFF" ||
              s == "0") {
     (node->*method)(false);
   } else {

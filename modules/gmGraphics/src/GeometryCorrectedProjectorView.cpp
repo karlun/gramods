@@ -14,6 +14,7 @@ BEGIN_NAMESPACE_GMGRAPHICS;
 GM_OFI_DEFINE_SUB(GeometryCorrectedProjectorView, StereoscopicView);
 GM_OFI_PARAM(GeometryCorrectedProjectorView, bufferWidth, int, GeometryCorrectedProjectorView::setBufferWidth);
 GM_OFI_PARAM(GeometryCorrectedProjectorView, bufferHeight, int, GeometryCorrectedProjectorView::setBufferHeight);
+GM_OFI_PARAM(GeometryCorrectedProjectorView, linearInterpolation, bool, GeometryCorrectedProjectorView::setLinearInterpolation);
 GM_OFI_PARAM(GeometryCorrectedProjectorView, topLeftCorner, gmTypes::float3, GeometryCorrectedProjectorView::setTopLeftCorner);
 GM_OFI_PARAM(GeometryCorrectedProjectorView, bottomRightCorner, gmTypes::float3, GeometryCorrectedProjectorView::setBottomRightCorner);
 GM_OFI_PARAM(GeometryCorrectedProjectorView, position, gmTypes::float3, GeometryCorrectedProjectorView::setPosition);
@@ -125,6 +126,10 @@ void GeometryCorrectedProjectorView::setBufferWidth(int W) {
 
 void GeometryCorrectedProjectorView::setBufferHeight(int H) {
   _impl->buffer_height = H;
+}
+
+void GeometryCorrectedProjectorView::setLinearInterpolation(bool on) {
+  _impl->render_target.setLinearInterpolation(on);
 }
 
 void GeometryCorrectedProjectorView::setTopLeftCorner(gmTypes::float3 tlc) {

@@ -47,6 +47,12 @@ public:
   void setBufferHeight(int H);
 
   /**
+     Turn on or off linear interpolation in the projection from linear
+     graphics to non-linear projection space. Default is off.
+  */
+  void setLinearInterpolation(bool on);
+
+  /**
      Set the top left corner of the projection.
   */
   void setTopLeftCorner(gmTypes::float3 tlc);

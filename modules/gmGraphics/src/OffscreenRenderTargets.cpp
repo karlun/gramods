@@ -20,6 +20,7 @@ struct OffscreenRenderTargets::Impl {
 
   bool use_powers_of_two = false;
   std::vector<std::array<size_t, 2>> tex_size;
+  bool use_linear = false;
 
   std::stack<std::array<GLint, 4>> viewport_stack;
   std::stack<GLint> target_framebuffer_stack;
@@ -67,8 +68,13 @@ bool OffscreenRenderTargets::Impl::init(size_t count) {
 
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, 32, 32, 0,GL_RGB, GL_UNSIGNED_BYTE, 0);
 
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    if (use_linear) {
+      glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+      glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    } else {
+      glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+      glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    }
 
     glFramebufferTexture2D(GL_DRAW_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, tex_id[idx], 0);
   }
@@ -175,6 +181,10 @@ void OffscreenRenderTargets::setUsePowersOfTwo(bool on) {
 
 bool OffscreenRenderTargets::getUsePowersOfTwo() {
   return _impl->use_powers_of_two;
+}
+
+void OffscreenRenderTargets::setLinearInterpolation(bool on) {
+  _impl->use_linear = on;
 }
 
 void OffscreenRenderTargets::getTextureSize(size_t &width, size_t &height, size_t idx) {
