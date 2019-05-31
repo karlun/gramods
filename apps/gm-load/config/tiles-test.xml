@@ -20,7 +20,7 @@
 
     <TiledView>
 
-      <param name="tileLocation" value="1 0 1 1"/>
+      <param name="tileLocation" value="0 0 1 1"/>
       <SpatialPlanarView
           topLeftCorner="-2.0 2.0 0.0"
           bottomRightCorner="2.0 -2.0 0.0"
@@ -29,16 +29,16 @@
             position="0.0 0.0 3.0"/>
       </SpatialPlanarView>
 
-      <param name="tileLocation" value="1 1 1 1"/>
+      <param name="tileLocation" value="0 1 1 1"/>
       <SpatialPlanarView
-          topLeftCorner="0.0 2.0 2.0"
-          bottomRightCorner="0.0 -2.0 -2.0"
+          topLeftCorner="0.0 2.0 -2.0"
+          bottomRightCorner="0.0 -2.0 2.0"
           upDirection="0.0 1.0 0.0">
         <Viewpoint
-            position="3.0 0.0 0.0"/>
+            position="-3.0 0.0 0.0"/>
       </SpatialPlanarView>
 
-      <param name="tileLocation" value="0 0 1 1"/>
+      <param name="tileLocation" value="1 0 1 1"/>
       <SpatialPlanarView
           topLeftCorner="-2.0 0.0 -2.0"
           bottomRightCorner="2.0 0.0 2.0"
@@ -47,7 +47,7 @@
             position="0.0 3.0 0.0"/>
       </SpatialPlanarView>
 
-      <param name="tileLocation" value="0 1 1 1"/>
+      <param name="tileLocation" value="1 1 1 1"/>
       <PosedPlanarView
           fieldOfView="1">
         <Viewpoint
