@@ -1,6 +1,7 @@
 
 #include <gmGraphics/SpatialPlanarView.hh>
 #include <gmCore/RunOnce.hh>
+#include <gmCore/RunLimited.hh>
 
 BEGIN_NAMESPACE_GMGRAPHICS;
 
@@ -38,6 +39,11 @@ void SpatialPlanarView::renderFullPipeline(ViewSettings settings, Eye eye) {
 
   auto distance = (x_VP - topLeftCorner).dot(display_normal);
   auto center = x_VP - distance * display_normal;
+
+  if (distance < std::numeric_limits<float>::epsilon()) {
+    GM_RUNLIMITED(GM_ERR("SpatialPlanarView", "Cannot render view with viewpoint on the plane"), 1);
+    return;
+  }
 
   // Map geometry onto near plane
   float ratio = 1.f / distance;
