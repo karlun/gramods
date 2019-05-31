@@ -44,9 +44,9 @@ Eigen::Affine3f Camera::getViewMatrix() {
 }
 
 void Camera::setFieldOfView(float fov_h, float fov_v) {
-  right = atanf(0.5f * fov_h);
+  right = tanf(0.5f * fov_h);
   left = -right;
-  top = atanf(0.5f * fov_v);
+  top = tanf(0.5f * fov_v);
   bottom = -top;
 }
 
