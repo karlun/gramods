@@ -10,6 +10,7 @@ BEGIN_NAMESPACE_GMGRAPHICS;
 GM_OFI_DEFINE_SUB(SphereGeometry, Geometry);
 GM_OFI_PARAM(SphereGeometry, center, gmTypes::float3, SphereGeometry::setCenter);
 GM_OFI_PARAM(SphereGeometry, radius, float, SphereGeometry::setRadius);
+GM_OFI_PARAM(SphereGeometry, frustumSizeRatio, float, SphereGeometry::setFrustumSizeRatio);
 
 struct SphereGeometry::Impl
   : Geometry::Impl {
@@ -22,8 +23,9 @@ struct SphereGeometry::Impl
                        Eigen::Vector3f dir,
                        Eigen::Vector3f &icp);
 
-  Eigen::Vector3f center;
-  float radius;
+  Eigen::Vector3f center = Eigen::Vector3f::Zero();
+  float radius = 10.f;
+  float size_ratio = 1.f;
 };
 
 SphereGeometry::SphereGeometry()
@@ -110,11 +112,22 @@ bool SphereGeometry::Impl::getCameraFromPosition(Camera vfrustum,
   // TODO: expand the render frustum to include also the circles of
   // sphere of the view frustum crop planes.
 
+  float left2 = std::min(TL[0], BL[0]);
+  float right2 = std::max(TR[0], BR[0]);
+  float bottom2 = std::min(BL[1], BR[1]);
+  float top2 = std::max(TL[1], TR[1]);
+
+  // Until we have exact render frustum, that include also the circles
+  // of sphere of the view frustum crop planes, we expand the frustum
+  // by a fixed percentage.
+
+  left2 = (0.5 * left2 + 0.5 * right2) + size_ratio * (left2 - (0.5 * left2 + 0.5 * right2));
+  right2 = (0.5 * left2 + 0.5 * right2) + size_ratio * (right2 - (0.5 * left2 + 0.5 * right2));
+  bottom2 = (0.5 * top2 + 0.5 * bottom2) + size_ratio * (bottom2 - (0.5 * top2 + 0.5 * bottom2));
+  top2 = (0.5 * top2 + 0.5 * bottom2) + size_ratio * (top2 - (0.5 * top2 + 0.5 * bottom2));
+
   rfrustum.setPose(position, orientation);
-  rfrustum.setClipPlanes(std::min(TL[0], BL[0]),
-                         std::max(TR[0], BR[0]),
-                         std::min(BL[1], BR[1]),
-                         std::max(TL[1], TR[1]));
+  rfrustum.setClipPlanes(left2, right2, bottom2, top2);
 
   return true;
 }
@@ -176,5 +189,11 @@ void SphereGeometry::setRadius(float r) {
   auto impl = static_cast<Impl*>(_impl.get());
   impl->radius = r;
 }
+
+void SphereGeometry::setFrustumSizeRatio(float r) {
+  auto impl = static_cast<Impl*>(_impl.get());
+  impl->size_ratio = r;
+}
+
 
 END_NAMESPACE_GMGRAPHICS;

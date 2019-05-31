@@ -31,6 +31,15 @@ public:
   void setRadius(float);
 
   /**
+     Until the render frustum estimation has been implemented to
+     correctly cover the full view frustum, this frustum size
+     modulation parameter can be used to enlarge the render
+     frustum. Use this if you see D-shaped black regions at the edge
+     of the view. Default is 1.0.
+  */
+  void setFrustumSizeRatio(float);
+
+  /**
      Calculates and returns a frustum, with optical center at the
      specified position, that contains the intersection between the
      provided frustum and the geometrical shape.
