@@ -62,6 +62,9 @@ bool OffscreenRenderTargets::Impl::init(size_t count) {
   glGenTextures(count, tex_id.data());
   glGenRenderbuffers(1, &rb_depth_id);
 
+  glBindRenderbuffer(GL_RENDERBUFFER, rb_depth_id);
+  glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT32F, 32, 32);
+
   for (size_t idx = 0; idx < count; ++idx) {
     glBindFramebuffer(GL_FRAMEBUFFER, fb_id[idx]);
     glBindTexture(GL_TEXTURE_2D, tex_id[idx]);
@@ -77,11 +80,8 @@ bool OffscreenRenderTargets::Impl::init(size_t count) {
     }
 
     glFramebufferTexture2D(GL_DRAW_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, tex_id[idx], 0);
+    glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, rb_depth_id);
   }
-
-  glBindRenderbuffer(GL_RENDERBUFFER, rb_depth_id);
-  glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT32F, 32, 32);
-  glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, rb_depth_id);
 
   if (!GLUtils::check_framebuffer())
     return false;
