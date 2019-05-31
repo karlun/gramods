@@ -59,10 +59,10 @@ void Camera::setFieldOfView(float fov_h, float fov_v) {
 }
 
 void Camera::setClipAngles(float l, float r, float b, float t) {
-  left = -atanf(l);
-  right = atanf(r);
-  bottom = -atanf(b);
-  top = atanf(t);
+  left = -tanf(l);
+  right = tanf(r);
+  bottom = -tanf(b);
+  top = tanf(t);
 }
 
 END_NAMESPACE_GMGRAPHICS;
