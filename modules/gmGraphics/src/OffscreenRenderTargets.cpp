@@ -119,6 +119,9 @@ void OffscreenRenderTargets::Impl::bind(size_t vwidth, size_t vheight, size_t id
   if (idx >= fb_id.size())
     return;
 
+  if (!vwidth && !viewport_stack.empty()) vwidth = viewport_stack.top()[2];
+  if (!vheight && !viewport_stack.empty()) vheight = viewport_stack.top()[3];
+
   size_t width, height;
   if (use_powers_of_two) {
     width = GLUtils::nextPowerOfTwo(vwidth);
@@ -128,6 +131,7 @@ void OffscreenRenderTargets::Impl::bind(size_t vwidth, size_t vheight, size_t id
     height = vheight;
   }
   tex_size[idx] = { width, height };
+  GM_VINF("OffscreenRenderTargets", "Bind " << idx << " with size " << width << "x" << height);
 
   glBindFramebuffer(GL_FRAMEBUFFER, fb_id[idx]);
 

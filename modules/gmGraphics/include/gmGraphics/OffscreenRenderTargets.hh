@@ -75,7 +75,7 @@ public:
      Sets the texture resolution and sets this texture as render
      target.
   */
-  void bind(size_t width, size_t height, size_t idx = 0);
+  void bind(size_t width = 0, size_t height = 0, size_t idx = 0);
 
   /**
      Returns the texture id of the specified offline render buffer.
