@@ -153,6 +153,15 @@ void ViewMixView::Impl::renderFullPipeline(ViewSettings settings) {
     return;
   }
 
+  if (type > 0 && views.size() < 2) {
+    GM_RUNONCE(GM_ERR("ViewMixView", "Too few views to mix for the current operator."));
+    return;
+  }
+
+  if (type > 0 && views.size() > 2) {
+    GM_RUNONCE(GM_WRN("ViewMixView", "Too many views to mix for the current operator - residual view will be ignored."));
+  }
+
   if (!is_setup) {
     is_setup = true;
     raster_processor.setFragmentCode(fragment_code[type]);
