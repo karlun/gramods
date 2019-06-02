@@ -9,9 +9,7 @@
 BEGIN_NAMESPACE_GMGRAPHICS;
 
 /**
-   This view mixes the graphics from two or more other views. The
-   current implementation shows the per pixel difference between the
-   first added view and the other added views.
+   This view mixes the graphics from two or more other views.
 */
 class ViewMixView
   : public View {
@@ -26,6 +24,19 @@ public:
      to the sub views and mixes the results.
   */
   void renderFullPipeline(ViewSettings settings);
+
+  /**
+     Set type of mixing. Default is average. Valid values are
+
+     - average, showing the per pixel average value of all the views,
+
+     - difference, showing the per pixel difference between the first
+       and the second added view.
+
+     - distance, showing the per pixel color distance between the
+       first and the second added view.
+  */
+  void setMixType(std::string);
 
   /**
      Add a view to mix.
