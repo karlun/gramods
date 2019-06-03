@@ -8,9 +8,17 @@
 BEGIN_NAMESPACE_GMGRAPHICS;
 
 GM_OFI_DEFINE_SUB(PosedPlanarView, View);
-GM_OFI_PARAM(PosedPlanarView, fieldOfView, float, PosedPlanarView::setFieldOfView);
+GM_OFI_PARAM(PosedPlanarView, fieldOfView, gmTypes::float2, PosedPlanarView::setFieldOfView);
 
 void PosedPlanarView::renderFullPipeline(ViewSettings settings) {
+
+  float fov_h = field_of_view[0];
+  float fov_v = field_of_view[1];
+
+  if (fov_h < 0 && fov_v < 0) {
+    GM_RUNONCE(GM_ERR("PosedPlanarView", "Both horizontal and vertical field of view is set to be controlled by the other."));
+    return;
+  }
 
   populateViewSettings(settings);
 
@@ -31,10 +39,30 @@ void PosedPlanarView::renderFullPipeline(ViewSettings settings) {
     return;
   }
 
-  float ratio = cvp[2] / (float)cvp[3];
-
   Camera camera;
-  camera.setFieldOfView(ratio * field_of_view, field_of_view);
+
+  if (fov_h < 0) {
+
+    float top = tanf(0.5f * fov_v);
+
+    float ratio = cvp[2] / (float)cvp[3];
+    float right = ratio * top;
+
+    camera.setClipPlanes(-right, right, -top, top);
+
+  } else if (fov_v < 0) {
+
+    float right = tanf(0.5f * fov_h);
+
+    float ratio = cvp[3] / (float)cvp[2];
+    float top = ratio * right;
+
+    camera.setClipPlanes(-right, right, -top, top);
+
+  } else {
+    camera.setFieldOfView(fov_h, fov_v);
+  }
+
   camera.setPose(x_VP, q_VP);
 
   for (auto renderer : settings.renderers)

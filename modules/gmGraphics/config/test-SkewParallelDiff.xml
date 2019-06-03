@@ -1,0 +1,40 @@
+<config>
+
+  <OStreamMessageSink stream="err" useAnsiColor="1" level="1"/>
+  <LogFileMessageSink logFilePath="gramod.log" append="0"/>
+
+  <ImportLibrary lib="libgmGraphics.so"/>
+
+  <SdlWindow
+      size="1920 1080"
+      fullscreen="off"
+      title="Spherical"
+      GLMajor="3" GLMinor="3">
+
+    <SdlContext
+        DEF="SDLContext"
+        useVideo="1"/>
+
+    <CubeSceneRenderer
+        cubeSize="0.2"
+        cubeSetSize="10.0"/>
+
+    <Viewpoint
+        position="0.03 0 10"/>
+
+    <ViewMixView
+        mixType="difference">
+
+      <SpatialPlanarView
+          topLeftCorner="-10 10 0"
+          bottomRightCorner="10 -10 0"
+          upDirection="0.0 1.0 0.0"/>
+
+      <PosedPlanarView
+          fieldOfView="1.57079632679489661923132169163975144209858469968755
+                       1.57079632679489661923132169163975144209858469968755"/>
+
+    </ViewMixView>
+  </SdlWindow>
+
+</config>

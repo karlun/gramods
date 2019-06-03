@@ -2,6 +2,7 @@
 #ifndef GRAMODS_GRAPHICS_POSEDPLANARVIEW
 #define GRAMODS_GRAPHICS_POSEDPLANARVIEW
 
+#include <gmTypes/all.hh>
 #include <gmGraphics/View.hh>
 
 BEGIN_NAMESPACE_GMGRAPHICS;
@@ -18,10 +19,12 @@ public:
   void renderFullPipeline(ViewSettings settings);
 
   /**
-     Sets the vertical field of view, in radians, while the horizontal
-     is affected by the size of the viewport.
+     Sets the horizontal and vertical field of view, in radians. If
+     one dimension is set to -1 then that dimension is automatically
+     controlled to fit the ratio of the viewport. Default is 1
+     horizontal.
   */
-  void setFieldOfView(float fov) {
+  void setFieldOfView(gmTypes::float2 fov) {
     field_of_view = fov;
   }
 
@@ -29,7 +32,7 @@ public:
 
 private:
 
-  float field_of_view = 1;
+  gmTypes::float2 field_of_view = { 1, -1 };
 
 };
 
