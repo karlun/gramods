@@ -13,6 +13,7 @@
      4. [gmGraphics](#gmgraphics)
      5. [gmTouch](#gmtouch)
      6. [gmMisc](#gmmisc)
+     7. [gmTypes](#gmtypes)
 
 
 # Introduction
@@ -301,3 +302,6 @@ Optional dependencies:
  - Eigen3 (at least version 3.3), for end-fitting estimators (EFFOAW and EFHOAW)
 
 
+## gmTypes
+
+Special types for use in the other modules, and their operators. In particular, this module defines std::array template instantiations for setting vector type attributes.

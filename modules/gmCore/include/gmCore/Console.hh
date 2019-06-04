@@ -24,6 +24,10 @@ BEGIN_NAMESPACE_GMCORE;
 
 /// TODO: replace with std::filesystem::path(__FILE__).filename() when
 /// this is supported by mainstream GCC (version > 8.0)
+
+/**
+   Local functions for string handling.
+*/
 namespace detail {
   constexpr bool is_path_sep(char c) {
     return c == '/' || c == '\\';

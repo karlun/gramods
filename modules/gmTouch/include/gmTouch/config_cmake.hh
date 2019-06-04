@@ -23,4 +23,13 @@
 #define END_NAMESPACE_GMTOUCH }}//
 #define USING_NAMESPACE_GMTOUCH using namespace gramods::gmTouch
 
+namespace gramods {
+
+  /**
+     The module provides touch handling functionality for the
+     implementation of touch screen or touch table interaction.
+  */
+  namespace gmTouch {}
+}
+
 #endif

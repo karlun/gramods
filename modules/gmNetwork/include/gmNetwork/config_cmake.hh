@@ -6,6 +6,15 @@
 #define END_NAMESPACE_GMNETWORK }}//
 #define USING_NAMESPACE_GMNETWORK using namespace gramods::gmNetwork
 
+namespace gramods {
+
+  /**
+     The gmNetwork module provides network data synchronization and
+     execution synchronization.
+  */
+  namespace gmNetwork {}
+}
+
 #define GRAMODS_NETWORK_VERSION "dev"
 
 #cmakedefine gramods_ACTIVATE_ASIO_HANDLER_TRACKING

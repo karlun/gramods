@@ -25,14 +25,14 @@ public:
 
   /**
      Set the vertex shader code to run in the raster processor. This
-     must be called before ::init. The default code will set
+     must be called before init. The default code will set
      gl_Position to (x y 0 1) where x and y are in the range -1 to 1.
   */
   void setVertexCode(std::string code);
 
   /**
      Set the fragment shader code to run in the raster processor. This
-     must be called before ::init. This must be set.
+     must be called before init. This must be set.
   */
   void setFragmentCode(std::string code);
 

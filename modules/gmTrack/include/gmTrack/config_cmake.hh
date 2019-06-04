@@ -21,4 +21,13 @@
 #define END_NAMESPACE_GMTRACK }}//
 #define USING_NAMESPACE_GMTRACK using namespace gramods::gmTrack
 
+namespace gramods {
+
+  /**
+     The gmTrack module provides primarily pose tracking clients,
+     servers and filters.
+  */
+  namespace gmTrack {}
+}
+
 #endif

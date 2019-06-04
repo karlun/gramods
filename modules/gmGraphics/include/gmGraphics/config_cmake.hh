@@ -6,6 +6,23 @@
 #define END_NAMESPACE_GMGRAPHICS }}//
 #define USING_NAMESPACE_GMGRAPHICS using namespace gramods::gmGraphics;//
 
+namespace gramods {
+
+  /**
+     The gmGraphics module provides nodes primarily for graphics
+     rendering pipeline definition and handling.
+
+     A Window creates a graphics context and makes it current before
+     any subsequent calls. The Window calls a View to produce
+     graphics. A View may call other views recursively, or make one or
+     more calls to one or more renderers to produce this graphics. It
+     is the renderer that actually renders the scene, while the view
+     determines frame buffers and frustum settings to use, based on
+     the current Viewpoint.
+  */
+  namespace gmGraphics {}
+}
+
 #define gramods_PI   (            std::acos(-1))
 #define gramods_PI_2 (            std::asin( 1))
 #define gramods_PI_4 ((1.0/2.0) * std::asin( 1))

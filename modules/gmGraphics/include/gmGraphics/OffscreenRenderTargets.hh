@@ -25,14 +25,14 @@ public:
 
   /**
      Set to true if even power of two should be used for texture size,
-     instead of the size provided to ::bind. The viewport size will
+     instead of the size provided to bind. The viewport size will
      always be set to the specified size. Default it false.
   */
   void setUsePowersOfTwo(bool on);
 
   /**
      Returns true when even power of two is used for texture size,
-     instead of the size provided to ::bind. The viewport size will
+     instead of the size provided to bind. The viewport size will
      always be set to the specified size.
   */
   bool getUsePowersOfTwo();
@@ -45,9 +45,9 @@ public:
 
   /**
      Provides the size of the specified texture from the last bind
-     call. This will be the same as the size provided to the last
-     ::bind call, unless use powers of two is set to true. This will
-     then be the next power of two.
+     call. This will be the same as the size provided to the last bind
+     call, unless use powers of two is set to true. This will then be
+     the next power of two.
   */
   void getTextureSize(size_t &width, size_t &height, size_t idx = 0);
 
