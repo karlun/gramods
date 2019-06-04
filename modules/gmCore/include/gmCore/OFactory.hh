@@ -155,6 +155,12 @@ class OFactory {
 
 public:
 
+  /**
+     Registrator of information required by the object factory. By
+     instantiating this class a creator object is associated with a
+     name. The information object can also be populated with attribute
+     setters for setting attribute pointers and values from strings.
+  */
   struct OFactoryInformation {
 
     /**
