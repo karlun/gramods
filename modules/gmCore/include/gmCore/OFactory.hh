@@ -126,14 +126,27 @@ BEGIN_NAMESPACE_GMCORE;
 */
 class OFactory {
 
+  /**
+     Base for parameter setters, that set value to an attribute of a
+     specified object from a string. The setter will call a member
+     method to set the parsed value.
+   */
   struct ParamSetterBase {
     virtual void setValueFromString(Object *n, std::string s) = 0;
   };
 
+  /**
+     Base for pointer setters, that assigns a pointer to another
+     object as an attribute of an object. The setter will call a
+     member method to set the parsed value.
+   */
   struct PointerSetterBase {
     virtual void setPointer(Object *n, std::shared_ptr<Object> o) = 0;
   };
 
+  /**
+     Base for object creators, that instantiate an object type.
+  */
   struct ObjectCreatorBase {
     /** Creates and returns an instance of the template argument
         class. */
@@ -154,17 +167,42 @@ public:
                         ObjectCreatorBase *creator,
                         OFactoryInformation *base = nullptr);
 
-    /** Unregisters the class at the object factory. */
+    /**
+       Unregisters the class at the object factory.
+    */
     ~OFactoryInformation();
 
+    /**
+       Instantiates the class associated with this OFI and returns a
+       raw pointer to this object.
+    */
     Object * create();
 
+    /**
+       Registers a parameter setter with a specific attribute name.
+    */
     void registerParamSetter(std::string name, ParamSetterBase *setter);
 
+    /**
+       Registers a pointer setter with a specific attribute name.
+    */
     void registerPointerSetter(std::string name, PointerSetterBase *setter);
 
+    /**
+       Finds a parameter setter for the specified attribute name and
+       calls it to set that attribute value for the specified object
+       to the value encoded by the specified string value. Returns
+       false if there is no setter associated with the specified
+       attribute name.
+    */
     bool setParamValueFromString(Object *node, std::string name, std::string value);
 
+    /**
+       Finds a pointer setter for the specified attribute name and
+       calls it to set that attribute pointer for the specified object
+       to the specified pointer value. Returns false if there is no
+       setter associated with the specified attribute name.
+    */
     bool setPointerValue(Object *node, std::string name, std::shared_ptr<Object> ptr);
 
   private:
@@ -177,7 +215,16 @@ public:
     std::map<std::string, std::unique_ptr<PointerSetterBase>> pointer_setters;
   };
 
+  /**
+     Convenience class that registers a parameter setter upon
+     instantiation.
+  */
   struct ParamSetterInsert {
+
+    /**
+       Constructor registering the specified parameter setter with the
+       specified OFI, associating it with the specified name.
+    */
     ParamSetterInsert(OFactoryInformation *ofi,
                       std::string name,
                       ParamSetterBase *setter) {
@@ -185,7 +232,16 @@ public:
     }
   };
 
+  /**
+     Convenience class that registers a pointer setter upon
+     instantiation.
+  */
   struct PointerSetterInsert {
+
+    /**
+       Constructor registering the specified pointer setter with the
+       specified OFI, associating it with the specified name.
+    */
     PointerSetterInsert(OFactoryInformation *ofi,
                         std::string name,
                         PointerSetterBase *setter) {
@@ -193,6 +249,14 @@ public:
     }
   };
 
+  /**
+     General parameter setter, templated to determine the type to set
+     value for. Any type, even types unknown to the library, can be
+     used, as long as it supports the istream operator. Include the
+     header code defining the istream operator before including this
+     header, to make sure that the template class is instantiated
+     against that type.
+  */
   template<class Node, class T>
   struct ParamSetter : ParamSetterBase {
 
@@ -204,6 +268,10 @@ public:
     void (Node::*method)(T val);
   };
 
+  /**
+     Specialization parameter setter for string type, to avoid
+     tokenization of strings with white space.
+  */
   template<class Node>
   struct ParamSetter<Node, std::string> : ParamSetterBase {
 
@@ -215,6 +283,10 @@ public:
     void (Node::*method)(std::string val);
   };
 
+  /**
+     Specialization parameter setter for bool type, to allow named
+     states, such as "on" and "true".
+  */
   template<class Node>
   struct ParamSetter<Node, bool> : ParamSetterBase {
 
@@ -226,6 +298,10 @@ public:
     void (Node::*method)(bool val);
   };
 
+  /**
+     General pointer setter, templated to determine the type of the
+     pointer.
+  */
   template<class Node, class T>
   struct PointerSetter : PointerSetterBase {
 
@@ -237,6 +313,9 @@ public:
     void (Node::*method)(std::shared_ptr<T> ptr);
   };
 
+  /**
+     Actual object creator, templated for the type to instantiate.
+  */
   template<class Node>
   struct ObjectCreator : ObjectCreatorBase {
     /** Creates and returns an instance of the template argument
