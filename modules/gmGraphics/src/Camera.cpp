@@ -43,11 +43,26 @@ Eigen::Affine3f Camera::getViewMatrix() {
   return Mv;
 }
 
+Eigen::Vector3f Camera::getPosition() {
+  return position;
+}
+
+Eigen::Quaternionf Camera::getOrientation() {
+  return orientation;
+}
+
 void Camera::setFieldOfView(float fov_h, float fov_v) {
   right = tanf(0.5f * fov_h);
   left = -right;
   top = tanf(0.5f * fov_v);
   bottom = -top;
+}
+
+void Camera::setClipAngles(float l, float r, float b, float t) {
+  left = -tanf(l);
+  right = tanf(r);
+  bottom = -tanf(b);
+  top = tanf(t);
 }
 
 END_NAMESPACE_GMGRAPHICS;

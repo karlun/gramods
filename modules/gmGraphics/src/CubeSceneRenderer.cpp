@@ -188,12 +188,12 @@ void CubeSceneRenderer::Impl::render(Camera camera) {
 
   GM_VINF("CubeSceneRenderer", "rendering");
 
-  auto Mv = camera.getViewMatrix();
+  Eigen::Affine3f Mv = camera.getViewMatrix();
   float near = 0.1 * cube_size;
   float far =
     (Mv.inverse().translation() - cube_set_center).norm()
     + 0.87 * (cube_set_size + cube_size);
-  auto Mp = camera.getProjectionMatrix(near, far);
+  Eigen::Matrix4f Mp = camera.getProjectionMatrix(near, far);
 
   size_t N = (size_t)(cube_set_size / (3.0 * cube_size));
   float pD = N > 1 ? cube_set_size / (N - 1) : 0.f;
@@ -203,7 +203,7 @@ void CubeSceneRenderer::Impl::render(Camera camera) {
 
   glUseProgram(program_id);
   glUniformMatrix4fv(glGetUniformLocation(program_id, "Mp"),  1, false, Mp.data());
-  glUniformMatrix4fv(glGetUniformLocation(program_id, "Mv"),  1, false, Mv.data());
+  glUniformMatrix4fv(glGetUniformLocation(program_id, "Mv"),  1, false, Mv.matrix().data());
   auto Mm_id = glGetUniformLocation(program_id, "Mm");
   auto color_id = glGetUniformLocation(program_id, "color");
 

@@ -30,12 +30,29 @@ public:
   Eigen::Affine3f getViewMatrix();
 
   /**
-     Explicitly sets the frustum planes at a distance of 1. Near and
-     far planes are defined by the renderer that requests a projection
-     matrix for the camera.
+     Get the position of the camera.
   */
-  void setPlanes(float l, float r, float b, float t) {
+  Eigen::Vector3f getPosition();
+
+  /**
+     Get the orientation of the camera.
+  */
+  Eigen::Quaternionf getOrientation();
+
+  /**
+     Explicitly sets the frustum clip planes at a distance of 1. Near
+     and far planes are defined by the renderer that requests a
+     projection matrix for the camera.
+  */
+  void setClipPlanes(float l, float r, float b, float t) {
     left = l; right = r; top = t; bottom = b;
+  }
+
+  /**
+     Gets the frustum clip planes at a distance of 1.
+  */
+  void getClipPlanes(float &l, float &r, float &b, float &t) {
+    l = left; r = right; t = top; b = bottom;
   }
 
   /**
@@ -44,6 +61,14 @@ public:
      radians.
   */
   void setFieldOfView(float fov_h, float fov_v);
+
+  /**
+     Sets the frustum planes of an asymmetric frustum for the camera
+     based on left, right, bottom and top field-of-view, expressed in
+     radians. The left field-of-view increase left-wise while the
+     right field-of-view increate right-wise.
+  */
+  void setClipAngles(float l, float r, float b, float t);
 
   /**
      Sets the pose of the camera.

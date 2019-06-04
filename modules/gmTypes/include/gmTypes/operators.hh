@@ -52,6 +52,11 @@ inline std::istream& operator>> (std::istream &in, gramods::gmTypes::float4 &s) 
   return in;
 }
 
+inline std::istream& operator>> (std::istream &in, gramods::gmTypes::float12 &s) {
+  in >> s[0] >> s[1] >> s[2] >> s[3] >> s[4] >> s[5] >> s[6] >> s[7] >> s[8] >> s[9] >> s[10] >> s[11];
+  return in;
+}
+
 inline std::ostream& operator<< (std::ostream &out, gramods::gmTypes::float2 &s) {
   out << s[0] << " " << s[1];
   return out;

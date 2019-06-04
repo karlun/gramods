@@ -1,0 +1,121 @@
+<config>
+
+  <OStreamMessageSink stream="err" useAnsiColor="1" level="1"/>
+  <LogFileMessageSink logFilePath="gramod.log" append="0"/>
+
+  <ImportLibrary lib="libgmGraphics.so"/>
+
+  <SdlWindow
+      size="640 480"
+      fullscreen="on"
+      title="Spherical"
+      GLMajor="3" GLMinor="3">
+
+    <SdlContext
+        DEF="SDLContext"
+        useVideo="1"/>
+
+    <CubeSceneRenderer
+        cubeSize="0.2"
+        cubeSetSize="10.0"/>
+
+    <TiledView>
+
+      <param name="tileLocation" value="1 1 1 1"/>
+      <GeometryCorrectedProjectorView
+          bufferWidth="4096"
+          bufferHeight="4096"
+          position="0 0 0"
+          axisAngle="1 0 0 0"
+          clipAngles="0.7854 0.7854 0.7854 0.7854"
+          linearInterpolation="on">
+
+        <VelocityViewpoint
+            DEF="VIEW"
+            position="0 0 2"
+            velocity="0 0 -0.5"/>
+        <!--Viewpoint
+            DEF="VIEW"
+            position="0 0 0"/-->
+
+        <SphereGeometry
+            DEF="GEOMETRY"
+            center="0 0 0"
+            radius="10"
+            frustumSizeRatio="1.1"
+            inside="1"/>
+
+      </GeometryCorrectedProjectorView>
+
+      <param name="tileLocation" value="1 0 1 1"/>
+      <GeometryCorrectedProjectorView
+          bufferWidth="4096"
+          bufferHeight="4096"
+          position="0 0 0"
+          axisAngle="0 1 0 1.5708"
+          clipAngles="0.7854 0.7854 0.7854 0.7854"
+          linearInterpolation="on">
+
+        <VelocityViewpoint
+            USE="VIEW"/>
+
+        <SphereGeometry
+            USE="GEOMETRY"/>
+
+      </GeometryCorrectedProjectorView>
+
+      <param name="tileLocation" value="1 2 1 1"/>
+      <GeometryCorrectedProjectorView
+          bufferWidth="4096"
+          bufferHeight="4096"
+          position="0 0 0"
+          axisAngle="0 1 0 -1.5708"
+          clipAngles="0.7854 0.7854 0.7854 0.7854"
+          linearInterpolation="on">
+
+        <VelocityViewpoint
+            USE="VIEW"/>
+
+        <SphereGeometry
+            USE="GEOMETRY"/>
+
+      </GeometryCorrectedProjectorView>
+
+      <param name="tileLocation" value="0 1 1 1"/>
+      <GeometryCorrectedProjectorView
+          bufferWidth="4096"
+          bufferHeight="4096"
+          position="0 0 0"
+          axisAngle="1 0 0 1.5708"
+          clipAngles="0.7854 0.7854 0.7854 0.7854"
+          linearInterpolation="on">
+
+        <VelocityViewpoint
+            USE="VIEW"/>
+
+        <SphereGeometry
+            USE="GEOMETRY"/>
+
+      </GeometryCorrectedProjectorView>
+
+      <param name="tileLocation" value="2 1 1 1"/>
+      <GeometryCorrectedProjectorView
+          bufferWidth="4096"
+          bufferHeight="4096"
+          position="0 0 0"
+          axisAngle="1 0 0 -1.5708"
+          clipAngles="0.7854 0.7854 0.7854 0.7854"
+          linearInterpolation="on">
+
+        <VelocityViewpoint
+            USE="VIEW"/>
+
+        <SphereGeometry
+            USE="GEOMETRY"/>
+
+      </GeometryCorrectedProjectorView>
+
+    </TiledView>
+  </SdlWindow>
+
+</config>
