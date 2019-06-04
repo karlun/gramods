@@ -1,7 +1,7 @@
 <config>
 
   <OStreamMessageSink stream="err" useAnsiColor="1" level="1"/>
-  <LogFileMessageSink logFilePath="gramod.log" append="0"/>
+  <LogFileMessageSink logFilePath="gramods.log" append="0"/>
 
   <ImportLibrary lib="libgmTrack.so"/>
 
