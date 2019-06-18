@@ -10,9 +10,9 @@ BEGIN_NAMESPACE_GMTRACK;
 
 GM_OFI_DEFINE(TimeSamplePoseTracker);
 GM_OFI_PARAM(TimeSamplePoseTracker, time, double, TimeSamplePoseTracker::addTime);
-GM_OFI_PARAM(TimeSamplePoseTracker, position, gmTypes::float3, TimeSamplePoseTracker::addPosition);
-GM_OFI_PARAM(TimeSamplePoseTracker, quaternion, gmTypes::float4, TimeSamplePoseTracker::addQuaternion);
-GM_OFI_PARAM(TimeSamplePoseTracker, axisAngle, gmTypes::float4, TimeSamplePoseTracker::addAxisAngle);
+GM_OFI_PARAM(TimeSamplePoseTracker, position, Eigen::Vector3f, TimeSamplePoseTracker::addPosition);
+GM_OFI_PARAM(TimeSamplePoseTracker, quaternion, Eigen::Quaternionf, TimeSamplePoseTracker::addQuaternion);
+GM_OFI_PARAM(TimeSamplePoseTracker, angleAxis, Eigen::AngleAxisf, TimeSamplePoseTracker::addAngleAxis);
 
 
 struct TimeSamplePoseTracker::Impl {
@@ -135,17 +135,16 @@ void TimeSamplePoseTracker::addTime(double t) {
   _impl->addTime(t);
 }
 
-void TimeSamplePoseTracker::addPosition(gmTypes::float3 p) {
-  _impl->addPosition(Eigen::Vector3f(p[0], p[1], p[2]));
+void TimeSamplePoseTracker::addPosition(Eigen::Vector3f p) {
+  _impl->addPosition(p);
 }
 
-void TimeSamplePoseTracker::addQuaternion(gmTypes::float4 rot) {
-  _impl->addQuaternion(Eigen::Quaternionf(rot[0], rot[1], rot[2], rot[3]));
+void TimeSamplePoseTracker::addQuaternion(Eigen::Quaternionf q) {
+  _impl->addQuaternion(q);
 }
 
-void TimeSamplePoseTracker::addAxisAngle(gmTypes::float4 rot) {
-  Eigen::Quaternionf q(Eigen::Quaternionf::AngleAxisType
-                       (rot[3], Eigen::Vector3f(rot[0], rot[1], rot[2]).normalized()));
+void TimeSamplePoseTracker::addAngleAxis(Eigen::AngleAxisf aa) {
+  Eigen::Quaternionf q(aa);
   _impl->addQuaternion(q);
 }
 

@@ -4,6 +4,8 @@
 
 #include <gmGraphics/View.hh>
 
+#include <gmTypes/float.hh>
+
 BEGIN_NAMESPACE_GMGRAPHICS;
 
 /**
@@ -47,11 +49,11 @@ public:
   }
 
   /**
-     Sets the orientation of the View as a quaternion in format (w x y
-     z).
+     Sets the orientation of the View as a quaternion, in xml as (w x
+     y z).
    */
-  void setQuaternion(gmTypes::float4 rot) {
-    orientation = Eigen::Quaternionf(rot[0], rot[1], rot[2], rot[3]);
+  void setQuaternion(Eigen::Quaternionf q) {
+    orientation = q;
   }
 
   GM_OFI_DECLARE;

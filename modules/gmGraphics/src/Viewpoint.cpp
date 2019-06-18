@@ -4,18 +4,17 @@
 BEGIN_NAMESPACE_GMGRAPHICS;
 
 GM_OFI_DEFINE(Viewpoint);
-GM_OFI_PARAM(Viewpoint, position, gmTypes::float3, Viewpoint::setPosition);
-GM_OFI_PARAM(Viewpoint, quaternion, gmTypes::float4, Viewpoint::setQuaternion);
-GM_OFI_PARAM(Viewpoint, axisAngle, gmTypes::float4, Viewpoint::setAxisAngle);
-GM_OFI_PARAM(Viewpoint, upDirection, gmTypes::float3, Viewpoint::setUpDirection);
-GM_OFI_PARAM(Viewpoint, lookAt, gmTypes::float3, Viewpoint::setLookAt);
+GM_OFI_PARAM(Viewpoint, position, Eigen::Vector3f, Viewpoint::setPosition);
+GM_OFI_PARAM(Viewpoint, quaternion, Eigen::Quaternionf, Viewpoint::setQuaternion);
+GM_OFI_PARAM(Viewpoint, angleAxis, Eigen::AngleAxisf, Viewpoint::setAngleAxis);
+GM_OFI_PARAM(Viewpoint, upDirection, Eigen::Vector3f, Viewpoint::setUpDirection);
+GM_OFI_PARAM(Viewpoint, lookAt, Eigen::Vector3f, Viewpoint::setLookAt);
 
-void Viewpoint::setLookAt(gmTypes::float3 pt) {
+void Viewpoint::setLookAt(Eigen::Vector3f target) {
 
   static const Eigen::Vector3f z(0, 0, 1);
   static const Eigen::Vector3f y(0, 1, 0);
 
-  Eigen::Vector3f target(pt[0], pt[1], pt[2]);
   auto direction = (position - target).normalized();
 
   GM_VINF("Viewpoint", "From " << position.transpose()

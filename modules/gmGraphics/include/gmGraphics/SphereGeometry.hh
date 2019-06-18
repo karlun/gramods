@@ -2,7 +2,7 @@
 #ifndef GRAMODS_GRAPHICS_SPHEREGEOMETRY
 #define GRAMODS_GRAPHICS_SPHEREGEOMETRY
 
-#include <gmTypes/all.hh>
+#include <gmTypes/eigen.hh>
 #include <gmGraphics/Geometry.hh>
 
 BEGIN_NAMESPACE_GMGRAPHICS;
@@ -23,7 +23,7 @@ public:
   /**
      Set the position of the sphere origin, its center.
   */
-  void setCenter(gmTypes::float3);
+  void setCenter(Eigen::Vector3f c);
 
   /**
      Set the radius of the sphere.

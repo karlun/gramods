@@ -6,9 +6,9 @@
 BEGIN_NAMESPACE_GMGRAPHICS;
 
 GM_OFI_DEFINE_SUB(VelocityViewpoint, Viewpoint);
-GM_OFI_PARAM(VelocityViewpoint, velocity, gmTypes::float3, VelocityViewpoint::setVelocity);
-GM_OFI_PARAM(VelocityViewpoint, quaternionVelocity, gmTypes::float4, VelocityViewpoint::setQuaternionVelocity);
-GM_OFI_PARAM(VelocityViewpoint, axisAngleVelocity, gmTypes::float4, VelocityViewpoint::setAxisAngleVelocity);
+GM_OFI_PARAM(VelocityViewpoint, velocity, Eigen::Vector3f, VelocityViewpoint::setVelocity);
+GM_OFI_PARAM(VelocityViewpoint, quaternionVelocity, Eigen::Quaternionf, VelocityViewpoint::setQuaternionVelocity);
+GM_OFI_PARAM(VelocityViewpoint, angleAxisVelocity, Eigen::AngleAxisf, VelocityViewpoint::setAngleAxisVelocity);
 
 struct VelocityViewpoint::Impl {
 
@@ -46,17 +46,16 @@ void VelocityViewpoint::Impl::update(Eigen::Vector3f &position,
   last_time = t;
 }
 
-void VelocityViewpoint::setVelocity(gmTypes::float3 vel) {
-  _impl->linear_velocity = Eigen::Vector3f(vel[0], vel[1], vel[2]);
+void VelocityViewpoint::setVelocity(Eigen::Vector3f vel) {
+  _impl->linear_velocity = vel;
 }
 
-void VelocityViewpoint::setQuaternionVelocity(gmTypes::float4 rot) {
-  _impl->angular_velocity = Eigen::Quaternionf(rot[0], rot[1], rot[2], rot[3]);
+void VelocityViewpoint::setQuaternionVelocity(Eigen::Quaternionf q) {
+  _impl->angular_velocity = q;
 }
 
-void VelocityViewpoint::setAxisAngleVelocity(gmTypes::float4 rot) {
-  _impl->angular_velocity = Eigen::Quaternionf::AngleAxisType
-    (rot[3], Eigen::Vector3f(rot[0], rot[1], rot[2]).normalized());
+void VelocityViewpoint::setAngleAxisVelocity(Eigen::AngleAxisf aa) {
+  _impl->angular_velocity = Eigen::Quaternionf(aa);
 }
 
 END_NAMESPACE_GMGRAPHICS;

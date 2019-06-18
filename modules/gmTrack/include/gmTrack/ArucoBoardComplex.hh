@@ -6,7 +6,7 @@
 
 #ifdef gramods_ENABLE_aruco
 
-#include <gmTypes/all.hh>
+#include <gmTypes/eigen.hh>
 #include <gmCore/OFactory.hh>
 
 #include <Eigen/Eigen>
@@ -39,35 +39,35 @@ public:
   void addArucoBoard(std::shared_ptr<ArucoBoard> b);
 
   /**
-     Add a board position of the complex.
+     Add a board position of the complex, in xml as (x y z).
 
      Either only boards and no pose specifications are provided, and
      the specified boards have different positions and/or
      orientations, or an equal amount of boards and pose
      specifications must be provided.
   */
-  void addPosition(gmTypes::float3 p);
+  void addPosition(Eigen::Vector3f p);
 
   /**
-     Add a board orientation, as quaternion in format (w x y z).
+     Add a board orientation, as quaternion, in xml as (w x y z).
 
      Either only boards and no pose specifications are provided, and
      the specified boards have different positions and/or
      orientations, or an equal amount of boards and pose
      specifications must be provided.
   */
-  void addQuaternion(gmTypes::float4 q);
+  void addQuaternion(Eigen::Quaternionf q);
 
   /**
-     Add a board orientation, as an axis angle in format (x y z a),
-     where angle a is expressed in radians.
+     Add a board orientation, as an angle axis rotation, in xml as (a
+     x y z), where angle a is expressed in radians.
 
      Either only boards and no pose specifications are provided, and
      the specified boards have different positions and/or
      orientations, or an equal amount of boards and pose
      specifications must be provided.
   */
-  void addAxisAngle(gmTypes::float4 q);
+  void addAngleAxis(Eigen::AngleAxisf q);
 
   /**
      Returns a reference to the board defined by this node.

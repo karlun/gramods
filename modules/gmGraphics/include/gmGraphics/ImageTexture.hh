@@ -6,7 +6,7 @@
 
 #ifdef gramods_ENABLE_FreeImage
 
-#include <gmTypes/all.hh>
+#include <gmTypes/size.hh>
 #include <gmCore/OFactory.hh>
 #include <gmGraphics/Texture.hh>
 #include <memory>

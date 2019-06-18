@@ -23,14 +23,14 @@
         bufferWidth="4096"
         bufferHeight="4096"
         position="0 0 0"
-        axisAngle="1 0 0 0"
+        angleAxis="1 0 0 0"
         clipAngles=".5 .5 .5 .5"
         linearInterpolation="on">
 
       <VelocityViewpoint
           position="2 0 0"
           velocity="-0.5 0 0"
-          axisAngleVelocity="1 0 0 0"/>
+          angleAxisVelocity="1 0 0 0"/>
 
       <SphereGeometry
           center="0 0 0"

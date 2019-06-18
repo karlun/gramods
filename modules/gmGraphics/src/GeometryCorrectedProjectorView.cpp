@@ -15,14 +15,14 @@ GM_OFI_DEFINE_SUB(GeometryCorrectedProjectorView, StereoscopicView);
 GM_OFI_PARAM(GeometryCorrectedProjectorView, bufferWidth, int, GeometryCorrectedProjectorView::setBufferWidth);
 GM_OFI_PARAM(GeometryCorrectedProjectorView, bufferHeight, int, GeometryCorrectedProjectorView::setBufferHeight);
 GM_OFI_PARAM(GeometryCorrectedProjectorView, linearInterpolation, bool, GeometryCorrectedProjectorView::setLinearInterpolation);
-GM_OFI_PARAM(GeometryCorrectedProjectorView, topLeftCorner, gmTypes::float3, GeometryCorrectedProjectorView::setTopLeftCorner);
-GM_OFI_PARAM(GeometryCorrectedProjectorView, bottomRightCorner, gmTypes::float3, GeometryCorrectedProjectorView::setBottomRightCorner);
-GM_OFI_PARAM(GeometryCorrectedProjectorView, position, gmTypes::float3, GeometryCorrectedProjectorView::setPosition);
+GM_OFI_PARAM(GeometryCorrectedProjectorView, topLeftCorner, Eigen::Vector3f, GeometryCorrectedProjectorView::setTopLeftCorner);
+GM_OFI_PARAM(GeometryCorrectedProjectorView, bottomRightCorner, Eigen::Vector3f, GeometryCorrectedProjectorView::setBottomRightCorner);
+GM_OFI_PARAM(GeometryCorrectedProjectorView, position, Eigen::Vector3f, GeometryCorrectedProjectorView::setPosition);
 GM_OFI_PARAM(GeometryCorrectedProjectorView, extrinsics, gmTypes::float12, GeometryCorrectedProjectorView::setExtrinsics);
 GM_OFI_PARAM(GeometryCorrectedProjectorView, intrinsics, gmTypes::float4, GeometryCorrectedProjectorView::setIntrinsics);
 GM_OFI_PARAM(GeometryCorrectedProjectorView, clipAngles, gmTypes::float4, GeometryCorrectedProjectorView::setClipAngles);
-GM_OFI_PARAM(GeometryCorrectedProjectorView, quaternion, gmTypes::float4, GeometryCorrectedProjectorView::setQuaternion);
-GM_OFI_PARAM(GeometryCorrectedProjectorView, axisAngle, gmTypes::float4, GeometryCorrectedProjectorView::setAxisAngle);
+GM_OFI_PARAM(GeometryCorrectedProjectorView, quaternion, Eigen::Quaternionf, GeometryCorrectedProjectorView::setQuaternion);
+GM_OFI_PARAM(GeometryCorrectedProjectorView, angleAxis, Eigen::AngleAxisf, GeometryCorrectedProjectorView::setAngleAxis);
 GM_OFI_PARAM(GeometryCorrectedProjectorView, eulerAngles, gmTypes::float3, GeometryCorrectedProjectorView::setEulerAngles);
 GM_OFI_POINTER(GeometryCorrectedProjectorView, geometry, Geometry, GeometryCorrectedProjectorView::setGeometry);
 
@@ -132,18 +132,18 @@ void GeometryCorrectedProjectorView::setLinearInterpolation(bool on) {
   _impl->render_target.setLinearInterpolation(on);
 }
 
-void GeometryCorrectedProjectorView::setTopLeftCorner(gmTypes::float3 tlc) {
-  _impl->shape_corner_tl = Eigen::Vector3f(tlc[0], tlc[1], tlc[2]);
+void GeometryCorrectedProjectorView::setTopLeftCorner(Eigen::Vector3f tlc) {
+  _impl->shape_corner_tl = tlc;
   _impl->have_shape_corner_tl = true;
 }
 
-void GeometryCorrectedProjectorView::setBottomRightCorner(gmTypes::float3 brc) {
-  _impl->shape_corner_br = Eigen::Vector3f(brc[0], brc[1], brc[2]);
+void GeometryCorrectedProjectorView::setBottomRightCorner(Eigen::Vector3f brc) {
+  _impl->shape_corner_br = brc;
   _impl->have_shape_corner_br = true;
 }
 
-void GeometryCorrectedProjectorView::setPosition(gmTypes::float3 p) {
-  _impl->position = Eigen::Vector3f(p[0], p[1], p[2]);
+void GeometryCorrectedProjectorView::setPosition(Eigen::Vector3f p) {
+  _impl->position = p;
 }
 
 void GeometryCorrectedProjectorView::setExtrinsics(gmTypes::float12 M) {
@@ -166,13 +166,12 @@ void GeometryCorrectedProjectorView::setClipAngles(gmTypes::float4 a) {
   _impl->have_shape_angles = true;
 }
 
-void GeometryCorrectedProjectorView::setQuaternion(gmTypes::float4 q) {
-  _impl->orientation = Eigen::Quaternionf(q[0], q[1], q[2], q[3]);
+void GeometryCorrectedProjectorView::setQuaternion(Eigen::Quaternionf q) {
+  _impl->orientation = q;
 }
 
-void GeometryCorrectedProjectorView::setAxisAngle(gmTypes::float4 aa) {
-  Eigen::Quaternionf Q(Eigen::Quaternionf::AngleAxisType
-                       (aa[3], Eigen::Vector3f(aa[0], aa[1], aa[2]).normalized()));
+void GeometryCorrectedProjectorView::setAngleAxis(Eigen::AngleAxisf aa) {
+  Eigen::Quaternionf Q(aa);
   _impl->orientation = Q;
 }
 

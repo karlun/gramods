@@ -8,6 +8,16 @@ SET (MODULE_INCLUDE_DIRS ${MODULE_INCLUDE_DIRS} ${CMAKE_CURRENT_SOURCE_DIR}/incl
 SET (MODULE_INCLUDE_DIRS ${MODULE_INCLUDE_DIRS} ${CMAKE_CURRENT_BINARY_DIR}/include)
 
 
+FIND_PACKAGE (Eigen3 QUIET NO_MODULE)
+IF (Eigen3_FOUND)
+  SET(HAVE_Eigen3 1)
+  OPTION(gramods_ENABLE_Eigen3 "Enable functionality that requires Eigen3" ON)
+  IF (gramods_ENABLE_Eigen3)
+    SET (MODULE_LIBS ${MODULE_LIBS} Eigen3::Eigen)
+  ENDIF()
+ENDIF()
+
+
 CONFIGURE_FILE(
   ${CMAKE_CURRENT_SOURCE_DIR}/include/gmTypes/config_cmake.hh
   ${CMAKE_CURRENT_BINARY_DIR}/include/gmTypes/config.hh)

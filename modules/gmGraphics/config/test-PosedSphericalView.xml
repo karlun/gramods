@@ -27,7 +27,7 @@
       <VelocityViewpoint
           position="0 0 7"
           velocity="0 0 -0.5"
-          axisAngleVelocity="1 0 0 0"/>
+          angleAxisVelocity="1 0 0 0"/>
 
     </PosedSphericalView>
 

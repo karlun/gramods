@@ -4,6 +4,8 @@
 
 #include <gmGraphics/StereoscopicMultiplexer.hh>
 
+#include <gmTypes/float.hh>
+
 BEGIN_NAMESPACE_GMGRAPHICS;
 
 /**

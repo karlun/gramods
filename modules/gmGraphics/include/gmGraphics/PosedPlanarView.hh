@@ -2,7 +2,7 @@
 #ifndef GRAMODS_GRAPHICS_POSEDPLANARVIEW
 #define GRAMODS_GRAPHICS_POSEDPLANARVIEW
 
-#include <gmTypes/all.hh>
+#include <gmTypes/float.hh>
 #include <gmGraphics/View.hh>
 
 BEGIN_NAMESPACE_GMGRAPHICS;

@@ -4,7 +4,7 @@
 
 #include <gmGraphics/Renderer.hh>
 
-#include <gmTypes/all.hh>
+#include <gmTypes/eigen.hh>
 #include <gmCore/OFactory.hh>
 
 BEGIN_NAMESPACE_GMGRAPHICS;
@@ -27,7 +27,7 @@ public:
 
   void setCubeSize(float d);
   void setCubeSetSize(float d);
-  void setCubeSetCenter(gmTypes::float3 c);
+  void setCubeSetCenter(Eigen::Vector3f c);
 
   GM_OFI_DECLARE;
 

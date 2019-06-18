@@ -4,6 +4,8 @@
 
 #include <gmGraphics/View.hh>
 
+#include <gmTypes/size.hh>
+
 BEGIN_NAMESPACE_GMGRAPHICS;
 
 /**

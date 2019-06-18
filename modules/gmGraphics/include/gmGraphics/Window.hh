@@ -4,6 +4,8 @@
 
 #include <gmGraphics/RendererDispatcher.hh>
 
+#include <gmTypes/size.hh>
+
 BEGIN_NAMESPACE_GMGRAPHICS;
 
 class View;

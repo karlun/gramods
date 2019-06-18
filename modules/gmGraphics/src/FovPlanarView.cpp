@@ -7,7 +7,7 @@ GM_OFI_DEFINE_SUB(FovPlanarView, View);
 GM_OFI_PARAM(FovPlanarView, clipPlanes, gmTypes::float4, FovPlanarView::setClipPlanes);
 GM_OFI_PARAM(FovPlanarView, clipAngles, gmTypes::float4, FovPlanarView::setClipAngles);
 GM_OFI_PARAM(FovPlanarView, eulerAngles, gmTypes::float3, FovPlanarView::setEulerAngles);
-GM_OFI_PARAM(FovPlanarView, quaternion, gmTypes::float4, FovPlanarView::setQuaternion);
+GM_OFI_PARAM(FovPlanarView, quaternion, Eigen::Quaternionf, FovPlanarView::setQuaternion);
 
 
 void FovPlanarView::renderFullPipeline(ViewSettings settings) {

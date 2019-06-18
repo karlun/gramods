@@ -10,7 +10,7 @@ BEGIN_NAMESPACE_GMTRACK;
 
 GM_OFI_DEFINE(PoseRegistrationEstimator);
 GM_OFI_PARAM(PoseRegistrationEstimator, samplesPerSecond, float, PoseRegistrationEstimator::setSamplesPerSecond);
-GM_OFI_PARAM(PoseRegistrationEstimator, point, gmTypes::float3, PoseRegistrationEstimator::addPoint);
+GM_OFI_PARAM(PoseRegistrationEstimator, point, Eigen::Vector3f, PoseRegistrationEstimator::addPoint);
 GM_OFI_POINTER(PoseRegistrationEstimator, controller, Controller, PoseRegistrationEstimator::setController);
 
 struct PoseRegistrationEstimator::Impl {
@@ -74,8 +74,8 @@ void PoseRegistrationEstimator::setController(std::shared_ptr<gramods::gmTrack::
   _impl->controller = controller;
 }
 
-void PoseRegistrationEstimator::addPoint(gmTypes::float3 p) {
-  _impl->actual_positions.push_back(Eigen::Vector3f(p[0], p[1], p[2]));
+void PoseRegistrationEstimator::addPoint(Eigen::Vector3f p) {
+  _impl->actual_positions.push_back(p);
 }
 
 void PoseRegistrationEstimator::setSamplesPerSecond(float n) {

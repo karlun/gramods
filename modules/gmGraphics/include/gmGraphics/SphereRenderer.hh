@@ -5,7 +5,7 @@
 #include <gmGraphics/Renderer.hh>
 #include <gmGraphics/Texture.hh>
 
-#include <gmTypes/all.hh>
+#include <gmTypes/eigen.hh>
 #include <gmCore/OFactory.hh>
 
 BEGIN_NAMESPACE_GMGRAPHICS;
@@ -27,7 +27,7 @@ public:
   void render(Camera camera);
 
   void setRadius(float r);
-  void setCenter(gmTypes::float3 c);
+  void setCenter(Eigen::Vector3f c);
 
   /**
      Sets the Texture to apply on the sphere.

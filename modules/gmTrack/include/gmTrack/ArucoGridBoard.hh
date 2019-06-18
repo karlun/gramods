@@ -6,7 +6,8 @@
 
 #ifdef gramods_ENABLE_aruco
 
-#include <gmTypes/all.hh>
+#include <gmTypes/eigen.hh>
+#include <gmTypes/float.hh>
 #include <gmCore/OFactory.hh>
 
 #include <Eigen/Eigen>
@@ -87,19 +88,19 @@ public:
      Set the position of the board grid relative to the origin of the
      board.
   */
-  void setPosition(gmTypes::float3 p);
+  void setPosition(Eigen::Vector3f p);
 
   /**
-     Set the orientation of the board grid, as quaternion in format (w
+     Set the orientation of the board grid as quaternion, in xml as (w
      x y z).
   */
-  void setQuaternion(gmTypes::float4 q);
+  void setQuaternion(Eigen::Quaternionf q);
 
   /**
-     Set the orientation of the board grid, as an axis angle in format
-     (x y z a) where angle a is expressed in radians.
+     Set the orientation of the board grid as an angle axis, in xml as
+     (a x y z) where angle a is expressed in radians.
   */
-  void setAxisAngle(gmTypes::float4 aa);
+  void setAngleAxis(Eigen::AngleAxisf aa);
 
   /**
      Set the orientation of the board grid, as euler angles.

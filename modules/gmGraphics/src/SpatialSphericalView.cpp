@@ -18,7 +18,7 @@ GM_OFI_PARAM(SpatialSphericalView, cubeMapResolution, int, SpatialSphericalView:
 GM_OFI_PARAM(SpatialSphericalView, linearInterpolation, bool, SpatialSphericalView::setLinearInterpolation);
 GM_OFI_PARAM(SpatialSphericalView, coverageAngle, float, SpatialSphericalView::setCoverageAngle);
 GM_OFI_PARAM(SpatialSphericalView, projectionType, int, SpatialSphericalView::setProjectionType);
-GM_OFI_PARAM(SpatialSphericalView, sphereCenter, gmTypes::float3, SpatialSphericalView::setSphereCenter);
+GM_OFI_PARAM(SpatialSphericalView, sphereCenter, Eigen::Vector3f, SpatialSphericalView::setSphereCenter);
 GM_OFI_PARAM(SpatialSphericalView, sphereRadius, float, SpatialSphericalView::setSphereRadius);
 GM_OFI_PARAM(SpatialSphericalView, tiltAngle, float, SpatialSphericalView::setTiltAngle);
 
@@ -274,9 +274,9 @@ void SpatialSphericalView::setProjectionType(int a) {
   _impl->setProjectionType(a);
 }
 
-void SpatialSphericalView::setSphereCenter(gmTypes::float3 c) {
+void SpatialSphericalView::setSphereCenter(Eigen::Vector3f c) {
   assert(0);
-  _impl->sphere_center = Eigen::Vector3f(c[0], c[1], c[2]);
+  _impl->sphere_center = c;
 }
 
 void SpatialSphericalView::setSphereRadius(float r) {

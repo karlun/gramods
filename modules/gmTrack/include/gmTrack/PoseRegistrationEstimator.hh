@@ -4,7 +4,7 @@
 
 #include <gmTrack/config.hh>
 
-#include <gmTypes/all.hh>
+#include <gmTypes/eigen.hh>
 #include <gmCore/Object.hh>
 #include <gmTrack/Controller.hh>
 #include <gmCore/Updateable.hh>
@@ -42,7 +42,7 @@ public:
   /**
      Adds a known calibration point, in room coordinates.
   */
-  void addPoint(gmTypes::float3 p);
+  void addPoint(Eigen::Vector3f p);
 
   /**
      Sets the frequency at which samples are collected when the

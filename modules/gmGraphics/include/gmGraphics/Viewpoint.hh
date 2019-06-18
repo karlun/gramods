@@ -4,8 +4,7 @@
 
 #include <gmGraphics/config.hh>
 
-#include <gmTypes/all.hh>
-#include <Eigen/Eigen>
+#include <gmTypes/eigen.hh>
 
 #include <gmCore/Object.hh>
 #include <gmCore/OFactory.hh>
@@ -39,7 +38,7 @@ public:
      for its appearance.
 
      Observe that there is no setOrientation - use setQuaternion or
-     setAxisAngle.
+     setAngleAxis.
   */
   virtual Eigen::Quaternionf getOrientation() {
     return orientation;
@@ -49,9 +48,9 @@ public:
      Explicitly sets the position of the Viewpoint. This may be
      ignored or instantaneously overwritten by dynamic updates of the
      position value.
-   */
-  virtual void setPosition(gmTypes::float3 pos) {
-    position = Eigen::Vector3f(pos[0], pos[1], pos[2]);
+  */
+  virtual void setPosition(Eigen::Vector3f p) {
+    position = p;
   }
 
   /**
@@ -61,8 +60,8 @@ public:
      This may be ignored or instantaneously overwritten by dynamic
      updates of the position value.
    */
-  virtual void setQuaternion(gmTypes::float4 rot) {
-    orientation = Eigen::Quaternionf(rot[0], rot[1], rot[2], rot[3]);
+  virtual void setQuaternion(Eigen::Quaternionf q) {
+    orientation = q;
   }
 
   /**
@@ -73,17 +72,16 @@ public:
      This may be ignored or instantaneously overwritten by dynamic
      updates of the position value.
    */
-  virtual void setAxisAngle(gmTypes::float4 rot) {
-    orientation = Eigen::Quaternionf::AngleAxisType
-      (rot[3], Eigen::Vector3f(rot[0], rot[1], rot[2]).normalized());
+  virtual void setAngleAxis(Eigen::AngleAxisf aa) {
+    orientation = Eigen::Quaternionf(aa);
   }
 
   /**
      Set the up direction to be used in a later call to
      setLookAt. This does nothing if setLookAt is not used.
   */
-  virtual void setUpDirection(gmTypes::float3 up) {
-    up_direction = Eigen::Vector3f(up[0], up[1], up[2]).normalized();
+  virtual void setUpDirection(Eigen::Vector3f up) {
+    up_direction = up.normalized();
   }
 
   /**
@@ -95,7 +93,7 @@ public:
      Observe that this affects only the viewpoint orientation -
      camera orientation will not automatically toe-in to this point.
   */
-  virtual void setLookAt(gmTypes::float3 pt);
+  virtual void setLookAt(Eigen::Vector3f p);
 
   /**
      Returns the default key, in Configuration, for the

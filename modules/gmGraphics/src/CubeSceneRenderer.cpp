@@ -11,7 +11,7 @@ BEGIN_NAMESPACE_GMGRAPHICS;
 GM_OFI_DEFINE(CubeSceneRenderer);
 GM_OFI_PARAM(CubeSceneRenderer, cubeSize, float, CubeSceneRenderer::setCubeSize);
 GM_OFI_PARAM(CubeSceneRenderer, cubeSetSize, float, CubeSceneRenderer::setCubeSetSize);
-GM_OFI_PARAM(CubeSceneRenderer, cubeSetCenter, gmTypes::float3, CubeSceneRenderer::setCubeSetCenter);
+GM_OFI_PARAM(CubeSceneRenderer, cubeSetCenter, Eigen::Vector3f, CubeSceneRenderer::setCubeSetCenter);
 
 #define N_VERTICES 108
 
@@ -275,8 +275,8 @@ void CubeSceneRenderer::setCubeSetSize(float d) {
   _impl->cube_set_size = d;
 }
 
-void CubeSceneRenderer::setCubeSetCenter(gmTypes::float3 c) {
-  _impl->cube_set_center = Eigen::Vector3f(c[0], c[1], c[2]);
+void CubeSceneRenderer::setCubeSetCenter(Eigen::Vector3f c) {
+  _impl->cube_set_center = c;
 }
 
 END_NAMESPACE_GMGRAPHICS;

@@ -4,6 +4,8 @@
 
 #include <gmGraphics/StereoscopicView.hh>
 
+#include <gmTypes/eigen.hh>
+
 BEGIN_NAMESPACE_GMGRAPHICS;
 
 /**
@@ -56,7 +58,7 @@ public:
      Sets the location of the center of the spherical projection
      surface, in meters. Default is zero.
   */
-  void setSphereCenter(gmTypes::float3 c);
+  void setSphereCenter(Eigen::Vector3f c);
 
   /**
      Set the radius of the projection surface, in meters. Default is 10.

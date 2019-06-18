@@ -6,6 +6,9 @@
 
 #include <gmGraphics/Geometry.hh>
 
+#include <gmTypes/float.hh>
+#include <gmTypes/eigen.hh>
+
 BEGIN_NAMESPACE_GMGRAPHICS;
 
 /**
@@ -55,17 +58,17 @@ public:
   /**
      Set the top left corner of the projection.
   */
-  void setTopLeftCorner(gmTypes::float3 tlc);
+  void setTopLeftCorner(Eigen::Vector3f tlc);
 
   /**
      Set the bottom right corner of the projection.
   */
-  void setBottomRightCorner(gmTypes::float3 brc);
+  void setBottomRightCorner(Eigen::Vector3f brc);
 
   /**
      Set the position of the optic center of the projection.
   */
-  void setPosition(gmTypes::float3 p);
+  void setPosition(Eigen::Vector3f p);
 
   /**
      Set the position and orientation of the projection as an
@@ -89,13 +92,13 @@ public:
      Set orientation of the projection, of the extrinsics, as
      quaternion in format (w x y z).
   */
-  void setQuaternion(gmTypes::float4 q);
+  void setQuaternion(Eigen::Quaternionf q);
 
   /**
-     Set orientation of the projection, of the extrinsics, as an axis
-     angle in format (x y z a), where angle a is expressed in radians.
+     Set orientation of the projection, of the extrinsics, as an angle
+     axis, in xml as (a x y z) where angle a is expressed in radians.
   */
-  void setAxisAngle(gmTypes::float4 aa);
+  void setAngleAxis(Eigen::AngleAxisf aa);
 
   /**
      Set orientation of the projection, of the extrinsics, as euler

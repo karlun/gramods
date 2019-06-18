@@ -15,42 +15,42 @@
     <ArucoBoardComplex>
 
       <param name="position" value="0 0 0.02"/>
-      <param name="axisAngle" value="0 0 1 0"/>
+      <param name="angleAxis" value="0 0 1 0"/>
       <ArucoGridBoard
           dictionary="4X4_50" rows="2" columns="2"
           markerSize="0.012" markerSeparation="0.004"
           firstId="0"/>
 
       <param name="position" value="0 0.02 0"/>
-      <param name="axisAngle" value="1 0 0 -1.5708"/>
+      <param name="angleAxis" value="1 0 0 -1.5708"/>
       <ArucoGridBoard
           dictionary="4X4_50" rows="2" columns="2"
           markerSize="0.012" markerSeparation="0.004"
           firstId="4"/>
 
       <param name="position" value="-0.02 0 0"/>
-      <param name="axisAngle" value="0 1 0 -1.5708"/>
+      <param name="angleAxis" value="0 1 0 -1.5708"/>
       <ArucoGridBoard
           dictionary="4X4_50" rows="2" columns="2"
           markerSize="0.012" markerSeparation="0.004"
           firstId="8"/>
 
       <param name="position" value="0.02 0 0"/>
-      <param name="axisAngle" value="0 1 0 1.5708"/>
+      <param name="angleAxis" value="0 1 0 1.5708"/>
       <ArucoGridBoard
           dictionary="4X4_50" rows="2" columns="2"
           markerSize="0.012" markerSeparation="0.004"
           firstId="12"/>
 
       <param name="position" value="0 -0.02 0"/>
-      <param name="axisAngle" value="1 0 0 1.5708"/>
+      <param name="angleAxis" value="1 0 0 1.5708"/>
       <ArucoGridBoard
           dictionary="4X4_50" rows="2" columns="2"
           markerSize="0.012" markerSeparation="0.004"
           firstId="16"/>
 
       <param name="position" value="0 0 -0.02"/>
-      <param name="axisAngle" value="1 0 0 3.1416"/>
+      <param name="angleAxis" value="1 0 0 3.1416"/>
       <ArucoGridBoard
           dictionary="4X4_50" rows="2" columns="2"
           markerSize="0.012" markerSeparation="0.004"

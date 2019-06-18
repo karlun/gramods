@@ -4,6 +4,8 @@
 
 #include <gmGraphics/StereoscopicView.hh>
 
+#include <gmTypes/eigen.hh>
+
 BEGIN_NAMESPACE_GMGRAPHICS;
 
 /**
@@ -14,14 +16,14 @@ class SpatialPlanarView
 
 public:
 
-  void setTopLeftCorner(gmTypes::float3 tlc) {
-    topLeftCorner = Eigen::Vector3f(tlc[0], tlc[1], tlc[2]);
+  void setTopLeftCorner(Eigen::Vector3f tlc) {
+    topLeftCorner = tlc;
   }
-  void setBottomRightCorner(gmTypes::float3 brc) {
-    bottomRightCorner = Eigen::Vector3f(brc[0], brc[1], brc[2]);
+  void setBottomRightCorner(Eigen::Vector3f brc) {
+    bottomRightCorner = brc;
   }
-  void setUpDirection(gmTypes::float3 up) {
-    upDirection = Eigen::Vector3f(up[0], up[1], up[2]);
+  void setUpDirection(Eigen::Vector3f up) {
+    upDirection = up.normalized();
   }
 
   GM_OFI_DECLARE;

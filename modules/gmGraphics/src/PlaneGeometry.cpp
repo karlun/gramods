@@ -5,10 +5,10 @@
 BEGIN_NAMESPACE_GMGRAPHICS;
 
 GM_OFI_DEFINE_SUB(PlaneGeometry, Geometry);
-GM_OFI_PARAM(PlaneGeometry, position, gmTypes::float3, PlaneGeometry::setPosition);
-GM_OFI_PARAM(PlaneGeometry, normal, gmTypes::float3, PlaneGeometry::setNormal);
-GM_OFI_PARAM(PlaneGeometry, quaternion, gmTypes::float4, PlaneGeometry::setQuaternion);
-GM_OFI_PARAM(PlaneGeometry, axisAngle, gmTypes::float4, PlaneGeometry::setAxisAngle);
+GM_OFI_PARAM(PlaneGeometry, position, Eigen::Vector3f, PlaneGeometry::setPosition);
+GM_OFI_PARAM(PlaneGeometry, normal, Eigen::Vector3f, PlaneGeometry::setNormal);
+GM_OFI_PARAM(PlaneGeometry, quaternion, Eigen::Quaternionf, PlaneGeometry::setQuaternion);
+GM_OFI_PARAM(PlaneGeometry, angleAxis, Eigen::AngleAxisf, PlaneGeometry::setAngleAxis);
 
 struct PlaneGeometry::Impl
   : Geometry::Impl {
@@ -148,27 +148,24 @@ bool PlaneGeometry::Impl::getIntersection(Eigen::Vector3f pos,
   return true;
 }
 
-void PlaneGeometry::setPosition(gmTypes::float3 p) {
+void PlaneGeometry::setPosition(Eigen::Vector3f p) {
   auto impl = static_cast<Impl*>(_impl.get());
-  impl->position = Eigen::Vector3f(p[0], p[1], p[2]);
+  impl->position = p;
 }
 
-void PlaneGeometry::setNormal(gmTypes::float3 n) {
+void PlaneGeometry::setNormal(Eigen::Vector3f n) {
   auto impl = static_cast<Impl*>(_impl.get());
-  impl->normal = Eigen::Vector3f(n[0], n[1], n[2]).normalized();
+  impl->normal = n.normalized();
 }
 
-void PlaneGeometry::setQuaternion(gmTypes::float4 q) {
+void PlaneGeometry::setQuaternion(Eigen::Quaternionf q) {
   auto impl = static_cast<Impl*>(_impl.get());
-  Eigen::Quaternionf Q(q[0], q[1], q[2], q[3]);
-  impl->normal = Q * Eigen::Vector3f(0, 0, 1);
+  impl->normal = q * Eigen::Vector3f(0, 0, 1);
 }
 
-void PlaneGeometry::setAxisAngle(gmTypes::float4 aa) {
-  Eigen::Quaternionf Q(Eigen::Quaternionf::AngleAxisType
-                       (aa[3], Eigen::Vector3f(aa[0], aa[1], aa[2]).normalized()));
+void PlaneGeometry::setAngleAxis(Eigen::AngleAxisf aa) {
   auto impl = static_cast<Impl*>(_impl.get());
-  impl->normal = Q * Eigen::Vector3f(0, 0, 1);
+  impl->normal = aa * Eigen::Vector3f(0, 0, 1);
 }
 
 

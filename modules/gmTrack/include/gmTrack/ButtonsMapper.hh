@@ -4,7 +4,7 @@
 
 #include <gmTrack/ButtonsTracker.hh>
 
-#include <gmTypes/all.hh>
+#include <gmTypes/size.hh>
 
 #include <gmCore/OFactory.hh>
 
