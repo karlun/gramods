@@ -30,11 +30,15 @@ public:
 
   /**
      Sets the video file to read from.
+
+     \b XML-attribute: \c videoFile
   */
   void setVideoFile(std::string file);
 
   /**
      Sets the camera id to capture data from.
+
+     \b XML-attribute: \c cameraId
   */
   void setCameraId(int id);
 
@@ -42,6 +46,8 @@ public:
      Sets the width of the resolution to request from the camera.
 
      If not set the driver default is used.
+
+     \b XML-attribute: \c cameraWidth
   */
   void setCameraWidth(int W);
 
@@ -49,14 +55,17 @@ public:
      Sets the height of the resolution to request from the camera.
 
      If not set the driver default is used.
+
+     \b XML-attribute: \c cameraHeight
   */
   void setCameraHeight(int W);
 
   /**
      Sets the framerate to request from the camera.
 
-     If not set the driver default is used. This string must be four
-     characters long, so add spaces when necessary.
+     If not set the driver default is used.
+
+     \b XML-attribute: \c cameraFramerate
 
      @see https://www.fourcc.org/codecs.php
   */
@@ -66,7 +75,10 @@ public:
      Specifies the FourCC for the camera stream.
 
      If not set the driver default is used. A value supported by many
-     cameras is "MJPG".
+     cameras is "MJPG". This string must be four characters long, so
+     add spaces when necessary.
+
+     \b XML-attribute: \c cameraFourCC
   */
   void setCameraFourCC(std::string cc);
 
@@ -106,6 +118,8 @@ public:
      - OPENCV_MJPEG
      - INTEL_MFX
      - XINE
+
+     \b XML-attribute: \c backend
   */
   void setBackend(std::string b);
 

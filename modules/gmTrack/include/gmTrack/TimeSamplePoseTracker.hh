@@ -25,6 +25,8 @@ public:
      There must be at least two time samples as well as an equal
      amount of time samples and amount of either one of both of
      position and orientation samples.
+
+     \b XML-attribute: \c time
   */
   void addTime(double t);
 
@@ -33,6 +35,9 @@ public:
 
      There must be either no or one position sample, or as many as the
      number of time samples.
+
+     \b XML-attribute: \c position
+     @see gramods::operator>>(std::istream &in, Eigen::Vector3f &v)
   */
   void addPosition(Eigen::Vector3f p);
 
@@ -41,6 +46,9 @@ public:
 
      There must be either no or one orientation sample, or as many as
      the number of time samples.
+
+     \b XML-attribute: \c orientation
+     @see gramods::operator>>(std::istream &in, Eigen::Quaternionf &v)
   */
   void addOrientation(Eigen::Quaternionf q);
 

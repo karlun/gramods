@@ -34,30 +34,40 @@ public:
 
   /**
      Sets the buttons tracker to re-map.
+
+     \b XML-key: \c buttonsTracker
   */
   void setButtonsTracker(std::shared_ptr<ButtonsTracker> bt);
 
   /**
      Adds a mapping in the form of two integer indices: from and to
      button index, respectively.
+
+     \b XML-attribute: \c mapping
   */
   void addMapping(gmTypes::size2 m);
 
   /**
      Sets which button to map to main button, as an index starting at
      zero.
+
+     \b XML-attribute: \c mainButton
   */
   void setMainButton(int idx);
 
   /**
      Sets which button to map to secondary button, as an index
      starting at zero.
+
+     \b XML-attribute: \c secondaryButton
   */
   void setSecondaryButton(int idx);
 
   /**
      Sets which button to map to menu button, as an index starting at
      zero.
+
+     \b XML-attribute: \c menuButton
   */
   void setMenuButton(int idx);
 

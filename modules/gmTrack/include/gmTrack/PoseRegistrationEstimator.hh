@@ -36,11 +36,15 @@ public:
 
   /**
      Sets the controller to use for calibration.
+
+     \b XML-key: \c controller
   */
   void setController(std::shared_ptr<Controller> controller);
 
   /**
      Adds a known calibration point, in room coordinates.
+
+     \b XML-attribute: \c point
   */
   void addPoint(Eigen::Vector3f p);
 
@@ -48,6 +52,8 @@ public:
      Sets the frequency at which samples are collected when the
      controller button is pressed. Default is 1. At most one sample
      per frame will be used regardless of this value.
+
+     \b XML-attribute: \c samplesPerSecond
   */
   void setSamplesPerSecond(float n);
 

@@ -45,16 +45,22 @@ public:
 
   /**
      Set the ArucoBoard to track.
+
+     \b XML-key: \c arucoBoard
   */
   void setArucoBoard(std::shared_ptr<ArucoBoard> board);
 
   /**
      Set the video source to read images from.
+
+     \b XML-key: \c videoSource
   */
   void setVideoSource(std::shared_ptr<OpenCvVideoSource> vs);
 
   /**
      If set to true... Default is false.
+
+     \b XML-attribute: \c inverted
   */
   void setInverted(bool on);
 
@@ -63,17 +69,23 @@ public:
 
      When true an OpenCV window will open showing marker detection and
      coordinate axes for the detected board.
+
+     \b XML-attribute: \c showDebug
   */
   void setShowDebug(bool on);
 
   /**
      Set to true if markers that were not found should be detected
      based on the information from found markers. Default: false.
+
+     \b XML-attribute: \c refindMarkers
   */
   void setRefindMarkers(bool on);
 
   /**
      Sets the (cv::FileStorage) file to read camera parameters from.
+
+     \b XML-attribute: \c cameraConfigurationFile
   */
   void setCameraConfigurationFile(std::string file);
 

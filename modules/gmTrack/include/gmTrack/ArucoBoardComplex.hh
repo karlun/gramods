@@ -35,6 +35,8 @@ public:
      the specified boards have different positions and/or
      orientations, or an equal amount of boards and pose
      specifications must be provided.
+     
+     \b XML-key: \c arucoBoard
   */
   void addArucoBoard(std::shared_ptr<ArucoBoard> b);
 
@@ -45,6 +47,8 @@ public:
      the specified boards have different positions and/or
      orientations, or an equal amount of boards and pose
      specifications must be provided.
+     
+     \b XML-attribute: \c position
   */
   void addPosition(Eigen::Vector3f p);
 
@@ -55,6 +59,8 @@ public:
      the specified boards have different positions and/or
      orientations, or an equal amount of boards and pose
      specifications must be provided.
+
+     \b XML-attribute: \c orientation
   */
   void addOrientation(Eigen::Quaternionf q);
 

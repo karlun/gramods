@@ -24,11 +24,15 @@ public:
      Adds a time sample in seconds, from the start of the
      program. There must be at least two time samples as well as an
      equal amount of time samples and amount of samples.
+
+     \b XML-attribute: \c time
   */
   void addTime(double t);
 
   /**
      Adds an analogs sample as three floats representing three analog inputs.
+
+     \b XML-attribute: \c analogs
   */
   void addAnalogs(gmTypes::float3 a);
 
