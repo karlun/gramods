@@ -20,7 +20,7 @@
 
     <GeometryCorrectedProjectorView
         position="0 10 10"
-        angleAxis="1 0 0 -0.7"
+        orientation="axisangle 1 0 0 -0.7"
         clipAngles=".5 .5 .5 .5"
         linearInterpolation="on">
 

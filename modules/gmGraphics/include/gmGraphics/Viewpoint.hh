@@ -36,9 +36,6 @@ public:
      Returns the orientation of the viewpoint. Observe that a view may
      ignore the orientation value if this does not make any difference
      for its appearance.
-
-     Observe that there is no setOrientation - use setQuaternion or
-     setAngleAxis.
   */
   virtual Eigen::Quaternionf getOrientation() {
     return orientation;
@@ -54,26 +51,13 @@ public:
   }
 
   /**
-     Explicitly sets the orientation of the Viewpoint as a quaternion
-     in format (w x y z).
+     Explicitly sets the orientation of the Viewpoint.
 
      This may be ignored or instantaneously overwritten by dynamic
      updates of the position value.
    */
-  virtual void setQuaternion(Eigen::Quaternionf q) {
+  virtual void setOrientation(Eigen::Quaternionf q) {
     orientation = q;
-  }
-
-  /**
-     Explicitly sets the orientation of the Viewpoint as an axis angle
-     rotation in format (x y z a) where the angle a is expressed in
-     radians. The axis is normalized during the call.
-
-     This may be ignored or instantaneously overwritten by dynamic
-     updates of the position value.
-   */
-  virtual void setAngleAxis(Eigen::AngleAxisf aa) {
-    orientation = Eigen::Quaternionf(aa);
   }
 
   /**

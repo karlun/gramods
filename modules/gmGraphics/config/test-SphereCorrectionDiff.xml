@@ -35,7 +35,7 @@
           bufferWidth="4096"
           bufferHeight="4096"
           position="0 0 0"
-          angleAxis="1 0 0 0"
+          orientation="axisangle 1 0 0 0"
           clipAngles="0.78539816339744830962 0.78539816339744830962 0.78539816339744830962 0.78539816339744830962"
           linearInterpolation="on">
 

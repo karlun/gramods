@@ -10,8 +10,7 @@ BEGIN_NAMESPACE_GMTRACK;
 GM_OFI_DEFINE(ArucoBoardComplex);
 GM_OFI_POINTER(ArucoBoardComplex, arucoBoard, gmTrack::ArucoBoard, ArucoBoardComplex::addArucoBoard);
 GM_OFI_PARAM(ArucoBoardComplex, position, Eigen::Vector3f, ArucoBoardComplex::addPosition);
-GM_OFI_PARAM(ArucoBoardComplex, quaternion, Eigen::Quaternionf, ArucoBoardComplex::addQuaternion);
-GM_OFI_PARAM(ArucoBoardComplex, angleAxis, Eigen::AngleAxisf, ArucoBoardComplex::addAngleAxis);
+GM_OFI_PARAM(ArucoBoardComplex, orientation, Eigen::Quaternionf, ArucoBoardComplex::addOrientation);
 
 
 struct ArucoBoardComplex::Impl {
@@ -41,15 +40,9 @@ void ArucoBoardComplex::addPosition(Eigen::Vector3f p) {
   _impl->positions.push_back(p);
 }
 
-void ArucoBoardComplex::addQuaternion(Eigen::Quaternionf q) {
+void ArucoBoardComplex::addOrientation(Eigen::Quaternionf q) {
   _impl->cache_up_to_date = false;
   _impl->orientations.push_back(q);
-}
-
-void ArucoBoardComplex::addAngleAxis(Eigen::AngleAxisf aa) {
-  _impl->cache_up_to_date = false;
-  Eigen::Quaternionf Q(aa);
-  _impl->orientations.push_back(Q);
 }
 
 cv::Ptr<cv::aruco::Board> ArucoBoardComplex::getBoard() {

@@ -38,21 +38,9 @@ public:
   }
 
   /**
-     Sets the orientation of the View from Euler angles, roll, pitch,
-     yaw, in radians.
+     Sets the orientation of the View.
   */
-  void setEulerAngles(gmTypes::float3 e) {
-    orientation =
-      Eigen::AngleAxisf(e[0], Eigen::Vector3f::UnitX()) *
-      Eigen::AngleAxisf(e[1], Eigen::Vector3f::UnitY()) *
-      Eigen::AngleAxisf(e[2], Eigen::Vector3f::UnitZ());
-  }
-
-  /**
-     Sets the orientation of the View as a quaternion, in xml as (w x
-     y z).
-   */
-  void setQuaternion(Eigen::Quaternionf q) {
+  void setOrientation(Eigen::Quaternionf q) {
     orientation = q;
   }
 

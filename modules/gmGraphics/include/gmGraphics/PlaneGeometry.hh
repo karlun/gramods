@@ -30,17 +30,10 @@ public:
   void setNormal(Eigen::Vector3f n);
 
   /**
-     Set the orientation of the plane as quaternion, in xml as (w x y
-     z). The zero rotation plane is in the x-y plane.
+     Set the orientation of the plane. The zero rotation plane is in
+     the x-y plane.
   */
-  void setQuaternion(Eigen::Quaternionf q);
-
-  /**
-     Set the orientation of the plane as angle axis, in xml as (a x y
-     z) where angle a is expressed in radians. The zero rotation plane
-     is in the x-y plane.
-  */
-  void setAngleAxis(Eigen::AngleAxisf aa);
+  void setOrientation(Eigen::Quaternionf q);
 
   /**
      Calculates and returns a frustum, with optical center at the

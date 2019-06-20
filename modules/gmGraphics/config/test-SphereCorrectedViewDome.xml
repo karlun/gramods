@@ -26,7 +26,7 @@
           bufferWidth="4096"
           bufferHeight="4096"
           position="0 0 0"
-          angleAxis="1 0 0 0"
+          orientation="axisangle 1 0 0 0"
           clipAngles="0.7854 0.7854 0.7854 0.7854"
           linearInterpolation="on">
 
@@ -52,7 +52,7 @@
           bufferWidth="4096"
           bufferHeight="4096"
           position="0 0 0"
-          angleAxis="0 1 0 1.5708"
+          orientation="axisangle 0 1 0 1.5708"
           clipAngles="0.7854 0.7854 0.7854 0.7854"
           linearInterpolation="on">
 
@@ -69,7 +69,7 @@
           bufferWidth="4096"
           bufferHeight="4096"
           position="0 0 0"
-          angleAxis="0 1 0 -1.5708"
+          orientation="axisangle 0 1 0 -1.5708"
           clipAngles="0.7854 0.7854 0.7854 0.7854"
           linearInterpolation="on">
 
@@ -86,7 +86,7 @@
           bufferWidth="4096"
           bufferHeight="4096"
           position="0 0 0"
-          angleAxis="1 0 0 1.5708"
+          orientation="axisangle 1 0 0 1.5708"
           clipAngles="0.7854 0.7854 0.7854 0.7854"
           linearInterpolation="on">
 
@@ -103,7 +103,7 @@
           bufferWidth="4096"
           bufferHeight="4096"
           position="0 0 0"
-          angleAxis="1 0 0 -1.5708"
+          orientation="axisangle 1 0 0 -1.5708"
           clipAngles="0.7854 0.7854 0.7854 0.7854"
           linearInterpolation="on">
 

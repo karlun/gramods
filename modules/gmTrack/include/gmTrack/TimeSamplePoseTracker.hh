@@ -37,21 +37,12 @@ public:
   void addPosition(Eigen::Vector3f p);
 
   /**
-     Add a orientation sample as quaternion, in xml as (w x y z).
+     Add a orientation sample.
 
      There must be either no or one orientation sample, or as many as
      the number of time samples.
   */
-  void addQuaternion(Eigen::Quaternionf q);
-
-  /**
-     Adds an orientation sample, as an angle axis rotation, in xml as
-     (a x y z) where angle a is expressed in radians.
-
-     There must be either no or one orientation sample, or as many as
-     the number of time samples.
-  */
-  void addAngleAxis(Eigen::AngleAxisf r);
+  void addOrientation(Eigen::Quaternionf q);
 
   /**
      Replaces the contents of p with pose data.

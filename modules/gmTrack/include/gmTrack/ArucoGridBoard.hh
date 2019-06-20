@@ -91,21 +91,9 @@ public:
   void setPosition(Eigen::Vector3f p);
 
   /**
-     Set the orientation of the board grid as quaternion, in xml as (w
-     x y z).
+     Set the orientation of the board grid.
   */
-  void setQuaternion(Eigen::Quaternionf q);
-
-  /**
-     Set the orientation of the board grid as an angle axis, in xml as
-     (a x y z) where angle a is expressed in radians.
-  */
-  void setAngleAxis(Eigen::AngleAxisf aa);
-
-  /**
-     Set the orientation of the board grid, as euler angles.
-  */
-  void setEulerAngles(gmTypes::float3 e);
+  void setOrientation(Eigen::Quaternionf q);
 
   /**
      Returns a reference to the board defined by this node.

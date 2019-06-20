@@ -30,7 +30,7 @@
         <VelocityViewpoint
             position="0 0 7"
             velocity="0 0 -0.5"
-            angleAxisVelocity="1 0 0 0"
+            rotation="axisangle 1 0 0 0"
             DEF="viewpoint"/>
 
       </SpatialSphericalView>

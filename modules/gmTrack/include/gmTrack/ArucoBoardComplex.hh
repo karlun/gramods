@@ -49,25 +49,14 @@ public:
   void addPosition(Eigen::Vector3f p);
 
   /**
-     Add a board orientation, as quaternion, in xml as (w x y z).
+     Add a board orientation.
 
      Either only boards and no pose specifications are provided, and
      the specified boards have different positions and/or
      orientations, or an equal amount of boards and pose
      specifications must be provided.
   */
-  void addQuaternion(Eigen::Quaternionf q);
-
-  /**
-     Add a board orientation, as an angle axis rotation, in xml as (a
-     x y z), where angle a is expressed in radians.
-
-     Either only boards and no pose specifications are provided, and
-     the specified boards have different positions and/or
-     orientations, or an equal amount of boards and pose
-     specifications must be provided.
-  */
-  void addAngleAxis(Eigen::AngleAxisf q);
+  void addOrientation(Eigen::Quaternionf q);
 
   /**
      Returns a reference to the board defined by this node.

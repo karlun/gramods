@@ -21,9 +21,7 @@ GM_OFI_PARAM(GeometryCorrectedProjectorView, position, Eigen::Vector3f, Geometry
 GM_OFI_PARAM(GeometryCorrectedProjectorView, extrinsics, gmTypes::float12, GeometryCorrectedProjectorView::setExtrinsics);
 GM_OFI_PARAM(GeometryCorrectedProjectorView, intrinsics, gmTypes::float4, GeometryCorrectedProjectorView::setIntrinsics);
 GM_OFI_PARAM(GeometryCorrectedProjectorView, clipAngles, gmTypes::float4, GeometryCorrectedProjectorView::setClipAngles);
-GM_OFI_PARAM(GeometryCorrectedProjectorView, quaternion, Eigen::Quaternionf, GeometryCorrectedProjectorView::setQuaternion);
-GM_OFI_PARAM(GeometryCorrectedProjectorView, angleAxis, Eigen::AngleAxisf, GeometryCorrectedProjectorView::setAngleAxis);
-GM_OFI_PARAM(GeometryCorrectedProjectorView, eulerAngles, gmTypes::float3, GeometryCorrectedProjectorView::setEulerAngles);
+GM_OFI_PARAM(GeometryCorrectedProjectorView, orientation, Eigen::Quaternionf, GeometryCorrectedProjectorView::setOrientation);
 GM_OFI_POINTER(GeometryCorrectedProjectorView, geometry, Geometry, GeometryCorrectedProjectorView::setGeometry);
 
 struct GeometryCorrectedProjectorView::Impl {
@@ -166,20 +164,8 @@ void GeometryCorrectedProjectorView::setClipAngles(gmTypes::float4 a) {
   _impl->have_shape_angles = true;
 }
 
-void GeometryCorrectedProjectorView::setQuaternion(Eigen::Quaternionf q) {
+void GeometryCorrectedProjectorView::setOrientation(Eigen::Quaternionf q) {
   _impl->orientation = q;
-}
-
-void GeometryCorrectedProjectorView::setAngleAxis(Eigen::AngleAxisf aa) {
-  Eigen::Quaternionf Q(aa);
-  _impl->orientation = Q;
-}
-
-void GeometryCorrectedProjectorView::setEulerAngles(gmTypes::float3 ea) {
-  Eigen::Quaternionf Q(Eigen::AngleAxisf(ea[0], Eigen::Vector3f::UnitX()) *
-                       Eigen::AngleAxisf(ea[1], Eigen::Vector3f::UnitY()) *
-                       Eigen::AngleAxisf(ea[2], Eigen::Vector3f::UnitZ()));
-  _impl->orientation = Q;
 }
 
 void GeometryCorrectedProjectorView::setGeometry(std::shared_ptr<Geometry> g) {

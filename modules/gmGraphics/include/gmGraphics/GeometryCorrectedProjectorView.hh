@@ -89,22 +89,9 @@ public:
   void setClipAngles(gmTypes::float4 a);
 
   /**
-     Set orientation of the projection, of the extrinsics, as
-     quaternion in format (w x y z).
+     Set orientation of the projection, of the extrinsics.
   */
-  void setQuaternion(Eigen::Quaternionf q);
-
-  /**
-     Set orientation of the projection, of the extrinsics, as an angle
-     axis, in xml as (a x y z) where angle a is expressed in radians.
-  */
-  void setAngleAxis(Eigen::AngleAxisf aa);
-
-  /**
-     Set orientation of the projection, of the extrinsics, as euler
-     angles, in radians.
-  */
-  void setEulerAngles(gmTypes::float3 ea);
+  void setOrientation(Eigen::Quaternionf q);
 
   /**
      Set the geometry to use for projection correction.

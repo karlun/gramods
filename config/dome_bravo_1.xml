@@ -22,7 +22,7 @@
     <FovPlanarView
         AS="view"
         clipAngles="-0.9742 0.9742 0.1344 1.2933"
-        eulerAngles="0.7854 0 0">
+        orientation="ypr 0.7854 0 0">
       <Viewpoint
           AS="viewpoint"
           position="0 0 0"/>

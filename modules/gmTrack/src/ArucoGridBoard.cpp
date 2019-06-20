@@ -15,9 +15,7 @@ GM_OFI_PARAM(ArucoGridBoard, markerSeparation, float, ArucoGridBoard::setMarkerS
 GM_OFI_PARAM(ArucoGridBoard, firstId, size_t, ArucoGridBoard::setFirstId);
 GM_OFI_PARAM(ArucoGridBoard, dictionary, std::string, ArucoGridBoard::setDictionary);
 GM_OFI_PARAM(ArucoGridBoard, position, Eigen::Vector3f, ArucoGridBoard::setPosition);
-GM_OFI_PARAM(ArucoGridBoard, quaternion, Eigen::Quaternionf, ArucoGridBoard::setQuaternion);
-GM_OFI_PARAM(ArucoGridBoard, angleAxis, Eigen::AngleAxisf, ArucoGridBoard::setAngleAxis);
-GM_OFI_PARAM(ArucoGridBoard, eulerAngles, gmTypes::float3, ArucoGridBoard::setEulerAngles);
+GM_OFI_PARAM(ArucoGridBoard, orientation, Eigen::Quaternionf, ArucoGridBoard::setOrientation);
 
 
 struct ArucoGridBoard::Impl {
@@ -117,23 +115,9 @@ void ArucoGridBoard::setPosition(Eigen::Vector3f p) {
   _impl->position = p;
 }
 
-void ArucoGridBoard::setQuaternion(Eigen::Quaternionf q) {
+void ArucoGridBoard::setOrientation(Eigen::Quaternionf q) {
   _impl->cache_up_to_date = false;
   _impl->orientation = q;
-}
-
-void ArucoGridBoard::setAngleAxis(Eigen::AngleAxisf aa) {
-  _impl->cache_up_to_date = false;
-  Eigen::Quaternionf Q(aa);
-  _impl->orientation = Q;
-}
-
-void ArucoGridBoard::setEulerAngles(gmTypes::float3 ea) {
-  _impl->cache_up_to_date = false;
-  Eigen::Quaternionf Q(Eigen::AngleAxisf(ea[0], Eigen::Vector3f::UnitX()) *
-                       Eigen::AngleAxisf(ea[1], Eigen::Vector3f::UnitY()) *
-                       Eigen::AngleAxisf(ea[2], Eigen::Vector3f::UnitZ()));
-  _impl->orientation = Q;
 }
 
 cv::Ptr<cv::aruco::Board> ArucoGridBoard::getBoard() {

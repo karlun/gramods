@@ -27,17 +27,10 @@ public:
   void setVelocity(Eigen::Vector3f vel);
 
   /**
-     Sets the rotational velocity of the viewpoint as a quaternion,
-     defining the rotation per second, in xml as (w x y z).
+     Sets the rotational velocity of the viewpoint, in rotation per
+     second.
   */
-  void setQuaternionVelocity(Eigen::Quaternionf q);
-
-  /**
-     Sets the rotational velocity of the viewpoint as a axis angle
-     rotation, in xml as (a x y z) where angle a is expressed in
-     radians per second. The axis is automatically normalized.
-  */
-  void setAngleAxisVelocity(Eigen::AngleAxisf aa);
+  void setRotation(Eigen::Quaternionf q);
 
   /**
      Updates the animation.

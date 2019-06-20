@@ -7,8 +7,7 @@ BEGIN_NAMESPACE_GMGRAPHICS;
 GM_OFI_DEFINE_SUB(PlaneGeometry, Geometry);
 GM_OFI_PARAM(PlaneGeometry, position, Eigen::Vector3f, PlaneGeometry::setPosition);
 GM_OFI_PARAM(PlaneGeometry, normal, Eigen::Vector3f, PlaneGeometry::setNormal);
-GM_OFI_PARAM(PlaneGeometry, quaternion, Eigen::Quaternionf, PlaneGeometry::setQuaternion);
-GM_OFI_PARAM(PlaneGeometry, angleAxis, Eigen::AngleAxisf, PlaneGeometry::setAngleAxis);
+GM_OFI_PARAM(PlaneGeometry, orientation, Eigen::Quaternionf, PlaneGeometry::setOrientation);
 
 struct PlaneGeometry::Impl
   : Geometry::Impl {
@@ -158,14 +157,9 @@ void PlaneGeometry::setNormal(Eigen::Vector3f n) {
   impl->normal = n.normalized();
 }
 
-void PlaneGeometry::setQuaternion(Eigen::Quaternionf q) {
+void PlaneGeometry::setOrientation(Eigen::Quaternionf q) {
   auto impl = static_cast<Impl*>(_impl.get());
   impl->normal = q * Eigen::Vector3f(0, 0, 1);
-}
-
-void PlaneGeometry::setAngleAxis(Eigen::AngleAxisf aa) {
-  auto impl = static_cast<Impl*>(_impl.get());
-  impl->normal = aa * Eigen::Vector3f(0, 0, 1);
 }
 
 
