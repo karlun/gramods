@@ -11,7 +11,7 @@ BEGIN_NAMESPACE_GMGRAPHICS;
 
    Typical usage:
 
-   ~~~~~{.c++}
+   ~~~~~{.cpp}
    auto callback = std::make_shared<gmGraphics::CallbackRenderer>();
    callback->setCallback([=](Camera c){ my_render_callback(c); });
    window->addRenderer(callback);
