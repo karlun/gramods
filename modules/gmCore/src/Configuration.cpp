@@ -4,6 +4,8 @@
 #include <gmCore/OFactory.hh>
 #include <gmCore/CommandLineParser.hh>
 
+#include <stdlib.h>
+
 BEGIN_NAMESPACE_GMCORE;
 
 Configuration::Configuration()
@@ -127,7 +129,8 @@ void Configuration::load(tinyxml2::XMLNode *node) {
     node = doc->RootElement();
 
   tinyxml2::XMLElement *node_element = node->ToElement();
-  if (node_element != NULL) {
+  if (node_element != NULL &&
+      strcmp(node_element->Value(), "if") != 0) {
     for( const tinyxml2::XMLAttribute *attr_it = node->ToElement()->FirstAttribute() ;
          attr_it != NULL ; attr_it = attr_it->Next()) {
       std::string name = attr_it->Name();
@@ -145,7 +148,13 @@ void Configuration::load(tinyxml2::XMLNode *node) {
     if (node_element == NULL) {
       continue;
     }
-    
+
+    if (strcmp(node_it->Value(), "if") == 0) {
+      if (parse_if(node_element))
+        load(node_it);
+      continue;
+    }
+
     if (strcmp(node_it->Value(), "param") == 0) {
       parse_param(node_element);
       continue;
@@ -322,6 +331,31 @@ size_t Configuration::getAllObjectNames(std::vector<std::string> &name) {
   name.insert(name.end(), new_names.begin(), new_names.end());
 
   return new_names.size();
+}
+
+bool Configuration::parse_if(tinyxml2::XMLElement *element) {
+
+  const char* variable_attribute = element->Attribute("variable");
+  if (variable_attribute == NULL) {
+    GM_ERR("Configuration", "Node if is missing expected attribute \"variable\"");
+    return false;
+  }
+
+  char * variable_value = getenv(variable_attribute);
+  if (variable_value == NULL) {
+    GM_WRN("Configuration", "Environment variable \"" << variable_attribute << "\" not found - cannot compare.");
+    return false;
+  }
+  std::string variable = variable_value;
+
+  const char* value_attribute = element->Attribute("value");
+  if (value_attribute == NULL) {
+    GM_ERR("Configuration", "Node if is missing expected attribute \"value\"");
+    return false;
+  }
+  std::string value = value_attribute;
+
+  return variable == value;
 }
 
 void Configuration::parse_param(tinyxml2::XMLElement *element){

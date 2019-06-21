@@ -209,6 +209,7 @@ private:
   std::shared_ptr<overrides_list> parameter_overrides;
   bool warn_unused_overrides;
 
+  bool parse_if(tinyxml2::XMLElement *element);
   void parse_param(tinyxml2::XMLElement *element);
 
   /**
