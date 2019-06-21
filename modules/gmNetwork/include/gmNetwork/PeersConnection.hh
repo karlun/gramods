@@ -58,11 +58,15 @@ public:
      -  nnn.nnn.nnn.nnn:port
      -  nnnn:nnn::nnnn:nn:nnnn
      -  [nnnn:nnn:nnnn::nnn:nnn:nnnn:nnn]:port
+
+     \b XML-attribute: \c peer
   */
   void addPeer(std::string address);
 
   /**
      Sets which of the peers that represents the local address.
+
+     \b XML-attribute: \c localPeerIdx
   */
   void setLocalPeerIdx(int idx);
 

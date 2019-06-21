@@ -53,6 +53,8 @@ public:
      Sets the connection to read messages from. This method will also
      register the protocol with the connection, for receiving messages
      with this protocols flag.
+
+     \b XML-key: \c connection
   */
   void setConnection(std::shared_ptr<PeersConnection> conn);
 
