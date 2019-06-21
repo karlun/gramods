@@ -24,7 +24,7 @@ TEST(gmTrackBaseEstimation, FullSamplesByInverse) {
     std::string xml = R"lang=xml(
 <config>
 
-  <ImportLibrary lib="libgmTrack.so"/>
+  <ImportLibrary library="libgmTrack.so"/>
 
   <TimeSamplePoseTracker DEF="pose_tracker"/>
 
@@ -120,7 +120,7 @@ TEST(gmTrackBaseEstimation, OverDeterminedSamplesByQR) {
     std::string xml = R"lang=xml(
 <config>
 
-  <ImportLibrary lib="libgmTrack.so"/>
+  <ImportLibrary library="libgmTrack.so"/>
 
   <TimeSamplePoseTracker DEF="pose_tracker"/>
 

@@ -24,7 +24,7 @@ TEST(gmTrackMapper, Buttons) {
     std::string xml = R"lang=xml(
 <config>
 
-  <ImportLibrary lib="libgmTrack.so"/>
+  <ImportLibrary library="libgmTrack.so"/>
 
   <ButtonsMapper>
 
@@ -85,7 +85,7 @@ TEST(gmTrackMapper, Buttons2) {
     std::string xml = R"lang=xml(
 <config>
 
-  <ImportLibrary lib="libgmTrack.so"/>
+  <ImportLibrary library="libgmTrack.so"/>
 
   <ButtonsMapper>
 
@@ -146,7 +146,7 @@ TEST(gmTrackMapper, Analogs) {
     std::string xml = R"lang=xml(
 <config>
 
-  <ImportLibrary lib="libgmTrack.so"/>
+  <ImportLibrary library="libgmTrack.so"/>
 
   <AnalogsMapper>
 
@@ -202,7 +202,7 @@ TEST(gmTrackMapper, Analogs2) {
     std::string xml = R"lang=xml(
 <config>
 
-  <ImportLibrary lib="libgmTrack.so"/>
+  <ImportLibrary library="libgmTrack.so"/>
 
   <AnalogsMapper>
 

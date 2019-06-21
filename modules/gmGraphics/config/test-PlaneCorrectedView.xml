@@ -3,7 +3,7 @@
   <OStreamMessageSink stream="err" useAnsiColor="1" level="1"/>
   <LogFileMessageSink logFilePath="gramods.log" append="0"/>
 
-  <ImportLibrary lib="libgmGraphics.so"/>
+  <ImportLibrary library="libgmGraphics.so"/>
 
   <SdlWindow
       size="1536 1024"
