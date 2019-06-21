@@ -19,6 +19,8 @@ public:
   /**
      Sets the side-by-side pattern between horizontal (0), vertical
      (1) and frame packing (2). Default is 0.
+
+     \b XML-attribute: \c pattern
   */
   void setPattern(int p);
 

@@ -21,6 +21,8 @@ public:
   /**
      Sets the clip planes, left, right, bottom, top, in x, y
      coordinates at distance 1.
+
+     \b XML-attribute: \c clipPlanes
   */
   void setClipPlanes(gmTypes::float4 p) {
     planes = p;
@@ -29,6 +31,8 @@ public:
   /**
      Angles between forward direction and the clip planes left, right,
      bottom and top, in radians. Positive angles are right and up.
+
+     \b XML-attribute: \c clipAngles
   */
   void setClipAngles(gmTypes::float4 p) {
     planes[0] = tan(p[0]);
@@ -39,6 +43,8 @@ public:
 
   /**
      Sets the orientation of the View.
+
+     \b XML-attribute: \c orientation
   */
   void setOrientation(Eigen::Quaternionf q) {
     orientation = q;

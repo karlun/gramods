@@ -27,12 +27,16 @@ public:
   /**
      Sets the resolution of the intermediate cube map, in
      pixels. Default is 2048.
+
+     \b XML-attribute: \c cubeMapResolution
   */
   void setCubeMapResolution(int res);
 
   /**
      Turn on or off linear interpolation in the projection from linear
      graphics to non-linear projection space. Default is off.
+
+     \b XML-attribute: \c linearInterpolation
   */
   void setLinearInterpolation(bool on);
 
@@ -40,12 +44,16 @@ public:
      Sets the vertical coverage of the angular fisheye or horizontal
      for the equirectangular projection, in radians. Default is
      2π.
+
+     \b XML-attribute: \c coverageAngle
   */
   void setCoverageAngle(float a);
 
   /**
      Selects projection between equirectangular (0), angular
      fisheye (1) and square angular fisheye (2). Default is 0.
+
+     \b XML-attribute: \c projectionType
   */
   void setProjectionType(int p);
 

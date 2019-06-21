@@ -79,6 +79,8 @@ public:
      Set true if the projection should be calculated for the inside of
      the geometry, and not the outside. Default is false (projection
      is estimated for the outside of the geometry).
+
+     \b XML-attribute: \c inside
   */
   void setInside(bool on);
 

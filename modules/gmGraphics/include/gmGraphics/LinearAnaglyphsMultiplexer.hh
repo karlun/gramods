@@ -22,12 +22,16 @@ public:
   /**
      Sets the color of the left eye filter, in RGB 0-1. Default is red
      (1, 0, 0).
+
+     \b XML-attribute: \c leftColor
   */
   void setLeftColor(gmTypes::float3 c);
 
   /**
      Sets the color of the right eye filter, in RGB 0-1. Default is
      cyan (0, 1, 1).
+
+     \b XML-attribute: \c rightColor
   */
   void setRightColor(gmTypes::float3 c);
 
@@ -36,6 +40,8 @@ public:
      range 0-1. Removing some saturation reduces the problem that an
      object with the same color as the eye filter becomes invisible
      for that eye. Default is 0.8.
+
+     \b XML-attribute: \c saturation
   */
   void setSaturation(float s);
 
@@ -44,6 +50,8 @@ public:
      range 0-1. Removing some saturation reduces the problem that an
      object with the same color as the eye filter becomes invisible
      for that eye. Default is 0.8.
+
+     \b XML-attribute: \c leftSaturation
   */
   void setLeftSaturation(float s);
 
@@ -52,6 +60,8 @@ public:
      range 0-1. Removing some saturation reduces the problem that an
      object with the same color as the eye filter becomes invisible
      for that eye. Default is 0.8.
+
+     \b XML-attribute: \c rightSaturation
   */
   void setRightSaturation(float s);
 

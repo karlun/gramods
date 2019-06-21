@@ -30,6 +30,8 @@ public:
   /**
      Sets the distance between the eyes, in internal units, typically
      meters. Default is 0.06 m.
+
+     \b XML-attribute: \c eyeSeparation
   */
   void setEyeSeparation(float e) {
     eye_separation = e;
@@ -38,6 +40,8 @@ public:
   /**
      Sets the stereoscopic multiplexing to use for rendering. If not
      set, monoscopic rendering will be used.
+
+     \b XML-key: \c stereoscopicMultiplexer
   */
   void setStereoscopicMultiplexer(std::shared_ptr<StereoscopicMultiplexer> sm) {
     stereoscopic_multiplexer = sm;

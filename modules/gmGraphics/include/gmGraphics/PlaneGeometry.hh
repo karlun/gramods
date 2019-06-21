@@ -21,17 +21,23 @@ public:
 
   /**
      Set the position of the plane.
+
+     \b XML-attribute: \c position
   */
   void setPosition(Eigen::Vector3f p);
 
   /**
      Set the orientation of the plane by defining its normal.
+
+     \b XML-attribute: \c normal
   */
   void setNormal(Eigen::Vector3f n);
 
   /**
      Set the orientation of the plane. The zero rotation plane is in
      the x-y plane.
+
+     \b XML-attribute: \c orientation
   */
   void setOrientation(Eigen::Quaternionf q);
 

@@ -23,12 +23,16 @@ public:
   /**
      Sets the linear (position) velocity of the viewpoint, in meters
      per second.
+
+     \b XML-attribute: \c velocity
   */
   void setVelocity(Eigen::Vector3f vel);
 
   /**
      Sets the rotational velocity of the viewpoint, in rotation per
      second.
+
+     \b XML-attribute: \c rotation
   */
   void setRotation(Eigen::Quaternionf q);
 

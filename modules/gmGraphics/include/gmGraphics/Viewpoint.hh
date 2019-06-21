@@ -45,6 +45,8 @@ public:
      Explicitly sets the position of the Viewpoint. This may be
      ignored or instantaneously overwritten by dynamic updates of the
      position value.
+
+     \b XML-attribute: \c position
   */
   virtual void setPosition(Eigen::Vector3f p) {
     position = p;
@@ -55,7 +57,9 @@ public:
 
      This may be ignored or instantaneously overwritten by dynamic
      updates of the position value.
-   */
+
+     \b XML-attribute: \c orientation
+  */
   virtual void setOrientation(Eigen::Quaternionf q) {
     orientation = q;
   }
@@ -63,6 +67,8 @@ public:
   /**
      Set the up direction to be used in a later call to
      setLookAt. This does nothing if setLookAt is not used.
+
+     \b XML-attribute: \c upDirection
   */
   virtual void setUpDirection(Eigen::Vector3f up) {
     up_direction = up.normalized();
@@ -76,6 +82,8 @@ public:
 
      Observe that this affects only the viewpoint orientation -
      camera orientation will not automatically toe-in to this point.
+
+     \b XML-attribute: \c lookAt
   */
   virtual void setLookAt(Eigen::Vector3f p);
 

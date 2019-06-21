@@ -22,11 +22,15 @@ public:
 
   /**
      Set the position of the sphere origin, its center.
+
+     \b XML-attribute: \c center
   */
   void setCenter(Eigen::Vector3f c);
 
   /**
      Set the radius of the sphere.
+
+     \b XML-attribute: \c radius
   */
   void setRadius(float);
 
@@ -36,6 +40,8 @@ public:
      modulation parameter can be used to enlarge the render
      frustum. Use this if you see D-shaped black regions at the edge
      of the view. Default is 1.0.
+
+     \b XML-attribute: \c frustumSizeRatio
   */
   void setFrustumSizeRatio(float);
 

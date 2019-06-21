@@ -25,8 +25,25 @@ public:
   */
   void render(Camera camera);
 
+  /**
+     Sets the size of each cube to be drawn.
+
+     \b XML-attribute: \c cubeSize
+  */
   void setCubeSize(float d);
+
+  /**
+     Sets the size of the set of cubes.
+
+     \b XML-attribute: \c cubeSetSize
+  */
   void setCubeSetSize(float d);
+
+  /**
+     Sets the position of the cube set.
+
+     \b XML-attribute: \c cubeSetCenter
+  */
   void setCubeSetCenter(Eigen::Vector3f c);
 
   GM_OFI_DECLARE;

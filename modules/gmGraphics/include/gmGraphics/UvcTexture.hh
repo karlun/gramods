@@ -41,6 +41,8 @@ public:
      Set the vendor ID of the UVC device to stream from. As XML
      attribute, use the 0x prefix to enter the value in hexadecimal
      format.
+
+     \b XML-attribute: \c vendor
   */
   void setVendor(int v) { vendor = v; }
 
@@ -48,21 +50,29 @@ public:
      Set the product ID of the UVC device to stream from. As XML
      attribute, use the 0x prefix to enter the value in hexadecimal
      format.
+
+     \b XML-attribute: \c product
   */
   void setProduct(int p) { product = p; }
 
   /**
      Set the serial ID of the UVC device to stream from.
+
+     \b XML-attribute: \c serial
   */
   void setSerial(std::string s) { serial = s; }
 
   /**
      Set the resolution to attempt to negotiate with the UVC device.
+
+     \b XML-attribute: \c resolution
   */
   void setResolution(gmTypes::size2 res);
 
   /**
      Set the framerate to attempt to negotiate with the UVC device.
+
+     \b XML-attribute: \c framerate
   */
   void setFramerate(int fps);
 
@@ -72,7 +82,9 @@ public:
      Values recognized by UVC, but not necessarily supported by all
      devices, are any, uncompressed, compressed, yuyv, uyvy, rgb, bgr,
      mjpeg, gray8, gray16, by8, ba81, sgrbg8, sgbrg8, srggb8, sbggr8.
-   */
+
+     \b XML-attribute: \c format
+  */
   void setFormat(std::string fmt);
 
   GM_OFI_DECLARE;

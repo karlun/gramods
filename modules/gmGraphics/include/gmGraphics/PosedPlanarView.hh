@@ -23,6 +23,8 @@ public:
      one dimension is set to -1 then that dimension is automatically
      controlled to fit the ratio of the viewport. Default is 1
      horizontal.
+
+     \b XML-attribute: \c fieldOfView
   */
   void setFieldOfView(gmTypes::float2 fov) {
     field_of_view = fov;
