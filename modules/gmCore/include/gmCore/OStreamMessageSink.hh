@@ -45,12 +45,16 @@ public:
   /**
      Set the stream to use as output, as string. Valid values are
      "out" and "err".
+
+     \b XML-attribute: \c stream
   */
   void setStream(std::string name);
 
   /**
      Activate or deactivate the use of ANSI color escape characters to
      emphasize error and warning messages.
+
+     \b XML-attribute: \c useAnsiColor
   */
   void setUseAnsiColor(bool on) {
     use_ansi_color = on;
@@ -62,6 +66,8 @@ public:
      Set the level of messages to output. This is an integer 0-4 where
      0 results in only error messages begin printed and 4 results in
      all messages.
+
+     \b XML-attribute: \c level
   */
   void setLevel(int l) { level = l; }
 

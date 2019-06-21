@@ -25,7 +25,20 @@ public:
   SdlContext();
   ~SdlContext();
 
+  /**
+     Enable or disable initialization of SDL video engine. Default is
+     false.
+
+     \b XML-attribute: \c useVideo
+  */
   void setUseVideo(bool on) { use_video = on; }
+
+  /**
+     Enable or disable initialization of SDL audio engine. Default is
+     false.
+
+     \b XML-attribute: \c useAudio
+  */
   void setUseAudio(bool on) { use_audio = on; }
 
   GM_OFI_DECLARE;
