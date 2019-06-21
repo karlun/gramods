@@ -20,6 +20,8 @@ public:
      Sets the interlace pattern between horizontal lines (0), vertical
      lines (1) and checkerboard pattern (2). Default is 0, resulting
      in every other row being left and right eye, respectively.
+
+     \b XML-attribute: \c pattern
   */
   void setPattern(int p);
 

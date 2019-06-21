@@ -37,6 +37,8 @@ public:
   /**
      The address to the button tracker at the VRPN server, such as
      "tracker@localhost".
+
+     \b XML-attribute: \c connectionString
   */
   void setConnectionString(std::string id);
 

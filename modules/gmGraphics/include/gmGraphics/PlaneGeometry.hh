@@ -2,7 +2,7 @@
 #ifndef GRAMODS_GRAPHICS_PLANEGEOMETRY
 #define GRAMODS_GRAPHICS_PLANEGEOMETRY
 
-#include <gmTypes/all.hh>
+#include <gmTypes/eigen.hh>
 #include <gmGraphics/Geometry.hh>
 
 BEGIN_NAMESPACE_GMGRAPHICS;
@@ -21,26 +21,25 @@ public:
 
   /**
      Set the position of the plane.
+
+     \b XML-attribute: \c position
   */
-  void setPosition(gmTypes::float3);
+  void setPosition(Eigen::Vector3f p);
 
   /**
      Set the orientation of the plane by defining its normal.
+
+     \b XML-attribute: \c normal
   */
-  void setNormal(gmTypes::float3);
+  void setNormal(Eigen::Vector3f n);
 
   /**
-     Set the orientation of the plane as quaternion in format (w x y
-     z). The zero rotation plane is in the x-y plane.
-  */
-  void setQuaternion(gmTypes::float4);
+     Set the orientation of the plane. The zero rotation plane is in
+     the x-y plane.
 
-  /**
-     Set the orientation of the plane as axis angle in format (x y z
-     a), where angle a is expressed in radians. The zero rotation
-     plane is in the x-y plane.
+     \b XML-attribute: \c orientation
   */
-  void setAxisAngle(gmTypes::float4);
+  void setOrientation(Eigen::Quaternionf q);
 
   /**
      Calculates and returns a frustum, with optical center at the

@@ -4,7 +4,7 @@
 
 #include <gmTrack/AnalogsTracker.hh>
 
-#include <gmTypes/all.hh>
+#include <gmTypes/size.hh>
 
 #include <gmCore/OFactory.hh>
 
@@ -36,30 +36,40 @@ public:
 
   /**
      Sets the analogs tracker to re-map.
+     
+     \b XML-key: \c analogsTracker
   */
   void setAnalogsTracker(std::shared_ptr<AnalogsTracker> bt);
 
   /**
      Adds a mapping in the form of two integer indices: from and to
      button index, respectively.
+     
+     \b XML-attribute: \c mapping
   */
   void addMapping(gmTypes::size2 m);
 
   /**
      Sets which analog to map to vertical analog, as an index starting
      at zero.
+     
+     \b XML-attribute: \c verticalAnalog
   */
   void setVerticalAnalog(int idx);
 
   /**
      Sets which analog to map to horizontal analog, as an index
      starting at zero.
+     
+     \b XML-attribute: \c horizontalAnalog
   */
   void setHorizontalAnalog(int idx);
 
   /**
      Sets which analog to map to trigger analog, as an index starting
      at zero.
+     
+     \b XML-attribute: \c triggerAnalog
   */
   void setTriggerAnalog(int idx);
 

@@ -23,21 +23,18 @@ public:
   /**
      Sets the linear (position) velocity of the viewpoint, in meters
      per second.
+
+     \b XML-attribute: \c velocity
   */
-  void setVelocity(gmTypes::float3 vel);
+  void setVelocity(Eigen::Vector3f vel);
 
   /**
-     Sets the rotational velocity of the viewpoint as a quaternion,
-     defining the rotation per second, in format (w x y z).
-  */
-  void setQuaternionVelocity(gmTypes::float4 rot);
+     Sets the rotational velocity of the viewpoint, in rotation per
+     second.
 
-  /**
-     Sets the rotational velocity of the viewpoint as a axis angle
-     rotation in format (x y z a) where angle a is expressed in
-     radians per second. The axis is normalized during the call.
+     \b XML-attribute: \c rotation
   */
-  void setAxisAngleVelocity(gmTypes::float4 rot);
+  void setRotation(Eigen::Quaternionf q);
 
   /**
      Updates the animation.

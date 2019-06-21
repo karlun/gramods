@@ -3,7 +3,7 @@
   <OStreamMessageSink stream="err" useAnsiColor="1" level="1"/>
   <LogFileMessageSink logFilePath="gramods.log" append="0"/>
 
-  <ImportLibrary lib="libgmGraphics.so"/>
+  <ImportLibrary library="libgmGraphics.so"/>
 
   <SdlWindow
       size="1024 1024"
@@ -27,7 +27,7 @@
       <VelocityViewpoint
           position="0 0 7"
           velocity="0 0 -0.5"
-          axisAngleVelocity="1 0 0 0"/>
+          rotation="axisangle 1 0 0 0"/>
 
     </PosedSphericalView>
 

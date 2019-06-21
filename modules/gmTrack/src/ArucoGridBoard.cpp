@@ -14,10 +14,8 @@ GM_OFI_PARAM(ArucoGridBoard, markerSize, float, ArucoGridBoard::setMarkerSize);
 GM_OFI_PARAM(ArucoGridBoard, markerSeparation, float, ArucoGridBoard::setMarkerSeparation);
 GM_OFI_PARAM(ArucoGridBoard, firstId, size_t, ArucoGridBoard::setFirstId);
 GM_OFI_PARAM(ArucoGridBoard, dictionary, std::string, ArucoGridBoard::setDictionary);
-GM_OFI_PARAM(ArucoGridBoard, position, gmTypes::float3, ArucoGridBoard::setPosition);
-GM_OFI_PARAM(ArucoGridBoard, quaternion, gmTypes::float4, ArucoGridBoard::setQuaternion);
-GM_OFI_PARAM(ArucoGridBoard, axisAngle, gmTypes::float4, ArucoGridBoard::setAxisAngle);
-GM_OFI_PARAM(ArucoGridBoard, eulerAngles, gmTypes::float3, ArucoGridBoard::setEulerAngles);
+GM_OFI_PARAM(ArucoGridBoard, position, Eigen::Vector3f, ArucoGridBoard::setPosition);
+GM_OFI_PARAM(ArucoGridBoard, orientation, Eigen::Quaternionf, ArucoGridBoard::setOrientation);
 
 
 struct ArucoGridBoard::Impl {
@@ -112,29 +110,14 @@ cv::Ptr<cv::aruco::Dictionary> ArucoGridBoard::Impl::getDictionary(std::string n
 
 }
 
-void ArucoGridBoard::setPosition(gmTypes::float3 p) {
+void ArucoGridBoard::setPosition(Eigen::Vector3f p) {
   _impl->cache_up_to_date = false;
-  _impl->position = Eigen::Vector3f(p[0], p[1], p[2]);
+  _impl->position = p;
 }
 
-void ArucoGridBoard::setQuaternion(gmTypes::float4 q) {
+void ArucoGridBoard::setOrientation(Eigen::Quaternionf q) {
   _impl->cache_up_to_date = false;
-  _impl->orientation = Eigen::Quaternionf(q[0], q[1], q[2], q[3]);
-}
-
-void ArucoGridBoard::setAxisAngle(gmTypes::float4 aa) {
-  _impl->cache_up_to_date = false;
-  Eigen::Quaternionf Q(Eigen::Quaternionf::AngleAxisType
-                       (aa[3], Eigen::Vector3f(aa[0], aa[1], aa[2]).normalized()));
-  _impl->orientation = Q;
-}
-
-void ArucoGridBoard::setEulerAngles(gmTypes::float3 ea) {
-  _impl->cache_up_to_date = false;
-  Eigen::Quaternionf Q(Eigen::AngleAxisf(ea[0], Eigen::Vector3f::UnitX()) *
-                       Eigen::AngleAxisf(ea[1], Eigen::Vector3f::UnitY()) *
-                       Eigen::AngleAxisf(ea[2], Eigen::Vector3f::UnitZ()));
-  _impl->orientation = Q;
+  _impl->orientation = q;
 }
 
 cv::Ptr<cv::aruco::Board> ArucoGridBoard::getBoard() {

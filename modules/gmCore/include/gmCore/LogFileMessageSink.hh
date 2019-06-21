@@ -23,6 +23,8 @@ public:
 
   /**
      Sets the path to the log file to write to.
+
+     \b XML-attribute: \c logFilePath
   */
   void setLogFilePath(std::string name);
 
@@ -30,7 +32,9 @@ public:
      Set to true if the messages should be appended to the end of the
      file, if it already exists. With false (default) the file will be
      overwritten.
-   */
+
+     \b XML-attribute: \c append
+  */
   void setAppend(bool on);
 
   void output(Message msg);

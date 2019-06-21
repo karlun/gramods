@@ -4,6 +4,8 @@
 
 #include <gmGraphics/View.hh>
 
+#include <gmTypes/float.hh>
+
 BEGIN_NAMESPACE_GMGRAPHICS;
 
 /**
@@ -19,6 +21,8 @@ public:
   /**
      Sets the clip planes, left, right, bottom, top, in x, y
      coordinates at distance 1.
+
+     \b XML-attribute: \c clipPlanes
   */
   void setClipPlanes(gmTypes::float4 p) {
     planes = p;
@@ -27,6 +31,8 @@ public:
   /**
      Angles between forward direction and the clip planes left, right,
      bottom and top, in radians. Positive angles are right and up.
+
+     \b XML-attribute: \c clipAngles
   */
   void setClipAngles(gmTypes::float4 p) {
     planes[0] = tan(p[0]);
@@ -36,22 +42,12 @@ public:
   }
 
   /**
-     Sets the orientation of the View from Euler angles, roll, pitch,
-     yaw, in radians.
-  */
-  void setEulerAngles(gmTypes::float3 e) {
-    orientation =
-      Eigen::AngleAxisf(e[0], Eigen::Vector3f::UnitX()) *
-      Eigen::AngleAxisf(e[1], Eigen::Vector3f::UnitY()) *
-      Eigen::AngleAxisf(e[2], Eigen::Vector3f::UnitZ());
-  }
+     Sets the orientation of the View.
 
-  /**
-     Sets the orientation of the View as a quaternion in format (w x y
-     z).
-   */
-  void setQuaternion(gmTypes::float4 rot) {
-    orientation = Eigen::Quaternionf(rot[0], rot[1], rot[2], rot[3]);
+     \b XML-attribute: \c orientation
+  */
+  void setOrientation(Eigen::Quaternionf q) {
+    orientation = q;
   }
 
   GM_OFI_DECLARE;

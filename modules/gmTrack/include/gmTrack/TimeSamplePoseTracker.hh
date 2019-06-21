@@ -3,8 +3,7 @@
 #define GRAMODS_TRACK_TIMESAMPLEPOSETRACKER
 
 #include <gmTrack/SinglePoseTracker.hh>
-#include <gmTypes/types.hh>
-#include <gmTypes/operators.hh>
+#include <gmTypes/eigen.hh>
 #include <gmCore/OFactory.hh>
 
 BEGIN_NAMESPACE_GMTRACK;
@@ -21,34 +20,37 @@ public:
   TimeSamplePoseTracker();
 
   /**
-     Adds a time sample in seconds, from the start of the
-     program. There must be at least two time samples as well as an
-     equal amount of time samples and amount of either one of both of
+     Adds a time sample in seconds, from the start of the program.
+
+     There must be at least two time samples as well as an equal
+     amount of time samples and amount of either one of both of
      position and orientation samples.
+
+     \b XML-attribute: \c time
   */
   void addTime(double t);
 
   /**
-     Adds a position sample. There must be either no or one position
-     sample, or as many as the number of time samples.
+     Adds a position sample, in xml as (x y z).
+
+     There must be either no or one position sample, or as many as the
+     number of time samples.
+
+     \b XML-attribute: \c position
+     @see gramods::operator>>(std::istream &in, Eigen::Vector3f &v)
   */
-  void addPosition(gmTypes::float3 p);
+  void addPosition(Eigen::Vector3f p);
 
   /**
-     Adds an orientation sample as a quaternion rotation in format (w
-     x y z) where the angle a is expressed in radians. There must be
-     either no or one orientation sample, or as many as the number of
-     time samples.
-  */
-  void addQuaternion(gmTypes::float4 r);
+     Add a orientation sample.
 
-  /**
-     Adds an orientation sample as an axis angle rotation in format (x
-     y z a) where the angle a is expressed in radians. There must be
-     either no or one orientation sample, or as many as the number of
-     time samples.
+     There must be either no or one orientation sample, or as many as
+     the number of time samples.
+
+     \b XML-attribute: \c orientation
+     @see gramods::operator>>(std::istream &in, Eigen::Quaternionf &v)
   */
-  void addAxisAngle(gmTypes::float4 r);
+  void addOrientation(Eigen::Quaternionf q);
 
   /**
      Replaces the contents of p with pose data.

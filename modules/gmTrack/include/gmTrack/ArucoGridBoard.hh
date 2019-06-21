@@ -6,7 +6,8 @@
 
 #ifdef gramods_ENABLE_aruco
 
-#include <gmTypes/all.hh>
+#include <gmTypes/eigen.hh>
+#include <gmTypes/float.hh>
 #include <gmCore/OFactory.hh>
 
 #include <Eigen/Eigen>
@@ -27,22 +28,30 @@ public:
 
   /**
      Set the number of columns of markers to track. Default is 1.
+
+     \b XML-attribute: \c columns
   */
   void setColumns(size_t N);
 
   /**
      Set the number of columns of markers to track. Default is 1.
+
+     \b XML-attribute: \c rows
   */
   void setRows(size_t N);
 
   /**
      Set the size of the markers, typically in meters.
+
+     \b XML-attribute: \c markerSize
   */
   void setMarkerSize(float s);
 
   /**
      Set the distance between the markers, typically in
      meters.
+
+     \b XML-attribute: \c markerSeparation
   */
   void setMarkerSeparation(float s);
 
@@ -51,6 +60,8 @@ public:
 
      Since the ids are taken in sequence from the dictionary, the last
      id will be id + columns x rows - 1. Default is 0.
+
+     \b XML-attribute: \c firstId
   */
   void setFirstId(size_t id);
 
@@ -80,31 +91,25 @@ public:
      - APRILTAG_25h9
      - APRILTAG_36h10
      - APRILTAG_36h11
+
+     \b XML-attribute: \c dictionary
   */
   void setDictionary(std::string dict);
 
   /**
      Set the position of the board grid relative to the origin of the
      board.
+
+     \b XML-attribute: \c position
   */
-  void setPosition(gmTypes::float3 p);
+  void setPosition(Eigen::Vector3f p);
 
   /**
-     Set the orientation of the board grid, as quaternion in format (w
-     x y z).
-  */
-  void setQuaternion(gmTypes::float4 q);
+     Set the orientation of the board grid.
 
-  /**
-     Set the orientation of the board grid, as an axis angle in format
-     (x y z a) where angle a is expressed in radians.
+     \b XML-attribute: \c orientation
   */
-  void setAxisAngle(gmTypes::float4 aa);
-
-  /**
-     Set the orientation of the board grid, as euler angles.
-  */
-  void setEulerAngles(gmTypes::float3 e);
+  void setOrientation(Eigen::Quaternionf q);
 
   /**
      Returns a reference to the board defined by this node.

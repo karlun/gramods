@@ -4,6 +4,8 @@
 
 #include <gmGraphics/View.hh>
 
+#include <gmTypes/size.hh>
+
 BEGIN_NAMESPACE_GMGRAPHICS;
 
 /**
@@ -41,11 +43,15 @@ public:
      Adds a location and span that is used when adding views. Format
      is [row col rowspan colspan] where row and col start at zero at
      bottom left corner.
-   */
+
+     \b XML-attribute: \c tileLocation
+  */
   void addTileLocation(gmTypes::size4 c);
 
   /**
      Adds a view to the previously specified tile location.
+
+     \b XML-key: \c view
   */
   void addView(std::shared_ptr<View> view);
 

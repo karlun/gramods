@@ -4,6 +4,8 @@
 
 #include <gmGraphics/RendererDispatcher.hh>
 
+#include <gmTypes/size.hh>
+
 BEGIN_NAMESPACE_GMGRAPHICS;
 
 class View;
@@ -29,6 +31,8 @@ public:
      Adds a view to the window. A window without views will render
      nothing - it is the tiles that provide the graphics. If multiple
      views are added, then these will be rendered over each other.
+
+     \b XML-key: \c view
   */
   void addView(std::shared_ptr<View> view) {
     views.push_back(view);
@@ -49,6 +53,8 @@ public:
   /**
      Activates or deactivates fullscreen mode. This should be
      overloaded by sub classes to also support run-time changes.
+
+     \b XML-attribute: \c fullscreen
   */
   virtual void setFullscreen(bool on) { fullscreen = on; }
 
@@ -56,6 +62,8 @@ public:
      Sets the size of the drawable canvas of this window, in
      pixels. This should be overloaded by sub classes to also support
      run-time changes.
+
+     \b XML-attribute: \c size
   */
   virtual void setSize(gmTypes::size2 s) { size = s; }
 
@@ -69,6 +77,8 @@ public:
   /**
      Sets the title of the windows. This should be overloaded by sub
      classes to also support run-time changes.
+
+     \b XML-attribute: \c title
   */
   virtual void setTitle(std::string t) { title = t; }
 

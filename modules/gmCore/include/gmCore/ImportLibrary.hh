@@ -27,18 +27,29 @@ public:
 
   ~ImportLibrary();
 
+  /**
+     Check if the library has been successfully loaded.
+  */
   bool isLoaded() { return library_loaded; }
 
+  /**
+     Called to initialize the Object. This should be called once only!
+  */
   void initialize();
 
-  void setLib(std::string file);
+  /**
+     Set name or path of library file.
+
+     \b XML-attribute: \c library
+  */
+  void setLibrary(std::string file);
 
   GM_OFI_DECLARE;
 
 private:
 
   bool library_loaded;
-  std::string lib;
+  std::string library;
 
 #ifdef WIN32
   HMODULE handle = 0;

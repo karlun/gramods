@@ -3,7 +3,7 @@
   <OStreamMessageSink stream="err" useAnsiColor="1" level="1"/>
   <LogFileMessageSink logFilePath="gramods.log" append="0"/>
 
-  <ImportLibrary lib="libgmGraphics.so"/>
+  <ImportLibrary library="libgmGraphics.so"/>
 
   <SdlWindow
       size="1536 1024"
@@ -20,7 +20,7 @@
 
     <GeometryCorrectedProjectorView
         position="0 10 10"
-        axisAngle="1 0 0 -0.7"
+        orientation="axisangle 1 0 0 -0.7"
         clipAngles=".5 .5 .5 .5"
         linearInterpolation="on">
 

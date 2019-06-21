@@ -4,8 +4,7 @@
 
 #include <gmGraphics/config.hh>
 
-#include <gmTypes/all.hh>
-#include <Eigen/Eigen>
+#include <gmTypes/eigen.hh>
 
 #include <gmCore/Object.hh>
 #include <gmCore/OFactory.hh>
@@ -37,9 +36,6 @@ public:
      Returns the orientation of the viewpoint. Observe that a view may
      ignore the orientation value if this does not make any difference
      for its appearance.
-
-     Observe that there is no setOrientation - use setQuaternion or
-     setAxisAngle.
   */
   virtual Eigen::Quaternionf getOrientation() {
     return orientation;
@@ -49,41 +45,33 @@ public:
      Explicitly sets the position of the Viewpoint. This may be
      ignored or instantaneously overwritten by dynamic updates of the
      position value.
-   */
-  virtual void setPosition(gmTypes::float3 pos) {
-    position = Eigen::Vector3f(pos[0], pos[1], pos[2]);
+
+     \b XML-attribute: \c position
+  */
+  virtual void setPosition(Eigen::Vector3f p) {
+    position = p;
   }
 
   /**
-     Explicitly sets the orientation of the Viewpoint as a quaternion
-     in format (w x y z).
+     Explicitly sets the orientation of the Viewpoint.
 
      This may be ignored or instantaneously overwritten by dynamic
      updates of the position value.
-   */
-  virtual void setQuaternion(gmTypes::float4 rot) {
-    orientation = Eigen::Quaternionf(rot[0], rot[1], rot[2], rot[3]);
-  }
 
-  /**
-     Explicitly sets the orientation of the Viewpoint as an axis angle
-     rotation in format (x y z a) where the angle a is expressed in
-     radians. The axis is normalized during the call.
-
-     This may be ignored or instantaneously overwritten by dynamic
-     updates of the position value.
-   */
-  virtual void setAxisAngle(gmTypes::float4 rot) {
-    orientation = Eigen::Quaternionf::AngleAxisType
-      (rot[3], Eigen::Vector3f(rot[0], rot[1], rot[2]).normalized());
+     \b XML-attribute: \c orientation
+  */
+  virtual void setOrientation(Eigen::Quaternionf q) {
+    orientation = q;
   }
 
   /**
      Set the up direction to be used in a later call to
      setLookAt. This does nothing if setLookAt is not used.
+
+     \b XML-attribute: \c upDirection
   */
-  virtual void setUpDirection(gmTypes::float3 up) {
-    up_direction = Eigen::Vector3f(up[0], up[1], up[2]).normalized();
+  virtual void setUpDirection(Eigen::Vector3f up) {
+    up_direction = up.normalized();
   }
 
   /**
@@ -94,8 +82,10 @@ public:
 
      Observe that this affects only the viewpoint orientation -
      camera orientation will not automatically toe-in to this point.
+
+     \b XML-attribute: \c lookAt
   */
-  virtual void setLookAt(gmTypes::float3 pt);
+  virtual void setLookAt(Eigen::Vector3f p);
 
   /**
      Returns the default key, in Configuration, for the

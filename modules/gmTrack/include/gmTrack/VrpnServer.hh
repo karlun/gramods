@@ -47,6 +47,8 @@ public:
 
   /**
      Sets the port to bind the VRPN server to.
+
+     \b XML-attribute: \c port
   */
   void setPort(int port);
 

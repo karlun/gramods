@@ -24,13 +24,17 @@ public:
   /**
      Sets the tracker to be used to read off the origin pose of the
      target tracker.
+
+     \b XML-key: \c originTracker
    */
   void setOriginTracker(std::shared_ptr<SinglePoseTracker> tracker);
 
   /**
      Sets the tracker to be used to read off the target pose relative
      to the pose extracted from the origin tracker.
-   */
+
+     \b XML-key: \c targetTracker
+  */
   void setTargetTracker(std::shared_ptr<SinglePoseTracker> tracker);
 
   GM_OFI_DECLARE;

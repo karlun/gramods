@@ -10,9 +10,8 @@ BEGIN_NAMESPACE_GMTRACK;
 
 GM_OFI_DEFINE(TimeSamplePoseTracker);
 GM_OFI_PARAM(TimeSamplePoseTracker, time, double, TimeSamplePoseTracker::addTime);
-GM_OFI_PARAM(TimeSamplePoseTracker, position, gmTypes::float3, TimeSamplePoseTracker::addPosition);
-GM_OFI_PARAM(TimeSamplePoseTracker, quaternion, gmTypes::float4, TimeSamplePoseTracker::addQuaternion);
-GM_OFI_PARAM(TimeSamplePoseTracker, axisAngle, gmTypes::float4, TimeSamplePoseTracker::addAxisAngle);
+GM_OFI_PARAM(TimeSamplePoseTracker, position, Eigen::Vector3f, TimeSamplePoseTracker::addPosition);
+GM_OFI_PARAM(TimeSamplePoseTracker, orientation, Eigen::Quaternionf, TimeSamplePoseTracker::addOrientation);
 
 
 struct TimeSamplePoseTracker::Impl {
@@ -21,7 +20,7 @@ struct TimeSamplePoseTracker::Impl {
 
   void addTime(double t);
   void addPosition(Eigen::Vector3f p);
-  void addQuaternion(Eigen::Quaternionf q);
+  void addOrientation(Eigen::Quaternionf q);
 
   bool getPose(PoseSample &p);
 
@@ -45,7 +44,7 @@ void TimeSamplePoseTracker::Impl::addTime(double t) { time.push_back(t); }
 
 void TimeSamplePoseTracker::Impl::addPosition(Eigen::Vector3f p) { position.push_back(p); }
 
-void TimeSamplePoseTracker::Impl::addQuaternion(Eigen::Quaternionf q) { orientation.push_back(q); }
+void TimeSamplePoseTracker::Impl::addOrientation(Eigen::Quaternionf q) { orientation.push_back(q); }
 
 bool TimeSamplePoseTracker::Impl::getPose(PoseSample &p) {
 
@@ -135,18 +134,12 @@ void TimeSamplePoseTracker::addTime(double t) {
   _impl->addTime(t);
 }
 
-void TimeSamplePoseTracker::addPosition(gmTypes::float3 p) {
-  _impl->addPosition(Eigen::Vector3f(p[0], p[1], p[2]));
+void TimeSamplePoseTracker::addPosition(Eigen::Vector3f p) {
+  _impl->addPosition(p);
 }
 
-void TimeSamplePoseTracker::addQuaternion(gmTypes::float4 rot) {
-  _impl->addQuaternion(Eigen::Quaternionf(rot[0], rot[1], rot[2], rot[3]));
-}
-
-void TimeSamplePoseTracker::addAxisAngle(gmTypes::float4 rot) {
-  Eigen::Quaternionf q(Eigen::Quaternionf::AngleAxisType
-                       (rot[3], Eigen::Vector3f(rot[0], rot[1], rot[2]).normalized()));
-  _impl->addQuaternion(q);
+void TimeSamplePoseTracker::addOrientation(Eigen::Quaternionf q) {
+  _impl->addOrientation(q);
 }
 
 bool TimeSamplePoseTracker::getPose(PoseSample &p) {

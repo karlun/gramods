@@ -27,11 +27,15 @@ public:
      files should be saved, then set this as a fprint formatted
      template, for example "frame_%06d.png". Default value is
      "SaveView.png". Supported suffixes are .png and .jpeg.
+
+     \b XML-attribute: \c file
   */
   void setFile(std::string file);
 
   /**
      Sets the view that should be saved to file.
+
+     \b XML-key: \c view
   */
   void setView(std::shared_ptr<View> view);
 

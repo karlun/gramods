@@ -42,24 +42,32 @@ public:
 
   /**
      Sets if quad buffers should be requested for the GL context.
+
+     \b XML-attribute: \c useQuadBuffers
   */
   void setUseQuadBuffers(bool on) { gl_use_quad_buffers = on; }
 
   /**
      Sets the major version to be requested for the GL context in this
      Window.
+
+     \b XML-attribute: \c GLMajor
   */
   void setGLMajor(int v) { gl_major = v; }
 
   /**
      Sets the minor version to be requested for the GL context in this
      Window.
+
+     \b XML-attribute: \c GLMinor
   */
   void setGLMinor(int v) { gl_minor = v; }
 
   /**
      Sets the profile to be requested for the GL context in this
      Window. Valid values are CORE, ES and COMPATIBILITY.
+
+     \b XML-attribute: \c GLProfile
   */
   void setGLProfile(std::string s) { gl_profile = s; }
 
@@ -68,6 +76,8 @@ public:
      is not strictly necessary, but putting the SDL context here
      ensures that it is not destroyed until the SdlWindow has been
      destroyed.
+
+     \b XML-key: \c context
   */
   void setContext(std::shared_ptr<gmCore::SdlContext> ctx) { context = ctx; }
 

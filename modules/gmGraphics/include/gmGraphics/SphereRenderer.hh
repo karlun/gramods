@@ -5,7 +5,7 @@
 #include <gmGraphics/Renderer.hh>
 #include <gmGraphics/Texture.hh>
 
-#include <gmTypes/all.hh>
+#include <gmTypes/eigen.hh>
 #include <gmCore/OFactory.hh>
 
 BEGIN_NAMESPACE_GMGRAPHICS;
@@ -26,17 +26,32 @@ public:
   */
   void render(Camera camera);
 
+  /**
+     Set the radius of the sphere.
+
+     \b XML-attribute: \c radius
+  */
   void setRadius(float r);
-  void setCenter(gmTypes::float3 c);
+
+  /**
+     Set the position of the sphere.
+
+     \b XML-attribute: \c center
+  */
+  void setCenter(Eigen::Vector3f c);
 
   /**
      Sets the Texture to apply on the sphere.
+
+     \b XML-key: \c texture
   */
   void setTexture(std::shared_ptr<Texture> tex);
 
   /**
      Sets the vertical coverage of the angular fisheye texture, in
      radians. Default is 2π.
+
+     \b XML-attribute: \c textureCoverageAngle
   */
   void setTextureCoverageAngle(float v);
 

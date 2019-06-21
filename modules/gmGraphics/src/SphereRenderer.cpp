@@ -13,7 +13,7 @@ BEGIN_NAMESPACE_GMGRAPHICS;
 
 GM_OFI_DEFINE(SphereRenderer);
 GM_OFI_PARAM(SphereRenderer, radius, float, SphereRenderer::setRadius);
-GM_OFI_PARAM(SphereRenderer, center, gmTypes::float3, SphereRenderer::setCenter);
+GM_OFI_PARAM(SphereRenderer, center, Eigen::Vector3f, SphereRenderer::setCenter);
 GM_OFI_POINTER(SphereRenderer, texture, gmGraphics::Texture, SphereRenderer::setTexture);
 GM_OFI_PARAM(SphereRenderer, textureCoverageAngle, float, SphereRenderer::setTextureCoverageAngle);
 
@@ -275,8 +275,8 @@ void SphereRenderer::setRadius(float r) {
   _impl->sphere_radius = r;
 }
 
-void SphereRenderer::setCenter(gmTypes::float3 c) {
-  _impl->sphere_center = Eigen::Vector3f(c[0], c[1], c[2]);
+void SphereRenderer::setCenter(Eigen::Vector3f c) {
+  _impl->sphere_center = c;
 }
 
 void SphereRenderer::setTexture(std::shared_ptr<Texture> tex) {

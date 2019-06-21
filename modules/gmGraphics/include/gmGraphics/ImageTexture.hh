@@ -6,7 +6,7 @@
 
 #ifdef gramods_ENABLE_FreeImage
 
-#include <gmTypes/all.hh>
+#include <gmTypes/size.hh>
 #include <gmCore/OFactory.hh>
 #include <gmGraphics/Texture.hh>
 #include <memory>
@@ -43,6 +43,8 @@ public:
      use setRange to specify the range. For example if file is set to
      "image_%05d.png" and range is set to 1-199, then images from
      "image_00000.png" to "image_00199.png" will be read.
+
+     \b XML-attribute: \c file
   */
   void setFile(std::string file);
 
@@ -50,11 +52,15 @@ public:
      Sets the range (inclusive) of frames to read. This assumes that
      the file name specified with setFile is a printf formatted
      template.
+
+     \b XML-attribute: \c range
   */
   void setRange(gmTypes::size2 range);
 
   /**
      Activates or deactivates looping the animation.
+
+     \b XML-attribute: \c loop
   */
   void setLoop(bool on);
 

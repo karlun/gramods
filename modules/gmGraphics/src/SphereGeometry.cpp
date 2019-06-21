@@ -8,7 +8,7 @@
 BEGIN_NAMESPACE_GMGRAPHICS;
 
 GM_OFI_DEFINE_SUB(SphereGeometry, Geometry);
-GM_OFI_PARAM(SphereGeometry, center, gmTypes::float3, SphereGeometry::setCenter);
+GM_OFI_PARAM(SphereGeometry, center, Eigen::Vector3f, SphereGeometry::setCenter);
 GM_OFI_PARAM(SphereGeometry, radius, float, SphereGeometry::setRadius);
 GM_OFI_PARAM(SphereGeometry, frustumSizeRatio, float, SphereGeometry::setFrustumSizeRatio);
 
@@ -180,9 +180,9 @@ bool SphereGeometry::Impl::getIntersection(Eigen::Vector3f pos,
   return true;
 }
 
-void SphereGeometry::setCenter(gmTypes::float3 c) {
+void SphereGeometry::setCenter(Eigen::Vector3f c) {
   auto impl = static_cast<Impl*>(_impl.get());
-  impl->center = Eigen::Vector3f(c[0], c[1], c[2]);
+  impl->center = c;
 }
 
 void SphereGeometry::setRadius(float r) {

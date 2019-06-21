@@ -6,9 +6,9 @@
 BEGIN_NAMESPACE_GMGRAPHICS;
 
 GM_OFI_DEFINE_SUB(SpatialPlanarView, StereoscopicView);
-GM_OFI_PARAM(SpatialPlanarView, topLeftCorner, gmTypes::float3, SpatialPlanarView::setTopLeftCorner);
-GM_OFI_PARAM(SpatialPlanarView, bottomRightCorner, gmTypes::float3, SpatialPlanarView::setBottomRightCorner);
-GM_OFI_PARAM(SpatialPlanarView, upDirection, gmTypes::float3, SpatialPlanarView::setUpDirection);
+GM_OFI_PARAM(SpatialPlanarView, topLeftCorner, Eigen::Vector3f, SpatialPlanarView::setTopLeftCorner);
+GM_OFI_PARAM(SpatialPlanarView, bottomRightCorner, Eigen::Vector3f, SpatialPlanarView::setBottomRightCorner);
+GM_OFI_PARAM(SpatialPlanarView, upDirection, Eigen::Vector3f, SpatialPlanarView::setUpDirection);
 
 void SpatialPlanarView::renderFullPipeline(ViewSettings settings, Eye eye) {
 

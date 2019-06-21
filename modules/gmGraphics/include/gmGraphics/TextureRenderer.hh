@@ -27,6 +27,8 @@ public:
   /**
      Sets the Texture that should be called upon calls to the render
      method.
+
+     \b XML-key: \c texture
   */
   void setTexture(std::shared_ptr<Texture> tex) {
     texture = tex;

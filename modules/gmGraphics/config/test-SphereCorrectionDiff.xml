@@ -3,7 +3,7 @@
   <OStreamMessageSink stream="err" useAnsiColor="1" level="1"/>
   <LogFileMessageSink logFilePath="gramods.log" append="0"/>
 
-  <ImportLibrary lib="libgmGraphics.so"/>
+  <ImportLibrary library="libgmGraphics.so"/>
 
   <SdlWindow
       size="600 600"
@@ -35,7 +35,7 @@
           bufferWidth="4096"
           bufferHeight="4096"
           position="0 0 0"
-          axisAngle="1 0 0 0"
+          orientation="axisangle 1 0 0 0"
           clipAngles="0.78539816339744830962 0.78539816339744830962 0.78539816339744830962 0.78539816339744830962"
           linearInterpolation="on">
 
