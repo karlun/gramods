@@ -57,6 +57,8 @@ TEST(gmCoreConsole, OStreamMessageSink_sstream) {
   result << "I3 (e) E" << std::endl;
 
   EXPECT_EQ(result.str(), ss.str());
+
+  gmCore::Console::removeAllSinks();
 }
 
 TEST(gmCoreConsole, OStreamMessageSink_stdcout) {
