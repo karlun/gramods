@@ -68,6 +68,7 @@ class SimpleDataSynchronization
 public:
 
   SimpleDataSynchronization();
+  virtual ~SimpleDataSynchronization();
 
   /**
      Adds a data container to be synchronized by the

@@ -19,6 +19,7 @@ class TimeSampleAnalogsTracker
 public:
 
   TimeSampleAnalogsTracker();
+  virtual ~TimeSampleAnalogsTracker();
 
   /**
      Adds a time sample in seconds, from the start of the

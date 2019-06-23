@@ -18,6 +18,7 @@ class TimeSampleButtonsTracker
 public:
 
   TimeSampleButtonsTracker();
+  virtual ~TimeSampleButtonsTracker();
 
   /**
      Adds a time sample in seconds, from the start of the

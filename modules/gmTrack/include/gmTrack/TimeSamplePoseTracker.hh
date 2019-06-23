@@ -18,6 +18,7 @@ class TimeSamplePoseTracker
 public:
 
   TimeSamplePoseTracker();
+  virtual ~TimeSamplePoseTracker();
 
   /**
      Adds a time sample in seconds, from the start of the program.

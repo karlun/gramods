@@ -32,6 +32,8 @@ struct TimeSampleButtonsTracker::Impl {
 TimeSampleButtonsTracker::TimeSampleButtonsTracker()
   : _impl(new Impl()) {}
 
+TimeSampleButtonsTracker::~TimeSampleButtonsTracker() {}
+
 TimeSampleButtonsTracker::Impl::Impl()
   : start_time(std::chrono::steady_clock::now()),
     sample_idx(-1) {}

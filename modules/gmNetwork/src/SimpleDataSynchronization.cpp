@@ -26,6 +26,8 @@ struct SimpleDataSynchronization::Impl {
 SimpleDataSynchronization::SimpleDataSynchronization()
   : _impl(std::make_unique<Impl>()) {}
 
+SimpleDataSynchronization::~SimpleDataSynchronization() {}
+
 void SimpleDataSynchronization::addData(std::shared_ptr<SyncData> d) {
   if (!d)
     throw std::invalid_argument("Attempting to add data by null pointer");
