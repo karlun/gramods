@@ -17,6 +17,8 @@ namespace gramods {
 
 #define GRAMODS_NETWORK_VERSION "dev"
 
+#cmakedefine _WIN32_WINNT @_WIN32_WINNT@
+
 #cmakedefine gramods_ACTIVATE_ASIO_HANDLER_TRACKING
 #ifdef gramods_ACTIVATE_ASIO_HANDLER_TRACKING
 #define ASIO_ENABLE_HANDLER_TRACKING
