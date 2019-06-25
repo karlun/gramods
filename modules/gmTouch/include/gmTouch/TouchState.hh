@@ -758,10 +758,16 @@ private:
 
   int state;
 
-  Eigen::Affine3f current_WPV_inv;
+  /**
+   * Converts the specified touch point into a touch line using the
+   * specified inverse projection matrix.
+   */
+  TouchLine touchPointToTouchLine(TouchPoint pt, Eigen::Matrix4f WPV_inv) const;
+
+  Eigen::Matrix4f current_WPV_inv;
   bool current_WPV_inv_valid;
 
-  Eigen::Affine3f previous_WPV_inv;
+  Eigen::Matrix4f previous_WPV_inv;
   bool previous_WPV_inv_valid;
 
   int current_height;
