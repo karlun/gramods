@@ -1,32 +1,40 @@
 
-#include <gmGraphics/Window.hh>
 #include <gmCore/Configuration.hh>
 #include <gmCore/Console.hh>
 #include <gmCore/OStreamMessageSink.hh>
 #include <gmCore/ImportLibrary.hh>
+#include <gmCore/SdlContext.hh>
+#include <gmGraphics/SdlWindow.hh>
 
 #include <chrono>
 #include <thread>
 
 using namespace gramods;
 
-TEST(gmCore, ImportLibrary) {
-  std::string xml = ""
-    "<config>"
-    "  <ImportLibrary lib=\"libgmGraphics.so\"/>"
-    "</config>";
-  gmCore::Configuration config(xml);
-
-  std::vector<std::shared_ptr<gmCore::ImportLibrary>> importers;
-  EXPECT_EQ(1, config.getAllObjects(importers));
-
-  if (!importers.empty())
-    EXPECT_TRUE(importers[0]->isLoaded());
-}
-
 #ifdef gramods_ENABLE_SDL2
 
 TEST(gmGraphics, SdlWindow) {
+
+  gmCore::ImportLibrary importer;
+  importer.setLibrary("libgmGraphics.so");
+
+  auto context = std::make_shared<gmCore::SdlContext>();
+  context->setUseVideo(true);
+  context->initialize();
+
+  auto window = std::make_shared<gmGraphics::SdlWindow>();
+  window->setContext(context);
+  window->initialize();
+
+  std::this_thread::sleep_for(std::chrono::seconds(1));
+}
+
+#endif
+
+#ifdef gramods_ENABLE_TinyXML2
+#ifdef gramods_ENABLE_SDL2
+
+TEST(gmGraphics, SdlWindowXml) {
 
   std::string xml = ""
     "<config>"
@@ -45,4 +53,5 @@ TEST(gmGraphics, SdlWindow) {
   std::this_thread::sleep_for(std::chrono::seconds(1));
 }
 
+#endif
 #endif

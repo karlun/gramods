@@ -32,6 +32,11 @@ namespace gramods {
 
 #cmakedefine gramods_STRIP_PATH_FROM_FILE
 
+#cmakedefine TinyXML2_FOUND
+#ifdef TinyXML2_FOUND
+#cmakedefine gramods_ENABLE_TinyXML2
+#endif
+
 #cmakedefine SDL2_FOUND
 #ifdef SDL2_FOUND
 #cmakedefine gramods_ENABLE_SDL2

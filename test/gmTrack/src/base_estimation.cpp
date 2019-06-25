@@ -2,12 +2,12 @@
 #include <gmTrack/PoseRegistrationEstimator.hh>
 
 #include <gmTrack/TimeSamplePoseTracker.hh>
+#include <gmTrack/TimeSampleButtonsTracker.hh>
 
 #include <gmCore/Updateable.hh>
 
 #include <gmCore/Console.hh>
 #include <gmCore/OStreamMessageSink.hh>
-#include <gmCore/Configuration.hh>
 
 using namespace gramods;
 
@@ -21,45 +21,30 @@ TEST(gmTrackBaseEstimation, FullSamplesByInverse) {
 #endif
 
   {
-    std::string xml = R"lang=xml(
-<config>
 
-  <ImportLibrary library="libgmTrack.so"/>
+    auto ts_buttons_tracker = std::make_shared<gmTrack::TimeSampleButtonsTracker>();
+    ts_buttons_tracker->addButtons(0);
+    ts_buttons_tracker->addButtons(1);
+    ts_buttons_tracker->addButtons(0);
+    ts_buttons_tracker->addButtons(1);
+    ts_buttons_tracker->addButtons(0);
+    ts_buttons_tracker->addButtons(1);
+    ts_buttons_tracker->addButtons(0);
+    ts_buttons_tracker->addButtons(1);
+    ts_buttons_tracker->addButtons(0);
+    ts_buttons_tracker->initialize();
 
-  <TimeSamplePoseTracker DEF="pose_tracker"/>
+    auto ts_pose_tracker = std::make_shared<gmTrack::TimeSamplePoseTracker>();
+    ts_pose_tracker->initialize();
 
-  <PoseRegistrationEstimator>
+    auto controller = std::make_shared<gmTrack::Controller>();
+    controller->setPoseTracker(ts_pose_tracker);
+    controller->setButtonsTracker(ts_buttons_tracker);
+    controller->initialize();
 
-    <Controller>
-
-      <TimeSamplePoseTracker USE="pose_tracker"/>
-
-      <TimeSampleButtonsTracker>
-        <param name="buttons" value="0"/>
-        <param name="buttons" value="1"/>
-        <param name="buttons" value="0"/>
-        <param name="buttons" value="1"/>
-        <param name="buttons" value="0"/>
-        <param name="buttons" value="1"/>
-        <param name="buttons" value="0"/>
-        <param name="buttons" value="1"/>
-        <param name="buttons" value="0"/>
-      </TimeSampleButtonsTracker>
-    </Controller>
-    
-  </PoseRegistrationEstimator>
-</config>
-)lang=xml";
-    gmCore::Configuration config(xml);
-
-    std::shared_ptr<gmTrack::PoseRegistrationEstimator> registrator;
-    ASSERT_TRUE(config.getObject(registrator));
-
-    std::shared_ptr<gmTrack::TimeSamplePoseTracker> tracker;
-    ASSERT_TRUE(config.getObject(tracker));
-
-    std::vector<std::shared_ptr<gmCore::Object>> objects;
-    config.getAllObjects(objects);
+    auto registrator = std::make_shared<gmTrack::PoseRegistrationEstimator>();
+    registrator->setController(controller);
+    registrator->initialize();
 
     Eigen::Matrix4f RegA;
     RegA <<
@@ -89,9 +74,9 @@ TEST(gmTrackBaseEstimation, FullSamplesByInverse) {
                              points(1, idx),
                              points(2, idx)});
     for (int idx = 0; idx < 4; ++idx)
-      tracker->addPosition({samples(0, idx),
-                            samples(1, idx),
-                            samples(2, idx)});
+      ts_pose_tracker->addPosition({samples(0, idx),
+                                    samples(1, idx),
+                                    samples(2, idx)});
 
     for (int idx = 1; idx <= 9; ++idx) {
       gmCore::Updateable::updateAll();
@@ -117,45 +102,30 @@ TEST(gmTrackBaseEstimation, OverDeterminedSamplesByQR) {
 #endif
 
   {
-    std::string xml = R"lang=xml(
-<config>
 
-  <ImportLibrary library="libgmTrack.so"/>
+    auto ts_buttons_tracker = std::make_shared<gmTrack::TimeSampleButtonsTracker>();
+    ts_buttons_tracker->addButtons(0);
+    ts_buttons_tracker->addButtons(1);
+    ts_buttons_tracker->addButtons(0);
+    ts_buttons_tracker->addButtons(1);
+    ts_buttons_tracker->addButtons(0);
+    ts_buttons_tracker->addButtons(1);
+    ts_buttons_tracker->addButtons(0);
+    ts_buttons_tracker->addButtons(1);
+    ts_buttons_tracker->addButtons(0);
+    ts_buttons_tracker->initialize();
 
-  <TimeSamplePoseTracker DEF="pose_tracker"/>
+    auto ts_pose_tracker = std::make_shared<gmTrack::TimeSamplePoseTracker>();
+    ts_pose_tracker->initialize();
 
-  <PoseRegistrationEstimator>
+    auto controller = std::make_shared<gmTrack::Controller>();
+    controller->setPoseTracker(ts_pose_tracker);
+    controller->setButtonsTracker(ts_buttons_tracker);
+    controller->initialize();
 
-    <Controller>
-
-      <TimeSamplePoseTracker USE="pose_tracker"/>
-
-      <TimeSampleButtonsTracker>
-        <param name="buttons" value="0"/>
-        <param name="buttons" value="1"/>
-        <param name="buttons" value="0"/>
-        <param name="buttons" value="1"/>
-        <param name="buttons" value="0"/>
-        <param name="buttons" value="1"/>
-        <param name="buttons" value="0"/>
-        <param name="buttons" value="1"/>
-        <param name="buttons" value="0"/>
-      </TimeSampleButtonsTracker>
-    </Controller>
-    
-  </PoseRegistrationEstimator>
-</config>
-)lang=xml";
-    gmCore::Configuration config(xml);
-
-    std::shared_ptr<gmTrack::PoseRegistrationEstimator> registrator;
-    ASSERT_TRUE(config.getObject(registrator));
-
-    std::shared_ptr<gmTrack::TimeSamplePoseTracker> tracker;
-    ASSERT_TRUE(config.getObject(tracker));
-
-    std::vector<std::shared_ptr<gmCore::Object>> objects;
-    config.getAllObjects(objects);
+    auto registrator = std::make_shared<gmTrack::PoseRegistrationEstimator>();
+    registrator->setController(controller);
+    registrator->initialize();
 
     Eigen::Matrix4f RegA;
     RegA <<
@@ -185,9 +155,9 @@ TEST(gmTrackBaseEstimation, OverDeterminedSamplesByQR) {
                              points(1, idx),
                              points(2, idx)});
     for (int idx = 0; idx < 4; ++idx)
-      tracker->addPosition({samples(0, idx),
-                            samples(1, idx),
-                            samples(2, idx)});
+      ts_pose_tracker->addPosition({samples(0, idx),
+                                    samples(1, idx),
+                                    samples(2, idx)});
 
     for (int idx = 1; idx <= 9; ++idx) {
       gmCore::Updateable::updateAll();

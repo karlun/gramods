@@ -1,13 +1,15 @@
 
 #include <gmTrack/PoseRegistrationEstimator.hh>
 
+#include <gmTrack/TimeSampleButtonsTracker.hh>
+#include <gmTrack/TimeSampleAnalogsTracker.hh>
+#include <gmTrack/ButtonsMapper.hh>
 #include <gmTrack/AnalogsMapper.hh>
 
 #include <gmCore/Updateable.hh>
 
 #include <gmCore/Console.hh>
 #include <gmCore/OStreamMessageSink.hh>
-#include <gmCore/Configuration.hh>
 
 using namespace gramods;
 
@@ -45,13 +47,21 @@ TEST(gmTrackMapper, Buttons) {
 
 </config>
 )lang=xml";
-    gmCore::Configuration config(xml);
 
-    std::shared_ptr<gmTrack::ButtonsTracker> tracker;
-    config.getObject(tracker);
+    auto ts_tracker = std::make_shared<gmTrack::TimeSampleButtonsTracker>();
+    ts_tracker->addButtons(0);
+    ts_tracker->addButtons(1);
+    ts_tracker->addButtons(2);
+    ts_tracker->addButtons(3);
+    ts_tracker->addButtons(4);
+    ts_tracker->initialize();
 
-    std::vector<std::shared_ptr<gmCore::Object>> objects;
-    config.getAllObjects(objects);
+    auto tracker = std::make_shared<gmTrack::ButtonsMapper>();
+    tracker->setButtonsTracker(ts_tracker);
+    tracker->addMapping({2, 1});
+    tracker->addMapping({1, 0});
+    tracker->addMapping({0, 2});
+    tracker->initialize();
 
     gmTrack::ButtonsTracker::ButtonsSample sample;
 
@@ -106,13 +116,21 @@ TEST(gmTrackMapper, Buttons2) {
 
 </config>
 )lang=xml";
-    gmCore::Configuration config(xml);
 
-    std::shared_ptr<gmTrack::ButtonsTracker> tracker;
-    config.getObject(tracker);
+    auto ts_tracker = std::make_shared<gmTrack::TimeSampleButtonsTracker>();
+    ts_tracker->addButtons(0);
+    ts_tracker->addButtons(1);
+    ts_tracker->addButtons(2);
+    ts_tracker->addButtons(3);
+    ts_tracker->addButtons(4);
+    ts_tracker->initialize();
 
-    std::vector<std::shared_ptr<gmCore::Object>> objects;
-    config.getAllObjects(objects);
+    auto tracker = std::make_shared<gmTrack::ButtonsMapper>();
+    tracker->setButtonsTracker(ts_tracker);
+    tracker->setMainButton(1);
+    tracker->setSecondaryButton(2);
+    tracker->setMenuButton(0);
+    tracker->initialize();
 
     gmTrack::ButtonsTracker::ButtonsSample sample;
 
@@ -164,13 +182,18 @@ TEST(gmTrackMapper, Analogs) {
 
 </config>
 )lang=xml";
-    gmCore::Configuration config(xml);
 
-    std::shared_ptr<gmTrack::AnalogsTracker> tracker;
-    config.getObject(tracker);
+    auto ts_tracker = std::make_shared<gmTrack::TimeSampleAnalogsTracker>();
+    ts_tracker->addAnalogs({0, 0, 0});
+    ts_tracker->addAnalogs({1, 2, 3});
+    ts_tracker->initialize();
 
-    std::vector<std::shared_ptr<gmCore::Object>> objects;
-    config.getAllObjects(objects);
+    auto tracker = std::make_shared<gmTrack::AnalogsMapper>();
+    tracker->setAnalogsTracker(ts_tracker);
+    tracker->addMapping({2, 1});
+    tracker->addMapping({1, 0});
+    tracker->addMapping({0, 2});
+    tracker->initialize();
 
     gmTrack::AnalogsTracker::AnalogsSample sample;
 
@@ -220,13 +243,18 @@ TEST(gmTrackMapper, Analogs2) {
 
 </config>
 )lang=xml";
-    gmCore::Configuration config(xml);
 
-    std::shared_ptr<gmTrack::AnalogsTracker> tracker;
-    config.getObject(tracker);
+    auto ts_tracker = std::make_shared<gmTrack::TimeSampleAnalogsTracker>();
+    ts_tracker->addAnalogs({0, 0, 0});
+    ts_tracker->addAnalogs({1, 2, 3});
+    ts_tracker->initialize();
 
-    std::vector<std::shared_ptr<gmCore::Object>> objects;
-    config.getAllObjects(objects);
+    auto tracker = std::make_shared<gmTrack::AnalogsMapper>();
+    tracker->setAnalogsTracker(ts_tracker);
+    tracker->setVerticalAnalog(1);
+    tracker->setHorizontalAnalog(2);
+    tracker->setTriggerAnalog(0);
+    tracker->initialize();
 
     gmTrack::AnalogsTracker::AnalogsSample sample;
 
@@ -244,4 +272,3 @@ TEST(gmTrackMapper, Analogs2) {
 
   }
 }
-
