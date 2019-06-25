@@ -35,8 +35,6 @@ class EFFOAW {
 
 public:
 
-  typedef std::valarray<double> VEC;
-
   /** Creates a new end-fitting first-order adaptive window
       estimator using the default parameters. */
   EFFOAW();
