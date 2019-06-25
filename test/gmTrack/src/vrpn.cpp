@@ -3,11 +3,10 @@
 
 #ifdef gramods_ENABLE_VRPN
 
-#include <gmTrack/SinglePoseTracker.hh>
+#include <gmTrack/MultiToSinglePoseTracker.hh>
 
 #include <gmCore/Console.hh>
 #include <gmCore/OStreamMessageSink.hh>
-#include <gmCore/Configuration.hh>
 
 #include <memory>
 #include <string>
@@ -116,22 +115,17 @@ TEST(gmTrackVrpn, VrpnPoseTrackerConfigurationAndMultiToSinglePoseTracker) {
     gmTrack::PoseTracker::PoseSample sample;
     bool got_sample = false;
     {
-      std::string xml = ""
-        "<config>"
-        "  <MultiToSinglePoseTracker sensor=\"0\">"
-        "    <VrpnPoseTracker connectionString=\"TEST_DEVICE@localhost\"/>"
-        "  </MultiToSinglePoseTracker>"
-        "</config>";
-      gmCore::Configuration config(xml);
 
-      std::shared_ptr<gmTrack::SinglePoseTracker> tracker;
-      bool got_tracker = config.getObject(tracker);
+      auto vrpn_tracker = std::make_shared<gmTrack::VrpnPoseTracker>();
+      vrpn_tracker->setConnectionString("TEST_DEVICE@localhost");
+      vrpn_tracker->initialize();
 
-      EXPECT_TRUE(got_tracker);
-      EXPECT_TRUE(tracker);
+      auto m2s_tracker = std::make_shared<gmTrack::MultiToSinglePoseTracker>();
+      m2s_tracker->setPoseTracker(vrpn_tracker);
+      m2s_tracker->setSensor(0);
+      m2s_tracker->initialize();
 
-      if (!tracker)
-        return;
+      std::shared_ptr<gmTrack::SinglePoseTracker> tracker = m2s_tracker;
 
       for (int idx = 0; idx < 10; ++idx) {
         server.report_pose(0, timestamp, position, quaternion);

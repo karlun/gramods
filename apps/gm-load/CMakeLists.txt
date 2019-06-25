@@ -14,6 +14,11 @@ IF (NOT TARGET gmCore)
 ENDIF ()
 SET (APP_LIBS ${APP_LIBS} gmCore)
 
+IF (NOT gramods_ENABLE_TinyXML2)
+  MESSAGE (STATUS "Not including gm-load - requires XML support")
+  RETURN()
+ENDIF ()
+
 IF (NOT TARGET gmGraphics)
   MESSAGE (STATUS "Not including gm-load - requires gmGraphics")
   RETURN()

@@ -9,9 +9,20 @@ using namespace gramods;
 
 TEST(gmCoreLoadLib, SimpleLoad) {
 
+  auto importer = std::make_shared<gmCore::ImportLibrary>();
+  importer->setLibrary("test-lib");
+  importer->initialize();
+
+  EXPECT_FALSE(importer->isLoaded());
+}
+
+#ifdef gramods_ENABLE_TinyXML2
+
+TEST(gmCoreLoadLib, SimpleLoadXml) {
+
   std::string xml = ""
     "<config>"
-    "  <ImportLibrary lib=\"test-lib\"/>"
+    "  <ImportLibrary library=\"test-lib\"/>"
     "</config>";
   gmCore::Configuration config(xml);
 
@@ -20,3 +31,5 @@ TEST(gmCoreLoadLib, SimpleLoad) {
   for (auto importer : importers)
     EXPECT_FALSE(importer->isLoaded());
 }
+
+#endif

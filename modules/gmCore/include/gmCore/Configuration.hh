@@ -11,6 +11,8 @@
 #include <algorithm>
 #include <memory>
 
+#ifdef gramods_ENABLE_TinyXML2
+
 #include <tinyxml2.h>
 
 BEGIN_NAMESPACE_GMCORE;
@@ -441,6 +443,8 @@ inline std::size_t Configuration::getAllParams(std::string name, std::vector<T> 
 }
 
 END_NAMESPACE_GMCORE;
+
+#endif
 
 #endif
 

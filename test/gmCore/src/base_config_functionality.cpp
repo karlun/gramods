@@ -3,6 +3,8 @@
 #include <gmCore/ImportLibrary.hh>
 #include <gmCore/Configuration.hh>
 
+#ifdef gramods_ENABLE_TinyXML2
+
 #include <memory>
 #include <string>
 #include <vector>
@@ -298,3 +300,5 @@ TEST(gmCoreBaseFunctionality, ParameterTypes) {
   EXPECT_THROW(gmCore::Configuration config(argc, argv3), std::invalid_argument);
 
 }
+
+#endif

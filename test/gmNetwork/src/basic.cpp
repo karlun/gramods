@@ -5,10 +5,8 @@
 #include <gmNetwork/SyncMData.hh>
 #include <gmNetwork/SimpleDataSynchronization.hh>
 
-
 #include <gmCore/Console.hh>
 #include <gmCore/OStreamMessageSink.hh>
-#include <gmCore/Configuration.hh>
 
 #include <memory>
 #include <thread>
@@ -21,34 +19,20 @@ struct Peer {
   Peer(int host_idx, int delay_ms)
     : delay_ms(delay_ms) {
 
-    std::string xml_tmpl = R"lang=xml(
-<config>
-  <ExecutionSynchronization>
-    <PeersConnection
-        DEF="PEERS"
-        localPeerIdx="%d">
-      <param name="peer" value="127.0.0.1:20400"/>
-      <param name="peer" value="127.0.0.1:20401"/>
-      <param name="peer" value="127.0.0.1:20402"/>
-    </PeersConnection>
-  </ExecutionSynchronization>
-  <SimpleDataSynchronization>
-    <PeersConnection
-        USE="PEERS"/>
-  </SimpleDataSynchronization>
-</config>
-)lang=xml";
+    auto conn = std::make_shared<gmNetwork::PeersConnection>();
+    conn->addPeer("127.0.0.1:20400");
+    conn->addPeer("127.0.0.1:20401");
+    conn->addPeer("127.0.0.1:20402");
+    conn->setLocalPeerIdx(host_idx);
+    conn->initialize();
 
-    size_t xml_size = snprintf(nullptr, 0, xml_tmpl.c_str(), host_idx) + 1;
-    std::vector<char> xml_str(xml_size);
-    snprintf(&xml_str[0], xml_size, xml_tmpl.c_str(), host_idx);
+    exec_sync = std::make_shared<gmNetwork::ExecutionSynchronization>();
+    exec_sync->setConnection(conn);
+    exec_sync->initialize();
 
-    gmCore::Configuration config(&xml_str[0]);
-
-    if (!config.getObject(exec_sync))
-      return;
-    if (!config.getObject(data_sync))
-      return;
+    data_sync = std::make_shared<gmNetwork::SimpleDataSynchronization>();
+    data_sync->setConnection(conn);
+    data_sync->initialize();
 
     data_int64 = std::make_shared<gmNetwork::SyncSInt64>();
     data_float64 = std::make_shared<gmNetwork::SyncSFloat64>();
@@ -222,4 +206,5 @@ TEST(gmNetworkPeersConnection, waitForAll) {
       EXPECT_EQ(vec_bool0[idx], vec_bool2[idx]);
     }
 }
+
 #endif

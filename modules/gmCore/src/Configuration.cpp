@@ -1,6 +1,8 @@
 
 #include <gmCore/Configuration.hh>
 
+#ifdef gramods_ENABLE_TinyXML2
+
 #include <gmCore/OFactory.hh>
 #include <gmCore/CommandLineParser.hh>
 
@@ -374,3 +376,5 @@ void Configuration::parse_param(tinyxml2::XMLElement *element){
 }
 
 END_NAMESPACE_GMCORE;
+
+#endif

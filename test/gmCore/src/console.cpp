@@ -61,6 +61,8 @@ TEST(gmCoreConsole, OStreamMessageSink_sstream) {
   gmCore::Console::removeAllSinks();
 }
 
+#ifdef gramods_ENABLE_TinyXML2
+
 TEST(gmCoreConsole, OStreamMessageSink_stdcout) {
 
   gmCore::Console::removeAllSinks();
@@ -90,4 +92,7 @@ TEST(gmCoreConsole, OStreamMessageSink_stdcout) {
   EXPECT_EQ(result.str(), ss.str());
 
   gmCore::Console::removeAllSinks();
+
 }
+
+#endif
