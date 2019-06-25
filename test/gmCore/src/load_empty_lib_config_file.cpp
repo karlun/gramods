@@ -11,7 +11,7 @@ TEST(gmCoreLoadLib, SimpleLoad) {
 
   std::string xml = ""
     "<config>"
-    "  <ImportLibrary lib=\"test-lib\"/>"
+    "  <ImportLibrary library=\"test-lib\"/>"
     "</config>";
   gmCore::Configuration config(xml);
 

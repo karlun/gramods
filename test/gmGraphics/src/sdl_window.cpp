@@ -30,7 +30,7 @@ TEST(gmGraphics, SdlWindow) {
 
   std::string xml = ""
     "<config>"
-    "  <ImportLibrary lib=\"libgmGraphics.so\"/>"
+    "  <ImportLibrary library=\"libgmGraphics.so\"/>"
     "  <SdlWindow size=\"100 100\">"
     "    <SdlContext AS=\"context\" useVideo=\"1\"/>"
     "  </SdlWindow>"
