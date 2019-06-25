@@ -35,13 +35,14 @@ GM_OFI_PARAM(Sub, b, int, Sub::setB);
 GM_OFI_POINTER(Sub, ptr, Sub, Sub::setPtr);
 GM_OFI_POINTER(Sub, ptrs, Sub, Sub::addPtr);
 
-std::string xml = ""
-  "<config>"
-  "  <Base a=\"412\"/>"
-  "  <Sub a=\"517\" b=\"917\">"
-  "    <Sub AS=\"ptr\" a=\"1\" b=\"4\"/>"
-  "  </Sub>"
-  "</config>";
+std::string xml = R"lang=xml(
+<config>
+  <Base a="412"/>
+  <Sub a="517" b="917">
+    <Sub AS="ptr" a="1" b="4"/>
+  </Sub>
+</config>
+)lang=xml";
 
 TEST(gmCoreBaseFunctionality, Inheritance) {
   
@@ -80,15 +81,16 @@ TEST(gmCoreBaseFunctionality, Tree) {
   }
 }
 
-std::string xml2 = ""
-  "<config>"
-  "  <Base a=\"412\"/>"
-  "  <Sub a=\"517\" b=\"917\">"
-  "    <Sub AS=\"ptrs\" a=\"1\" b=\"4\"/>"
-  "    <Sub AS=\"ptrs\" a=\"2\" b=\"8\"/>"
-  "    <Sub AS=\"ptrs\" a=\"3\" b=\"12\"/>"
-  "  </Sub>"
-  "</config>";
+std::string xml2 = R"lang=xml(
+<config>
+  <Base a="412"/>
+  <Sub a="517" b="917">
+    <Sub AS="ptrs" a="1" b="4"/>
+    <Sub AS="ptrs" a="2" b="8"/>
+    <Sub AS="ptrs" a="3" b="12"/>
+  </Sub>
+</config>
+)lang=xml";
 
 TEST(gmCoreBaseFunctionality, Multiple) {
   
@@ -111,15 +113,16 @@ TEST(gmCoreBaseFunctionality, ConfigCommandLine) {
   char arg0[] = "test";
   char arg1[] = "--asdf";
   char arg2[] = "--xml";
-  char arg3[] = ""
-    "<config>"
-    "  <Base a=\"412\"/>"
-    "  <Sub a=\"517\" b=\"917\">"
-    "    <Sub AS=\"ptrs\" a=\"1\" b=\"4\"/>"
-    "    <Sub AS=\"ptrs\" a=\"2\" b=\"8\"/>"
-    "    <Sub AS=\"ptrs\" a=\"3\" b=\"12\"/>"
-    "  </Sub>"
-    "</config>";
+  char arg3[] = R"lang=xml(
+  <config>
+    <Base a="412"/>
+    <Sub a="517" b="917">
+      <Sub AS="ptrs" a="1" b="4"/>
+      <Sub AS="ptrs" a="2" b="8"/>
+      <Sub AS="ptrs" a="3" b="12"/>
+    </Sub>
+  </config>
+  )lang=xml";
 
   {
     char *argv[] = { arg0, arg1 };
@@ -198,15 +201,16 @@ GM_OFI_PARAM(Multi, a, int, Multi::addA);
 TEST(gmCoreBaseFunctionality, MultipleParameters) {
 
   char arg0[] = "--xml";
-  char arg1[] = ""
-    "<config>"
-    "  <Multi a=\"312\"/>"
-    "  <Multi a=\"174\">"
-    "    <param name=\"a\" value=\"1391\"/>"
-    "    <param name=\"a\" value=\"31\"/>"
-    "    <param name=\"a\" value=\"74\"/>"
-    "  </Multi>"
-    "</config>";
+  char arg1[] = R"lang=xml(
+  <config>
+    <Multi a="312"/>
+    <Multi a="174">
+      <param name="a" value="1391"/>
+      <param name="a" value="31"/>
+      <param name="a" value="74"/>
+    </Multi>
+  </config>
+  )lang=xml";
 
   char *argv[] = { arg0, arg1 };
   int argc = 2;
@@ -242,21 +246,22 @@ GM_OFI_PARAM(Types, bool, bool, Types::addBool);
 TEST(gmCoreBaseFunctionality, ParameterTypes) {
 
   char arg0[] = "--xml";
-  char arg1[] = ""
-    "<config>"
-    "  <Types>"
-    "    <param name=\"string\" value=\"1391\"/>"
-    "    <param name=\"string\" value=\"12 12 12\"/>"
-    "    <param name=\"bool\" value=\"true\"/>"
-    "    <param name=\"bool\" value=\"True\"/>"
-    "    <param name=\"bool\" value=\"TRUE\"/>"
-    "    <param name=\"bool\" value=\"1\"/>"
-    "    <param name=\"bool\" value=\"false\"/>"
-    "    <param name=\"bool\" value=\"False\"/>"
-    "    <param name=\"bool\" value=\"FALSE\"/>"
-    "    <param name=\"bool\" value=\"0\"/>"
-    "  </Types>"
-    "</config>";
+  char arg1[] = R"lang=xml(
+  <config>
+    <Types>
+      <param name="string" value="1391"/>
+      <param name="string" value="12 12 12"/>
+      <param name="bool" value="true"/>
+      <param name="bool" value="True"/>
+      <param name="bool" value="TRUE"/>
+      <param name="bool" value="1"/>
+      <param name="bool" value="false"/>
+      <param name="bool" value="False"/>
+      <param name="bool" value="FALSE"/>
+      <param name="bool" value="0"/>
+    </Types>
+  </config>
+  )lang=xml";
 
   char *argv[] = { arg0, arg1 };
   int argc = 2;
@@ -279,22 +284,24 @@ TEST(gmCoreBaseFunctionality, ParameterTypes) {
   EXPECT_EQ(types->bools[6], false);
   EXPECT_EQ(types->bools[7], false);
 
-  char arg2[] = ""
-    "<config>"
-    "  <Types>"
-    "    <param name=\"bool\" value=\"2\"/>"
-    "  </Types>"
-    "</config>";
+  char arg2[] = R"lang=xml(
+  <config>
+    <Types>
+      <param name="bool" value="2"/>
+    </Types>
+  </config>
+  )lang=xml";
   char *argv2[] = { arg0, arg2 };
   argc = 2;
   EXPECT_THROW(gmCore::Configuration config(argc, argv2), std::invalid_argument);
 
-  char arg3[] = ""
-    "<config>"
-    "  <Types>"
-    "    <param name=\"bool\" value=\"tRue\"/>"
-    "  </Types>"
-    "</config>";
+  char arg3[] = R"lang=xml(
+  <config>
+    <Types>
+      <param name="bool" value="tRue"/>
+    </Types>
+  </config>
+  )lang=xml";
   char *argv3[] = { arg0, arg3 };
   argc = 2;
   EXPECT_THROW(gmCore::Configuration config(argc, argv3), std::invalid_argument);

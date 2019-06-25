@@ -67,10 +67,11 @@ TEST(gmCoreConsole, OStreamMessageSink_stdcout) {
 
   gmCore::Console::removeAllSinks();
 
-  std::string xml = ""
-    "<config>"
-    "  <OStreamMessageSink stream=\"out\"/>"
-    "</config>";
+  std::string xml = R"lang=xml(
+  <config>
+    <OStreamMessageSink stream="out"/>
+  </config>
+  )lang=xml";
 
   std::stringstream ss;
   int base_row;

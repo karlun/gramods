@@ -20,10 +20,12 @@ TEST(gmCoreLoadLib, SimpleLoad) {
 
 TEST(gmCoreLoadLib, SimpleLoadXml) {
 
-  std::string xml = ""
-    "<config>"
-    "  <ImportLibrary library=\"test-lib\"/>"
-    "</config>";
+  std::string xml = R"lang=xml(
+  <config>
+    <ImportLibrary library="test-lib"/>
+  </config>
+  )lang=xml";
+
   gmCore::Configuration config(xml);
 
   std::vector<std::shared_ptr<gmCore::ImportLibrary>> importers;

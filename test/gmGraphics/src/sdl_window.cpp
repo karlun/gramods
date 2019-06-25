@@ -36,13 +36,14 @@ TEST(gmGraphics, SdlWindow) {
 
 TEST(gmGraphics, SdlWindowXml) {
 
-  std::string xml = ""
-    "<config>"
-    "  <ImportLibrary library=\"libgmGraphics.so\"/>"
-    "  <SdlWindow size=\"100 100\">"
-    "    <SdlContext AS=\"context\" useVideo=\"1\"/>"
-    "  </SdlWindow>"
-    "</config>";
+  std::string xml = R"lang=xml(
+  <config>
+    <ImportLibrary library="libgmGraphics.so"/>
+    <SdlWindow size="100 100">
+      <SdlContext AS="context" useVideo="1"/>
+    </SdlWindow>
+  </config>
+  )lang=xml";
 
   gmCore::Configuration config(xml);
 
