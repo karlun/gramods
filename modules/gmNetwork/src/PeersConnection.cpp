@@ -10,8 +10,8 @@ GM_OFI_PARAM(PeersConnection, localPeerIdx, int, PeersConnection::setLocalPeerId
 #define DEFAULT_SERVICE "20401"
 #define HANDSHAKE_LENGTH 256
 #define HEADER_LENGTH (1+1+4)
-#define FIRST_CONNECT_DELAY_MS boost::posix_time::milliseconds(20)
-#define RECONNECT_DELAY_MS boost::posix_time::milliseconds(2000)
+#define FIRST_CONNECT_DELAY_MS std::chrono::milliseconds(20)
+#define RECONNECT_DELAY_MS std::chrono::milliseconds(2000)
 
 struct PeersConnection::Impl : public std::enable_shared_from_this<PeersConnection::Impl> {
 
@@ -264,7 +264,7 @@ void PeersConnection::Impl::Peer::connect() {
 
                           GM_VINF("PeersConnection", "Could not connect: " << ec.message());
 
-                          auto ptr = std::make_shared<asio::deadline_timer>
+                          auto ptr = std::make_shared<asio::steady_timer>
                             (self->io_context);
                           ptr->expires_from_now(RECONNECT_DELAY_MS);
 
@@ -535,7 +535,7 @@ bool PeersConnection::Impl::initialize() {
 
   for (auto peer : beta_peers) {
 
-    auto ptr = std::make_shared<asio::deadline_timer>
+    auto ptr = std::make_shared<asio::steady_timer>
       (io_context);
     ptr->expires_from_now(FIRST_CONNECT_DELAY_MS);
 
