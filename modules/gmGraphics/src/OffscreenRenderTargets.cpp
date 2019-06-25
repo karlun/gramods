@@ -4,6 +4,7 @@
 #include <gmGraphics/GLUtils.hh>
 #include <gmCore/Console.hh>
 
+#include <array>
 #include <stack>
 
 BEGIN_NAMESPACE_GMGRAPHICS;
