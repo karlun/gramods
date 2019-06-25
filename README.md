@@ -259,21 +259,21 @@ StereoscopicMultiplexer <|-- SimpleAnaglyphsMultiplexer
 StereoscopicMultiplexer <|-- QuadBufferMultiplexer
 @enduml
 
-Since shaders are tightly coupled with the C++ code together with which they are used, their code reside within their respective class, in string literals. These string literals are specified in the form `std::string code = R"lang=glsl(` so that the editor can detect the language and provide syntax highlighting and automatic indentation. To get language support in the string literals with Emacs, use `polymode` with the following code in your `.emacs` file:
+Since shaders are tightly coupled with the C++ code together with which they are used, their code reside within their respective class, in string literals. These string literals are specified in the form `std::string code = R"lang=glsl(` so that the editor may detect the language to provide syntax highlighting and automatic indentation. To get language support in the string literals with Emacs, use `polymode` (tested with version 20190624.1927) with the following code in your `.emacs` file:
 
 ~~~~~~~~~~~~~{.el}
 (require 'polymode)
 
-(defcustom  pm-inner/c++-string-literals-lang-code
-  (pm-inner-auto-chunkmode :name "lang-code-string-literal"
-                           :head-matcher "[^a-zA-Z0-9]R\"lang=[^(\n]*("
-                           :tail-matcher ")lang=[^\" \n]*\""
-                           :mode-matcher (cons "R\"lang=\\([^(\n]*\\)(" 1)
-                           :head-mode 'text-mode
-                           :tail-mode 'text-mode)
-  "Auto detect string literal language"
-  :group 'poly-innermodes
-  :type 'object)
+(define-auto-innermode poly-c++-string-literals-lang-code-innermode
+  :mode-matcher (cons "R\"lang=\\([^(\n]*\\)(" 1)
+  :head-matcher "[^a-zA-Z0-9]R\"lang=[^(\n]*("
+  :tail-matcher ")lang=[^\" \n]*\""
+  :head-mode 'host
+  :tail-mode 'host)
+
+(define-polymode poly-c++-mode
+  :hostmode 'poly-c++-hostmode
+  :innermodes '(poly-c++-string-literals-lang-code-innermode))
 ~~~~~~~~~~~~~
 
 ## gmTouch
