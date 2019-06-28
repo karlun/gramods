@@ -1,0 +1,23 @@
+<config>
+
+  <OStreamMessageSink stream="err" useAnsiColor="1" level="1"/>
+  <LogFileMessageSink logFilePath="gramods.log" append="0"/>
+
+  <ImportLibrary library="libgmGraphics.so"/>
+
+  <SdlWindow
+      size="800 600"
+      title="UVCstream"
+      GLMajor="3" GLMinor="3"
+      GLProfile="core">
+    <SdlContext
+        DEF="SDLContext"
+        useVideo="1"/>
+    <TextureRenderer>
+      <UvcTexture
+          resolution="800 600"
+          framerate="20"/>
+    </TextureRenderer>
+  </SdlWindow>
+
+</config>
