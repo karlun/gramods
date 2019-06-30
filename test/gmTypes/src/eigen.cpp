@@ -40,17 +40,46 @@ TEST(gmTypesEigen, XML_quaternion) {
 TEST(gmTypesEigen, XML_EulerYPR) {
 
   Eigen::Quaternionf q;
-  std::stringstream ss(R"lang=xml(
+
+  {
+    std::stringstream ss(R"lang=xml(
 ypr
 1.57079632679489661923
+0
+0)lang=xml");
+
+    ss >> q;
+
+    EXPECT_LE((q * Eigen::Vector3f::UnitX() + Eigen::Vector3f::UnitZ()).norm(), 1e-5);
+    EXPECT_LE((q * Eigen::Vector3f::UnitY() - Eigen::Vector3f::UnitY()).norm(), 1e-5);
+    EXPECT_LE((q * Eigen::Vector3f::UnitZ() - Eigen::Vector3f::UnitX()).norm(), 1e-5);
+  }
+  {
+    std::stringstream ss(R"lang=xml(
+ypr
+0
+1.57079632679489661923
+0)lang=xml");
+
+    ss >> q;
+
+    EXPECT_LE((q * Eigen::Vector3f::UnitX() - Eigen::Vector3f::UnitX()).norm(), 1e-5);
+    EXPECT_LE((q * Eigen::Vector3f::UnitY() - Eigen::Vector3f::UnitZ()).norm(), 1e-5);
+    EXPECT_LE((q * Eigen::Vector3f::UnitZ() + Eigen::Vector3f::UnitY()).norm(), 1e-5);
+  }
+  {
+    std::stringstream ss(R"lang=xml(
+ypr
+3.14159265358979323846
 1.57079632679489661923
 1.57079632679489661923)lang=xml");
 
-  ss >> q;
+    ss >> q;
 
-  EXPECT_LE((q * Eigen::Vector3f::UnitX() + Eigen::Vector3f::UnitX()).norm(), 1e-5);
-  EXPECT_LE((q * Eigen::Vector3f::UnitY() - Eigen::Vector3f::UnitZ()).norm(), 1e-5);
-  EXPECT_LE((q * Eigen::Vector3f::UnitZ() - Eigen::Vector3f::UnitY()).norm(), 1e-5);
+    EXPECT_LE((q * Eigen::Vector3f::UnitX() + Eigen::Vector3f::UnitZ()).norm(), 1e-5);
+    EXPECT_LE((q * Eigen::Vector3f::UnitY() - Eigen::Vector3f::UnitX()).norm(), 1e-5);
+    EXPECT_LE((q * Eigen::Vector3f::UnitZ() + Eigen::Vector3f::UnitY()).norm(), 1e-5);
+  }
 }
 
 TEST(gmTypesEigen, XML_axisangle) {
