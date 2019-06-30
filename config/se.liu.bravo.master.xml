@@ -1,0 +1,106 @@
+<config>
+
+  <OStreamMessageSink stream="err" useAnsiColor="1" level="1"/>
+  <LogFileMessageSink logFilePath="gramods.log" append="0"/>
+
+  <ImportLibrary library="libgmGraphics.so"/>
+
+  <SphereGeometry
+      DEF="GEOMETRY"
+      center="0 0 0"
+      radius="10"
+      frustumSizeRatio="1.1"
+      inside="true"/>
+
+  <SdlWindow
+      fullscreen="true"
+      GLMajor="3" GLMinor="3">
+
+    <SdlContext useVideo="true"/>
+
+    <SphereRenderer
+        radius="10">
+      <ImageTexture
+          file="modules/gmGraphics/resources/equirectangular-coordinates.png"/>
+    </SphereRenderer>
+
+    <Viewpoint
+        position="0 0 0"/>
+
+    <TiledView>
+
+      <!--FOV left="58.865" right="58.865" up="70.238" down="-7.701" -->
+      <!--Orientation heading="-45.0" pitch="0.0" roll="0.0" -->
+      <param name="tileLocation" value="0 0 1 1"/>
+      <GeometryCorrectedProjectorView
+          bufferWidth="2048"
+          bufferHeight="2048"
+          clipAngles="1.0274 1.0274 -0.1344 1.2259"
+          orientation="ypr -0.7854 0 0 0"
+          linearInterpolation="on">
+        <Geometry USE="GEOMETRY"/>
+      </GeometryCorrectedProjectorView>
+
+      <!--FOV left="58.865" right="58.865" up="70.238" down="-7.701" -->
+      <!--Orientation heading="45.0" pitch="0.0" roll="0.0" -->
+      <param name="tileLocation" value="0 1 1 1"/>
+      <GeometryCorrectedProjectorView
+          bufferWidth="2048"
+          bufferHeight="2048"
+          clipAngles="1.0274 1.0274 -0.1344 1.2259"
+          orientation="ypr 0.7854 0 0 0"
+          linearInterpolation="on">
+        <Geometry USE="GEOMETRY"/>
+      </GeometryCorrectedProjectorView>
+
+      <!--FOV left="58.865" right="58.865" up="70.238" down="-7.701" -->
+      <!--Orientation heading="135.0" pitch="0.0" roll="0.0" -->
+      <param name="tileLocation" value="0 2 1 1"/>
+      <GeometryCorrectedProjectorView
+          bufferWidth="2048"
+          bufferHeight="2048"
+          clipAngles="1.0274 1.0274 -0.1344 1.2259"
+          orientation="ypr 2.3562 0 0 0"
+          linearInterpolation="on">
+        <Geometry USE="GEOMETRY"/>
+      </GeometryCorrectedProjectorView>
+
+      <!--FOV left="58.865" right="58.865" up="70.238" down="-7.701" -->
+      <!--Orientation heading="-135.0" pitch="0.0" roll="0.0" -->
+      <param name="tileLocation" value="1 0 1 1"/>
+      <GeometryCorrectedProjectorView
+          bufferWidth="2048"
+          bufferHeight="2048"
+          clipAngles="1.0274 1.0274 -0.1344 1.2259"
+          orientation="ypr -2.3562 0 0 0"
+          linearInterpolation="on">
+        <Geometry USE="GEOMETRY"/>
+      </GeometryCorrectedProjectorView>
+
+      <!--FOV left="58.992" right="58.992" up="55.336" down="11.608" -->
+      <!--Orientation heading="57.0" pitch="48.0" roll="0.0" -->
+      <param name="tileLocation" value="1 1 1 1"/>
+      <GeometryCorrectedProjectorView
+          bufferWidth="2048"
+          bufferHeight="2048"
+          clipAngles="1.0296 1.0296 0.2026 0.9658"
+          orientation="ypr 0.9948 0.8378 0 0"
+          linearInterpolation="on">
+        <Geometry USE="GEOMETRY"/>
+      </GeometryCorrectedProjectorView>
+
+      <!--FOV left="58.992" right="58.992" up="55.336" down="11.608" -->
+      <!--Orientation heading="-123.0" pitch="48.0" roll="0.0" -->
+      <param name="tileLocation" value="1 2 1 1"/>
+      <GeometryCorrectedProjectorView
+          bufferWidth="2048"
+          bufferHeight="2048"
+          clipAngles="1.0296 1.0296 0.2026 0.9658"
+          orientation="ypr -2.1468 0.8378 0 0"
+          linearInterpolation="on">
+        <Geometry USE="GEOMETRY"/>
+      </GeometryCorrectedProjectorView>
+
+    </TiledView>
+  </SdlWindow>
+</config>
