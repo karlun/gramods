@@ -43,9 +43,9 @@ std::istream& operator>> (std::istream &in, Eigen::Quaternionf &q) {
     in >> yaw >> pitch >> roll;
 
     if (in) {
-      q = Eigen::Quaternionf(Eigen::AngleAxisf(yaw, Eigen::Vector3f::UnitY()) *
+      q = Eigen::Quaternionf(Eigen::AngleAxisf(-yaw, Eigen::Vector3f::UnitY()) *
                              Eigen::AngleAxisf(pitch, Eigen::Vector3f::UnitX()) *
-                             Eigen::AngleAxisf(roll, Eigen::Vector3f::UnitZ()));
+                             Eigen::AngleAxisf(-roll, Eigen::Vector3f::UnitZ()));
     } else {
       q = Eigen::Quaternionf::Identity();
       GM_WRN("operator>>(std::istream, Eigen::Quaternionf)",
