@@ -20,6 +20,7 @@
 
     <SphereRenderer
         radius="10">
+      <EquirectangularCoordinatesMapper/>
       <ImageTexture
           file="modules/gmGraphics/resources/equirectangular-coordinates.png"/>
     </SphereRenderer>

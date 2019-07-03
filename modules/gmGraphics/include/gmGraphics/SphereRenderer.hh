@@ -4,6 +4,7 @@
 
 #include <gmGraphics/Renderer.hh>
 #include <gmGraphics/Texture.hh>
+#include <gmGraphics/CoordinatesMapper.hh>
 
 #include <gmTypes/eigen.hh>
 #include <gmCore/OFactory.hh>
@@ -48,12 +49,10 @@ public:
   void setTexture(std::shared_ptr<Texture> tex);
 
   /**
-     Sets the vertical coverage of the angular fisheye texture, in
-     radians. Default is 2π.
-
-     \b XML-attribute: \c textureCoverageAngle
+     Sets the coordinates mapper that should be used to map the 2D
+     texture onto the 3D sphere.
   */
-  void setTextureCoverageAngle(float v);
+  void setCoordinatesMapper(std::shared_ptr<CoordinatesMapper> mapper);
 
   GM_OFI_DECLARE;
 

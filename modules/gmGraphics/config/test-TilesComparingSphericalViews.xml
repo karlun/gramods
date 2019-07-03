@@ -18,20 +18,19 @@
         cubeSize="0.2"
         cubeSetSize="10.0"/>
 
+    <VelocityViewpoint
+        position="0 0 7"
+        velocity="0 0 -0.5"
+        rotation="axisangle 1 0 0 0"/>
+
     <TiledView>
 
       <param name="tileLocation" value="0 1 1 2"/>
       <SpatialSphericalView
           cubeMapResolution="1024"
-          linearInterpolation="1"
-          coverageAngle="6.283"
-          projectionType="0">
+          linearInterpolation="1">
 
-        <VelocityViewpoint
-            position="0 0 7"
-            velocity="0 0 -0.5"
-            rotation="axisangle 1 0 0 0"
-            DEF="viewpoint"/>
+        <EquirectangularCoordinatesMapper/>
 
       </SpatialSphericalView>
 
@@ -39,35 +38,29 @@
       <SpatialSphericalView
           cubeMapResolution="1024"
           linearInterpolation="1"
-          coverageAngle="6.283"
-          projectionType="2">
+          makeSquare="true">
 
-        <VelocityViewpoint
-            USE="viewpoint"/>
+        <AngularFisheyeCoordinatesMapper
+            coverageAngle="6.283"/>
 
       </SpatialSphericalView>
 
       <param name="tileLocation" value="1 1 1 2"/>
       <PosedSphericalView
           cubeMapResolution="1024"
-          linearInterpolation="1"
-          coverageAngle="6.283"
-          projectionType="0">
+          linearInterpolation="1">
 
-        <VelocityViewpoint
-            USE="viewpoint"/>
+        <EquirectangularCoordinatesMapper/>
 
       </PosedSphericalView>
 
       <param name="tileLocation" value="1 0 1 1"/>
       <PosedSphericalView
           cubeMapResolution="1024"
-          linearInterpolation="1"
-          coverageAngle="6.283"
-          projectionType="2">
+          linearInterpolation="1">
 
-        <VelocityViewpoint
-            USE="viewpoint"/>
+        <AngularFisheyeCoordinatesMapper
+          coverageAngle="6.283"/>
 
       </PosedSphericalView>
     </TiledView>
