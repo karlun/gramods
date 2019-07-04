@@ -4,6 +4,7 @@
 
 #include <gmGraphics/StereoscopicView.hh>
 
+#include <gmGraphics/CoordinatesMapper.hh>
 #include <gmTypes/eigen.hh>
 
 BEGIN_NAMESPACE_GMGRAPHICS;
@@ -46,21 +47,17 @@ public:
   void setLinearInterpolation(bool on);
 
   /**
-     Sets the vertical coverage of the angular fisheye or horizontal
-     for the equirectangular projection, in radians. Default is
-     2π.
-
-     \b XML-attribute: \c coverageAngle
+     Sets the coordinates mapper that should be used to map the 3D
+     surrounding into the 2D view.
   */
-  void setCoverageAngle(float a);
+  void setCoordinatesMapper(std::shared_ptr<CoordinatesMapper> mapper);
 
   /**
-     Selects projection between equirectangular (0), angular
-     fisheye (1) and square angular fisheye (2). Default is 0.
-
-     \b XML-attribute: \c projectionType
+     When set to true, the output on the view will be square, so that
+     using a fisheye mapper would render the view as a circle instead
+     of an ellipse. Default is false.
   */
-  void setProjectionType(int p);
+  void setMakeSquare(bool on);
 
   /**
      Sets the location of the center of the spherical projection

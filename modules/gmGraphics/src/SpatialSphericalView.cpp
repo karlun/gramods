@@ -16,22 +16,17 @@ BEGIN_NAMESPACE_GMGRAPHICS;
 GM_OFI_DEFINE_SUB(SpatialSphericalView, StereoscopicView);
 GM_OFI_PARAM(SpatialSphericalView, cubeMapResolution, int, SpatialSphericalView::setCubeMapResolution);
 GM_OFI_PARAM(SpatialSphericalView, linearInterpolation, bool, SpatialSphericalView::setLinearInterpolation);
-GM_OFI_PARAM(SpatialSphericalView, coverageAngle, float, SpatialSphericalView::setCoverageAngle);
-GM_OFI_PARAM(SpatialSphericalView, projectionType, int, SpatialSphericalView::setProjectionType);
+GM_OFI_PARAM(SpatialSphericalView, makeSquare, bool, SpatialSphericalView::setMakeSquare);
+GM_OFI_POINTER(SpatialSphericalView, coordinatesMapper, gmGraphics::CoordinatesMapper, SpatialSphericalView::setCoordinatesMapper);
 GM_OFI_PARAM(SpatialSphericalView, sphereCenter, Eigen::Vector3f, SpatialSphericalView::setSphereCenter);
 GM_OFI_PARAM(SpatialSphericalView, sphereRadius, float, SpatialSphericalView::setSphereRadius);
 GM_OFI_PARAM(SpatialSphericalView, tiltAngle, float, SpatialSphericalView::setTiltAngle);
 
 struct SpatialSphericalView::Impl {
 
-  static const std::string fragment_code;
-  static const std::string fisheye_mapper_code;
-  static const std::string equirectangular_mapper_code;
+  static const std::string fragment_template_code;
   static const std::string mapper_pattern;
 
-  void setProjectionType(int a);
-
-  float coverage_angle = 2 * gramods_PI;
   bool make_square = false;
   Eigen::Vector3f sphere_center = Eigen::Vector3f::Zero();
   float sphere_radius = 10;
@@ -39,47 +34,18 @@ struct SpatialSphericalView::Impl {
   float eye_separation = 0;
 
   std::unique_ptr<CubeMap> cubemap;
+  std::shared_ptr<CoordinatesMapper> mapper;
 
-  Impl() : cubemap(std::make_unique<CubeMap>()) {
-    setProjectionType(0);
-  }
+  Impl() : cubemap(std::make_unique<CubeMap>()) {}
 
+  std::string createFragmentCode();
   void renderFullPipeline(ViewSettings settings, Eye eye);
 
 };
 
 const std::string SpatialSphericalView::Impl::mapper_pattern = "MAPPER;";
 
-const std::string SpatialSphericalView::Impl::fisheye_mapper_code = R"lang=glsl(
-vec3 mapper(vec2 pos) {
-
-  float r = sqrt(dot(pos.xy, pos.xy));
-  if (r > 1) {
-    return vec3(0, 0, 0);
-  }
-
-  float phi = 0.5 * r * min(coverageAngle, 6.28318530717958647693);
-  float theta = atan(pos.y, pos.x);
-
-  vec3 pix = vec3(cos(theta) * sin(phi), cos(phi), sin(theta) * sin(phi));
-
-  return pix;
-}
-)lang=glsl";
-
-const std::string SpatialSphericalView::Impl::equirectangular_mapper_code = R"lang=glsl(
-vec3 mapper(vec2 pos) {
-
-  float ay = pos.y * 1.57079632679489661923;
-  float ax = pos.x * 0.5 * min(coverageAngle, 6.28318530717958647693);
-
-  vec3 pix = vec3(cos(ay) * sin(ax), sin(ay), -cos(ay) * cos(ax));
-
-  return pix;
-}
-)lang=glsl";
-
-const std::string SpatialSphericalView::Impl::fragment_code = R"lang=glsl(
+const std::string SpatialSphericalView::Impl::fragment_template_code = R"lang=glsl(
 #version 330 core
 
 uniform sampler2D texLeft;
@@ -89,7 +55,6 @@ uniform sampler2D texTop;
 uniform sampler2D texBack;
 uniform sampler2D texFront;
 
-uniform float coverageAngle;
 uniform vec3 eye_position;
 uniform float radius;
 uniform float cubemap_radius;
@@ -117,8 +82,10 @@ float plane_line_d(vec3 line, vec3 n) {
 
 void main() {
 
-  vec3 pix_dir = mapper(pos);
-  if (pix_dir.x == 0 && pix_dir.y == 0 && pix_dir.z == 0) {
+  vec3 pix_dir;
+  bool good = mapTo3D(pos, pix_dir);
+
+  if (!good) {
     fragColor = vec4(0, 0, 0, 0);
     return;
   }
@@ -180,6 +147,11 @@ void SpatialSphericalView::renderFullPipeline(ViewSettings settings, Eye eye) {
 
 void SpatialSphericalView::Impl::renderFullPipeline(ViewSettings settings, Eye eye) {
 
+  if (!mapper) {
+    GM_RUNONCE(GM_ERR("SpatialSphericalView", "No coordinate mapper specified."));
+    return;
+  }
+
   Eigen::Vector3f eye_pos = Eigen::Vector3f::Zero();
   Eigen::Quaternionf head_rot = Eigen::Quaternionf::Identity();
   Eigen::Quaternionf tilt
@@ -201,6 +173,8 @@ void SpatialSphericalView::Impl::renderFullPipeline(ViewSettings settings, Eye e
   GLint program_id = cubemap->getProgram();
   if (!program_id) {
 
+    cubemap->setFragmentCode(createFragmentCode());
+
     std::vector<std::shared_ptr<Renderer>> no_renderers;
     cubemap->renderFullPipeline(no_renderers, eye_pos, tilt, make_square);
     program_id = cubemap->getProgram();
@@ -214,48 +188,36 @@ void SpatialSphericalView::Impl::renderFullPipeline(ViewSettings settings, Eye e
   Eigen::Vector3f offset = eye_pos - sphere_center;
 
   glUseProgram(program_id);
-  glUniform1f(glGetUniformLocation(program_id, "coverageAngle"), coverage_angle);
   glUniform3fv(glGetUniformLocation(program_id, "eye_position"), 1, offset.data());
   glUniform1f(glGetUniformLocation(program_id, "radius"), sphere_radius);
   glUniform1f(glGetUniformLocation(program_id, "cubemap_radius"), sphere_radius);
+  mapper->setMapperUniforms(program_id);
   glUseProgram(0);
 
   cubemap->setSpatialCubeMap(sphere_center, 2 * sphere_radius);
   cubemap->renderFullPipeline(settings.renderers, eye_pos, tilt, make_square);
 }
 
-void SpatialSphericalView::Impl::setProjectionType(int a) {
+std::string SpatialSphericalView::Impl::createFragmentCode() {
+  assert(mapper);
+  assert(fragment_template_code.find(mapper_pattern) != std::string::npos);
 
-  std::string fragment_code = this->fragment_code;
-  assert(fragment_code.find(mapper_pattern) != std::string::npos);
+  std::string mapper_code = mapper->getMapperCode();
+  std::string fragment_code = fragment_template_code;
 
-  switch(a) {
-  default:
-    GM_WRN("PosedSphericalView", "Unavailable projection " << a);
-  case 0:
-    GM_VINF("PosedSphericalView", "Projection set to equirectangular");
-    make_square = false;
-    fragment_code.replace(fragment_code.find(mapper_pattern),
-                          mapper_pattern.length(),
-                          equirectangular_mapper_code);
-    break;
-  case 1:
-    GM_VINF("PosedSphericalView", "Projection set to angular fisheye");
-    make_square = false;
-    fragment_code.replace(fragment_code.find(mapper_pattern),
-                          mapper_pattern.length(),
-                          fisheye_mapper_code);
-    break;
-  case 2:
-    GM_VINF("PosedSphericalView", "Projection set to square angular fisheye");
-    make_square = true;
-    fragment_code.replace(fragment_code.find(mapper_pattern),
-                          mapper_pattern.length(),
-                          fisheye_mapper_code);
-    break;
-  }
+  fragment_code.replace(fragment_code.find(mapper_pattern),
+                        mapper_pattern.length(),
+                        mapper_code);
 
-  cubemap->setFragmentCode(fragment_code);
+  return fragment_code;
+}
+
+void SpatialSphericalView::setCoordinatesMapper(std::shared_ptr<CoordinatesMapper> mapper) {
+  _impl->mapper = mapper;
+}
+
+void SpatialSphericalView::setMakeSquare(bool on) {
+  _impl->make_square = on;
 }
 
 void SpatialSphericalView::setCubeMapResolution(int res) {
@@ -264,14 +226,6 @@ void SpatialSphericalView::setCubeMapResolution(int res) {
 
 void SpatialSphericalView::setLinearInterpolation(bool on) {
   _impl->cubemap->setLinearInterpolation(on);
-}
-
-void SpatialSphericalView::setCoverageAngle(float a) {
-  _impl->coverage_angle = a;
-}
-
-void SpatialSphericalView::setProjectionType(int a) {
-  _impl->setProjectionType(a);
 }
 
 void SpatialSphericalView::setSphereCenter(Eigen::Vector3f c) {

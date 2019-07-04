@@ -15,15 +15,20 @@ GM_OFI_DEFINE(SphereRenderer);
 GM_OFI_PARAM(SphereRenderer, radius, float, SphereRenderer::setRadius);
 GM_OFI_PARAM(SphereRenderer, center, Eigen::Vector3f, SphereRenderer::setCenter);
 GM_OFI_POINTER(SphereRenderer, texture, gmGraphics::Texture, SphereRenderer::setTexture);
-GM_OFI_PARAM(SphereRenderer, textureCoverageAngle, float, SphereRenderer::setTextureCoverageAngle);
+GM_OFI_POINTER(SphereRenderer, coordinatesMapper, gmGraphics::CoordinatesMapper, SphereRenderer::setCoordinatesMapper);
 
 struct SphereRenderer::Impl {
 
   ~Impl();
 
   void setup();
+  std::string createFragmentCode();
   void render(Camera camera);
   void teardown();
+
+  static const std::string vertex_shader_code;
+  static const std::string fragment_template_code;
+  static const std::string mapper_pattern;
 
   GLuint vertex_shader_id = 0;
   GLuint fragment_shader_id = 0;
@@ -37,7 +42,7 @@ struct SphereRenderer::Impl {
   Eigen::Vector3f sphere_center;
 
   std::shared_ptr<Texture> texture;
-  float texture_coverage = 2 * gramods_PI;
+  std::shared_ptr<CoordinatesMapper> mapper;
 
   bool is_setup = false;
   bool is_functional = false;
@@ -50,8 +55,7 @@ void SphereRenderer::render(Camera camera) {
   _impl->render(camera);
 }
 
-namespace {
-  const char * vertex_shader_code = R"lang=glsl(
+const std::string SphereRenderer::Impl::vertex_shader_code = R"lang=glsl(
 #version 330 core
 
 uniform mat4 Mp;
@@ -68,38 +72,35 @@ void main() {
 }
 )lang=glsl";
 
-  const char * fragment_shader_code = R"lang=glsl(
+const std::string SphereRenderer::Impl::mapper_pattern = "MAPPER;";
+
+const std::string SphereRenderer::Impl::fragment_template_code = R"lang=glsl(
 #version 330 core
 
 uniform sampler2D tex;
-uniform float cov;
 
 in vec3 tex_pos;
 out vec4 fragColor;
 
-#define PI1 3.14159265358979323846264338327950288419716939937511
-#define PI2 1.57079632679489661923132169163975144209858469968755
-
-vec2 mapper(vec3 pos) {
-
-  float phi = asin(pos.y);
-  float r = (1.0 / cov) * (-phi + PI2);
-  if (r > 0.5) r = 0.0;
-
-  float theta = atan(pos.x, -pos.z);
-
-  return vec2(0.5 + r * sin(theta), 0.5 + r * cos(theta));
-}
+MAPPER;
 
 void main() {
-  vec2 v_uv = mapper(tex_pos);
-  fragColor = vec4(texture(tex, v_uv).rgb, 1);
+  vec2 v_uv;
+  bool good = mapTo2D(tex_pos, v_uv);
+  if (good)
+    fragColor = vec4(texture(tex, 0.5 + 0.5 * v_uv).rgb, 1);
+  else
+    fragColor = vec4(0, 0, 0, 0);
 }
 )lang=glsl";
-}
 
 void SphereRenderer::Impl::setup() {
   is_setup = true;
+
+  if (!mapper) {
+    GM_RUNONCE(GM_ERR("SphereRenderer", "No coordinate mapper specified."));
+    return;
+  }
 
   std::vector<GLfloat> vertices;
   std::vector<GLfloat> tcoords;
@@ -158,12 +159,15 @@ void SphereRenderer::Impl::setup() {
 
   GM_VINF("SphereRenderer", "Creating vertex shader");
   vertex_shader_id = glCreateShader(GL_VERTEX_SHADER);
-  glShaderSource(vertex_shader_id, 1, &vertex_shader_code, nullptr);
+  const char *vert_strs[] = { vertex_shader_code.c_str() };
+  glShaderSource(vertex_shader_id, 1, vert_strs, nullptr);
   glCompileShader(vertex_shader_id);
 
   GM_VINF("SphereRenderer", "Creating fragment shader");
   fragment_shader_id = glCreateShader(GL_FRAGMENT_SHADER);
-  glShaderSource(fragment_shader_id, 1, &fragment_shader_code, nullptr);
+  std::string frag_str = createFragmentCode();
+  const char *frag_strs[] = { frag_str.c_str() };
+  glShaderSource(fragment_shader_id, 1, frag_strs, nullptr);
   glCompileShader(fragment_shader_id);
 
   GM_VINF("SphereRenderer", "Creating and linking program");
@@ -203,6 +207,20 @@ void SphereRenderer::Impl::setup() {
   is_functional = true;
 }
 
+std::string SphereRenderer::Impl::createFragmentCode() {
+  assert(mapper);
+  assert(fragment_template_code.find(mapper_pattern) != std::string::npos);
+
+  std::string mapper_code = mapper->getMapperCode();
+  std::string fragment_code = fragment_template_code;
+
+  fragment_code.replace(fragment_code.find(mapper_pattern),
+                        mapper_pattern.length(),
+                        mapper_code);
+
+  return fragment_code;
+}
+
 void SphereRenderer::Impl::render(Camera camera) {
 
   if (!texture)
@@ -236,7 +254,7 @@ void SphereRenderer::Impl::render(Camera camera) {
   glUniformMatrix4fv(glGetUniformLocation(program_id, "Mp"),  1, false, Mp.data());
   glUniformMatrix4fv(glGetUniformLocation(program_id, "Mv"),  1, false, Mv.data());
   glUniform1i(glGetUniformLocation(program_id, "tex"), 0);
-  glUniform1f(glGetUniformLocation(program_id, "cov"), texture_coverage);
+  mapper->setMapperUniforms(program_id);
 
   glBindVertexArray(vao_id);
   glDrawArrays(GL_TRIANGLES, 0, vertex_count);
@@ -283,8 +301,8 @@ void SphereRenderer::setTexture(std::shared_ptr<Texture> tex) {
   _impl->texture = tex;
 }
 
-void SphereRenderer::setTextureCoverageAngle(float v) {
-  _impl->texture_coverage = v;
+void SphereRenderer::setCoordinatesMapper(std::shared_ptr<CoordinatesMapper> mapper) {
+  _impl->mapper = mapper;
 }
 
 END_NAMESPACE_GMGRAPHICS;
