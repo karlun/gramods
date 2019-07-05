@@ -84,7 +84,7 @@ public:
      processing to either another, worker thread or to the client,
      main thread.
   */
-  virtual void processMessage(Message m) {}
+  virtual void processMessage(Message) {}
 
   /**
      Returns the byte sent in the message to indicate which protocol

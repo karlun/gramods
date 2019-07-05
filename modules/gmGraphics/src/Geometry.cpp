@@ -11,6 +11,12 @@ Geometry::Geometry(Impl * impl)
 
 Geometry::~Geometry() {}
 
+bool Geometry::getCameraFromPosition(Camera,
+                                     Eigen::Vector3f,
+                                     Camera &) {
+  return false;
+}
+
 void Geometry::setInside(bool on) {
   _impl->inside = on;
 }

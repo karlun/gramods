@@ -34,8 +34,7 @@ public:
   */
   enum struct Eye {
     LEFT = 0,
-    RIGHT,
-    COUNT
+    RIGHT
   };
 
   /**

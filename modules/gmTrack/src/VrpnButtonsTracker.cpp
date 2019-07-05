@@ -17,7 +17,7 @@ VrpnButtonsTracker::~VrpnButtonsTracker() {
   tracker = nullptr;
 }
 
-void VrpnButtonsTracker::update(gmCore::Updateable::clock::time_point t) {
+void VrpnButtonsTracker::update(gmCore::Updateable::clock::time_point) {
 
   if (!tracker) {
     GM_WRN("VrpnButtonsTracker", "Cannot get buttons - no vrpn connection");

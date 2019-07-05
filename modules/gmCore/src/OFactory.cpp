@@ -72,23 +72,31 @@ void OFactory::OFactoryInformation::registerPointerSetter
 
 bool OFactory::OFactoryInformation::setParamValueFromString
 (Object *node, std::string name, std::string value) {
-  if (param_setters.count(name) == 0)
+
+  if (param_setters.count(name) == 0) {
     if (base == nullptr)
       return false;
     else
       return base->setParamValueFromString(node, name, value);
+  }
+
   param_setters[name]->setValueFromString(node, value);
+
   return true;
 }
 
 bool OFactory::OFactoryInformation::setPointerValue
 (Object *node, std::string name, std::shared_ptr<Object> ptr) {
-  if (pointer_setters.count(name) == 0)
+
+  if (pointer_setters.count(name) == 0) {
     if (base == nullptr)
       return false;
     else
       return base->setPointerValue(node, name, ptr);
+  }
+
   pointer_setters[name]->setPointer(node, ptr);
+
   return true;
 }
 

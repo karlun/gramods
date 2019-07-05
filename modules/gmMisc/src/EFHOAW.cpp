@@ -22,9 +22,9 @@ struct EFHOAW::Impl {
   polco estimateCoefficients
   (size_t id, double error, size_t order = 2, size_t *samples = nullptr);
 
-  polco findBestFit(size_t id, int sample_count, size_t order) const;
+  polco findBestFit(size_t id, size_t sample_count, size_t order) const;
 
-  Eigen::MatrixXd getPosVector(size_t id, int sample_count, size_t dim) const;
+  Eigen::MatrixXd getPosVector(size_t id, size_t sample_count, size_t dim) const;
 
   Eigen::Vector3d getPolynomialPosition(int id, double t) const;
   Eigen::Vector3d getPolynomialVelocity(int id, double t) const;
@@ -150,12 +150,12 @@ EFHOAW::polco EFHOAW::Impl::estimateCoefficients
   int best_count = 0;
   polco best_coefficients;
 
-  for (int candidate_count = order + 1; candidate_count <= position_list.size(); ++candidate_count) {
+  for (size_t candidate_count = order + 1; candidate_count <= position_list.size(); ++candidate_count) {
 
     polco coefficients = findBestFit(id, candidate_count, order);
 
     bool is_valid = true;
-    for (int idx = 0; idx < candidate_count; ++idx) {
+    for (size_t idx = 0; idx < candidate_count; ++idx) {
 
       auto pos = getPolynomialPosition(coefficients, time_list.at(idx) - time_list.at(0));
       auto off = pos - position_list.at(idx);
@@ -220,7 +220,7 @@ void EFHOAW::Impl::cleanup(double time) {
   }
 }
 
-EFHOAW::polco EFHOAW::Impl::findBestFit(size_t id, int sample_count, size_t order) const {
+EFHOAW::polco EFHOAW::Impl::findBestFit(size_t id, size_t sample_count, size_t order) const {
 
   if (sample_count < order + 1)
     throw std::invalid_argument("too low sample count to estimate specified order");
@@ -228,10 +228,10 @@ EFHOAW::polco EFHOAW::Impl::findBestFit(size_t id, int sample_count, size_t orde
   const time_list_t &time_list = history.at(id).first;
   Eigen::MatrixXd poly(sample_count, order + 1);
 
-  for (int sample_idx = 0; sample_idx < sample_count; ++sample_idx) {
+  for (size_t sample_idx = 0; sample_idx < sample_count; ++sample_idx) {
     double t = time_list[sample_idx] - time_list[0];
     double T = 1;
-    for (int ord_idx = 0; ord_idx < order + 1; ++ord_idx) {
+    for (size_t ord_idx = 0; ord_idx < order + 1; ++ord_idx) {
       poly(sample_idx, ord_idx) = T;
       T *= t;
     }
@@ -250,12 +250,12 @@ EFHOAW::polco EFHOAW::Impl::findBestFit(size_t id, int sample_count, size_t orde
   return res;
 }
 
-Eigen::MatrixXd EFHOAW::Impl::getPosVector(size_t id, int sample_count, size_t dim) const {
+Eigen::MatrixXd EFHOAW::Impl::getPosVector(size_t id, size_t sample_count, size_t dim) const {
 
   const position_list_t &position_list = history.at(id).second;
   Eigen::MatrixXd res(sample_count, 1);
 
-  for (int sample_idx = 0; sample_idx < sample_count; ++sample_idx)
+  for (size_t sample_idx = 0; sample_idx < sample_count; ++sample_idx)
     res(sample_idx, 0) = position_list[sample_idx][dim];
 
   return res;
@@ -282,7 +282,7 @@ Eigen::Vector3d EFHOAW::Impl::getPolynomialPosition(polco coefficients, double t
   double T = 1;
   Eigen::Vector3d res = Eigen::Vector3d::Zero();
 
-  for (int idx = 0; idx < order; ++idx) {
+  for (size_t idx = 0; idx < order; ++idx) {
     res[0] += T * coefficients(0, idx);
     res[1] += T * coefficients(1, idx);
     res[2] += T * coefficients(2, idx);
@@ -313,7 +313,7 @@ Eigen::Vector3d EFHOAW::Impl::getPolynomialVelocity(polco coefficients, double t
   double T = 1;
   Eigen::Vector3d res = Eigen::Vector3d::Zero();
 
-  for (int idx = 1; idx < order; ++idx) {
+  for (size_t idx = 1; idx < order; ++idx) {
     res[0] += idx * T * coefficients(0, idx);
     res[1] += idx * T * coefficients(1, idx);
     res[2] += idx * T * coefficients(2, idx);

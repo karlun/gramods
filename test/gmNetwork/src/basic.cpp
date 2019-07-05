@@ -201,7 +201,7 @@ TEST(gmNetworkPeersConnection, waitForAll) {
 
   if (vec_bool0.size() == vec_bool1.size() &&
       vec_bool0.size() == vec_bool2.size())
-    for (int idx = 0; idx < vec_bool0.size(); ++idx) {
+    for (size_t idx = 0; idx < vec_bool0.size(); ++idx) {
       EXPECT_EQ(vec_bool0[idx], vec_bool1[idx]);
       EXPECT_EQ(vec_bool0[idx], vec_bool2[idx]);
     }

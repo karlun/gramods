@@ -28,6 +28,9 @@ void SpatialPlanarView::renderFullPipeline(ViewSettings settings, Eye eye) {
     break;
   case Eye::RIGHT:
     x_VP += q_VP * Eigen::Vector3f(0.5f * eye_separation, 0.f, 0.f);
+    break;
+  case Eye::MONO:
+    break;
   }
 
   auto up = upDirection.normalized();

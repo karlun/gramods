@@ -70,7 +70,7 @@ int main(int argc, char *argv[]) {
   typedef std::chrono::steady_clock clock;
   typedef std::chrono::duration<double, std::ratio<1>> d_seconds;
 
-  auto last_print_time = std::chrono::steady_clock::now();
+  auto last_print_time = clock::now();
   size_t frame_count = 0;
 
   d_seconds update_time = d_seconds();
@@ -83,21 +83,21 @@ int main(int argc, char *argv[]) {
 
     alive = windows.empty();
 
-    auto t0 = std::chrono::steady_clock::now();
+    auto t0 = clock::now();
 
     for (auto window : windows) {
       window->processEvents();
     }
     gmCore::Updateable::updateAll();
 
-    auto t1 = std::chrono::steady_clock::now();
+    auto t1 = clock::now();
 
     for (auto window : windows) {
       if (!window->isOpen()) continue;
       window->RendererDispatcher::renderFullPipeline();
     }
 
-    auto t2 = std::chrono::steady_clock::now();
+    auto t2 = clock::now();
 
     for (auto window : windows) {
       if (!window->isOpen()) continue;
@@ -105,14 +105,14 @@ int main(int argc, char *argv[]) {
       alive |= true;
     }
 
-    auto t3 = std::chrono::steady_clock::now();
+    auto t3 = clock::now();
 
     for (auto window : windows) {
       if (!window->isOpen()) continue;
       window->sync();
     }
 
-    auto t4 = std::chrono::steady_clock::now();
+    auto t4 = clock::now();
 
     frame_count += 1;
 
@@ -121,7 +121,7 @@ int main(int argc, char *argv[]) {
     swap_time += std::chrono::duration_cast<d_seconds>(t3 - t2);
     vsync_time += std::chrono::duration_cast<d_seconds>(t4 - t3);
 
-    auto current_time = std::chrono::steady_clock::now();
+    auto current_time = clock::now();
     auto dt = std::chrono::duration_cast<d_seconds>(current_time - last_print_time);
     if (dt.count() > 2) {
       float to_us = 1e6 / (float)frame_count;

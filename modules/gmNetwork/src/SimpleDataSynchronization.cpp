@@ -76,7 +76,7 @@ void SimpleDataSynchronization::processMessage(Message m) {
 void SimpleDataSynchronization::Impl::processMessage(Message m, int local_peer_idx) {
   assert(m.data.size() > 1);
 
-  char idx = m.data[0];
+  size_t idx = (size_t)m.data[0];
 
   if (idx >= (ptr_data.size() + raw_data.size())) {
     GM_ERR("SimpleDataSynchronization",
@@ -114,10 +114,10 @@ void SimpleDataSynchronization::Impl::encode(SyncData * d,
 
   assert(data.size() > 1);
 
-  for (int idx = 0; idx < ptr_data.size(); ++idx)
+  for (size_t idx = 0; idx < ptr_data.size(); ++idx)
     if (ptr_data[idx].get() == d) {
       assert(idx < 256);
-      data[0] = idx;
+      data[0] = (char)idx;
 
       GM_VVINF("SimpleDataSynchronization",
                "Sending data (" << local_peer_idx
@@ -125,10 +125,10 @@ void SimpleDataSynchronization::Impl::encode(SyncData * d,
       return;
     }
 
-  for (int idx = 0; idx < raw_data.size(); ++idx)
+  for (size_t idx = 0; idx < raw_data.size(); ++idx)
     if (raw_data[idx] == d) {
       assert(idx + ptr_data.size() < 256);
-      data[0] = idx + ptr_data.size();
+      data[0] = (char)(idx + ptr_data.size());
 
       GM_VVINF("SimpleDataSynchronization",
                "Sending data (" << local_peer_idx

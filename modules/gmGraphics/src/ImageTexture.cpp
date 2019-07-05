@@ -67,7 +67,7 @@ void ImageTexture::Impl::update() {
     GM_VINF("ImageTexture", "Animation frame " << animation_frame);
     fail = !loadImage(file, animation_frame);
 
-    if (++animation_frame > animation_range[1])
+    if (++animation_frame > animation_range[1]) {
       if (loop) {
         GM_VINF("ImageTexture", "Looping animation");
         animation_frame = animation_range[0];
@@ -75,6 +75,7 @@ void ImageTexture::Impl::update() {
         GM_VINF("ImageTexture", "Animation done");
         animate = false;
       }
+    }
 
   } else if (!texture_id) {
     fail = !loadImage(file);

@@ -52,9 +52,7 @@ public:
   */
   virtual bool getCameraFromPosition(Camera vfrustum,
                                      Eigen::Vector3f position,
-                                     Camera &rfrustum) {
-    return false;
-  }
+                                     Camera &rfrustum);
 
   /**
      Returns shader code that implements the necessary functions for
@@ -73,7 +71,7 @@ public:
      Called by the code that is using this geometry object, to let the
      it set the uniforms used by the mapper code.
   */
-  virtual void setMapperUniforms(GLuint program) {}
+  virtual void setMapperUniforms(GLuint) {}
 
   /**
      Set true if the projection should be calculated for the inside of

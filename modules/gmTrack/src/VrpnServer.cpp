@@ -84,7 +84,7 @@ void VrpnServer::Impl::initialize() {
   if (tracker_names.size() > name_map.size())
     GM_WRN("VrpnServer", "More tracker names provided than trackers");
 
-  for (int idx = 0; idx < name_map.size(); ++idx) {
+  for (size_t idx = 0; idx < name_map.size(); ++idx) {
 
     std::string name = tracker_names[idx];
 
@@ -114,7 +114,7 @@ void VrpnServer::Impl::initialize() {
   }
 }
 
-void VrpnServer::update(gmCore::Updateable::clock::time_point t) {
+void VrpnServer::update(gmCore::Updateable::clock::time_point) {
 
   if (!isInitialized())
     return;
@@ -134,7 +134,7 @@ void VrpnServer::Impl::updateAnalogs() {
 
   assert(analogs_trackers.size() == analog_server.size());
 
-  for (int idx = 0; idx < analog_server.size(); ++idx) {
+  for (size_t idx = 0; idx < analog_server.size(); ++idx) {
 
     AnalogsTracker::AnalogsSample sample;
     bool good = analogs_trackers[idx]->getAnalogs(sample);
@@ -155,7 +155,7 @@ void VrpnServer::Impl::updateButtons() {
 
   assert(buttons_trackers.size() == button_server.size());
 
-  for (int idx = 0; idx < button_server.size(); ++idx) {
+  for (size_t idx = 0; idx < button_server.size(); ++idx) {
 
     ButtonsTracker::ButtonsSample sample;
     bool good = buttons_trackers[idx]->getButtons(sample);
@@ -173,7 +173,7 @@ void VrpnServer::Impl::updateSinglePose() {
 
   assert(single_pose_trackers.size() == single_tracker_server.size());
 
-  for (int idx = 0; idx < single_tracker_server.size(); ++idx) {
+  for (size_t idx = 0; idx < single_tracker_server.size(); ++idx) {
 
     PoseTracker::PoseSample sample;
     bool good = single_pose_trackers[idx]->getPose(sample);
@@ -197,7 +197,7 @@ void VrpnServer::Impl::updateMultiPose() {
 
   assert(multi_pose_trackers.size() == multi_tracker_server.size());
 
-  for (int idx = 0; idx < multi_tracker_server.size(); ++idx) {
+  for (size_t idx = 0; idx < multi_tracker_server.size(); ++idx) {
 
     std::map<int, PoseTracker::PoseSample> samples;
     bool good = multi_pose_trackers[idx]->getPose(samples);

@@ -17,7 +17,6 @@ SDLWindow::SDLWindow() :
   sdl_window = SDL_CreateWindow("gm-demo-multitouch", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, 640, 480, 0);
 
   sdl_renderer = SDL_CreateRenderer(sdl_window, -1, SDL_RENDERER_ACCELERATED);
-  SDL_Renderer *renderer = sdl_renderer;
 
   if (TTF_Init() < 0) {
     std::cerr << "Could not init SDL TTF" << std::endl;
@@ -58,7 +57,7 @@ void SDLWindow::process() {
   gmTouch::TouchState::TouchPoints current;
   touchState.getTouchPoints(current);
 
-  for (int idx = 0; idx < current.size(); ++idx) {
+  for (size_t idx = 0; idx < current.size(); ++idx) {
     Point
       A = { int(current[idx].x),
             int(current[idx].y) };

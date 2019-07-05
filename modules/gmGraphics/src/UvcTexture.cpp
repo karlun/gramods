@@ -107,9 +107,9 @@ void UvcTexture::Impl::update() {
 
   if (!texture_id) {
     std::vector<GLubyte> data;
-    for (int idxY = 0; idxY < resolution[1]; ++idxY)
-      for (int idxX = 0; idxX < resolution[0]; ++idxX)
-        for (int idxC = 0; idxC < 3; ++idxC)
+    for (size_t idxY = 0; idxY < resolution[1]; ++idxY)
+      for (size_t idxX = 0; idxX < resolution[0]; ++idxX)
+        for (size_t idxC = 0; idxC < 3; ++idxC)
           data.push_back(((idxX/10 + idxY/10) % 2 ? 150 : 50) +
                          ((idxX/100 + idxY/100) % 2 ? 20 : -20));
 
@@ -341,12 +341,13 @@ void UvcTexture::setConvertToRbg(bool on) {
 
 uvc_frame_format UvcTexture::Impl::formatFromString(std::string s) {
 
-#define FORMAT(A,B)                                   \
-  if (std::equal(s.begin(), s.end(),                  \
-                 #B, #B + strlen(#B),                 \
-                 [](char a, char b) {                 \
-                   return tolower(a) == tolower(b);   \
-                 })) return A; else //
+#define FORMAT(A,B)                                 \
+  if (std::equal(s.begin(), s.end(),                \
+                 #B, #B + strlen(#B),               \
+                 [](char a, char b) {               \
+                   return tolower(a) == tolower(b); \
+                 }))                                \
+    return A;
 
   FORMAT(UVC_FRAME_FORMAT_ANY, ANY);
   FORMAT(UVC_FRAME_FORMAT_UNCOMPRESSED, UNCOMPRESSED);
@@ -364,10 +365,9 @@ uvc_frame_format UvcTexture::Impl::formatFromString(std::string s) {
   FORMAT(UVC_FRAME_FORMAT_SGBRG8, SGBRG8);
   FORMAT(UVC_FRAME_FORMAT_SRGGB8, SRGGB8);
   FORMAT(UVC_FRAME_FORMAT_SBGGR8, SBGGR8);
-  {
-    GM_WRN("UvcTexture", "Unrecognized frame format " << s << "; using any");
-    return UVC_FRAME_FORMAT_ANY;
-  }
+
+  GM_WRN("UvcTexture", "Unrecognized frame format " << s << "; using any");
+  return UVC_FRAME_FORMAT_ANY;
 
 #undef FORMAT
 }

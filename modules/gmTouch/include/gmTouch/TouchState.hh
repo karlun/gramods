@@ -345,6 +345,8 @@ public:
    */
   struct CameraAdaptor {
 
+    virtual ~CameraAdaptor() {}
+
     /**
      * Called by the owner (TouchState) when eventsInit is called.
      */
@@ -591,6 +593,8 @@ public:
    */
   struct EventAdaptor {
 
+    virtual ~EventAdaptor() {}
+
     /**
      * Called by the owner (TouchState) when eventsInit is called.
      */
@@ -705,8 +709,8 @@ private:
   clock::duration click_time;
   clock::duration multi_time;
 
-  bool remove_mouse_upon_touch;
-  bool use_mouse;
+  bool remove_mouse_upon_touch = true;
+  bool use_mouse = true;
 
   std::map<TouchPointId, TouchPoint> current_state;
   std::map<TouchPointId, TouchPoint> previous_state;
@@ -756,7 +760,7 @@ private:
    */
   void clearReleasedStates();
 
-  int state;
+  int state = 0;
 
   /**
    * Converts the specified touch point into a touch line using the
@@ -765,20 +769,20 @@ private:
   TouchLine touchPointToTouchLine(TouchPoint pt, Eigen::Matrix4f WPV_inv) const;
 
   Eigen::Matrix4f current_WPV_inv;
-  bool current_WPV_inv_valid;
+  bool current_WPV_inv_valid = false;
 
   Eigen::Matrix4f previous_WPV_inv;
-  bool previous_WPV_inv_valid;
+  bool previous_WPV_inv_valid = false;
 
-  int current_height;
-  int previous_height;
-  int current_width;
-  int previous_width;
+  int current_height = -1;
+  int previous_height = -1;
+  int current_width = -1;
+  int previous_width = -1;
 
-  float mouse_wheel;
-  bool mouse_down;
-  int mouse_point_x;
-  int mouse_point_y;
+  float mouse_wheel = 0.f;
+  bool mouse_down = false;
+  int mouse_point_x = 0;
+  int mouse_point_y = 0;
 
   std::unordered_map<std::type_index, EventAdaptor*> event_adaptors;
   std::unordered_map<std::type_index, CameraAdaptor*> camera_adaptors;

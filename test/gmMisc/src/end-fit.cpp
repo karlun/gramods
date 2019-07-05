@@ -23,19 +23,19 @@ TEST(gmMiscEndFit, Effoaw) {
 
   {
     size_t samples;
-    auto vel = effoaw.estimateVelocity(0, 20, &samples);
+    effoaw.estimateVelocity(0, 20, &samples);
     EXPECT_EQ(samples, 6);
   }
 
   {
     size_t samples;
-    auto vel = effoaw.estimateVelocity(0, 4, &samples);
+    effoaw.estimateVelocity(0, 4, &samples);
     EXPECT_EQ(samples, 5);
   }
 
   {
     size_t samples;
-    auto vel = effoaw.estimateVelocity(0, 3, &samples);
+    effoaw.estimateVelocity(0, 3, &samples);
     EXPECT_EQ(samples, 4);
   }
 

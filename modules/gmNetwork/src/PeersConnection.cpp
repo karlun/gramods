@@ -28,9 +28,9 @@ struct PeersConnection::Impl : public std::enable_shared_from_this<PeersConnecti
       : io_context(io_context),
         parent(parent),
         socket(io_context),
+        is_connected(false),
         address(address),
-        endpoints(endpoints),
-        is_connected(false) {}
+        endpoints(endpoints) {}
 
     Peer (asio::io_context &io_context,
           std::shared_ptr<PeersConnection::Impl> parent,
@@ -286,7 +286,7 @@ void PeersConnection::Impl::Peer::sendHandshake() {
          sizeof(char) * string_data.str().size());
 
   GM_INF("PeersConnection", "Sending handshake '" << string_data.str() << "'");
-  int N = asio::write(socket, asio::buffer(data, HANDSHAKE_LENGTH));
+  asio::write(socket, asio::buffer(data, HANDSHAKE_LENGTH));
 }
 
 void PeersConnection::Impl::Peer::readHandshake() {
@@ -483,7 +483,7 @@ bool PeersConnection::Impl::initialize() {
     return false;
   }
 
-  if (local_peer_idx < 0 || local_peer_idx >= peer_addresses.size()) {
+  if (local_peer_idx < 0 || (size_t)local_peer_idx >= peer_addresses.size()) {
     GM_ERR("PeersConnection", "Invalid local peer idx, " << local_peer_idx);
     throw std::invalid_argument("invalid local peer idx");
   }
@@ -491,7 +491,7 @@ bool PeersConnection::Impl::initialize() {
   auto self = std::static_pointer_cast<PeersConnection::Impl>(shared_from_this());
   asio::ip::tcp::resolver resolver(io_context);
 
-  for (int idx = local_peer_idx + 1; idx < peer_addresses.size(); ++idx) {
+  for (size_t idx = (size_t)local_peer_idx + 1; idx < peer_addresses.size(); ++idx) {
     std::string address = peer_addresses[idx];
     GM_INF("PeersConnection", "Adding Beta Peer " << idx << " (" << address << ")");
 

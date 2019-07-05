@@ -16,7 +16,6 @@ SDLWindow::SDLWindow() :
   sdl_window = SDL_CreateWindow("gm-demo-end-fit", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, 640, 480, 0);
 
   sdl_renderer = SDL_CreateRenderer(sdl_window, -1, SDL_RENDERER_ACCELERATED);
-  SDL_Renderer *renderer = sdl_renderer;
 
   alive = true;
   dirty = true;
@@ -70,7 +69,7 @@ void SDLWindow::update() {
     int x0 = int(pt[0]);
     int y0 = int(pt[1]);
 
-    for (int idx = points.size() - sample_count; idx < points.size() + 2; ++idx) {
+    for (size_t idx = points.size() - sample_count; idx < points.size() + 2; ++idx) {
 
       if (idx + 1 < points.size())
         SDL_SetRenderDrawColor(sdl_renderer, 190, 255, 190, 255);
@@ -97,7 +96,7 @@ void SDLWindow::update() {
       drawPoint(points[idx].x, points[idx].y);
 
   }
-  catch(std::invalid_argument e) {
+  catch(std::invalid_argument &e) {
     std::cerr << e.what() << std::endl;
   }
 

@@ -30,8 +30,8 @@ Configuration::Configuration(std::string xml)
 
 Configuration::Configuration(int &argc, char *argv[])
   : def_objects(std::make_shared<def_list>()),
-    warn_unused_overrides(true),
-    parameter_overrides(std::make_shared<overrides_list>()) {
+    parameter_overrides(std::make_shared<overrides_list>()),
+    warn_unused_overrides(true) {
 
   std::vector<std::string> configs;
   std::vector<std::string> xmls;

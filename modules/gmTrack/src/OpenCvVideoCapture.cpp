@@ -188,7 +188,7 @@ void OpenCvVideoCapture::update(gmCore::Updateable::clock::time_point t) {
   _impl->update(t);
 }
 
-void OpenCvVideoCapture::Impl::update(gmCore::Updateable::clock::time_point t) {
+void OpenCvVideoCapture::Impl::update(gmCore::Updateable::clock::time_point) {
 
   if (!initialized) {
 

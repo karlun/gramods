@@ -168,6 +168,9 @@ void SpatialSphericalView::Impl::renderFullPipeline(ViewSettings settings, Eye e
     break;
   case Eye::RIGHT:
     eye_pos += head_rot * Eigen::Vector3f(0.5f * eye_separation, 0.f, 0.f);
+    break;
+  case Eye::MONO:
+    break;
   }
 
   GLint program_id = cubemap->getProgram();

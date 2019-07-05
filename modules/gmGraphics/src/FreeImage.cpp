@@ -20,7 +20,7 @@ std::shared_ptr<FreeImage> FreeImage::get() {
 }
 
 namespace {
-  void freeimage_output(FREE_IMAGE_FORMAT fif, const char *msg) {
+  void freeimage_output(FREE_IMAGE_FORMAT, const char *msg) {
     GM_ERR("FreeImage", msg);
   }
 }
