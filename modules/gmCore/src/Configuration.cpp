@@ -48,8 +48,7 @@ Configuration::Configuration(int &argc, char *argv[])
         throw std::invalid_argument("--config missing value");
 
       value = cmd.getNextArgument();
-      bool res = cmd.consumeLast(2);
-      assert(res);
+      cmd.consumeLast(2);
 
       configs.push_back(value);
 
@@ -59,8 +58,7 @@ Configuration::Configuration(int &argc, char *argv[])
         throw std::invalid_argument("--xml missing value");
 
       value = cmd.getNextArgument();
-      bool res = cmd.consumeLast(2);
-      assert(res);
+      cmd.consumeLast(2);
 
       xmls.push_back(value);
 
@@ -70,8 +68,7 @@ Configuration::Configuration(int &argc, char *argv[])
         throw std::invalid_argument("--param missing value");
 
       value = cmd.getNextArgument();
-      bool res = cmd.consumeLast(2);
-      assert(res);
+      cmd.consumeLast(2);
 
       std::size_t sep_pos = value.find("=");
       if (sep_pos == std::string::npos || sep_pos + 1 == value.size())
@@ -221,8 +218,7 @@ void Configuration::load(tinyxml2::XMLNode *node) {
           parameter_overrides->end()) {
 
         std::vector<std::string> values;
-        size_t count = node_conf.getAllParams(param_name, values);
-        assert(count > 0);
+        node_conf.getAllParams(param_name, values);
 
         for (std::string value : values) {
           GM_INF("Configuration", name << " -> " <<

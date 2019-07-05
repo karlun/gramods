@@ -417,7 +417,7 @@ inline std::size_t Configuration::getAllParams(std::string name, std::vector<boo
 
       GM_WRN("Configuration", "Could not parse '" << string_value << "' as bool!");
     }
-    catch(std::exception){
+    catch(std::exception&){
       GM_WRN("Configuration", "Could not parse '" << string_value << "' as bool!");
     }
   return value.size() - original_size;
