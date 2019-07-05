@@ -31,13 +31,14 @@ void SdlWindow::makeGLContextCurrent() {
   SDL_GL_MakeCurrent(window, gl_context);
 }
 
-void MessageCallback(GLenum source,
-                     GLenum type,
-                     GLuint id,
-                     GLenum severity,
-                     GLsizei length,
-                     const GLchar* message,
-                     const void* userParam) {
+void GLAPIENTRY MessageCallback
+(GLenum source,
+ GLenum type,
+ GLuint id,
+ GLenum severity,
+ GLsizei length,
+ const GLchar* message,
+ const void* userParam) {
   std::string type_str;
   switch(type) {
   case GL_DEBUG_TYPE_ERROR: type_str = "error"; break;

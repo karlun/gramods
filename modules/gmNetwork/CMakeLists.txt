@@ -30,6 +30,10 @@ OPTION(gramods_ACTIVATE_ASIO_HANDLER_TRACKING
   "Activate ASIO handler tracking and debug output to the standard error stream."
   OFF)
 
+INCLUDE(WinVer)
+get_WIN32_WINNT(_WIN32_WINNT)
+SET(_WIN32_WINNT "${_WIN32_WINNT}")
+
 CONFIGURE_FILE(
   ${CMAKE_CURRENT_SOURCE_DIR}/include/gmNetwork/config_cmake.hh
   ${CMAKE_CURRENT_BINARY_DIR}/include/gmNetwork/config.hh)
