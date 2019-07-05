@@ -81,11 +81,27 @@ public:
 
      Values recognized by UVC, but not necessarily supported by all
      devices, are any, uncompressed, compressed, yuyv, uyvy, rgb, bgr,
-     mjpeg, gray8, gray16, by8, ba81, sgrbg8, sgbrg8, srggb8, sbggr8.
+     mjpeg, gray8, gray16, by8, ba81, sgrbg8, sgbrg8, srggb8,
+     sbggr8. Default is any.
 
      \b XML-attribute: \c format
   */
   void setFormat(std::string fmt);
+
+  /**
+     If this is set to false, the incoming image data will be
+     downloaded to texture as is, if true they will be converted to
+     8-bit RGB. Default is true.
+
+     Only YUYV and UYVY formats can be uploaded as texture. All other
+     formats need to be converted to RGB. The YUV data are encoded
+     into a 4-channel texture (RGBA8) and it is up to the client code
+     using this texture to decode each four channel texel into two
+     three channel RGB pixels.
+
+     \b XML-attribute: \c convertToRgb
+  */
+  void setConvertToRbg(bool on);
 
   GM_OFI_DECLARE;
 
