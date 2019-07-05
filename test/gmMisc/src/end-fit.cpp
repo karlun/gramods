@@ -74,6 +74,7 @@ TEST(gmMiscEndFit, Efhoaw) {
     double t = idx * a;
     auto X = Eigen::Vector3d(cos(t), sin(t), t);
     auto P = efhoaw.getPolynomialPosition(0, t);
+    EXPECT_LE((X-P).norm(), 1e-10);
   }
 }
 
