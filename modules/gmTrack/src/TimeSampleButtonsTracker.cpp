@@ -23,7 +23,7 @@ struct TimeSampleButtonsTracker::Impl {
   bool getButtons(ButtonsSample &b);
 
   std::vector<double> time;
-  size_t sample_idx;
+  size_t sample_idx = 0;
   std::vector<int> button_states;
 
   std::chrono::steady_clock::time_point start_time;
@@ -35,8 +35,7 @@ TimeSampleButtonsTracker::TimeSampleButtonsTracker()
 TimeSampleButtonsTracker::~TimeSampleButtonsTracker() {}
 
 TimeSampleButtonsTracker::Impl::Impl()
-  : start_time(std::chrono::steady_clock::now()),
-    sample_idx(-1) {}
+  : start_time(std::chrono::steady_clock::now()) {}
 
 
 void TimeSampleButtonsTracker::Impl::addTime(double t) { time.push_back(t); }
@@ -45,7 +44,14 @@ void TimeSampleButtonsTracker::Impl::addButtons(int b) { button_states.push_back
 
 bool TimeSampleButtonsTracker::Impl::getButtons(ButtonsSample &b) {
 
-  if (!time.empty() && button_states.size() >= 2 && time.size() != button_states.size()) {
+  if (button_states.empty()) {
+    GM_RUNONCE(GM_ERR("TimeSampleButtonsTracker", "No button states available."));
+    return false;
+  }
+
+  if (!time.empty() &&
+      button_states.size() >= 2 &&
+      time.size() != button_states.size()) {
 
     GM_RUNONCE(GM_ERR("TimeSampleButtonsTracker", "cannot find button state - sample count mismatch (" << time.size() << " and " << button_states.size() << ")"));
 
@@ -55,41 +61,37 @@ bool TimeSampleButtonsTracker::Impl::getButtons(ButtonsSample &b) {
   b.time = ButtonsTracker::clock::now();
   
   if (time.empty()) {
-    // If there is not time specified, iterate per frame
+    // If there is no time specified, iterate per frame
+
+    assert(sample_idx < button_states.size());
+    b.buttons = button_states[sample_idx];
 
     sample_idx = (sample_idx + 1) % button_states.size();
-
-    if (button_states.size() == 0) {
-      b.buttons = 0;
-    } else {
-      assert(sample_idx < button_states.size());
-      b.buttons = button_states[sample_idx];
-    }
 
     return true;
   }
 
   typedef std::chrono::duration<double, std::ratio<1>> d_seconds;
-  auto duration = std::chrono::duration_cast<d_seconds>
+  double duration = std::chrono::duration_cast<d_seconds>
     (std::chrono::steady_clock::now() - start_time).count();
 
-  if (duration > time.back()) {
-    duration -= int(duration/time.back()) * time.back();
+  if (duration > time.back())
+    duration -= int(duration / time.back()) * time.back();
+
+  if (duration <= time.front()) {
+    b.buttons = 0;
+    return true;
   }
 
   size_t last_time = 0;
-  for (int idx = 0; idx < time.size(); ++idx) {
+  for (size_t idx = 0; idx < time.size(); ++idx) {
     if (time[idx] > duration) {
       last_time = idx;
       break;
     }
   }
-  assert(last_time >= 0);
 
-  if (button_states.size() == 0)
-    b.buttons = 0;
-  else
-    b.buttons = button_states[last_time];
+  b.buttons = button_states[last_time];
 
   return true;
 }
