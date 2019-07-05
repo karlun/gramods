@@ -120,6 +120,16 @@ std::istream& operator>> (std::istream &in, Eigen::Quaternionf &q) {
   return in;
 }
 
+std::istream& operator>> (std::istream &in, Eigen::Matrix3f &m) {
+
+  float a1, a2, a3, a4, a5, a6, a7, a8, a9;
+
+  in >> a1 >> a2 >> a3 >> a4 >> a5 >> a6 >> a7 >> a8 >> a9;
+  m << a1, a2, a3, a4, a5, a6, a7, a8, a9;
+
+  return in;
+}
+
 END_NAMESPACE_GRAMODS;
 
 #endif

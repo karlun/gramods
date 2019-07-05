@@ -6,18 +6,43 @@
   <ImportLibrary library="libgmGraphics.so"/>
 
   <SdlWindow
-      size="800 600"
+      size="1280 480"
       title="UVCstream"
       GLMajor="3" GLMinor="3"
       GLProfile="core">
+
     <SdlContext
         DEF="SDLContext"
         useVideo="1"/>
-    <TextureRenderer>
-      <UvcTexture
-          resolution="800 600"
-          framerate="20"/>
-    </TextureRenderer>
+
+    <TiledView>
+
+      <param name="tileLocation" value="0 0 1 1"/>
+
+      <View>
+        <TextureRenderer>
+          <UvcTexture
+              DEF="CAM"
+              resolution="640 480"
+              framerate="20"
+              format="YUYV"
+              convertToRgb="false"/>
+        </TextureRenderer>
+      </View>
+
+      <param name="tileLocation" value="0 1 1 1"/>
+
+      <View>
+        <TextureRenderer>
+          <YuvDecodeTexture>
+            <UvcTexture
+                USE="CAM"/>
+          </YuvDecodeTexture>
+        </TextureRenderer>
+      </View>
+
+    </TiledView>
+
   </SdlWindow>
 
 </config>
