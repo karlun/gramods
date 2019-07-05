@@ -344,6 +344,8 @@ TouchState::TouchLine TouchState::touchPointToTouchLine(TouchPoint pt, Eigen::Ma
                    pt.id,
                    pt.state,
                    pt.clicks };
+
+  return tl;
 }
 
 void TouchState::setSmoothing(float r) {
