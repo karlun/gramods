@@ -35,7 +35,7 @@ struct GeometryCorrectedProjectorView::Impl {
   bool is_setup = false;
   bool is_functional = false;
 
-  void renderFullPipeline(ViewSettings settings, Eye eye);
+  void renderFullPipeline(ViewSettings settings, Eye eye, float eye_separation);
 
   bool setCamera(Camera &c);
   bool setCameraShapeFromIntrinsics(Camera &c);
@@ -173,7 +173,7 @@ void GeometryCorrectedProjectorView::setGeometry(std::shared_ptr<Geometry> g) {
 }
 
 void GeometryCorrectedProjectorView::renderFullPipeline(ViewSettings settings, Eye eye) {
-  _impl->renderFullPipeline(settings, eye);
+  _impl->renderFullPipeline(settings, eye, eye_separation);
 }
 
 bool GeometryCorrectedProjectorView::Impl::setCamera(Camera &c) {
@@ -256,7 +256,9 @@ std::string GeometryCorrectedProjectorView::Impl::createFragmentCode() {
   return fragment_code;
 }
 
-void GeometryCorrectedProjectorView::Impl::renderFullPipeline(ViewSettings settings, Eye eye) {
+void GeometryCorrectedProjectorView::Impl::renderFullPipeline(ViewSettings settings,
+                                                              Eye eye,
+                                                              float eye_separation) {
 
   if (!geometry) {
     GM_RUNONCE(GM_ERR("GeometryCorrectedProjectorView", "Missing geometry, that is necessary to render the geometry corrected view."));
@@ -267,14 +269,32 @@ void GeometryCorrectedProjectorView::Impl::renderFullPipeline(ViewSettings setti
   if (!setCamera(projector_camera))
     return;
 
-  Eigen::Vector3f render_position = settings.viewpoint
-    ? settings.viewpoint->getPosition()
-    : Eigen::Vector3f::Zero();
+  Eigen::Vector3f x_VP = Eigen::Vector3f::Zero();
+  Eigen::Quaternionf q_VP = Eigen::Quaternionf::Identity();
+
+  if (settings.viewpoint) {
+    x_VP = settings.viewpoint->getPosition();
+    q_VP = settings.viewpoint->getOrientation();
+  } else {
+    GM_RUNONCE(GM_WRN("GeometryCorrectedProjectorView",
+                      "No viewpoint available - using zero position and rotation"));
+  }
+
+  switch (eye) {
+  case Eye::LEFT:
+    x_VP -= q_VP * Eigen::Vector3f(0.5f * eye_separation, 0.f, 0.f);
+    break;
+  case Eye::RIGHT:
+    x_VP += q_VP * Eigen::Vector3f(0.5f * eye_separation, 0.f, 0.f);
+    break;
+  case Eye::MONO:
+    break;
+  }
 
   Camera render_camera;
   bool camera_good =
     geometry->getCameraFromPosition(projector_camera,
-                                    render_position,
+                                    x_VP,
                                     render_camera);
   if (!camera_good) return;
 

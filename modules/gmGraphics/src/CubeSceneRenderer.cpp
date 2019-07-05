@@ -210,9 +210,9 @@ void CubeSceneRenderer::Impl::render(Camera camera) {
   glBindVertexArray(vao_id);
 
   float step = (1.f/N);
-  for (int idx_z = 0; idx_z < N; ++idx_z)
-    for (int idx_y = 0; idx_y < N; ++idx_y)
-      for (int idx_x = 0; idx_x < N; ++idx_x) {
+  for (size_t idx_z = 0; idx_z < N; ++idx_z)
+    for (size_t idx_y = 0; idx_y < N; ++idx_y)
+      for (size_t idx_x = 0; idx_x < N; ++idx_x) {
 
         if (idx_x != 0 && idx_x != N - 1 &&
             idx_y != 0 && idx_y != N - 1 &&

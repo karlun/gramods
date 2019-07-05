@@ -23,7 +23,7 @@ struct TimeSampleAnalogsTracker::Impl {
   bool getAnalogs(AnalogsSample &a);
 
   std::vector<double> time;
-  size_t sample_idx;
+  size_t sample_idx = 0;
   std::vector<gmTypes::float3> states;
 
   std::chrono::steady_clock::time_point start_time;
@@ -35,8 +35,7 @@ TimeSampleAnalogsTracker::TimeSampleAnalogsTracker()
 TimeSampleAnalogsTracker::~TimeSampleAnalogsTracker() {}
 
 TimeSampleAnalogsTracker::Impl::Impl()
-  : start_time(std::chrono::steady_clock::now()),
-    sample_idx(-1) {}
+  : start_time(std::chrono::steady_clock::now()) {}
 
 
 void TimeSampleAnalogsTracker::Impl::addTime(double t) { time.push_back(t); }
@@ -45,14 +44,16 @@ void TimeSampleAnalogsTracker::Impl::addAnalogs(gmTypes::float3 a) { states.push
 
 bool TimeSampleAnalogsTracker::Impl::getAnalogs(AnalogsSample &b) {
 
+  if (states.empty()) {
+    GM_RUNONCE(GM_ERR("TimeSampleAnalogsTracker", "No analog samples available."));
+    return false;
+  }
+
   if (!time.empty() && states.size() >= 2 && time.size() != states.size()) {
     GM_RUNONCE(GM_ERR("TimeSampleAnalogsTracker", "cannot find state - sample count mismatch (" << time.size() << " and " << states.size() << ")"));
 
     return false;
   }
-
-  if (states.empty())
-      return false;
 
   b.time = AnalogsTracker::clock::now();
   b.analogs.clear();
@@ -60,11 +61,11 @@ bool TimeSampleAnalogsTracker::Impl::getAnalogs(AnalogsSample &b) {
   if (time.empty()) {
     // If there is not time specified, iterate per frame
 
-    sample_idx = (sample_idx + 1) % states.size();
-
     assert(sample_idx < states.size());
     for (auto s : states[sample_idx])
       b.analogs.push_back(s);
+
+    sample_idx = (sample_idx + 1) % states.size();
 
     return true;
   }
@@ -78,17 +79,16 @@ bool TimeSampleAnalogsTracker::Impl::getAnalogs(AnalogsSample &b) {
   }
 
   size_t last_time = 0;
-  for (int idx = 0; idx < time.size(); ++idx) {
+  for (size_t idx = 0; idx < time.size(); ++idx) {
     if (time[idx] > duration) {
       last_time = idx;
       break;
     }
   }
 
-  assert(last_time >= 0);
   assert(last_time < states.size());
 
-  for (auto s : states[sample_idx])
+  for (auto s : states[last_time])
     b.analogs.push_back(s);
 
   return true;

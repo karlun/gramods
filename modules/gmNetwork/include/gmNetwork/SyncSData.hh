@@ -69,7 +69,7 @@ protected:
 
     char * m = reinterpret_cast<char*>(&back);
 
-    for (int idx = 0; idx < sizeof(TYPE); ++idx) {
+    for (size_t idx = 0; idx < sizeof(TYPE); ++idx) {
       d[idx + 1] = m[idx];
     }
   }
@@ -87,7 +87,7 @@ protected:
     TYPE value;
     char * m = reinterpret_cast<char*>(&value);
 
-    for (int idx = 0; idx < sizeof(TYPE); ++idx)
+    for (size_t idx = 0; idx < sizeof(TYPE); ++idx)
       m[idx] = d[idx + 1];
 
     back = value;

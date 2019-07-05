@@ -226,21 +226,21 @@ void PoseRegistrationEstimator::Impl::getIQM3D(std::vector<Eigen::Vector3f> samp
             [](Eigen::Vector3f a, Eigen::Vector3f b){
               return a[0] < b[0];
             });
-  for (int idx = samples.size()/4; idx < (3*samples.size())/4; ++idx)
+  for (size_t idx = samples.size()/4; idx < (3*samples.size())/4; ++idx)
     sum[0] += samples[idx][0];
 
   std::sort(samples.begin(), samples.end(),
             [](Eigen::Vector3f a, Eigen::Vector3f b){
               return a[1] < b[1];
             });
-  for (int idx = samples.size()/4; idx < (3*samples.size())/4; ++idx)
+  for (size_t idx = samples.size()/4; idx < (3*samples.size())/4; ++idx)
     sum[1] += samples[idx][1];
 
   std::sort(samples.begin(), samples.end(),
             [](Eigen::Vector3f a, Eigen::Vector3f b){
               return a[2] < b[2];
             });
-  for (int idx = samples.size()/4; idx < (3*samples.size())/4; ++idx)
+  for (size_t idx = samples.size()/4; idx < (3*samples.size())/4; ++idx)
     sum[2] += samples[idx][2];
 
   x = (1.0 / ((3*samples.size())/4 - samples.size()/4)) * sum;
@@ -304,7 +304,7 @@ void PoseRegistrationEstimator::Impl::expandPlanar(std::vector<Eigen::Vector3f> 
   if (idx0 < 0) {
 
     float best_value0 = 0.f;
-    for (int idx = 0; idx < data.size(); ++idx) {
+    for (size_t idx = 0; idx < data.size(); ++idx) {
       float value = fabsf(data_X.dot((data[idx] - cp)));
       if (value > best_value0) {
         best_value0 = value;
@@ -313,8 +313,8 @@ void PoseRegistrationEstimator::Impl::expandPlanar(std::vector<Eigen::Vector3f> 
     }
 
     float best_value1 = 0.f;
-    for (int idx = 0; idx < data.size(); ++idx) {
-      if (idx == idx0) continue;
+    for (size_t idx = 0; idx < data.size(); ++idx) {
+      if (idx == (size_t)idx0) continue;
       float value = fabsf(data_Y.dot((data[idx] - cp)));
       if (value > best_value1) {
         best_value1 = value;

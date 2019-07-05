@@ -23,19 +23,19 @@ TEST(gmMiscEndFit, Effoaw) {
 
   {
     size_t samples;
-    auto vel = effoaw.estimateVelocity(0, 20, &samples);
+    effoaw.estimateVelocity(0, 20, &samples);
     EXPECT_EQ(samples, 6);
   }
 
   {
     size_t samples;
-    auto vel = effoaw.estimateVelocity(0, 4, &samples);
+    effoaw.estimateVelocity(0, 4, &samples);
     EXPECT_EQ(samples, 5);
   }
 
   {
     size_t samples;
-    auto vel = effoaw.estimateVelocity(0, 3, &samples);
+    effoaw.estimateVelocity(0, 3, &samples);
     EXPECT_EQ(samples, 4);
   }
 
@@ -74,6 +74,7 @@ TEST(gmMiscEndFit, Efhoaw) {
     double t = idx * a;
     auto X = Eigen::Vector3d(cos(t), sin(t), t);
     auto P = efhoaw.getPolynomialPosition(0, t);
+    EXPECT_LE((X-P).norm(), 1e-10);
   }
 }
 

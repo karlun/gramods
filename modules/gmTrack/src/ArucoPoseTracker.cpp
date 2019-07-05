@@ -75,7 +75,7 @@ bool ArucoPoseTracker::getPose(PoseSample &p) {
   return _impl->getPose(p);
 }
 
-void ArucoPoseTracker::Impl::update(gmCore::Updateable::clock::time_point t) {
+void ArucoPoseTracker::Impl::update(gmCore::Updateable::clock::time_point) {
 
   if (!board) {
     GM_RUNONCE(GM_ERR("ArucoPoseTracker", "No board to track."));

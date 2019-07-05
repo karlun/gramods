@@ -88,7 +88,7 @@ cv::Ptr<cv::aruco::Board> ArucoBoardComplex::Impl::getBoard() {
   std::vector<std::vector<cv::Point3f>> objPoints;
   std::vector<int> ids;
 
-  for (int idx = 0; idx < aboards.size(); ++idx) {
+  for (size_t idx = 0; idx < aboards.size(); ++idx) {
 
     auto aboard = aboards[idx];
     auto position = positions.empty() ?

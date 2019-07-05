@@ -77,8 +77,8 @@ void InterlaceMultiplexer::Impl::setup() {
   is_functional = false;
 
   GM_VINF("InterlaceMultiplexer", "Creating buffers and textures");
-  glGenFramebuffers((GLsizei)Eye::COUNT, fb_id);
-  glGenTextures((GLsizei)Eye::COUNT, tex_id);
+  glGenFramebuffers((GLsizei)2, fb_id);
+  glGenTextures((GLsizei)2, tex_id);
   glGenRenderbuffers(1, &rb_depth_id);
 
   for (size_t eye_idx = (size_t)Eye::LEFT; eye_idx <= (size_t)Eye::RIGHT; ++eye_idx) {
@@ -201,8 +201,8 @@ void main() {
 void InterlaceMultiplexer::Impl::teardown() {
   is_functional = false;
 
-  if (fb_id[0]) glDeleteFramebuffers((GLsizei)Eye::COUNT, fb_id);
-  if (tex_id[0]) glDeleteTextures((GLsizei)Eye::COUNT, tex_id);
+  if (fb_id[0]) glDeleteFramebuffers((GLsizei)2, fb_id);
+  if (tex_id[0]) glDeleteTextures((GLsizei)2, tex_id);
   if (rb_depth_id) glDeleteRenderbuffers(1, &rb_depth_id);
 
   fb_id[0] = 0;

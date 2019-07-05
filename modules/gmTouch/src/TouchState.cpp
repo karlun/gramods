@@ -15,18 +15,12 @@ BEGIN_NAMESPACE_GMTOUCH;
 #define DEFAULT_MULTI_DELAY_MS 500
 
 TouchState::TouchState()
-  : state(0),
-    use_mouse(true),
-    mouse_down(false),
-    remove_mouse_upon_touch(true),
-    smoothing(DEFAULT_SMOOTHING),
+  : smoothing(DEFAULT_SMOOTHING),
     move_magnitude(DEFAULT_MOVE_MAGNITUDE),
     hold_time(std::chrono::milliseconds(DEFAULT_HOLD_DELAY_MS)),
     click_time(std::chrono::milliseconds(DEFAULT_CLICK_DELAY_MS)),
-    multi_time(std::chrono::milliseconds(DEFAULT_MULTI_DELAY_MS)),
-    current_WPV_inv_valid(false), 
-    previous_WPV_inv_valid(false) {
-  
+    multi_time(std::chrono::milliseconds(DEFAULT_MULTI_DELAY_MS)) {
+
   velocityEstimator.setHistoryLength(DEFAULT_MOVE_HISTORY_LENGTH);
   velocityEstimator.setHistoryDuration(DEFAULT_MOVE_HISTORY_DURATION);
 }
@@ -344,6 +338,8 @@ TouchState::TouchLine TouchState::touchPointToTouchLine(TouchPoint pt, Eigen::Ma
                    pt.id,
                    pt.state,
                    pt.clicks };
+
+  return tl;
 }
 
 void TouchState::setSmoothing(float r) {

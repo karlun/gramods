@@ -114,13 +114,13 @@ Eigen::Vector3d EFFOAW::Impl::estimateVelocity
     return Eigen::Vector3d::Zero();
   }
 
-  int best_valid_n = 1;
-  for (int n = 2 ; n < position_list.size() ; ++n) {
+  size_t best_valid_n = 1;
+  for (size_t n = 2 ; n < position_list.size() ; ++n) {
 
     Eigen::Vector3d diff = (position_list[0] - position_list[n]) / (time_list[0] - time_list[n]);
 
     bool is_valid = true;
-    for (int i = 1 ; i <= n ; ++i) {
+    for (size_t i = 1 ; i <= n ; ++i) {
 
       Eigen::Vector3d offset = (time_list[0] - time_list[i]) * diff;
       Eigen::Vector3d pos = position_list[0] - position_list[i] - offset;
@@ -183,7 +183,7 @@ Eigen::Vector3d EFFOAW::Impl::estimatePosition(size_t id, double error_threshold
 
   double sum_time = 0.0;
   Eigen::Vector3d sum_position = Eigen::Vector3d::Zero();
-  for (int idx = 0; idx < samples; ++idx) {
+  for (size_t idx = 0; idx < samples; ++idx) {
     sum_time += time_list[idx];
     sum_position += position_list[idx];
   }

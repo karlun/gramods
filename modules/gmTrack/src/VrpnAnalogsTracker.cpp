@@ -17,7 +17,7 @@ VrpnAnalogsTracker::~VrpnAnalogsTracker() {
   tracker = nullptr;
 }
 
-void VrpnAnalogsTracker::update(gmCore::Updateable::clock::time_point t) {
+void VrpnAnalogsTracker::update(gmCore::Updateable::clock::time_point) {
 
   if (!tracker) {
     GM_WRN("VrpnAnalogsTracker", "Cannot get buttons - no vrpn connection");
@@ -67,7 +67,7 @@ void VRPN_CALLBACK VrpnAnalogsTracker::handler(void *data, const vrpn_ANALOGCB i
   _this->latest_sample.analogs.resize(info.num_channel, 0);
 
   std::stringstream analogs_log;
-  for (size_t idx = 0; idx < info.num_channel; ++idx) {
+  for (size_t idx = 0; idx < (size_t)info.num_channel; ++idx) {
     _this->latest_sample.analogs[idx] = info.channel[idx];
     analogs_log << info.channel[idx] << " ";
   }

@@ -17,7 +17,7 @@ VrpnPoseTracker::~VrpnPoseTracker() {
   tracker = nullptr;
 }
 
-void VrpnPoseTracker::update(gmCore::Updateable::clock::time_point t) {
+void VrpnPoseTracker::update(gmCore::Updateable::clock::time_point) {
 
   if (!tracker) {
     GM_WRN("VrpnPoseTracker", "Cannot get pose - no vrpn connection");
