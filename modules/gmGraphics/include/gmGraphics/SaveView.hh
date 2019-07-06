@@ -4,6 +4,8 @@
 
 #include <gmGraphics/View.hh>
 
+#include <gmTypes/size.hh>
+
 BEGIN_NAMESPACE_GMGRAPHICS;
 
 /**
@@ -31,6 +33,14 @@ public:
      \b XML-attribute: \c file
   */
   void setFile(std::string file);
+
+  /**
+     Sets the resolution to render and save at, regarless of
+     resolution of the parent. Default is to use the parent.
+
+     \b XML-attribute: \c resolution
+  */
+  void setResolution(gmTypes::size2 res);
 
   /**
      Sets the view that should be saved to file.
