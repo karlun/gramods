@@ -2,7 +2,7 @@
 #ifndef GRAMODS_GRAPHICS_VIEWMIXVIEW
 #define GRAMODS_GRAPHICS_VIEWMIXVIEW
 
-#include <gmGraphics/StereoscopicView.hh>
+#include <gmGraphics/View.hh>
 
 #include <gmGraphics/Geometry.hh>
 
