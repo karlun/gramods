@@ -23,13 +23,14 @@ struct ImageTexture::Impl {
   GLuint getGLTextureID() { return texture_id; }
 
   void update();
-  bool loadImage(std::string filename, size_t frame = 0);
+  void update(clock::time_point t);
+  bool loadImage(std::string filename, long int frame = 0);
 
   GLuint texture_id = 0;
   std::string file = "";
   bool fail = false;
   gmTypes::size2 animation_range;
-  size_t animation_frame = 0;
+  long int animation_frame = -1;
   bool animate = false;
   bool do_loop = false;
   bool do_exit = false;
@@ -50,7 +51,7 @@ void ImageTexture::setFile(std::string file) {
 
 void ImageTexture::setRange(gmTypes::size2 range) {
   _impl->animation_range = range;
-  _impl->animation_frame = range[0];
+  _impl->animation_frame = range[0] - 1;
   _impl->animate = true;
 }
 
@@ -74,24 +75,41 @@ void ImageTexture::Impl::update() {
     GM_VINF("ImageTexture", "Animation frame " << animation_frame);
     fail = !loadImage(file, animation_frame);
 
-    if (++animation_frame > animation_range[1]) {
-      if (do_loop) {
-        GM_VINF("ImageTexture", "Looping animation");
-        animation_frame = animation_range[0];
-      } else if (do_exit) {
-        exit(0);
-      } else {
-        GM_VINF("ImageTexture", "Animation done");
-        animate = false;
-      }
-    }
 
   } else if (!texture_id) {
     fail = !loadImage(file);
   }
 }
 
-bool ImageTexture::Impl::loadImage(std::string file_template, size_t frame) {
+void ImageTexture::update(clock::time_point t) {
+  _impl->update(t);
+}
+
+void ImageTexture::Impl::update(clock::time_point t) {
+
+  ++animation_frame;
+
+  if ((size_t)animation_frame > animation_range[1]) {
+
+    if (do_loop) {
+
+      GM_VINF("ImageTexture", "Looping animation");
+      animation_frame = animation_range[0];
+
+    } else if (do_exit) {
+
+      exit(0);
+
+    } else {
+
+      GM_VINF("ImageTexture", "Animation done");
+      animate = false;
+
+    }
+  }
+}
+
+bool ImageTexture::Impl::loadImage(std::string file_template, long int frame) {
 
   size_t filename_size = snprintf(nullptr, 0, file_template.c_str(), frame) + 1;
   std::vector<char> filename(filename_size + 1);

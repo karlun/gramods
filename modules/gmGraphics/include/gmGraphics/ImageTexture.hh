@@ -8,6 +8,7 @@
 
 #include <gmTypes/size.hh>
 #include <gmCore/OFactory.hh>
+#include <gmCore/Updateable.hh>
 #include <gmGraphics/Texture.hh>
 #include <memory>
 
@@ -18,7 +19,8 @@ BEGIN_NAMESPACE_GMGRAPHICS;
    its texture data.
 */
 class ImageTexture
-  : public gmGraphics::Texture {
+  : public gmGraphics::Texture,
+    public gmCore::Updateable {
 
 public:
 
@@ -31,6 +33,11 @@ public:
      context.
   */
   void update();
+
+  /**
+     Called by Updateable::updateAll to increment the frame counter.
+  */
+  void update(clock::time_point t);
 
   /**
      Returns the ID of the associated GL texture object.
