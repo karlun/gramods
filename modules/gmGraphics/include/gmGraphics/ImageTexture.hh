@@ -58,11 +58,20 @@ public:
   void setRange(gmTypes::size2 range);
 
   /**
-     Activates or deactivates looping the animation.
+     Activates or deactivates looping the animation. Default is false.
 
      \b XML-attribute: \c loop
   */
   void setLoop(bool on);
+
+  /**
+     Activates or deactivates automatic exit when the specified range
+     has been covered. Default is false. Loop has to be false for this
+     to work.
+
+     \b XML-attribute: \c exit
+  */
+  void setExit(bool on);
 
   GM_OFI_DECLARE;
 

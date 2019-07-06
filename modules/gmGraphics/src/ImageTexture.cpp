@@ -6,6 +6,7 @@
 #include <gmGraphics/FreeImage.hh>
 
 #include <FreeImage.h>
+#include <stdlib.h>
 
 BEGIN_NAMESPACE_GMGRAPHICS;
 
@@ -13,6 +14,7 @@ GM_OFI_DEFINE(ImageTexture);
 GM_OFI_PARAM(ImageTexture, file, std::string, ImageTexture::setFile);
 GM_OFI_PARAM(ImageTexture, range, gmTypes::size2, ImageTexture::setRange);
 GM_OFI_PARAM(ImageTexture, loop, bool, ImageTexture::setLoop);
+GM_OFI_PARAM(ImageTexture, exit, bool, ImageTexture::setExit);
 
 struct ImageTexture::Impl {
 
@@ -29,7 +31,8 @@ struct ImageTexture::Impl {
   gmTypes::size2 animation_range;
   size_t animation_frame = 0;
   bool animate = false;
-  bool loop = false;
+  bool do_loop = false;
+  bool do_exit = false;
 
   std::shared_ptr<FreeImage> free_image;
 };
@@ -52,7 +55,11 @@ void ImageTexture::setRange(gmTypes::size2 range) {
 }
 
 void ImageTexture::setLoop(bool on) {
-  _impl->loop = on;
+  _impl->do_loop = on;
+}
+
+void ImageTexture::setExit(bool on) {
+  _impl->do_exit = on;
 }
 
 ImageTexture::Impl::Impl() {
@@ -68,9 +75,11 @@ void ImageTexture::Impl::update() {
     fail = !loadImage(file, animation_frame);
 
     if (++animation_frame > animation_range[1]) {
-      if (loop) {
+      if (do_loop) {
         GM_VINF("ImageTexture", "Looping animation");
         animation_frame = animation_range[0];
+      } else if (do_exit) {
+        exit(0);
       } else {
         GM_VINF("ImageTexture", "Animation done");
         animate = false;
