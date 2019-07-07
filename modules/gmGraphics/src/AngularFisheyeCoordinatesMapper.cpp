@@ -28,7 +28,7 @@ bool mapTo2D(vec3 pos3, out vec2 pos2) {
   float r = (PI2 - phi) / (0.5 * coverageAngle);
   if (r > 1.0) return false;
 
-  float theta = atan(pos3.x, -pos3.z);
+  float theta = atan(pos3.x, pos3.z);
 
   pos2 = vec2(r * sin(theta), r * cos(theta));
   return true;
