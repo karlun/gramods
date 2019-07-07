@@ -50,9 +50,16 @@ public:
   /**
      Set the position of the sphere.
 
-     \b XML-attribute: \c center
+     \b XML-attribute: \c position
   */
-  void setCenter(Eigen::Vector3f c);
+  void setPosition(Eigen::Vector3f p);
+
+  /**
+     Set the orientation of the sphere.
+
+     \b XML-attribute: \c orientation
+  */
+  void setOrientation(Eigen::Quaternionf q);
 
   /**
      Sets the Texture to apply on the sphere.

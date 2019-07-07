@@ -13,7 +13,8 @@ BEGIN_NAMESPACE_GMGRAPHICS;
 
 GM_OFI_DEFINE(SphereRenderer);
 GM_OFI_PARAM(SphereRenderer, radius, float, SphereRenderer::setRadius);
-GM_OFI_PARAM(SphereRenderer, center, Eigen::Vector3f, SphereRenderer::setCenter);
+GM_OFI_PARAM(SphereRenderer, position, Eigen::Vector3f, SphereRenderer::setPosition);
+GM_OFI_PARAM(SphereRenderer, orientation, Eigen::Quaternionf, SphereRenderer::setOrientation);
 GM_OFI_POINTER(SphereRenderer, texture, gmGraphics::Texture, SphereRenderer::setTexture);
 GM_OFI_POINTER(SphereRenderer, coordinatesMapper, gmGraphics::CoordinatesMapper, SphereRenderer::setCoordinatesMapper);
 
@@ -38,8 +39,9 @@ struct SphereRenderer::Impl {
 
   GLuint vertex_count = 0;
 
-  float sphere_radius = 10;
-  Eigen::Vector3f sphere_center;
+  float radius = 10;
+  Eigen::Vector3f position = Eigen::Vector3f::Zero();
+  Eigen::Quaternionf orientation = Eigen::Quaternionf::Identity();
 
   std::shared_ptr<Texture> texture;
   std::shared_ptr<CoordinatesMapper> mapper;
@@ -60,6 +62,7 @@ const std::string SphereRenderer::Impl::vertex_shader_code = R"lang=glsl(
 
 uniform mat4 Mp;
 uniform mat4 Mv;
+uniform mat4 Mm;
 
 in vec4 vertex_position;
 in vec3 tex_position;
@@ -67,7 +70,7 @@ in vec3 tex_position;
 out vec3 tex_pos;
 
 void main() {
-  gl_Position = Mp * Mv * vertex_position;
+  gl_Position = Mp * Mv * Mm * vertex_position;
   tex_pos = tex_position;
 }
 )lang=glsl";
@@ -129,26 +132,26 @@ void SphereRenderer::Impl::setup() {
       double rz1 = cos(theta1);
 
       if (row + 1 != ROW_COUNT) {
-        tcoords.push_back(rx0 * rxz0); vertices.push_back(sphere_center[0] + sphere_radius * tcoords.back());
-        tcoords.push_back(       ry0); vertices.push_back(sphere_center[1] + sphere_radius * tcoords.back());
-        tcoords.push_back(rz0 * rxz0); vertices.push_back(sphere_center[2] + sphere_radius * tcoords.back());
-        tcoords.push_back(rx0 * rxz1); vertices.push_back(sphere_center[0] + sphere_radius * tcoords.back());
-        tcoords.push_back(       ry1); vertices.push_back(sphere_center[1] + sphere_radius * tcoords.back());
-        tcoords.push_back(rz0 * rxz1); vertices.push_back(sphere_center[2] + sphere_radius * tcoords.back());
-        tcoords.push_back(rx1 * rxz1); vertices.push_back(sphere_center[0] + sphere_radius * tcoords.back());
-        tcoords.push_back(       ry1); vertices.push_back(sphere_center[1] + sphere_radius * tcoords.back());
-        tcoords.push_back(rz1 * rxz1); vertices.push_back(sphere_center[2] + sphere_radius * tcoords.back());
+        tcoords.push_back(rx0 * rxz0); vertices.push_back(radius * tcoords.back());
+        tcoords.push_back(       ry0); vertices.push_back(radius * tcoords.back());
+        tcoords.push_back(rz0 * rxz0); vertices.push_back(radius * tcoords.back());
+        tcoords.push_back(rx0 * rxz1); vertices.push_back(radius * tcoords.back());
+        tcoords.push_back(       ry1); vertices.push_back(radius * tcoords.back());
+        tcoords.push_back(rz0 * rxz1); vertices.push_back(radius * tcoords.back());
+        tcoords.push_back(rx1 * rxz1); vertices.push_back(radius * tcoords.back());
+        tcoords.push_back(       ry1); vertices.push_back(radius * tcoords.back());
+        tcoords.push_back(rz1 * rxz1); vertices.push_back(radius * tcoords.back());
       }
       if (row != 0) {
-        tcoords.push_back(rx0 * rxz0); vertices.push_back(sphere_center[0] + sphere_radius * tcoords.back());
-        tcoords.push_back(       ry0); vertices.push_back(sphere_center[1] + sphere_radius * tcoords.back());
-        tcoords.push_back(rz0 * rxz0); vertices.push_back(sphere_center[2] + sphere_radius * tcoords.back());
-        tcoords.push_back(rx1 * rxz1); vertices.push_back(sphere_center[0] + sphere_radius * tcoords.back());
-        tcoords.push_back(       ry1); vertices.push_back(sphere_center[1] + sphere_radius * tcoords.back());
-        tcoords.push_back(rz1 * rxz1); vertices.push_back(sphere_center[2] + sphere_radius * tcoords.back());
-        tcoords.push_back(rx1 * rxz0); vertices.push_back(sphere_center[0] + sphere_radius * tcoords.back());
-        tcoords.push_back(       ry0); vertices.push_back(sphere_center[1] + sphere_radius * tcoords.back());
-        tcoords.push_back(rz1 * rxz0); vertices.push_back(sphere_center[2] + sphere_radius * tcoords.back());
+        tcoords.push_back(rx0 * rxz0); vertices.push_back(radius * tcoords.back());
+        tcoords.push_back(       ry0); vertices.push_back(radius * tcoords.back());
+        tcoords.push_back(rz0 * rxz0); vertices.push_back(radius * tcoords.back());
+        tcoords.push_back(rx1 * rxz1); vertices.push_back(radius * tcoords.back());
+        tcoords.push_back(       ry1); vertices.push_back(radius * tcoords.back());
+        tcoords.push_back(rz1 * rxz1); vertices.push_back(radius * tcoords.back());
+        tcoords.push_back(rx1 * rxz0); vertices.push_back(radius * tcoords.back());
+        tcoords.push_back(       ry0); vertices.push_back(radius * tcoords.back());
+        tcoords.push_back(rz1 * rxz0); vertices.push_back(radius * tcoords.back());
       }
     }
   }
@@ -239,11 +242,12 @@ void SphereRenderer::Impl::render(Camera camera) {
 
   GM_VINF("SphereRenderer", "rendering");
 
-  auto Mv = camera.getViewMatrix();
-  float near = std::max(0.1 * sphere_radius,
-                        double((Mv.translation() - sphere_center).norm() - sphere_radius));
-  float far = (Mv.translation() - sphere_center).norm() + sphere_radius;
-  auto Mp = camera.getProjectionMatrix(near, far);
+  Eigen::Affine3f Mm = Eigen::Translation3f(position) * orientation;
+  Eigen::Affine3f Mv = camera.getViewMatrix();
+  float near = std::max(0.1f * radius,
+                        (Mv * Mm).translation().z() - radius);
+  float far = (Mv * Mm).translation().z() + radius;
+  Eigen::Matrix4f Mp = camera.getProjectionMatrix(near, far);
 
   glEnable(GL_DEPTH_TEST);
 
@@ -253,6 +257,7 @@ void SphereRenderer::Impl::render(Camera camera) {
   glUseProgram(program_id);
   glUniformMatrix4fv(glGetUniformLocation(program_id, "Mp"),  1, false, Mp.data());
   glUniformMatrix4fv(glGetUniformLocation(program_id, "Mv"),  1, false, Mv.data());
+  glUniformMatrix4fv(glGetUniformLocation(program_id, "Mm"),  1, false, Mm.data());
   glUniform1i(glGetUniformLocation(program_id, "tex"), 0);
   mapper->setMapperUniforms(program_id);
 
@@ -290,11 +295,15 @@ void SphereRenderer::Impl::teardown() {
 }
 
 void SphereRenderer::setRadius(float r) {
-  _impl->sphere_radius = r;
+  _impl->radius = r;
 }
 
-void SphereRenderer::setCenter(Eigen::Vector3f c) {
-  _impl->sphere_center = c;
+void SphereRenderer::setPosition(Eigen::Vector3f p) {
+  _impl->position = p;
+}
+
+void SphereRenderer::setOrientation(Eigen::Quaternionf q) {
+  _impl->orientation = q;
 }
 
 void SphereRenderer::setTexture(std::shared_ptr<Texture> tex) {
