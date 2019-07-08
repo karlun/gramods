@@ -69,13 +69,6 @@ TEST(gmMiscEndFit, Efhoaw) {
   size_t samples;
   gmMisc::EFHOAW::polco pc = efhoaw.estimateCoefficients(0, 0.1, 2, &samples);
   EXPECT_EQ(samples, 39);
-
-  for (int idx = 0; idx < SAMPLES; ++idx) {
-    double t = idx * a;
-    auto X = Eigen::Vector3d(cos(t), sin(t), t);
-    auto P = efhoaw.getPolynomialPosition(0, t);
-    EXPECT_LE((X-P).norm(), 1e-10);
-  }
 }
 
 #endif
