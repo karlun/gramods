@@ -28,7 +28,7 @@
           position="0.0 0.0 10.0"/>
 
       <SphereGeometry
-          center="0 0 -5000"
+          position="0 0 -5000"
           radius="5000"
           inside="0"/>
 

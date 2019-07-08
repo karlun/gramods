@@ -11,7 +11,7 @@ BEGIN_NAMESPACE_GMGRAPHICS;
 GM_OFI_DEFINE(CubeSceneRenderer);
 GM_OFI_PARAM(CubeSceneRenderer, cubeSize, float, CubeSceneRenderer::setCubeSize);
 GM_OFI_PARAM(CubeSceneRenderer, cubeSetSize, float, CubeSceneRenderer::setCubeSetSize);
-GM_OFI_PARAM(CubeSceneRenderer, cubeSetCenter, Eigen::Vector3f, CubeSceneRenderer::setCubeSetCenter);
+GM_OFI_PARAM(CubeSceneRenderer, position, Eigen::Vector3f, CubeSceneRenderer::setPosition);
 
 #define N_VERTICES 108
 
@@ -31,7 +31,7 @@ struct CubeSceneRenderer::Impl {
 
   float cube_size = 0.1;
   float cube_set_size = 1.0;
-  Eigen::Vector3f cube_set_center;
+  Eigen::Vector3f position;
 
   bool is_setup = false;
   bool is_functional = false;
@@ -191,7 +191,7 @@ void CubeSceneRenderer::Impl::render(Camera camera) {
   Eigen::Affine3f Mv = camera.getViewMatrix();
   float near = 0.1 * cube_size;
   float far =
-    (Mv.inverse().translation() - cube_set_center).norm()
+    (Mv.inverse().translation() - position).norm()
     + 0.87 * (cube_set_size + cube_size);
   Eigen::Matrix4f Mp = camera.getProjectionMatrix(near, far);
 
@@ -220,9 +220,9 @@ void CubeSceneRenderer::Impl::render(Camera camera) {
           continue;
 
         Eigen::Affine3f Mm = Eigen::Affine3f::Identity();
-        Mm *= Eigen::Translation3f(cube_set_center[0] + p0 + pD * idx_x,
-                                   cube_set_center[1] + p0 + pD * idx_y,
-                                   cube_set_center[2] + p0 + pD * idx_z);
+        Mm *= Eigen::Translation3f(position[0] + p0 + pD * idx_x,
+                                   position[1] + p0 + pD * idx_y,
+                                   position[2] + p0 + pD * idx_z);
         Mm *= Eigen::Scaling(0.5f * cube_size);
         Mm *= Eigen::AngleAxis<float>
           (1.0 * step * idx_x +
@@ -275,8 +275,8 @@ void CubeSceneRenderer::setCubeSetSize(float d) {
   _impl->cube_set_size = d;
 }
 
-void CubeSceneRenderer::setCubeSetCenter(Eigen::Vector3f c) {
-  _impl->cube_set_center = c;
+void CubeSceneRenderer::setPosition(Eigen::Vector3f p) {
+  _impl->position = p;
 }
 
 END_NAMESPACE_GMGRAPHICS;

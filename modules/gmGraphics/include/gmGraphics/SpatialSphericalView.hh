@@ -63,24 +63,24 @@ public:
      Sets the location of the center of the spherical projection
      surface, in meters. Default is zero.
 
-     \b XML-attribute: \c sphereCenter
+     \b XML-attribute: \c position
   */
-  void setSphereCenter(Eigen::Vector3f c);
+  void setPosition(Eigen::Vector3f p);
 
   /**
      Set the radius of the projection surface, in meters. Default is 10.
 
-     \b XML-attribute: \c sphereRadius
+     \b XML-attribute: \c radius
   */
-  void setSphereRadius(float r);
+  void setRadius(float r);
 
   /**
      Set the orientation of the projection, for example to create a
      forward tilt common in dome theaters.
 
-     \b XML-attribute: \c sphereOrientation
+     \b XML-attribute: \c orientation
   */
-  void setSphereOrientation(Eigen::Quaternionf q);
+  void setOrientation(Eigen::Quaternionf q);
 
   GM_OFI_DECLARE;
 

@@ -17,7 +17,7 @@
     <CubeSceneRenderer
         cubeSize="0.1"
         cubeSetSize="5.0"
-        cubeSetCenter="0 0 -10"/>
+        position="0 0 -10"/>
 
     <GeometryCorrectedProjectorView
         bufferWidth="4096"
@@ -33,7 +33,7 @@
           rotation="1 0 0 0"/>
 
       <SphereGeometry
-          center="0 0 0"
+          position="0 0 0"
           radius="10"
           inside="1"/>
 

@@ -23,9 +23,9 @@ public:
   /**
      Set the position of the sphere origin, its center.
 
-     \b XML-attribute: \c center
+     \b XML-attribute: \c position
   */
-  void setCenter(Eigen::Vector3f c);
+  void setPosition(Eigen::Vector3f p);
 
   /**
      Set the radius of the sphere.

@@ -8,7 +8,7 @@
 BEGIN_NAMESPACE_GMGRAPHICS;
 
 GM_OFI_DEFINE_SUB(SphereGeometry, Geometry);
-GM_OFI_PARAM(SphereGeometry, center, Eigen::Vector3f, SphereGeometry::setCenter);
+GM_OFI_PARAM(SphereGeometry, position, Eigen::Vector3f, SphereGeometry::setPosition);
 GM_OFI_PARAM(SphereGeometry, radius, float, SphereGeometry::setRadius);
 GM_OFI_PARAM(SphereGeometry, frustumSizeRatio, float, SphereGeometry::setFrustumSizeRatio);
 
@@ -23,7 +23,7 @@ struct SphereGeometry::Impl
                        Eigen::Vector3f dir,
                        Eigen::Vector3f &icp);
 
-  Eigen::Vector3f center = Eigen::Vector3f::Zero();
+  Eigen::Vector3f position = Eigen::Vector3f::Zero();
   float radius = 10.f;
   float size_ratio = 1.f;
 };
@@ -134,19 +134,19 @@ bool SphereGeometry::Impl::getCameraFromPosition(Camera vfrustum,
 
 std::string SphereGeometry::getMapperCode() {
   return R"lang=glsl(
-uniform vec3 sg_center;
+uniform vec3 sg_position;
 uniform float sg_radius;
 uniform bool sg_inside;
 
 vec3 getIntersection(vec3 pos, vec3 dir) {
-  float s = dot(dir, pos - sg_center) * dot(dir, pos - sg_center)
-    - dot(pos - sg_center, pos - sg_center)
+  float s = dot(dir, pos - sg_position) * dot(dir, pos - sg_position)
+    - dot(pos - sg_position, pos - sg_position)
     + sg_radius * sg_radius;
   if (s < 0) return vec3(0, 0, 0);
 
   float t = sg_inside
-    ? - dot(dir, pos - sg_center) + sqrt(s)
-    : - dot(dir, pos - sg_center) - sqrt(s);
+    ? - dot(dir, pos - sg_position) + sqrt(s)
+    : - dot(dir, pos - sg_position) - sqrt(s);
   if (t < 0) return vec3(0, 0, 0);
 
   return pos + dir * t;
@@ -157,7 +157,7 @@ vec3 getIntersection(vec3 pos, vec3 dir) {
 
 void SphereGeometry::setMapperUniforms(GLuint program_id) {
   auto impl = static_cast<Impl*>(_impl.get());
-  glUniform3fv(glGetUniformLocation(program_id, "sg_center"), 1, impl->center.data());
+  glUniform3fv(glGetUniformLocation(program_id, "sg_position"), 1, impl->position.data());
   glUniform1f(glGetUniformLocation(program_id, "sg_radius"), impl->radius);
   glUniform1i(glGetUniformLocation(program_id, "sg_inside"), impl->inside);
 }
@@ -166,23 +166,23 @@ bool SphereGeometry::Impl::getIntersection(Eigen::Vector3f pos,
                                            Eigen::Vector3f dir,
                                            Eigen::Vector3f &icp) {
 
-  float s = dir.dot(pos - center) * dir.dot(pos - center)
-    - (pos - center).dot(pos - center)
+  float s = dir.dot(pos - position) * dir.dot(pos - position)
+    - (pos - position).dot(pos - position)
     + radius * radius;
   if (s < 0) return false;
 
   float t = inside
-    ? - dir.dot(pos - center) + sqrt(s)
-    : - dir.dot(pos - center) - sqrt(s);
+    ? - dir.dot(pos - position) + sqrt(s)
+    : - dir.dot(pos - position) - sqrt(s);
   if (t < 0) return false;
 
   icp = pos + dir * t;
   return true;
 }
 
-void SphereGeometry::setCenter(Eigen::Vector3f c) {
+void SphereGeometry::setPosition(Eigen::Vector3f p) {
   auto impl = static_cast<Impl*>(_impl.get());
-  impl->center = c;
+  impl->position = p;
 }
 
 void SphereGeometry::setRadius(float r) {
