@@ -50,9 +50,9 @@ ypr
 
     ss >> q;
 
-    EXPECT_LE((q * Eigen::Vector3f::UnitX() + Eigen::Vector3f::UnitZ()).norm(), 1e-5);
+    EXPECT_LE((q * Eigen::Vector3f::UnitX() - Eigen::Vector3f::UnitZ()).norm(), 1e-5);
     EXPECT_LE((q * Eigen::Vector3f::UnitY() - Eigen::Vector3f::UnitY()).norm(), 1e-5);
-    EXPECT_LE((q * Eigen::Vector3f::UnitZ() - Eigen::Vector3f::UnitX()).norm(), 1e-5);
+    EXPECT_LE((q * Eigen::Vector3f::UnitZ() + Eigen::Vector3f::UnitX()).norm(), 1e-5);
   }
   {
     std::stringstream ss(R"lang=xml(
@@ -76,8 +76,8 @@ ypr
 
     ss >> q;
 
-    EXPECT_LE((q * Eigen::Vector3f::UnitX() + Eigen::Vector3f::UnitZ()).norm(), 1e-5);
-    EXPECT_LE((q * Eigen::Vector3f::UnitY() - Eigen::Vector3f::UnitX()).norm(), 1e-5);
+    EXPECT_LE((q * Eigen::Vector3f::UnitX() - Eigen::Vector3f::UnitZ()).norm(), 1e-5);
+    EXPECT_LE((q * Eigen::Vector3f::UnitY() + Eigen::Vector3f::UnitX()).norm(), 1e-5);
     EXPECT_LE((q * Eigen::Vector3f::UnitZ() + Eigen::Vector3f::UnitY()).norm(), 1e-5);
   }
 }
