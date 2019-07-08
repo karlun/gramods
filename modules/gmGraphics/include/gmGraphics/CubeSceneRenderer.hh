@@ -42,9 +42,9 @@ public:
   /**
      Sets the position of the cube set.
 
-     \b XML-attribute: \c cubeSetCenter
+     \b XML-attribute: \c position
   */
-  void setCubeSetCenter(Eigen::Vector3f c);
+  void setPosition(Eigen::Vector3f c);
 
   GM_OFI_DECLARE;
 

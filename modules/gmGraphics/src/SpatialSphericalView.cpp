@@ -18,9 +18,9 @@ GM_OFI_PARAM(SpatialSphericalView, cubeMapResolution, int, SpatialSphericalView:
 GM_OFI_PARAM(SpatialSphericalView, linearInterpolation, bool, SpatialSphericalView::setLinearInterpolation);
 GM_OFI_PARAM(SpatialSphericalView, makeSquare, bool, SpatialSphericalView::setMakeSquare);
 GM_OFI_POINTER(SpatialSphericalView, coordinatesMapper, gmGraphics::CoordinatesMapper, SpatialSphericalView::setCoordinatesMapper);
-GM_OFI_PARAM(SpatialSphericalView, sphereCenter, Eigen::Vector3f, SpatialSphericalView::setSphereCenter);
-GM_OFI_PARAM(SpatialSphericalView, sphereRadius, float, SpatialSphericalView::setSphereRadius);
-GM_OFI_PARAM(SpatialSphericalView, sphereOrientation, Eigen::Quaternionf, SpatialSphericalView::setSphereOrientation);
+GM_OFI_PARAM(SpatialSphericalView, position, Eigen::Vector3f, SpatialSphericalView::setPosition);
+GM_OFI_PARAM(SpatialSphericalView, radius, float, SpatialSphericalView::setRadius);
+GM_OFI_PARAM(SpatialSphericalView, orientation, Eigen::Quaternionf, SpatialSphericalView::setOrientation);
 
 struct SpatialSphericalView::Impl {
 
@@ -28,9 +28,9 @@ struct SpatialSphericalView::Impl {
   static const std::string mapper_pattern;
 
   bool make_square = false;
-  Eigen::Vector3f sphere_center = Eigen::Vector3f::Zero();
-  float sphere_radius = 10;
-  Eigen::Quaternionf sphere_orientation = Eigen::Quaternionf::Identity();
+  Eigen::Vector3f position = Eigen::Vector3f::Zero();
+  float radius = 10;
+  Eigen::Quaternionf orientation = Eigen::Quaternionf::Identity();
   float eye_separation = 0;
 
   std::unique_ptr<CubeMap> cubemap;
@@ -177,7 +177,7 @@ void SpatialSphericalView::Impl::renderFullPipeline(ViewSettings settings, Eye e
     cubemap->setFragmentCode(createFragmentCode());
 
     std::vector<std::shared_ptr<Renderer>> no_renderers;
-    cubemap->renderFullPipeline(no_renderers, eye_pos, sphere_orientation, make_square);
+    cubemap->renderFullPipeline(no_renderers, eye_pos, orientation, make_square);
     program_id = cubemap->getProgram();
 
     if (!program_id) {
@@ -186,17 +186,17 @@ void SpatialSphericalView::Impl::renderFullPipeline(ViewSettings settings, Eye e
     }
   }
 
-  Eigen::Vector3f offset = eye_pos - sphere_center;
+  Eigen::Vector3f offset = eye_pos - position;
 
   glUseProgram(program_id);
   glUniform3fv(glGetUniformLocation(program_id, "eye_position"), 1, offset.data());
-  glUniform1f(glGetUniformLocation(program_id, "radius"), sphere_radius);
-  glUniform1f(glGetUniformLocation(program_id, "cubemap_radius"), sphere_radius);
+  glUniform1f(glGetUniformLocation(program_id, "radius"), radius);
+  glUniform1f(glGetUniformLocation(program_id, "cubemap_radius"), radius);
   mapper->setMapperUniforms(program_id);
   glUseProgram(0);
 
-  cubemap->setSpatialCubeMap(sphere_center, 2 * sphere_radius);
-  cubemap->renderFullPipeline(settings.renderers, eye_pos, sphere_orientation, make_square);
+  cubemap->setSpatialCubeMap(position, 2 * radius);
+  cubemap->renderFullPipeline(settings.renderers, eye_pos, orientation, make_square);
 }
 
 std::string SpatialSphericalView::Impl::createFragmentCode() {
@@ -229,17 +229,16 @@ void SpatialSphericalView::setLinearInterpolation(bool on) {
   _impl->cubemap->setLinearInterpolation(on);
 }
 
-void SpatialSphericalView::setSphereCenter(Eigen::Vector3f c) {
-  assert(0);
-  _impl->sphere_center = c;
+void SpatialSphericalView::setPosition(Eigen::Vector3f p) {
+  _impl->position = p;
 }
 
-void SpatialSphericalView::setSphereRadius(float r) {
-  _impl->sphere_radius = r;
+void SpatialSphericalView::setRadius(float r) {
+  _impl->radius = r;
 }
 
-void SpatialSphericalView::setSphereOrientation(Eigen::Quaternionf q) {
-  _impl->sphere_orientation = q;
+void SpatialSphericalView::setOrientation(Eigen::Quaternionf q) {
+  _impl->orientation = q;
 }
 
 END_NAMESPACE_GMGRAPHICS;

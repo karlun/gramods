@@ -17,7 +17,7 @@
     <CubeSceneRenderer
         cubeSize="0.1"
         cubeSetSize="5.0"
-        cubeSetCenter="0 4 0"/>
+        position="0 4 0"/>
 
     <SpatialSphericalView
         cubeMapResolution="1024"
