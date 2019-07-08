@@ -25,7 +25,7 @@ public:
      Returns shader code that implements the necessary functions for
      the specific coordinates mapper.
 
-     The code must implement
+     The code implements
 
      - ```bool mapTo2D(vec3 pos3, out vec2 pos2)``` - calculates the
        2D coordinates that correspond to the specified 3D

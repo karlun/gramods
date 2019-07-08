@@ -12,8 +12,21 @@
 BEGIN_NAMESPACE_GMGRAPHICS;
 
 /**
-   A renderer that draws single sphere, for demonstration and testing
-   purposes.
+   A renderer that draws single textured sphere. Use this to map video
+   and images into the 3D space. The mapping is defined by a
+   CoordinatesMapper.
+
+   Typical usage:
+
+   ~~~~~{.xml}
+   <SphereRenderer
+       radius="1">
+     <AngularFisheyeCoordinatesMapper
+         coverageAngle="3.1416"/>
+     <ImageTexture
+         file="fulldome180-coordinates.png"/>
+   </SphereRenderer>
+   ~~~~~
 */
 class SphereRenderer
   : public Renderer {
@@ -37,9 +50,16 @@ public:
   /**
      Set the position of the sphere.
 
-     \b XML-attribute: \c center
+     \b XML-attribute: \c position
   */
-  void setCenter(Eigen::Vector3f c);
+  void setPosition(Eigen::Vector3f p);
+
+  /**
+     Set the orientation of the sphere.
+
+     \b XML-attribute: \c orientation
+  */
+  void setOrientation(Eigen::Quaternionf q);
 
   /**
      Sets the Texture to apply on the sphere.

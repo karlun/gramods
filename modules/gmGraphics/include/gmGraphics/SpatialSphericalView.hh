@@ -75,12 +75,12 @@ public:
   void setSphereRadius(float r);
 
   /**
-     Set the forward tilt (towards -z) of the projection surface, in
-     radians. Default is 0.
+     Set the orientation of the projection, for example to create a
+     forward tilt common in dome theaters.
 
-     \b XML-attribute: \c tiltAngle
+     \b XML-attribute: \c sphereOrientation
   */
-  void setTiltAngle(float a);
+  void setSphereOrientation(Eigen::Quaternionf q);
 
   GM_OFI_DECLARE;
 
