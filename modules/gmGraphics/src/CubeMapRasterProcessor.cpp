@@ -1,5 +1,5 @@
 
-#include <gmGraphics/CubeMap.hh>
+#include <gmGraphics/CubeMapRasterProcessor.hh>
 
 #include <gmGraphics/GLUtils.hh>
 
@@ -11,7 +11,7 @@
 
 BEGIN_NAMESPACE_GMGRAPHICS;
 
-struct CubeMap::Impl {
+struct CubeMapRasterProcessor::Impl {
 
   ~Impl() {
     teardown();
@@ -68,30 +68,31 @@ struct CubeMap::Impl {
   float cubemap_side = 1.0;
 };
 
-CubeMap::CubeMap()
+CubeMapRasterProcessor::CubeMapRasterProcessor()
   : _impl(new Impl()) {}
 
-CubeMap::~CubeMap() {
+CubeMapRasterProcessor::~CubeMapRasterProcessor() {
   delete _impl;
   _impl = nullptr;
 }
 
-void CubeMap::renderFullPipeline(std::vector<std::shared_ptr<Renderer>> renderers,
-                                 Eigen::Vector3f pos,
-                                 Eigen::Quaternionf rot,
-                                 bool make_square) {
+void CubeMapRasterProcessor::renderFullPipeline
+(std::vector<std::shared_ptr<Renderer>> renderers,
+ Eigen::Vector3f pos,
+ Eigen::Quaternionf rot,
+ bool make_square) {
   _impl->renderFullPipeline(renderers, pos, rot, make_square);
 }
 
-void CubeMap::Impl::setup() {
+void CubeMapRasterProcessor::Impl::setup() {
   is_setup = true;
   is_functional = false;
 
   if (resolution != GLUtils::nextPowerOfTwo(resolution)) {
-    GM_WRN("CubeMap", "Cube map resolution (" << resolution << ") is not an even power of two");
+    GM_WRN("CubeMapRasterProcessor", "Cube map resolution (" << resolution << ") is not an even power of two");
   }
 
-  GM_VINF("CubeMap", "Creating buffers and textures");
+  GM_VINF("CubeMapRasterProcessor", "Creating buffers and textures");
   glGenFramebuffers(SIDE_COUNT, framebuffer_id);
   glGenTextures(SIDE_COUNT, texture_id);
   glGenRenderbuffers(1, &depth_renderbuffer_id);
@@ -141,18 +142,18 @@ void main() {
 }
 )lang=glsl";
 
-  GM_VINF("CubeMap", "Creating vertex shader");
+  GM_VINF("CubeMapRasterProcessor", "Creating vertex shader");
   vertex_shader_id = glCreateShader(GL_VERTEX_SHADER);
   glShaderSource(vertex_shader_id, 1, &vertex_shader_code, nullptr);
   glCompileShader(vertex_shader_id);
 
-  GM_VINF("CubeMap", "Creating fragment shader");
+  GM_VINF("CubeMapRasterProcessor", "Creating fragment shader");
   fragment_shader_id = glCreateShader(GL_FRAGMENT_SHADER);
   const char *strs[] = { fragment_code.c_str() };
   glShaderSource(fragment_shader_id, 1, strs, nullptr);
   glCompileShader(fragment_shader_id);
 
-  GM_VINF("CubeMap", "Creating and linking program");
+  GM_VINF("CubeMapRasterProcessor", "Creating and linking program");
   program_id = glCreateProgram();
   glAttachShader(program_id, vertex_shader_id);
   glAttachShader(program_id, fragment_shader_id);
@@ -162,11 +163,11 @@ void main() {
   if (!GLUtils::check_shader_program(program_id))
     return;
 
-  GM_VINF("CubeMap", "Creating vertex array");
+  GM_VINF("CubeMapRasterProcessor", "Creating vertex array");
   glGenVertexArrays(1, &vertexarray_id);
   glBindVertexArray(vertexarray_id);
 
-  GM_VINF("CubeMap", "Creating and setting up array buffer");
+  GM_VINF("CubeMapRasterProcessor", "Creating and setting up array buffer");
   glGenBuffers(1, &vertexbuffer_id);
   glBindBuffer(GL_ARRAY_BUFFER, vertexbuffer_id);
   const GLfloat vertices[4][2] = {
@@ -183,7 +184,7 @@ void main() {
   is_functional = true;
 }
 
-void CubeMap::Impl::teardown() {
+void CubeMapRasterProcessor::Impl::teardown() {
   is_functional = false;
 
   if (framebuffer_id[0]) glDeleteFramebuffers(SIDE_COUNT, framebuffer_id);
@@ -209,14 +210,15 @@ void CubeMap::Impl::teardown() {
   is_setup = false;
 }
 
-GLint CubeMap::getProgram() {
+GLint CubeMapRasterProcessor::getProgram() {
   return _impl->program_id;
 }
 
-void CubeMap::Impl::renderFullPipeline(std::vector<std::shared_ptr<Renderer>> renderers,
-                                       Eigen::Vector3f pos,
-                                       Eigen::Quaternionf rot,
-                                       bool make_square) {
+void CubeMapRasterProcessor::Impl::renderFullPipeline
+(std::vector<std::shared_ptr<Renderer>> renderers,
+ Eigen::Vector3f pos,
+ Eigen::Quaternionf rot,
+ bool make_square) {
 
   GLint previous_viewport[4] = { 0, 0, 0, 0 };
   glGetIntegerv(GL_VIEWPORT, previous_viewport);
@@ -236,7 +238,7 @@ void CubeMap::Impl::renderFullPipeline(std::vector<std::shared_ptr<Renderer>> re
   for (size_t idx = 0; idx < SIDE_COUNT; ++idx)
     renderSide(renderers, pos, rot, idx);
 
-  GM_VINF("CubeMap", "finalizing");
+  GM_VINF("CubeMapRasterProcessor", "finalizing");
 
   glBindFramebuffer(GL_FRAMEBUFFER, previous_framebuffer);
 
@@ -292,10 +294,11 @@ void CubeMap::Impl::renderFullPipeline(std::vector<std::shared_ptr<Renderer>> re
                previous_viewport[2], previous_viewport[3]);
 }
 
-void CubeMap::Impl::renderSide(std::vector<std::shared_ptr<Renderer>> renderers,
-                               Eigen::Vector3f pos,
-                               Eigen::Quaternionf rot,
-                               size_t side) {
+void CubeMapRasterProcessor::Impl::renderSide
+(std::vector<std::shared_ptr<Renderer>> renderers,
+ Eigen::Vector3f pos,
+ Eigen::Quaternionf rot,
+ size_t side) {
 
   glBindFramebuffer(GL_FRAMEBUFFER, framebuffer_id[side]);
   glViewport(0, 0, resolution, resolution);
@@ -357,19 +360,19 @@ void CubeMap::Impl::renderSide(std::vector<std::shared_ptr<Renderer>> renderers,
     renderer->render(camera);
 }
 
-void CubeMap::setFragmentCode(std::string code) {
+void CubeMapRasterProcessor::setFragmentCode(std::string code) {
   _impl->fragment_code = code;
 }
 
-void CubeMap::setCubeMapResolution(int res) {
+void CubeMapRasterProcessor::setCubeMapResolution(int res) {
   _impl->resolution = res;
 }
 
-void CubeMap::setLinearInterpolation(bool on) {
+void CubeMapRasterProcessor::setLinearInterpolation(bool on) {
   _impl->use_linear = on;
 }
 
-void CubeMap::setSpatialCubeMap(Eigen::Vector3f c, float side) {
+void CubeMapRasterProcessor::setSpatialCubeMap(Eigen::Vector3f c, float side) {
   _impl->spatial_cubemap = true;
   _impl->cubemap_position = c;
   _impl->cubemap_side = side;
