@@ -7,7 +7,6 @@
 
   <SphereGeometry
       DEF="GEOMETRY"
-      center="0 0 0"
       radius="10"
       frustumSizeRatio="1.1"
       inside="true"/>
