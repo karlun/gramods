@@ -1,7 +1,7 @@
 
 #include <gmGraphics/PosedSphericalView.hh>
 
-#include <gmGraphics/CubeMap.hh>
+#include <gmGraphics/CubeMapRasterProcessor.hh>
 #include <gmGraphics/GLUtils.hh>
 
 #include <gmCore/RunOnce.hh>
@@ -30,10 +30,10 @@ struct PosedSphericalView::Impl {
 
   bool make_square = false;
 
-  std::unique_ptr<CubeMap> cubemap;
+  std::unique_ptr<CubeMapRasterProcessor> cubemap;
   std::shared_ptr<CoordinatesMapper> mapper;
 
-  Impl() : cubemap(std::make_unique<CubeMap>()) {}
+  Impl() : cubemap(std::make_unique<CubeMapRasterProcessor>()) {}
 
   bool is_setup = false;
 };

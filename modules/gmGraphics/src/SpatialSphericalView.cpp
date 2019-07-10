@@ -1,7 +1,7 @@
 
 #include <gmGraphics/SpatialSphericalView.hh>
 
-#include <gmGraphics/CubeMap.hh>
+#include <gmGraphics/CubeMapRasterProcessor.hh>
 #include <gmGraphics/GLUtils.hh>
 #include <gmCore/RunOnce.hh>
 
@@ -33,10 +33,10 @@ struct SpatialSphericalView::Impl {
   Eigen::Quaternionf orientation = Eigen::Quaternionf::Identity();
   float eye_separation = 0;
 
-  std::unique_ptr<CubeMap> cubemap;
+  std::unique_ptr<CubeMapRasterProcessor> cubemap;
   std::shared_ptr<CoordinatesMapper> mapper;
 
-  Impl() : cubemap(std::make_unique<CubeMap>()) {}
+  Impl() : cubemap(std::make_unique<CubeMapRasterProcessor>()) {}
 
   std::string createFragmentCode();
   void renderFullPipeline(ViewSettings settings, Eye eye);

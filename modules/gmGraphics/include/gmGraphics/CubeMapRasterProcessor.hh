@@ -1,6 +1,6 @@
 
-#ifndef GRAMODS_GRAPHICS_CUBEMAP
-#define GRAMODS_GRAPHICS_CUBEMAP
+#ifndef GRAMODS_GRAPHICS_CUBEMAPRASTERPROCESSOR
+#define GRAMODS_GRAPHICS_CUBEMAPRASTERPROCESSOR
 
 #include <gmGraphics/config.hh>
 #include <gmGraphics/RendererDispatcher.hh>
@@ -11,18 +11,18 @@
 BEGIN_NAMESPACE_GMGRAPHICS;
 
 /**
-   The CubeMap is a helper class for views that map the surrounding to
-   a flat format. One call to renderFullPipeline will make up to six
-   cube map side rendering calls to the renderers specified in the
-   ViewSettings, as well as a final rendering through the specified
-   fragment shader code.
+   The CubeMapRasterProcessor is a helper class for views that map the
+   surrounding to a flat format. One call to renderFullPipeline will
+   make up to six cube map side rendering calls to the renderers
+   specified in the ViewSettings, as well as a final rendering through
+   the specified fragment shader code.
 */
-class CubeMap {
+class CubeMapRasterProcessor {
 
 public:
 
-  CubeMap();
-  ~CubeMap();
+  CubeMapRasterProcessor();
+  ~CubeMapRasterProcessor();
 
   /**
      Renders the cube map.
