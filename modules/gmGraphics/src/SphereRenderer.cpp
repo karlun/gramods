@@ -244,9 +244,9 @@ void SphereRenderer::Impl::render(Camera camera) {
 
   Eigen::Affine3f Mm = Eigen::Translation3f(position) * orientation;
   Eigen::Affine3f Mv = camera.getViewMatrix();
-  float near = std::max(0.1f * radius,
-                        (Mv * Mm).translation().z() - radius);
-  float far = (Mv * Mm).translation().z() + radius;
+  float near = std::max(1e-3f * radius,
+                        0.99f * (-(Mv * Mm).translation().z() - radius));
+  float far = 1.01f * (-(Mv * Mm).translation().z() + radius);
   Eigen::Matrix4f Mp = camera.getProjectionMatrix(near, far);
 
   glEnable(GL_DEPTH_TEST);
