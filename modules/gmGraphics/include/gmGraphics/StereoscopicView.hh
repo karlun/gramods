@@ -4,6 +4,7 @@
 
 #include <gmGraphics/View.hh>
 
+#include <gmGraphics/Eye.hh>
 #include <gmGraphics/StereoscopicMultiplexer.hh>
 
 BEGIN_NAMESPACE_GMGRAPHICS;
@@ -15,15 +16,6 @@ class StereoscopicView
   : public View {
 
 public:
-
-  /**
-     The two eyes that can be rendered.
-  */
-  enum struct Eye {
-    MONO,
-    LEFT,
-    RIGHT
-  };
 
   virtual void renderFullPipeline(ViewSettings settings);
 

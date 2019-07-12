@@ -137,7 +137,7 @@ void PosedSphericalView::Impl::renderFullPipeline(ViewSettings settings) {
     head_rot = settings.viewpoint->getOrientation();
   }
 
-  cubemap->renderFullPipeline(settings.renderers, eye_pos, head_rot, make_square);
+  cubemap->renderFullPipeline(settings.renderers, eye_pos, head_rot, Eye::MONO, make_square);
 }
 
 std::string PosedSphericalView::Impl::createFragmentCode() {

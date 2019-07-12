@@ -177,7 +177,7 @@ void SpatialSphericalView::Impl::renderFullPipeline(ViewSettings settings, Eye e
     cubemap->setFragmentCode(createFragmentCode());
 
     std::vector<std::shared_ptr<Renderer>> no_renderers;
-    cubemap->renderFullPipeline(no_renderers, eye_pos, orientation, make_square);
+    cubemap->renderFullPipeline(no_renderers, eye_pos, orientation, eye, make_square);
     program_id = cubemap->getProgram();
 
     if (!program_id) {
@@ -196,7 +196,7 @@ void SpatialSphericalView::Impl::renderFullPipeline(ViewSettings settings, Eye e
   glUseProgram(0);
 
   cubemap->setSpatialCubeMap(position, 2 * radius);
-  cubemap->renderFullPipeline(settings.renderers, eye_pos, orientation, make_square);
+  cubemap->renderFullPipeline(settings.renderers, eye_pos, orientation, eye, make_square);
 }
 
 std::string SpatialSphericalView::Impl::createFragmentCode() {

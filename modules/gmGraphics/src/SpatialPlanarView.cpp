@@ -63,6 +63,7 @@ void SpatialPlanarView::renderFullPipeline(ViewSettings settings, Eye eye) {
   Camera camera;
   camera.setClipPlanes(left, right, bottom, top);
   camera.setPose(x_VP, Q1 * Q0);
+  camera.setEye(eye);
 
   for (auto renderer : settings.renderers)
     renderer->render(camera);

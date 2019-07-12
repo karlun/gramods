@@ -4,6 +4,7 @@
 
 #include <gmGraphics/config.hh>
 
+#include <gmGraphics/Eye.hh>
 #include <gmCore/Console.hh>
 
 #include <Eigen/Eigen>
@@ -77,6 +78,17 @@ public:
     position = p; orientation = r;
   }
 
+  /**
+     Sets which eye the camera is supposed to render.
+  */
+  void setEye(Eye e) { eye = e; }
+
+  /**
+     Sets which eye the camera is supposed to render. Use this for
+     example to select between left or right eye textures.
+  */
+  Eye getEye() { return eye; }
+
 private:
 
   /**
@@ -87,12 +99,17 @@ private:
   /**
      The position of the camera.
   */
-  Eigen::Vector3f position;
+  Eigen::Vector3f position = Eigen::Vector3f::Zero();
 
   /**
      The orientation of the camera.
   */
-  Eigen::Quaternionf orientation;
+  Eigen::Quaternionf orientation = Eigen::Quaternionf::Identity();
+
+  /**
+     The current eye being for the camera to render.
+  */
+  Eye eye = Eye::MONO;
 };
 
 END_NAMESPACE_GMGRAPHICS;

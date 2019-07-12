@@ -30,7 +30,7 @@ class StereoscopicMultiplexer
 public:
 
   /**
-     The two eyes that can be rendered.
+     The two eyes that can be rendered stereoscopically.
   */
   enum struct Eye {
     LEFT = 0,

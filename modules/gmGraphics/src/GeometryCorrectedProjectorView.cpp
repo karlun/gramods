@@ -298,6 +298,8 @@ void GeometryCorrectedProjectorView::Impl::renderFullPipeline(ViewSettings setti
                                     render_camera);
   if (!camera_good) return;
 
+  render_camera.setEye(eye);
+
   if (!is_setup) {
     is_setup = true;
     raster_processor.setFragmentCode(createFragmentCode());
