@@ -89,11 +89,15 @@ bool SphereGeometry::Impl::getCameraFromPosition(Camera vfrustum,
 
   // Rotate view frustum orientation into projection (approximate
   // plane) to use as orientation for render frustum
+  Eigen::Vector3f normalish = ((TR - BR).cross(BL - BR) +
+                               (BR - BL).cross(TL - BL));
   orientation =
-    orientation *
-    Eigen::Quaternionf::FromTwoVectors(orientation * Eigen::Vector3f(0, 0, 1),
-                                       0.5 * (TR - BR).cross(BL - BR) +
-                                       0.5 * (BR - BL).cross(TL - BL));
+    Eigen::Quaternionf::FromTwoVectors(Eigen::Vector3f(0, 0, 1),
+                                       normalish);
+  Eigen::Vector3f upish = ((TL + TR) - (BL + BR));
+  orientation =
+    Eigen::Quaternionf::FromTwoVectors(orientation * Eigen::Vector3f(0, 1, 0),
+    upish) * orientation;
 
   if (! have_TL || ! have_BL ||
       ! have_TR || ! have_BR) {
