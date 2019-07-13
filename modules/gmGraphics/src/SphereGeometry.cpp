@@ -46,7 +46,19 @@ bool SphereGeometry::Impl::getCameraFromPosition(Camera vfrustum,
 
   if ((position - vfrustum.getPosition()).norm() <
       std::numeric_limits<float>::epsilon()) {
+
     rfrustum = vfrustum;
+
+    float l, r, b, t;
+    rfrustum.getClipPlanes(l, r, b, t);
+
+    float l2 = (0.5 * l + 0.5 * r) + size_ratio * (l - (0.5 * l + 0.5 * r));
+    float r2 = (0.5 * l + 0.5 * r) + size_ratio * (r - (0.5 * l + 0.5 * r));
+    float b2 = (0.5 * t + 0.5 * b) + size_ratio * (b - (0.5 * t + 0.5 * b));
+    float t2 = (0.5 * t + 0.5 * b) + size_ratio * (t - (0.5 * t + 0.5 * b));
+
+    rfrustum.setClipPlanes(l2, r2, b2, t2);
+
     return true;
   }
 
