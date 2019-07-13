@@ -121,13 +121,17 @@ bool SphereGeometry::Impl::getCameraFromPosition(Camera vfrustum,
   // of sphere of the view frustum crop planes, we expand the frustum
   // by a fixed percentage.
 
-  left2 = (0.5 * left2 + 0.5 * right2) + size_ratio * (left2 - (0.5 * left2 + 0.5 * right2));
-  right2 = (0.5 * left2 + 0.5 * right2) + size_ratio * (right2 - (0.5 * left2 + 0.5 * right2));
-  bottom2 = (0.5 * top2 + 0.5 * bottom2) + size_ratio * (bottom2 - (0.5 * top2 + 0.5 * bottom2));
-  top2 = (0.5 * top2 + 0.5 * bottom2) + size_ratio * (top2 - (0.5 * top2 + 0.5 * bottom2));
+  float left3 = (0.5 * left2 + 0.5 * right2) +
+    size_ratio * (left2 - (0.5 * left2 + 0.5 * right2));
+  float right3 = (0.5 * left2 + 0.5 * right2) +
+    size_ratio * (right2 - (0.5 * left2 + 0.5 * right2));
+  float bottom3 = (0.5 * top2 + 0.5 * bottom2) +
+    size_ratio * (bottom2 - (0.5 * top2 + 0.5 * bottom2));
+  float top3 = (0.5 * top2 + 0.5 * bottom2) +
+    size_ratio * (top2 - (0.5 * top2 + 0.5 * bottom2));
 
   rfrustum.setPose(position, orientation);
-  rfrustum.setClipPlanes(left2, right2, bottom2, top2);
+  rfrustum.setClipPlanes(left3, right3, bottom3, top3);
 
   return true;
 }
