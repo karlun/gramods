@@ -46,7 +46,19 @@ bool SphereGeometry::Impl::getCameraFromPosition(Camera vfrustum,
 
   if ((position - vfrustum.getPosition()).norm() <
       std::numeric_limits<float>::epsilon()) {
+
     rfrustum = vfrustum;
+
+    float l, r, b, t;
+    rfrustum.getClipPlanes(l, r, b, t);
+
+    float l2 = (0.5 * l + 0.5 * r) + size_ratio * (l - (0.5 * l + 0.5 * r));
+    float r2 = (0.5 * l + 0.5 * r) + size_ratio * (r - (0.5 * l + 0.5 * r));
+    float b2 = (0.5 * t + 0.5 * b) + size_ratio * (b - (0.5 * t + 0.5 * b));
+    float t2 = (0.5 * t + 0.5 * b) + size_ratio * (t - (0.5 * t + 0.5 * b));
+
+    rfrustum.setClipPlanes(l2, r2, b2, t2);
+
     return true;
   }
 
@@ -77,11 +89,15 @@ bool SphereGeometry::Impl::getCameraFromPosition(Camera vfrustum,
 
   // Rotate view frustum orientation into projection (approximate
   // plane) to use as orientation for render frustum
+  Eigen::Vector3f normalish = ((TR - BR).cross(BL - BR) +
+                               (BR - BL).cross(TL - BL));
   orientation =
-    orientation *
-    Eigen::Quaternionf::FromTwoVectors(orientation * Eigen::Vector3f(0, 0, 1),
-                                       0.5 * (TR - BR).cross(BL - BR) +
-                                       0.5 * (BR - BL).cross(TL - BL));
+    Eigen::Quaternionf::FromTwoVectors(Eigen::Vector3f(0, 0, 1),
+                                       normalish);
+  Eigen::Vector3f upish = ((TL + TR) - (BL + BR));
+  orientation =
+    Eigen::Quaternionf::FromTwoVectors(orientation * Eigen::Vector3f(0, 1, 0),
+    upish) * orientation;
 
   if (! have_TL || ! have_BL ||
       ! have_TR || ! have_BR) {
@@ -121,13 +137,17 @@ bool SphereGeometry::Impl::getCameraFromPosition(Camera vfrustum,
   // of sphere of the view frustum crop planes, we expand the frustum
   // by a fixed percentage.
 
-  left2 = (0.5 * left2 + 0.5 * right2) + size_ratio * (left2 - (0.5 * left2 + 0.5 * right2));
-  right2 = (0.5 * left2 + 0.5 * right2) + size_ratio * (right2 - (0.5 * left2 + 0.5 * right2));
-  bottom2 = (0.5 * top2 + 0.5 * bottom2) + size_ratio * (bottom2 - (0.5 * top2 + 0.5 * bottom2));
-  top2 = (0.5 * top2 + 0.5 * bottom2) + size_ratio * (top2 - (0.5 * top2 + 0.5 * bottom2));
+  float left3 = (0.5 * left2 + 0.5 * right2) +
+    size_ratio * (left2 - (0.5 * left2 + 0.5 * right2));
+  float right3 = (0.5 * left2 + 0.5 * right2) +
+    size_ratio * (right2 - (0.5 * left2 + 0.5 * right2));
+  float bottom3 = (0.5 * top2 + 0.5 * bottom2) +
+    size_ratio * (bottom2 - (0.5 * top2 + 0.5 * bottom2));
+  float top3 = (0.5 * top2 + 0.5 * bottom2) +
+    size_ratio * (top2 - (0.5 * top2 + 0.5 * bottom2));
 
   rfrustum.setPose(position, orientation);
-  rfrustum.setClipPlanes(left2, right2, bottom2, top2);
+  rfrustum.setClipPlanes(left3, right3, bottom3, top3);
 
   return true;
 }
