@@ -23,8 +23,7 @@
     <SpatialPlanarView
         topLeftCorner    ="-0.3 +0.165 +0.0"
         bottomRightCorner="+0.3 -0.165 +0.0"
-        upDirection="0.0 1.0 0.0"
-        eyeSeparation="0.065">
+        upDirection="0.0 1.0 0.0">
 
       <LinearAnaglyphsMultiplexer
           leftColor="1 1 0"
@@ -33,7 +32,8 @@
           rightSaturation="0.0"/>
 
       <Viewpoint
-          position="0 0 0.7"/>
+          position="0 0 0.7"
+          eyeSeparation="0.065"/>
 
     </SpatialPlanarView>
 

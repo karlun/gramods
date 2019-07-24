@@ -2,7 +2,7 @@
 #ifndef GRAMODS_GRAPHICS_SPATIALSPHERICALVIEW
 #define GRAMODS_GRAPHICS_SPATIALSPHERICALVIEW
 
-#include <gmGraphics/StereoscopicView.hh>
+#include <gmGraphics/MultiscopicView.hh>
 
 #include <gmGraphics/CoordinatesMapper.hh>
 #include <gmTypes/eigen.hh>
@@ -19,7 +19,7 @@ BEGIN_NAMESPACE_GMGRAPHICS;
    distortion due to the curved surface.
 */
 class SpatialSphericalView
-  : public StereoscopicView {
+  : public MultiscopicView {
 
 public:
 

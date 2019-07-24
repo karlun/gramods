@@ -2,7 +2,7 @@
 #ifndef GRAMODS_GRAPHICS_GEOMETRYCORRECTEDPROJECTORVIEW
 #define GRAMODS_GRAPHICS_GEOMETRYCORRECTEDPROJECTORVIEW
 
-#include <gmGraphics/StereoscopicView.hh>
+#include <gmGraphics/MultiscopicView.hh>
 
 #include <gmGraphics/Geometry.hh>
 
@@ -30,7 +30,7 @@ BEGIN_NAMESPACE_GMGRAPHICS;
    non-linear) projection surface.
 */
 class GeometryCorrectedProjectorView
-  : public StereoscopicView {
+  : public MultiscopicView {
 
 public:
 

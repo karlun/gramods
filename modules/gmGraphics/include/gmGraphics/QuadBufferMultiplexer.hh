@@ -2,7 +2,7 @@
 #ifndef GRAMODS_GRAPHICS_QUADBUFFERMULTIPLEXER
 #define GRAMODS_GRAPHICS_QUADBUFFERMULTIPLEXER
 
-#include <gmGraphics/StereoscopicMultiplexer.hh>
+#include <gmGraphics/MultiscopicMultiplexer.hh>
 
 BEGIN_NAMESPACE_GMGRAPHICS;
 
@@ -13,11 +13,17 @@ BEGIN_NAMESPACE_GMGRAPHICS;
    driver and current graphics context.
 */
 class QuadBufferMultiplexer
-  : public gmGraphics::StereoscopicMultiplexer {
+  : public gmGraphics::MultiscopicMultiplexer {
 
 public:
 
   QuadBufferMultiplexer();
+
+  /**
+     Returns the number of eyes that should be rendered for the
+     multiplexer. Returns the value two (2).
+  */
+  size_t getEyeCount() { return 2; }
 
   /**
      Prepares the multiplexer for rendering to the two eyes.
@@ -27,7 +33,7 @@ public:
   /**
      Sets up rendering for one eye at a time.
   */
-  void setupRendering(Eye eye);
+  void setupRendering(size_t eye);
 
   /**
      Finalizes the multiplexing.

@@ -11,7 +11,7 @@
 
 BEGIN_NAMESPACE_GMGRAPHICS;
 
-GM_OFI_DEFINE_SUB(GeometryCorrectedProjectorView, StereoscopicView);
+GM_OFI_DEFINE_SUB(GeometryCorrectedProjectorView, MultiscopicView);
 GM_OFI_PARAM(GeometryCorrectedProjectorView, bufferWidth, int, GeometryCorrectedProjectorView::setBufferWidth);
 GM_OFI_PARAM(GeometryCorrectedProjectorView, bufferHeight, int, GeometryCorrectedProjectorView::setBufferHeight);
 GM_OFI_PARAM(GeometryCorrectedProjectorView, linearInterpolation, bool, GeometryCorrectedProjectorView::setLinearInterpolation);
@@ -35,7 +35,7 @@ struct GeometryCorrectedProjectorView::Impl {
   bool is_setup = false;
   bool is_functional = false;
 
-  void renderFullPipeline(ViewSettings settings, Eye eye, float eye_separation);
+  void renderFullPipeline(ViewSettings settings, Eye eye);
 
   bool setCamera(Camera &c);
   bool setCameraShapeFromIntrinsics(Camera &c);
@@ -173,7 +173,7 @@ void GeometryCorrectedProjectorView::setGeometry(std::shared_ptr<Geometry> g) {
 }
 
 void GeometryCorrectedProjectorView::renderFullPipeline(ViewSettings settings, Eye eye) {
-  _impl->renderFullPipeline(settings, eye, eye_separation);
+  _impl->renderFullPipeline(settings, eye);
 }
 
 bool GeometryCorrectedProjectorView::Impl::setCamera(Camera &c) {
@@ -257,8 +257,7 @@ std::string GeometryCorrectedProjectorView::Impl::createFragmentCode() {
 }
 
 void GeometryCorrectedProjectorView::Impl::renderFullPipeline(ViewSettings settings,
-                                                              Eye eye,
-                                                              float eye_separation) {
+                                                              Eye eye) {
 
   if (!geometry) {
     GM_RUNONCE(GM_ERR("GeometryCorrectedProjectorView", "Missing geometry, that is necessary to render the geometry corrected view."));
@@ -273,22 +272,11 @@ void GeometryCorrectedProjectorView::Impl::renderFullPipeline(ViewSettings setti
   Eigen::Quaternionf q_VP = Eigen::Quaternionf::Identity();
 
   if (settings.viewpoint) {
-    x_VP = settings.viewpoint->getPosition();
-    q_VP = settings.viewpoint->getOrientation();
+    x_VP = settings.viewpoint->getPosition(eye);
+    q_VP = settings.viewpoint->getOrientation(eye);
   } else {
     GM_RUNONCE(GM_WRN("GeometryCorrectedProjectorView",
                       "No viewpoint available - using zero position and rotation"));
-  }
-
-  switch (eye) {
-  case Eye::LEFT:
-    x_VP -= q_VP * Eigen::Vector3f(0.5f * eye_separation, 0.f, 0.f);
-    break;
-  case Eye::RIGHT:
-    x_VP += q_VP * Eigen::Vector3f(0.5f * eye_separation, 0.f, 0.f);
-    break;
-  case Eye::MONO:
-    break;
   }
 
   Camera render_camera;

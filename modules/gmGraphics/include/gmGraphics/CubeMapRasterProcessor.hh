@@ -4,7 +4,6 @@
 
 #include <gmGraphics/config.hh>
 #include <gmGraphics/RendererDispatcher.hh>
-#include <gmGraphics/StereoscopicView.hh>
 
 #include <memory>
 

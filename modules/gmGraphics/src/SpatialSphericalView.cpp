@@ -13,7 +13,7 @@
 
 BEGIN_NAMESPACE_GMGRAPHICS;
 
-GM_OFI_DEFINE_SUB(SpatialSphericalView, StereoscopicView);
+GM_OFI_DEFINE_SUB(SpatialSphericalView, MultiscopicView);
 GM_OFI_PARAM(SpatialSphericalView, cubeMapResolution, int, SpatialSphericalView::setCubeMapResolution);
 GM_OFI_PARAM(SpatialSphericalView, linearInterpolation, bool, SpatialSphericalView::setLinearInterpolation);
 GM_OFI_PARAM(SpatialSphericalView, makeSquare, bool, SpatialSphericalView::setMakeSquare);
@@ -31,7 +31,6 @@ struct SpatialSphericalView::Impl {
   Eigen::Vector3f position = Eigen::Vector3f::Zero();
   float radius = 10;
   Eigen::Quaternionf orientation = Eigen::Quaternionf::Identity();
-  float eye_separation = 0;
 
   std::unique_ptr<CubeMapRasterProcessor> cubemap;
   std::shared_ptr<CoordinatesMapper> mapper;
@@ -141,7 +140,6 @@ SpatialSphericalView::SpatialSphericalView()
 
 void SpatialSphericalView::renderFullPipeline(ViewSettings settings, Eye eye) {
   populateViewSettings(settings);
-  _impl->eye_separation = eye_separation;
   _impl->renderFullPipeline(settings, eye);
 }
 
@@ -156,19 +154,10 @@ void SpatialSphericalView::Impl::renderFullPipeline(ViewSettings settings, Eye e
   Eigen::Quaternionf head_rot = Eigen::Quaternionf::Identity();
 
   if (settings.viewpoint) {
-    eye_pos = settings.viewpoint->getPosition();
-    head_rot = settings.viewpoint->getOrientation();
-  }
-
-  switch (eye) {
-  case Eye::LEFT:
-    eye_pos -= head_rot * Eigen::Vector3f(0.5f * eye_separation, 0.f, 0.f);
-    break;
-  case Eye::RIGHT:
-    eye_pos += head_rot * Eigen::Vector3f(0.5f * eye_separation, 0.f, 0.f);
-    break;
-  case Eye::MONO:
-    break;
+    eye_pos = settings.viewpoint->getPosition(eye);
+    head_rot = settings.viewpoint->getOrientation(eye);
+  } else {
+    GM_RUNONCE(GM_WRN("SpatialSphericalView", "No viewpoint available - using zero position and rotation"));
   }
 
   GLint program_id = cubemap->getProgram();

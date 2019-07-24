@@ -25,7 +25,7 @@ void SideBySideMultiplexer::prepare() {
   glGetIntegerv(GL_VIEWPORT, _impl->viewport);
 }
 
-void SideBySideMultiplexer::setupRendering(Eye eye) {
+void SideBySideMultiplexer::setupRendering(size_t eye) {
 
   switch(_impl->pattern) {
 
@@ -33,15 +33,18 @@ void SideBySideMultiplexer::setupRendering(Eye eye) {
 
     switch(eye) {
 
-    case Eye::LEFT:
+    case 0:
       glViewport(_impl->viewport[0], _impl->viewport[1],
                  _impl->viewport[2] / 2, _impl->viewport[3]);
       break;
 
-    case Eye::RIGHT:
+    case 1:
       glViewport(_impl->viewport[0] + _impl->viewport[2] / 2, _impl->viewport[1],
                  _impl->viewport[2] / 2, _impl->viewport[3]);
       break;
+
+    default:
+      throw std::invalid_argument("cannot render eye index higher than 1");
     }
 
     break;
@@ -50,15 +53,18 @@ void SideBySideMultiplexer::setupRendering(Eye eye) {
 
     switch(eye) {
 
-    case Eye::LEFT:
+    case 0:
       glViewport(_impl->viewport[0], _impl->viewport[1] + _impl->viewport[3] / 2,
                  _impl->viewport[2], _impl->viewport[3] / 2);
       break;
 
-    case Eye::RIGHT:
+    case 1:
       glViewport(_impl->viewport[0], _impl->viewport[1],
                  _impl->viewport[2], _impl->viewport[3] / 2);
       break;
+
+    default:
+      throw std::invalid_argument("cannot render eye index higher than 1");
     }
 
     break;
@@ -67,15 +73,18 @@ void SideBySideMultiplexer::setupRendering(Eye eye) {
 
     switch(eye) {
 
-    case Eye::LEFT:
+    case 0:
       glViewport(_impl->viewport[0], _impl->viewport[1] + (_impl->viewport[3] - 45) / 2 + 45,
                  _impl->viewport[2], (_impl->viewport[3] - 45) / 2);
       break;
 
-    case Eye::RIGHT:
+    case 1:
       glViewport(_impl->viewport[0], _impl->viewport[1],
                  _impl->viewport[2], (_impl->viewport[3] - 45) / 2);
       break;
+
+    default:
+      throw std::invalid_argument("cannot render eye index higher than 1");
     }
 
     break;
@@ -91,7 +100,7 @@ void SideBySideMultiplexer::finalize() {
 
 void SideBySideMultiplexer::setPattern(int p) {
   if (p < 0 || 2 < p)
-    throw std::invalid_argument("invalid interlace pattern");
+    throw std::invalid_argument("invalid pattern");
   _impl->pattern = p;
 }
 
