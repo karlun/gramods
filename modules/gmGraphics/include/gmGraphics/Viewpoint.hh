@@ -3,6 +3,7 @@
 #define GRAMODS_GRAPHICS_VIEWPOINT
 
 #include <gmGraphics/config.hh>
+#include <gmGraphics/Eye.hh>
 
 #include <gmTypes/eigen.hh>
 
@@ -27,19 +28,21 @@ public:
 
   /**
      Returns the position of the viewpoint.
+
+     \param[in] eye The eye for which to fetch position. Default is
+     Eye::MONO.
   */
-  virtual Eigen::Vector3f getPosition() {
-    return position;
-  }
+  virtual Eigen::Vector3f getPosition(Eye eye = Eye::MONO);
 
   /**
      Returns the orientation of the viewpoint. Observe that a view may
      ignore the orientation value if this does not make any difference
      for its appearance.
+
+     \param[in] eye The eye for which to fetch orientation. Default is
+     Eye::MONO.
   */
-  virtual Eigen::Quaternionf getOrientation() {
-    return orientation;
-  }
+  virtual Eigen::Quaternionf getOrientation(Eye eye = Eye::MONO);
 
   /**
      Explicitly sets the position of the Viewpoint. This may be
@@ -48,8 +51,17 @@ public:
 
      \b XML-attribute: \c position
   */
-  virtual void setPosition(Eigen::Vector3f p) {
-    position = p;
+  virtual void setPosition(Eigen::Vector3f p);
+
+  /**
+     Sets the distance between the eyes for stereoscopic (or
+     multiscopic) rendering, in internal units, typically
+     meters. Default is 0.06 m.
+
+     \b XML-attribute: \c eyeSeparation
+  */
+  void setEyeSeparation(float e) {
+    eye_separation = e;
   }
 
   /**
@@ -60,9 +72,7 @@ public:
 
      \b XML-attribute: \c orientation
   */
-  virtual void setOrientation(Eigen::Quaternionf q) {
-    orientation = q;
-  }
+  virtual void setOrientation(Eigen::Quaternionf q);
 
   /**
      Set the up direction to be used in a later call to
@@ -70,9 +80,7 @@ public:
 
      \b XML-attribute: \c upDirection
   */
-  virtual void setUpDirection(Eigen::Vector3f up) {
-    up_direction = up.normalized();
-  }
+  virtual void setUpDirection(Eigen::Vector3f up);
 
   /**
      Implicitly rotates the viewpoint to look at the specified
@@ -101,6 +109,8 @@ protected:
   Eigen::Quaternionf orientation = Eigen::Quaternionf::Identity();
 
   Eigen::Vector3f up_direction = Eigen::Vector3f(0, 1, 0);
+
+  float eye_separation = 0.06f;
 
 };
 

@@ -2,7 +2,7 @@
 #ifndef GRAMODS_GRAPHICS_LINEARANAGLYPHSMULTIPLEXER
 #define GRAMODS_GRAPHICS_LINEARANAGLYPHSMULTIPLEXER
 
-#include <gmGraphics/StereoscopicMultiplexer.hh>
+#include <gmGraphics/MultiscopicMultiplexer.hh>
 
 #include <gmTypes/float.hh>
 
@@ -13,7 +13,7 @@ BEGIN_NAMESPACE_GMGRAPHICS;
    based on linear operations.
 */
 class LinearAnaglyphsMultiplexer
-  : public gmGraphics::StereoscopicMultiplexer {
+  : public gmGraphics::MultiscopicMultiplexer {
 
 public:
 
@@ -66,6 +66,12 @@ public:
   void setRightSaturation(float s);
 
   /**
+     Returns the number of eyes that should be rendered for the
+     multiplexer. Returns the value two (2).
+  */
+  size_t getEyeCount() { return 2; }
+
+  /**
      Prepares the multiplexer for rendering to the two eyes.
   */
   void prepare();
@@ -73,7 +79,7 @@ public:
   /**
      Sets up rendering for one eye at a time.
   */
-  void setupRendering(Eye eye);
+  void setupRendering(size_t eye);
 
   /**
      Finalizes the multiplexing.

@@ -57,10 +57,12 @@ struct CubeMapRasterProcessor::Impl {
   void renderFullPipeline(std::vector<std::shared_ptr<Renderer>> renderers,
                           Eigen::Vector3f pos,
                           Eigen::Quaternionf rot,
+                          Eye eye,
                           bool make_square);
   void renderSide(std::vector<std::shared_ptr<Renderer>> renderers,
                   Eigen::Vector3f pos,
                   Eigen::Quaternionf rot,
+                  Eye eye,
                   size_t side);
 
   bool spatial_cubemap = false;
@@ -80,8 +82,9 @@ void CubeMapRasterProcessor::renderFullPipeline
 (std::vector<std::shared_ptr<Renderer>> renderers,
  Eigen::Vector3f pos,
  Eigen::Quaternionf rot,
+ Eye eye,
  bool make_square) {
-  _impl->renderFullPipeline(renderers, pos, rot, make_square);
+  _impl->renderFullPipeline(renderers, pos, rot, eye, make_square);
 }
 
 void CubeMapRasterProcessor::Impl::setup() {
@@ -218,6 +221,7 @@ void CubeMapRasterProcessor::Impl::renderFullPipeline
 (std::vector<std::shared_ptr<Renderer>> renderers,
  Eigen::Vector3f pos,
  Eigen::Quaternionf rot,
+ Eye eye,
  bool make_square) {
 
   GLint previous_viewport[4] = { 0, 0, 0, 0 };
@@ -236,7 +240,7 @@ void CubeMapRasterProcessor::Impl::renderFullPipeline
   glEnable(GL_BLEND);
 
   for (size_t idx = 0; idx < SIDE_COUNT; ++idx)
-    renderSide(renderers, pos, rot, idx);
+    renderSide(renderers, pos, rot, eye, idx);
 
   GM_VINF("CubeMapRasterProcessor", "finalizing");
 
@@ -298,6 +302,7 @@ void CubeMapRasterProcessor::Impl::renderSide
 (std::vector<std::shared_ptr<Renderer>> renderers,
  Eigen::Vector3f pos,
  Eigen::Quaternionf rot,
+ Eye eye,
  size_t side) {
 
   glBindFramebuffer(GL_FRAMEBUFFER, framebuffer_id[side]);
@@ -308,6 +313,7 @@ void CubeMapRasterProcessor::Impl::renderSide
 
   Camera camera;
   camera.setPose(pos, rot * side_orientation[side]);
+  camera.setEye(eye);
 
   if (spatial_cubemap) {
 

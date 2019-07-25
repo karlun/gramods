@@ -4,7 +4,6 @@
 
 #include <gmGraphics/config.hh>
 #include <gmGraphics/RendererDispatcher.hh>
-#include <gmGraphics/StereoscopicView.hh>
 
 #include <memory>
 
@@ -30,6 +29,7 @@ public:
   void renderFullPipeline(std::vector<std::shared_ptr<Renderer>> renderers,
                           Eigen::Vector3f pos,
                           Eigen::Quaternionf rot,
+                          Eye eye,
                           bool make_square = false);
 
   /**

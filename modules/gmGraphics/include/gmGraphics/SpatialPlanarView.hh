@@ -2,7 +2,7 @@
 #ifndef GRAMODS_GRAPHICS_SPATIALPLANARVIEW
 #define GRAMODS_GRAPHICS_SPATIALPLANARVIEW
 
-#include <gmGraphics/StereoscopicView.hh>
+#include <gmGraphics/MultiscopicView.hh>
 
 #include <gmTypes/eigen.hh>
 
@@ -12,7 +12,7 @@ BEGIN_NAMESPACE_GMGRAPHICS;
    This view provides skewed frustum projection of the renderers.
 */
 class SpatialPlanarView
-  : public StereoscopicView {
+  : public MultiscopicView {
 
 public:
 

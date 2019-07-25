@@ -17,14 +17,20 @@ void QuadBufferMultiplexer::prepare() {
   glGetIntegerv(GL_DRAW_BUFFER, &_impl->buffer_id);
 }
 
-void QuadBufferMultiplexer::setupRendering(Eye eye) {
+void QuadBufferMultiplexer::setupRendering(size_t eye) {
+
   switch(eye) {
-  case Eye::LEFT:
+
+  case 0:
     glDrawBuffer(GL_BACK_LEFT);
     break;
-  case Eye::RIGHT:
+
+  case 1:
     glDrawBuffer(GL_BACK_RIGHT);
     break;
+
+  default:
+    throw std::invalid_argument("cannot render eye index higher than 1");
   }
 }
 

@@ -5,7 +5,7 @@
 
 BEGIN_NAMESPACE_GMGRAPHICS;
 
-GM_OFI_DEFINE_SUB(SpatialPlanarView, StereoscopicView);
+GM_OFI_DEFINE_SUB(SpatialPlanarView, MultiscopicView);
 GM_OFI_PARAM(SpatialPlanarView, topLeftCorner, Eigen::Vector3f, SpatialPlanarView::setTopLeftCorner);
 GM_OFI_PARAM(SpatialPlanarView, bottomRightCorner, Eigen::Vector3f, SpatialPlanarView::setBottomRightCorner);
 GM_OFI_PARAM(SpatialPlanarView, upDirection, Eigen::Vector3f, SpatialPlanarView::setUpDirection);
@@ -16,21 +16,10 @@ void SpatialPlanarView::renderFullPipeline(ViewSettings settings, Eye eye) {
   Eigen::Quaternionf q_VP = Eigen::Quaternionf::Identity();
 
   if (settings.viewpoint) {
-    x_VP = settings.viewpoint->getPosition();
-    q_VP = settings.viewpoint->getOrientation();
+    x_VP = settings.viewpoint->getPosition(eye);
+    q_VP = settings.viewpoint->getOrientation(eye);
   } else {
     GM_RUNONCE(GM_WRN("SpatialPlanarView", "No viewpoint available - using zero position and rotation"));
-  }
-
-  switch (eye) {
-  case Eye::LEFT:
-    x_VP -= q_VP * Eigen::Vector3f(0.5f * eye_separation, 0.f, 0.f);
-    break;
-  case Eye::RIGHT:
-    x_VP += q_VP * Eigen::Vector3f(0.5f * eye_separation, 0.f, 0.f);
-    break;
-  case Eye::MONO:
-    break;
   }
 
   auto up = upDirection.normalized();
@@ -63,6 +52,7 @@ void SpatialPlanarView::renderFullPipeline(ViewSettings settings, Eye eye) {
   Camera camera;
   camera.setClipPlanes(left, right, bottom, top);
   camera.setPose(x_VP, Q1 * Q0);
+  camera.setEye(eye);
 
   for (auto renderer : settings.renderers)
     renderer->render(camera);

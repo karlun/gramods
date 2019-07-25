@@ -8,6 +8,35 @@ GM_OFI_PARAM(Viewpoint, position, Eigen::Vector3f, Viewpoint::setPosition);
 GM_OFI_PARAM(Viewpoint, orientation, Eigen::Quaternionf, Viewpoint::setOrientation);
 GM_OFI_PARAM(Viewpoint, upDirection, Eigen::Vector3f, Viewpoint::setUpDirection);
 GM_OFI_PARAM(Viewpoint, lookAt, Eigen::Vector3f, Viewpoint::setLookAt);
+GM_OFI_PARAM(Viewpoint, eyeSeparation, float, Viewpoint::setEyeSeparation);
+
+Eigen::Vector3f Viewpoint::getPosition(Eye eye) {
+
+  eye.validate();
+
+  if (eye.count == 1)
+    return position;
+
+  float offset = (eye.idx - 0.5f * (eye.count - 1)) * eye_separation;
+  return position - orientation * Eigen::Vector3f(offset, 0.f, 0.f);
+}
+
+Eigen::Quaternionf Viewpoint::getOrientation(Eye eye) {
+  eye.validate();
+  return orientation;
+}
+
+void Viewpoint::setPosition(Eigen::Vector3f p) {
+  position = p;
+}
+
+void Viewpoint::setOrientation(Eigen::Quaternionf q) {
+  orientation = q;
+}
+
+void Viewpoint::setUpDirection(Eigen::Vector3f up) {
+  up_direction = up.normalized();
+}
 
 void Viewpoint::setLookAt(Eigen::Vector3f target) {
 

@@ -46,7 +46,7 @@ struct LinearAnaglyphsMultiplexer::Impl {
   void teardown();
 
   void prepare();
-  void setupRendering(Eye eye);
+  void setupRendering(size_t eye);
   void finalize();
 };
 
@@ -61,7 +61,7 @@ void LinearAnaglyphsMultiplexer::prepare() {
   _impl->prepare();
 }
 
-void LinearAnaglyphsMultiplexer::setupRendering(Eye eye) {
+void LinearAnaglyphsMultiplexer::setupRendering(size_t eye) {
   _impl->setupRendering(eye);
 }
 
@@ -99,7 +99,7 @@ void LinearAnaglyphsMultiplexer::Impl::setup() {
   glGenTextures((GLsizei)2, tex_id);
   glGenRenderbuffers(1, &rb_depth_id);
 
-  for (size_t eye_idx = (size_t)Eye::LEFT; eye_idx <= (size_t)Eye::RIGHT; ++eye_idx) {
+  for (size_t eye_idx = 0; eye_idx < 2; ++eye_idx) {
     glBindFramebuffer(GL_FRAMEBUFFER, fb_id[eye_idx]);
     glBindTexture(GL_TEXTURE_2D, tex_id[eye_idx]);
 
@@ -249,12 +249,15 @@ void LinearAnaglyphsMultiplexer::Impl::prepare() {
     return;
 }
 
-void LinearAnaglyphsMultiplexer::Impl::setupRendering(Eye eye) {
+void LinearAnaglyphsMultiplexer::Impl::setupRendering(size_t eye) {
+
+  if (eye >= 2) throw std::invalid_argument("cannot render eye index higher than 1");
+
   if (!is_functional)
     return;
 
   GM_VINF("LinearAnaglyphsMultiplexer", "setting up for "
-          << (eye == Eye::LEFT ? "left eye" : "right eye"));
+          << (eye == 0 ? "left eye" : "right eye"));
 
   glBindFramebuffer(GL_FRAMEBUFFER, fb_id[(size_t)eye]);
 
@@ -278,10 +281,10 @@ void LinearAnaglyphsMultiplexer::Impl::finalize() {
   glViewport(viewport[0], viewport[1], viewport[2], viewport[3]);
 
   glActiveTexture(GL_TEXTURE0);
-  glBindTexture(GL_TEXTURE_2D, tex_id[(size_t)Eye::LEFT]);
+  glBindTexture(GL_TEXTURE_2D, tex_id[0]);
 
   glActiveTexture(GL_TEXTURE1);
-  glBindTexture(GL_TEXTURE_2D, tex_id[(size_t)Eye::RIGHT]);
+  glBindTexture(GL_TEXTURE_2D, tex_id[1]);
 
   glUseProgram(program_id);
   glUniform1i(glGetUniformLocation(program_id, "texL"), 0);
