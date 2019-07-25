@@ -233,7 +233,7 @@ Optional dependencies:
 
 A Window creates a graphics context and makes it current before any subsequent calls. The Window calls a View to produce graphics. A View may call other views recursively, or make one or more calls to one or more renderers to produce this graphics. It is the renderer that actually renders the scene, while the view determines frame buffers and frustum settings to use, based on the current Viewpoint.
 
-If a SterescopicView has a StereoscopicMultiplexer, it will call this to set up rendering to the left and right eye. Thus, the StereoscopicMultiplexer does not know how the eyes are physically oriented and offsetted, which even may be different depending on the View, but only knows if the graphics should be rendered to quad buffers or interlaced or anaglyphic to the back buffer. A smart interlaced technique can therefore combine the masked out lines with the closest shown lines.
+Support for stereoscopic rendering is provided through MultiscopicMultiplexer. If a MultiscopicView has a MultiscopicMultiplexer associated with it, it will call this to set up rendering to the left and right eye, or more if the view supports holographic rendering. Thus, the MultiscopicMultiplexer does not know how the eyes are physically oriented and offsetted, which even may be different depending on the View or Viewpoint, but only knows if the graphics should be rendered to quad buffers or interlaced or anaglyphic to the back buffer. A smart interlaced technique can therefore combine the masked out lines with the closest shown lines.
 
 The TiledView node makes use of the *Decorator Design Pattern*, to allow for flexible configurations of graphics output.
 
@@ -243,9 +243,9 @@ RendererDispatcher : renderFullPipeline(ViewSettings)
 RendererDispatcher <|-- View
 Window - View
 View <|-- TiledView
-View <|-- StereoscopicView
-StereoscopicView <|-- SpatialPlanarView
-StereoscopicView <|-- SpatialDomeView
+View <|-- MultiscopicView
+MultiscopicView <|-- SpatialPlanarView
+MultiscopicView <|-- SpatialDomeView
 View <|-- AngularFisheyeView
 View <|-- EquirectangularView
 View - Viewpoint
@@ -253,10 +253,10 @@ note top of Viewpoint : a View may not be affected by\nViewpoint orientation
 Viewpoint : position
 Viewpoint : orientation
 Window <|-- SdlWindow
-StereoscopicView - StereoscopicMultiplexer
-note top of StereoscopicMultiplexer : StereoscopicView lets a StereoscopicMultiplexer set up\ntargets for the left and right eye rendering.
-StereoscopicMultiplexer <|-- SimpleAnaglyphsMultiplexer
-StereoscopicMultiplexer <|-- QuadBufferMultiplexer
+MultiscopicView - MultiscopicMultiplexer
+note top of MultiscopicMultiplexer : MultiscopicView lets a MultiscopicMultiplexer set up\ntargets for the left and right eye rendering.
+MultiscopicMultiplexer <|-- LinearAnaglyphsMultiplexer
+MultiscopicMultiplexer <|-- QuadBufferMultiplexer
 @enduml
 
 Since shaders are tightly coupled with the C++ code together with which they are used, their code reside within their respective class, in string literals. These string literals are specified in the form `std::string code = R"lang=glsl(` so that the editor may detect the language to provide syntax highlighting and automatic indentation. To get language support in the string literals with Emacs, use `polymode` (tested with version 20190624.1927) with the following code in your `.emacs` file:
@@ -304,4 +304,4 @@ Optional dependencies:
 
 ## gmTypes
 
-Special types for use in the other modules, and their operators. In particular, this module defines std::array template instantiations for setting vector type attributes.
+Special types and operators for use in the other modules. In particular, this module defines stream operator for advanced parsing of types such as Eigen::Quaternionf for orientation, and float and size_t array types.
