@@ -52,7 +52,7 @@ struct PoseRegistrationEstimator::Impl {
                                 Eigen::Matrix4f M_raw,
                                 Eigen::Matrix4f &M_unit);
 
-  float planar_sphericity = 0.3;
+  float planar_sphericity = 0.3f;
   std::shared_ptr<gramods::gmTrack::Controller> controller;
 
   Eigen::Matrix4f registration_raw;
@@ -253,7 +253,7 @@ float PoseRegistrationEstimator::Impl::estimateSphericity(std::vector<Eigen::Vec
   Eigen::Vector3f cp = Eigen::Vector3f::Zero();
   for (auto pt : data)
     cp += pt;
-  cp /= data.size();
+  cp /= (float)data.size();
 
   Eigen::MatrixXf data_matrix(3, data.size());
 
@@ -282,7 +282,7 @@ void PoseRegistrationEstimator::Impl::expandPlanar(std::vector<Eigen::Vector3f> 
   Eigen::Vector3f cp = Eigen::Vector3f::Zero();
   for (auto pt : data)
     cp += pt;
-  cp /= data.size();
+  cp /= (float)data.size();
 
   Eigen::MatrixXf data_matrix(3, data.size());
 
@@ -421,12 +421,12 @@ void PoseRegistrationEstimator::Impl::estimateUnitRegistration
   Eigen::Vector3f tracker_cp = Eigen::Vector3f::Zero();
   for (auto pt : tracker_data)
     tracker_cp += pt;
-  tracker_cp /= tracker_data.size();
+  tracker_cp /= (float)tracker_data.size();
 
   Eigen::Vector3f actual_cp = Eigen::Vector3f::Zero();
   for (auto pt : actual_data)
     actual_cp += pt;
-  actual_cp /= actual_data.size();
+  actual_cp /= (float)actual_data.size();
 
   Eigen::Vector3f offset = (actual_cp - (M_unit * tracker_cp.homogeneous()).hnormalized());
   M_unit.block(0,3,3,1) = offset;

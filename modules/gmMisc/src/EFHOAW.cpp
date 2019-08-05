@@ -147,7 +147,7 @@ EFHOAW::polco EFHOAW::Impl::estimateCoefficients
     return polco(3, 0);
   }
 
-  int best_count = 0;
+  size_t best_count = 0;
   polco best_coefficients;
 
   for (size_t candidate_count = order + 1; candidate_count <= position_list.size(); ++candidate_count) {
