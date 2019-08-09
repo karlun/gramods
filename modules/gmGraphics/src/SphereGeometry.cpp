@@ -52,10 +52,10 @@ bool SphereGeometry::Impl::getCameraFromPosition(Camera vfrustum,
     float l, r, b, t;
     rfrustum.getClipPlanes(l, r, b, t);
 
-    float l2 = (0.5 * l + 0.5 * r) + size_ratio * (l - (0.5 * l + 0.5 * r));
-    float r2 = (0.5 * l + 0.5 * r) + size_ratio * (r - (0.5 * l + 0.5 * r));
-    float b2 = (0.5 * t + 0.5 * b) + size_ratio * (b - (0.5 * t + 0.5 * b));
-    float t2 = (0.5 * t + 0.5 * b) + size_ratio * (t - (0.5 * t + 0.5 * b));
+    float l2 = (0.5f * l + 0.5f * r) + size_ratio * (l - (0.5f * l + 0.5f * r));
+    float r2 = (0.5f * l + 0.5f * r) + size_ratio * (r - (0.5f * l + 0.5f * r));
+    float b2 = (0.5f * t + 0.5f * b) + size_ratio * (b - (0.5f * t + 0.5f * b));
+    float t2 = (0.5f * t + 0.5f * b) + size_ratio * (t - (0.5f * t + 0.5f * b));
 
     rfrustum.setClipPlanes(l2, r2, b2, t2);
 
@@ -137,14 +137,14 @@ bool SphereGeometry::Impl::getCameraFromPosition(Camera vfrustum,
   // of sphere of the view frustum crop planes, we expand the frustum
   // by a fixed percentage.
 
-  float left3 = (0.5 * left2 + 0.5 * right2) +
-    size_ratio * (left2 - (0.5 * left2 + 0.5 * right2));
-  float right3 = (0.5 * left2 + 0.5 * right2) +
-    size_ratio * (right2 - (0.5 * left2 + 0.5 * right2));
-  float bottom3 = (0.5 * top2 + 0.5 * bottom2) +
-    size_ratio * (bottom2 - (0.5 * top2 + 0.5 * bottom2));
-  float top3 = (0.5 * top2 + 0.5 * bottom2) +
-    size_ratio * (top2 - (0.5 * top2 + 0.5 * bottom2));
+  float left3 = (0.5f * left2 + 0.5f * right2) +
+    size_ratio * (left2 - (0.5f * left2 + 0.5f * right2));
+  float right3 = (0.5f * left2 + 0.5f * right2) +
+    size_ratio * (right2 - (0.5f * left2 + 0.5f * right2));
+  float bottom3 = (0.5f * top2 + 0.5f * bottom2) +
+    size_ratio * (bottom2 - (0.5f * top2 + 0.5f * bottom2));
+  float top3 = (0.5f * top2 + 0.5f * bottom2) +
+    size_ratio * (top2 - (0.5f * top2 + 0.5f * bottom2));
 
   rfrustum.setPose(position, orientation);
   rfrustum.setClipPlanes(left3, right3, bottom3, top3);
@@ -192,8 +192,8 @@ bool SphereGeometry::Impl::getIntersection(Eigen::Vector3f pos,
   if (s < 0) return false;
 
   float t = inside
-    ? - dir.dot(pos - position) + sqrt(s)
-    : - dir.dot(pos - position) - sqrt(s);
+    ? - dir.dot(pos - position) + sqrtf(s)
+    : - dir.dot(pos - position) - sqrtf(s);
   if (t < 0) return false;
 
   icp = pos + dir * t;

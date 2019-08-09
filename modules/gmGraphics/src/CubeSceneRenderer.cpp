@@ -200,7 +200,7 @@ void CubeSceneRenderer::Impl::render(Camera camera) {
     + 0.87f * (cube_set_size + cube_size);
   Eigen::Matrix4f Mp = camera.getProjectionMatrix(near, far);
 
-  size_t N = (size_t)(cube_set_size / (3.0 * cube_size));
+  size_t N = (size_t)(cube_set_size / (3.f * cube_size));
   float pD = N > 1 ? cube_set_size / (N - 1) : 0.f;
   float p0 = -0.5f * cube_set_size;
 
@@ -230,15 +230,15 @@ void CubeSceneRenderer::Impl::render(Camera camera) {
                                    position[2] + p0 + pD * idx_z);
         Mm *= Eigen::Scaling(0.5f * cube_size);
         Mm *= Eigen::AngleAxis<float>
-          (1.0 * step * idx_x +
-           0.4 * step * idx_y +
-           0.7 * step * idx_z,
+          (1.0f * step * idx_x +
+           0.4f * step * idx_y +
+           0.7f * step * idx_z,
            Eigen::Vector3f(idx_z + 1, idx_y, idx_x).normalized());
         glUniformMatrix4fv(Mm_id, 1, false, Mm.data());
 
-        Eigen::Vector3f color(0.2 + 0.8 * step * idx_x,
-                              0.2 + 0.8 * step * idx_y,
-                              0.2 + 0.8 * step * idx_z);
+        Eigen::Vector3f color(0.2f + 0.8f * step * idx_x,
+                              0.2f + 0.8f * step * idx_y,
+                              0.2f + 0.8f * step * idx_z);
         glUniform3fv(color_id, 1, color.data());
 
         glDrawArrays(GL_TRIANGLES, 0, N_VERTICES);

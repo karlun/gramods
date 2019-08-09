@@ -134,12 +134,12 @@ cv::Ptr<cv::aruco::Board> ArucoGridBoard::Impl::getBoard() {
 
   if (size <= 0) {
     GM_WRN("ArucoGridBoard", "Marker size not specified - using 5 cm.");
-    size = 0.05;
+    size = 0.05f;
   }
 
   if (columns * rows > 1 && sep <= 0) {
     GM_WRN("ArucoGridBoard", "Separation not specified - using 0.5 x marker size.");
-    sep = 0.5 * size;
+    sep = 0.5f * size;
   }
 
   auto aboard = cv::aruco::GridBoard::create(columns, rows, size, sep, dict, id_0);
