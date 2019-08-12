@@ -192,11 +192,11 @@ void CubeSceneRenderer::Impl::render(Camera camera) {
   Mm = Eigen::Translation3f(position);
   Eigen::Affine3f Mv = camera.getViewMatrix();
   float near =
-    (Mv * Mm).translation().z()
+    -(Mv * Mm).translation().z()
     - 0.87f * (cube_set_size + cube_size);
   near = std::max(near, 0.1f * cube_size);
   float far =
-    (Mv * Mm).translation().z()
+    -(Mv * Mm).translation().z()
     + 0.87f * (cube_set_size + cube_size);
   Eigen::Matrix4f Mp = camera.getProjectionMatrix(near, far);
 
