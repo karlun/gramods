@@ -318,7 +318,7 @@ void CubeMapRasterProcessor::Impl::renderSide
   if (spatial_cubemap) {
 
     Eigen::Vector3f O = pos - cubemap_position;
-    float W = 0.5 * cubemap_side;
+    float W = 0.5f * cubemap_side;
 
     switch (side) {
     case 0: // left

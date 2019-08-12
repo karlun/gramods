@@ -52,7 +52,7 @@ struct PoseRegistrationEstimator::Impl {
                                 Eigen::Matrix4f M_raw,
                                 Eigen::Matrix4f &M_unit);
 
-  float planar_sphericity = 0.3;
+  float planar_sphericity = 0.3f;
   std::shared_ptr<gramods::gmTrack::Controller> controller;
 
   Eigen::Matrix4f registration_raw;
@@ -253,7 +253,7 @@ float PoseRegistrationEstimator::Impl::estimateSphericity(std::vector<Eigen::Vec
   Eigen::Vector3f cp = Eigen::Vector3f::Zero();
   for (auto pt : data)
     cp += pt;
-  cp /= data.size();
+  cp /= (float)data.size();
 
   Eigen::MatrixXf data_matrix(3, data.size());
 
@@ -268,7 +268,7 @@ float PoseRegistrationEstimator::Impl::estimateSphericity(std::vector<Eigen::Vec
   GM_VINF("PoseRegistrationEstimator", "data matrix:\n" << data_matrix);
   GM_VINF("PoseRegistrationEstimator", "singular values: " << singular_values.transpose());
 
-  if (singular_values[1] / singular_values[0] < 0.3) //<< Arbitrarily choosen for warning only
+  if (singular_values[1] / singular_values[0] < 0.3f) //<< Arbitrarily choosen for warning only
     GM_WRN("PoseRegistrationEstimator", "poor second axis sphericity - points may be too linearly dependent for a good registration estimation");
 
   return singular_values[2] / singular_values[0];
@@ -282,7 +282,7 @@ void PoseRegistrationEstimator::Impl::expandPlanar(std::vector<Eigen::Vector3f> 
   Eigen::Vector3f cp = Eigen::Vector3f::Zero();
   for (auto pt : data)
     cp += pt;
-  cp /= data.size();
+  cp /= (float)data.size();
 
   Eigen::MatrixXf data_matrix(3, data.size());
 
@@ -339,7 +339,7 @@ void PoseRegistrationEstimator::Impl::expandPlanar(std::vector<Eigen::Vector3f> 
   std::vector<Eigen::Vector3f> new_data;
   new_data.reserve(2 * data.size());
 
-  auto offset = (0.5 * data_scale) * data_normal;
+  Eigen::Vector3f offset = (0.5f * data_scale) * data_normal;
   for (auto pt : data)
     new_data.push_back(pt + offset);
   for (auto pt : data)
@@ -421,12 +421,12 @@ void PoseRegistrationEstimator::Impl::estimateUnitRegistration
   Eigen::Vector3f tracker_cp = Eigen::Vector3f::Zero();
   for (auto pt : tracker_data)
     tracker_cp += pt;
-  tracker_cp /= tracker_data.size();
+  tracker_cp /= (float)tracker_data.size();
 
   Eigen::Vector3f actual_cp = Eigen::Vector3f::Zero();
   for (auto pt : actual_data)
     actual_cp += pt;
-  actual_cp /= actual_data.size();
+  actual_cp /= (float)actual_data.size();
 
   Eigen::Vector3f offset = (actual_cp - (M_unit * tracker_cp.homogeneous()).hnormalized());
   M_unit.block(0,3,3,1) = offset;

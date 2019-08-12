@@ -20,7 +20,7 @@ std::istream& operator>> (std::istream &in, Eigen::Quaternionf &q) {
 
   if (key == "quaternion") {
 
-    double w, x, y, z;
+    float w, x, y, z;
     in >> w >> x >> y >> z;
 
     if (in) {
@@ -39,7 +39,7 @@ std::istream& operator>> (std::istream &in, Eigen::Quaternionf &q) {
 
   } else if (key == "ypr") {
 
-    double yaw, pitch, roll;
+    float yaw, pitch, roll;
     in >> yaw >> pitch >> roll;
 
     if (in) {
@@ -88,7 +88,7 @@ std::istream& operator>> (std::istream &in, Eigen::Quaternionf &q) {
 
   } else {
 
-    double w, x, y, z;
+    float w, x, y, z;
 
     std::stringstream ss(key);
     ss >> w;

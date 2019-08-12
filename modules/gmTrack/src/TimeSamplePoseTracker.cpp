@@ -119,7 +119,7 @@ bool TimeSamplePoseTracker::Impl::getPose(PoseSample &p) {
   size_t to_time = from_time + 1;
   assert(to_time < time.size());
 
-  double a = (duration - time[from_time]) / (time[to_time] - time[from_time]);
+  float a = (duration - time[from_time]) / (time[to_time] - time[from_time]);
 
   if (position.empty()) {
     p.position = Eigen::Vector3f::Zero();
