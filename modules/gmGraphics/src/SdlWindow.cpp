@@ -185,6 +185,7 @@ bool SdlWindow::isOpen() {
 }
 
 void SdlWindow::swap() {
+  SDL_GL_MakeCurrent(window, gl_context);
   SDL_GL_SwapWindow(window);
 }
 
