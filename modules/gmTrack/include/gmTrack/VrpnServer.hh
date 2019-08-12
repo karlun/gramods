@@ -52,12 +52,28 @@ public:
   */
   void setPort(int port);
 
+  /**
+     Add a name to associate with a tracker in this VRPN server. There
+     must be exactly one name for each tracker served.
+  */
   void addTrackerName(std::string name);
 
+  /**
+     Add an AnalogsTracker to serve from this VRPN server. There must
+     be exactly one name for each tracker served.
+  */
   void addAnalogsTracker(std::shared_ptr<AnalogsTracker> t);
 
+  /**
+     Add a ButtonsTracker to serve from this VRPN server. There must
+     be exactly one name for each tracker served.
+  */
   void addButtonsTracker(std::shared_ptr<ButtonsTracker> t);
 
+  /**
+     Add a PoseTracker to serve from this VRPN server. There must be
+     exactly one name for each tracker served.
+  */
   void addPoseTracker(std::shared_ptr<PoseTracker> t);
 
   GM_OFI_DECLARE;
