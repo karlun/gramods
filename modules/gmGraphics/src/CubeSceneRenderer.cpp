@@ -6,6 +6,8 @@
 #include <GL/glew.h>
 #include <GL/gl.h>
 
+#include <chrono>
+
 BEGIN_NAMESPACE_GMGRAPHICS;
 
 GM_OFI_DEFINE(CubeSceneRenderer);
@@ -214,6 +216,13 @@ void CubeSceneRenderer::Impl::render(Camera camera) {
 
   glBindVertexArray(vao_id);
 
+  typedef std::chrono::steady_clock clock;
+  typedef std::chrono::duration<double, std::ratio<1>> d_seconds;
+
+  static clock::time_point start_time = clock::now();
+  static const double rate = 0.5 * (2.0 * gramods_PI);
+  double secs = std::chrono::duration_cast<d_seconds>(clock::now() - start_time).count();
+
   float step = (1.f/N);
   for (size_t idx_z = 0; idx_z < N; ++idx_z)
     for (size_t idx_y = 0; idx_y < N; ++idx_y)
@@ -232,7 +241,8 @@ void CubeSceneRenderer::Impl::render(Camera camera) {
         Mm *= Eigen::AngleAxis<float>
           (1.0f * step * idx_x +
            0.4f * step * idx_y +
-           0.7f * step * idx_z,
+           0.7f * step * idx_z +
+           (float)(rate * secs),
            Eigen::Vector3f(idx_z + 1, idx_y, idx_x).normalized());
         glUniformMatrix4fv(Mm_id, 1, false, Mm.data());
 
