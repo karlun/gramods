@@ -18,7 +18,7 @@ Eigen::Vector3f Viewpoint::getPosition(Eye eye) {
     return position;
 
   float offset = (eye.idx - 0.5f * (eye.count - 1)) * eye_separation;
-  return position - orientation * Eigen::Vector3f(offset, 0.f, 0.f);
+  return position + orientation * Eigen::Vector3f(offset, 0.f, 0.f);
 }
 
 Eigen::Quaternionf Viewpoint::getOrientation(Eye eye) {
