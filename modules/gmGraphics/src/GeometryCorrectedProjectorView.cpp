@@ -20,7 +20,7 @@ GM_OFI_PARAM(GeometryCorrectedProjectorView, bottomRightCorner, Eigen::Vector3f,
 GM_OFI_PARAM(GeometryCorrectedProjectorView, position, Eigen::Vector3f, GeometryCorrectedProjectorView::setPosition);
 GM_OFI_PARAM(GeometryCorrectedProjectorView, extrinsics, gmTypes::float12, GeometryCorrectedProjectorView::setExtrinsics);
 GM_OFI_PARAM(GeometryCorrectedProjectorView, intrinsics, gmTypes::float4, GeometryCorrectedProjectorView::setIntrinsics);
-GM_OFI_PARAM(GeometryCorrectedProjectorView, clipAngles, gmTypes::float4, GeometryCorrectedProjectorView::setClipAngles);
+GM_OFI_PARAM(GeometryCorrectedProjectorView, clipAngles, gmTypes::angle4, GeometryCorrectedProjectorView::setClipAngles);
 GM_OFI_PARAM(GeometryCorrectedProjectorView, orientation, Eigen::Quaternionf, GeometryCorrectedProjectorView::setOrientation);
 GM_OFI_POINTER(GeometryCorrectedProjectorView, geometry, Geometry, GeometryCorrectedProjectorView::setGeometry);
 
@@ -50,7 +50,7 @@ struct GeometryCorrectedProjectorView::Impl {
   Eigen::Vector3f shape_corner_tl;
   Eigen::Vector3f shape_corner_br;
   gmTypes::float4 shape_intrinsics;
-  gmTypes::float4 shape_angles;
+  gmTypes::angle4 shape_angles;
 
   bool have_shape_corner_tl = false;
   bool have_shape_corner_br = false;
@@ -159,7 +159,7 @@ void GeometryCorrectedProjectorView::setIntrinsics(gmTypes::float4 m) {
   _impl->have_shape_intrinsics = true;
 }
 
-void GeometryCorrectedProjectorView::setClipAngles(gmTypes::float4 a) {
+void GeometryCorrectedProjectorView::setClipAngles(gmTypes::angle4 a) {
   _impl->shape_angles = a;
   _impl->have_shape_angles = true;
 }

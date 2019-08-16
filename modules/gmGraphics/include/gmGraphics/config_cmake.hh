@@ -23,9 +23,12 @@ namespace gramods {
   namespace gmGraphics {}
 }
 
-#define gramods_PI   (            std::acos(-1))
-#define gramods_PI_2 (            std::asin( 1))
-#define gramods_PI_4 ((1.0/2.0) * std::asin( 1))
+#ifndef gramods_PI
+#  include <cmath>
+#  define gramods_PI   (            std::acos(-1))
+#  define gramods_PI_2 (            std::asin( 1))
+#  define gramods_PI_4 ((1.0/2.0) * std::asin( 1))
+#endif
 
 
 #cmakedefine HAVE_SDL2

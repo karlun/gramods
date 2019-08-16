@@ -8,6 +8,7 @@
 
 #include <gmTypes/float.hh>
 #include <gmTypes/eigen.hh>
+#include <gmTypes/angle.hh>
 
 BEGIN_NAMESPACE_GMGRAPHICS;
 
@@ -104,7 +105,7 @@ public:
 
      \b XML-attribute: \c clipAngles
   */
-  void setClipAngles(gmTypes::float4 a);
+  void setClipAngles(gmTypes::angle4 a);
 
   /**
      Set orientation of the projection, of the extrinsics.

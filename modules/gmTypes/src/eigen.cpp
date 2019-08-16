@@ -3,6 +3,8 @@
 
 #ifdef gramods_ENABLE_Eigen3
 
+#include <gmTypes/angle.hh>
+
 #include <gmCore/Console.hh>
 
 BEGIN_NAMESPACE_GRAMODS;
@@ -27,7 +29,7 @@ std::istream& operator>> (std::istream &in, Eigen::Quaternionf &q) {
 
       q = Eigen::Quaternionf(w, x, y, z);
 
-      if (fabs(1 - q.norm()) > 1e-5)
+      if (fabsf(1 - q.norm()) > 1e-5)
         GM_WRN("operator>>(std::istream, Eigen::Quaternionf)",
                "Parsed quaternion is not unit (pure rotation).");
 
@@ -39,7 +41,7 @@ std::istream& operator>> (std::istream &in, Eigen::Quaternionf &q) {
 
   } else if (key == "ypr") {
 
-    float yaw, pitch, roll;
+    gmTypes::angle yaw, pitch, roll;
     in >> yaw >> pitch >> roll;
 
     if (in) {
@@ -57,7 +59,7 @@ std::istream& operator>> (std::istream &in, Eigen::Quaternionf &q) {
     Eigen::Vector3f v;
     in >> v[0] >> v[1] >> v[2];
 
-    float angle;
+    gmTypes::angle angle;
     in >> angle;
 
     if (in) {
@@ -71,7 +73,7 @@ std::istream& operator>> (std::istream &in, Eigen::Quaternionf &q) {
 
   } else if (key == "angleaxis") {
 
-    float angle;
+    gmTypes::angle angle;
     in >> angle;
 
     Eigen::Vector3f v;
@@ -106,7 +108,7 @@ std::istream& operator>> (std::istream &in, Eigen::Quaternionf &q) {
 
       q = Eigen::Quaternionf(w, x, y, z);
 
-      if (fabs(1 - q.norm()) > 1e-5)
+      if (fabsf(1 - q.norm()) > 1e-5)
         GM_WRN("operator>>(std::istream, Eigen::Quaternionf)",
                "Parsed quaternion is not unit (pure rotation).");
 

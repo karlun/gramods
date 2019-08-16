@@ -4,6 +4,8 @@
 
 #include <gmGraphics/CoordinatesMapper.hh>
 
+#include <gmTypes/angle.hh>
+
 #include <GL/glew.h>
 #include <GL/gl.h>
 
@@ -51,7 +53,7 @@ public:
      radians between 0 and 2π. The typical fulldome format uses a
      coverage angle of π, which is also the default.
   */
-  void setCoverageAngle(float a);
+  void setCoverageAngle(gmTypes::angle a);
 
   GM_OFI_DECLARE;
 

@@ -2,6 +2,7 @@
 #include <gtest/gtest.h>
 
 #include "eigen.cpp"
+#include "angle.cpp"
 
 
 int main(int argc, char **argv) {
