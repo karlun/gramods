@@ -47,7 +47,8 @@ public:
 
   /**
      Set the vertical coverage that the 2D coordinates (y=[-1, 1])
-     should have in the 3D sphere. The typical fulldome format uses a
+     should have in the 3D sphere, as angle expressed as a value in
+     radians between 0 and 2π. The typical fulldome format uses a
      coverage angle of π, which is also the default.
   */
   void setCoverageAngle(float a);
