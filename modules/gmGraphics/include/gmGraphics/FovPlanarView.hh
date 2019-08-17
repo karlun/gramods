@@ -5,6 +5,7 @@
 #include <gmGraphics/View.hh>
 
 #include <gmTypes/float.hh>
+#include <gmTypes/angle.hh>
 
 BEGIN_NAMESPACE_GMGRAPHICS;
 
@@ -34,7 +35,7 @@ public:
 
      \b XML-attribute: \c clipAngles
   */
-  void setClipAngles(gmTypes::float4 p) {
+  void setClipAngles(gmTypes::angle4 p) {
     planes[0] = tan(p[0]);
     planes[1] = tan(p[1]);
     planes[2] = tan(p[2]);
