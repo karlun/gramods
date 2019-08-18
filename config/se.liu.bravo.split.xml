@@ -38,12 +38,12 @@
         <GeometryCorrectedProjectorView
             bufferWidth="2048"
             bufferHeight="2048"
-            clipAngles="1.0274 1.0274 -0.1344 1.2259"
-            orientation="ypr -0.7854 0 0 0"
+            clipAngles="d58.865 d58.865 d-7.701 d70.238"
+            orientation="ypr d-45.0 d0.0 d0.0"
             linearInterpolation="on">
           <Geometry USE="GEOMETRY"/>
         </GeometryCorrectedProjectorView>
-      </SaveView> 
+      </SaveView>
 
       <!--FOV left="58.865" right="58.865" up="70.238" down="-7.701" -->
       <!--Orientation heading="45.0" pitch="0.0" roll="0.0" -->
@@ -54,12 +54,12 @@
         <GeometryCorrectedProjectorView
             bufferWidth="2048"
             bufferHeight="2048"
-            clipAngles="1.0274 1.0274 -0.1344 1.2259"
-            orientation="ypr 0.7854 0 0 0"
+            clipAngles="d58.865 d58.865 d-7.701 d70.238"
+            orientation="ypr d45.0 d0.0 d0.0"
             linearInterpolation="on">
           <Geometry USE="GEOMETRY"/>
         </GeometryCorrectedProjectorView>
-      </SaveView> 
+      </SaveView>
 
       <!--FOV left="58.865" right="58.865" up="70.238" down="-7.701" -->
       <!--Orientation heading="135.0" pitch="0.0" roll="0.0" -->
@@ -70,12 +70,12 @@
         <GeometryCorrectedProjectorView
             bufferWidth="2048"
             bufferHeight="2048"
-            clipAngles="1.0274 1.0274 -0.1344 1.2259"
-            orientation="ypr 2.3562 0 0 0"
+            clipAngles="d58.865 d58.865 d-7.701 d70.238"
+            orientation="ypr d135.0 d0.0 d0.0"
             linearInterpolation="on">
           <Geometry USE="GEOMETRY"/>
         </GeometryCorrectedProjectorView>
-      </SaveView> 
+      </SaveView>
 
       <!--FOV left="58.865" right="58.865" up="70.238" down="-7.701" -->
       <!--Orientation heading="-135.0" pitch="0.0" roll="0.0" -->
@@ -86,12 +86,12 @@
         <GeometryCorrectedProjectorView
             bufferWidth="2048"
             bufferHeight="2048"
-            clipAngles="1.0274 1.0274 -0.1344 1.2259"
-            orientation="ypr -2.3562 0 0 0"
+            clipAngles="d58.865 d58.865 d-7.701 d70.238"
+            orientation="ypr d-135.0 d0.0 d0.0"
             linearInterpolation="on">
           <Geometry USE="GEOMETRY"/>
         </GeometryCorrectedProjectorView>
-      </SaveView> 
+      </SaveView>
 
       <!--FOV left="58.992" right="58.992" up="55.336" down="11.608" -->
       <!--Orientation heading="57.0" pitch="48.0" roll="0.0" -->
@@ -102,12 +102,12 @@
         <GeometryCorrectedProjectorView
             bufferWidth="2048"
             bufferHeight="2048"
-            clipAngles="1.0296 1.0296 0.2026 0.9658"
-            orientation="ypr 0.9948 0.8378 0 0"
+            clipAngles="d58.992 d58.992 d11.608 d55.336"
+            orientation="ypr d57.0 d48.0 d0.0"
             linearInterpolation="on">
           <Geometry USE="GEOMETRY"/>
         </GeometryCorrectedProjectorView>
-      </SaveView> 
+      </SaveView>
 
       <!--FOV left="58.992" right="58.992" up="55.336" down="11.608" -->
       <!--Orientation heading="-123.0" pitch="48.0" roll="0.0" -->
@@ -118,12 +118,12 @@
         <GeometryCorrectedProjectorView
             bufferWidth="2048"
             bufferHeight="2048"
-            clipAngles="1.0296 1.0296 0.2026 0.9658"
-            orientation="ypr -2.1468 0.8378 0 0"
+            clipAngles="d58.992 d58.992 d11.608 d55.336"
+            orientation="ypr d-123.0 d48.0 d0.0"
             linearInterpolation="on">
           <Geometry USE="GEOMETRY"/>
         </GeometryCorrectedProjectorView>
-      </SaveView> 
+      </SaveView>
 
     </TiledView>
   </SdlWindow>
