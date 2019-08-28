@@ -87,7 +87,10 @@ def main(argv):
 
         #mod_string += f"\li \b {theattr} = {thetype} (\link gramods::{mod}::{themethod}() {themethod} \endlink) <br/> \copybrief gramods::{mod}::{themethod}()\n"
         if ofi_type == 'param':
-          mod_string += f"<tr><td>P</td><td>{theattr}</td><td>{thetype}</td><td>\\link gramods::{mod}::{themethod}() {cleanmethod} \\endlink </td><td> \\copybrief gramods::{mod}::{themethod}() </td></tr>\n"
+          if "::" in thetype and thetype[:2] == "gm":
+            mod_string += f"<tr><td>P</td><td>{theattr}</td><td>\\link gramods::{thetype} {thetype} \\endlink </td><td>\\link gramods::{mod}::{themethod}() {cleanmethod} \\endlink </td><td> \\copybrief gramods::{mod}::{themethod}() </td></tr>\n"
+          else:
+            mod_string += f"<tr><td>P</td><td>{theattr}</td><td>{thetype}</td><td>\\link gramods::{mod}::{themethod}() {cleanmethod} \\endlink </td><td> \\copybrief gramods::{mod}::{themethod}() </td></tr>\n"
         elif ofi_type == 'pointer':
           mod_string += f"<tr><td>C</td><td>{theattr}</td><td>\\link gramods::{fulltype} {thetype} \\endlink</td><td>\\link gramods::{mod}::{themethod}() {cleanmethod} \\endlink </td><td> \\copybrief gramods::{mod}::{themethod}() </td></tr>\n"
         else:
