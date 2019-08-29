@@ -773,20 +773,10 @@ WARN_LOGFILE           =
 
 INPUT                  = @CMAKE_CURRENT_SOURCE_DIR@/README.md
 
-INPUT                 += @CMAKE_CURRENT_BINARY_DIR@/modules/gmCore/include
-INPUT                 += @CMAKE_CURRENT_SOURCE_DIR@/modules/gmCore/include
+INPUT                 += @CMAKE_CURRENT_BINARY_DIR@/xml-attributes
 
-INPUT                 += @CMAKE_CURRENT_BINARY_DIR@/modules/gmGraphics/include
-INPUT                 += @CMAKE_CURRENT_SOURCE_DIR@/modules/gmGraphics/include
-
-INPUT                 += @CMAKE_CURRENT_BINARY_DIR@/modules/gmNetwork/include
-INPUT                 += @CMAKE_CURRENT_SOURCE_DIR@/modules/gmNetwork/include
-
-INPUT                 += @CMAKE_CURRENT_BINARY_DIR@/modules/gmTrack/include
-INPUT                 += @CMAKE_CURRENT_SOURCE_DIR@/modules/gmTrack/include
-
-INPUT                 += @CMAKE_CURRENT_BINARY_DIR@/modules/gmTypes/include
-INPUT                 += @CMAKE_CURRENT_SOURCE_DIR@/modules/gmTypes/include
+INPUT                 += @CMAKE_CURRENT_BINARY_DIR@/modules/
+INPUT                 += @CMAKE_CURRENT_SOURCE_DIR@/modules/
 
 
 # This tag can be used to specify the character encoding of the source files
