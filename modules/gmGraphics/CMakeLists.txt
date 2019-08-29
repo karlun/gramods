@@ -87,13 +87,36 @@ IF(FreeImage_FOUND)
   ENDIF(gramods_ENABLE_FreeImage)
 ENDIF(FreeImage_FOUND)
 
+FIND_PACKAGE(Inkscape)
+IF(Inkscape_FOUND)
+
+  SET (PNG_RESOURCE_TARGETS CACHE INTERNAL "The list of png resources that can be built.")
+
+  FILE(GLOB_RECURSE SVG_RESOURCES ${CMAKE_CURRENT_SOURCE_DIR}/resources/*.svg)
+  SOURCE_GROUP("svg-resources" FILES ${SVG_RESOURCES})
+
+  FOREACH (RESOURCE ${SVG_RESOURCES})
+    STRING(REGEX REPLACE
+      "(.*)\\.svg$" "\\1.png"
+      PNG_RESOURCE ${RESOURCE})
+    convert_svg_to_png(${RESOURCE} ${PNG_RESOURCE})
+    LIST (APPEND PNG_RESOURCE_TARGETS ${PNG_RESOURCE})
+  ENDFOREACH()
+
+  add_custom_target(svg-resources
+    DEPENDS ${PNG_RESOURCE_TARGETS})
+  MESSAGE (STATUS "Added 'svg-resources' target for converting SVG resources to PNG.")
+ELSE()
+  MESSAGE (STATUS "Not including 'svg-resources' target - requires Inkscape")
+ENDIF()
+
 CONFIGURE_FILE(
   ${CMAKE_CURRENT_SOURCE_DIR}/include/gmGraphics/config_cmake.hh
   ${CMAKE_CURRENT_BINARY_DIR}/include/gmGraphics/config.hh)
 
 
-FILE(GLOB_RECURSE HEADERS include/*.hh)
-FILE(GLOB_RECURSE SOURCES src/*.cpp)
+FILE(GLOB_RECURSE HEADERS ${CMAKE_CURRENT_SOURCE_DIR}/include/*.hh)
+FILE(GLOB_RECURSE SOURCES ${CMAKE_CURRENT_SOURCE_DIR}/src/*.cpp)
 
 SOURCE_GROUP("headers" FILES ${HEADERS})
 SOURCE_GROUP("sources" FILES ${SOURCES})
