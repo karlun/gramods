@@ -11,7 +11,7 @@ using namespace gramods;
 
 SDLWindow::SDLWindow() :
   sdl_context(SDLContext::get()) {
-  
+
   touchState.getEventAdaptor<gmTouch::SDLEventAdaptor>();
   
   sdl_window = SDL_CreateWindow("gm-demo-multitouch", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, 640, 480, 0);
@@ -58,11 +58,8 @@ void SDLWindow::process() {
   touchState.getTouchPoints(current);
 
   for (size_t idx = 0; idx < current.size(); ++idx) {
-    Point
-      A = { int(current[idx].x),
-            int(current[idx].y) };
 
-    drawPoint(A, 50, pointToString(current[idx]), 1);
+    drawPoint(current[idx], 50, pointToString(current[idx]), 1);
 
     if (current[idx].state & gmTouch::TouchState::State::RELEASE) {
       releasedPoint = current[idx];
@@ -71,11 +68,7 @@ void SDLWindow::process() {
   }
 
   if (have_released_point) {
-    Point
-      C = { int(releasedPoint.x),
-            int(releasedPoint.y) };
-
-    drawPoint(C, 50, pointToString(releasedPoint), 3);
+    drawPoint(releasedPoint, 50, pointToString(releasedPoint), 3);
   }
 
   SDL_RenderPresent(sdl_renderer);
@@ -127,7 +120,8 @@ bool SDLWindow::handleEvent(SDL_Event& event, int width, int height) {
   return false;
 }
 
-void SDLWindow::drawPoint(const Point &pt, int radius, std::string text, int pos) {
+void SDLWindow::drawPoint(const gmTouch::TouchState::TouchPoint &pt,
+                          int radius, std::string text, int pos) {
   
   SDL_SetRenderDrawColor(sdl_renderer, 255, 0, 0, 255);
   SDL_Color color = {64, 64, 255};
@@ -168,22 +162,11 @@ void SDLWindow::drawPoint(const Point &pt, int radius, std::string text, int pos
   }
 
   if (radius > 0) {
-
-    int x0 = pt.x + radius;
-    int y0 = pt.y;
-
-    for (int idx = 1; idx < 64; ++idx) {
-
-      int x1 = pt.x + radius * cos((2 * 3.1416 / 64.0) * idx);
-      int y1 = pt.y + radius * sin((2 * 3.1416 / 64.0) * idx);
-
-      SDL_RenderDrawLine(sdl_renderer, x0, y0, x1, y1);
-
-      x0 = x1;
-      y0 = y1;
-    }
-
-    SDL_RenderDrawLine(sdl_renderer, x0, y0, pt.x + radius, pt.y);
+    drawCircle(pt.x, pt.y, radius);
+    drawCircle(pt.x + pt.vx, pt.y + pt.vy, radius);
+    SDL_RenderDrawLine(sdl_renderer,
+                       (int)pt.x, (int)pt.y,
+                       (int)(pt.x + pt.vx), (int)(pt.y + pt.vy));
   }
 
   if (font == nullptr)
@@ -193,8 +176,8 @@ void SDLWindow::drawPoint(const Point &pt, int radius, std::string text, int pos
   SDL_Texture* Message = SDL_CreateTextureFromSurface(sdl_renderer, surfaceMessage);
   
   SDL_Rect Message_rect;
-  Message_rect.x = pt.x + dx;
-  Message_rect.y = pt.y + dy - surfaceMessage->h / 2;
+  Message_rect.x = (int)(pt.x + dx);
+  Message_rect.y = (int)(pt.y + dy - surfaceMessage->h / 2);
   Message_rect.w = surfaceMessage->w;
   Message_rect.h = surfaceMessage->h;
   
@@ -203,7 +186,28 @@ void SDLWindow::drawPoint(const Point &pt, int radius, std::string text, int pos
   SDL_DestroyTexture(Message);
   SDL_FreeSurface(surfaceMessage);
   
-  SDL_RenderDrawLine(sdl_renderer, pt.x, pt.y, pt.x + ((8*dx)/10), pt.y + ((8*dy)/10));
+  SDL_RenderDrawLine(sdl_renderer,
+                     (int)pt.x, (int)pt.y,
+                     (int)(pt.x + ((8*dx)/10)), (int)(pt.y + ((8*dy)/10)));
+}
+
+void SDLWindow::drawCircle(float px, float py, int radius) {
+
+  int x0 = px + radius;
+  int y0 = py;
+
+  for (int idx = 1; idx < 64; ++idx) {
+
+    int x1 = px + radius * cos((2 * 3.1416 / 64.0) * idx);
+    int y1 = py + radius * sin((2 * 3.1416 / 64.0) * idx);
+
+    SDL_RenderDrawLine(sdl_renderer, x0, y0, x1, y1);
+
+    x0 = x1;
+    y0 = y1;
+  }
+
+  SDL_RenderDrawLine(sdl_renderer, x0, y0, px + radius, py);
 }
 
 void SDLWindow::drawLine(const Point &ptA, const Point &ptB, int R, int G, int B) {

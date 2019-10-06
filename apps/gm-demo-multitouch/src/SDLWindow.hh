@@ -69,8 +69,10 @@ namespace gramods {
         destroying the SDL context. */
     std::shared_ptr<SDLContext> sdl_context;
 
-    void drawPoint(const Point &pt, int radius, std::string text, int pos);
+    void drawPoint(const gmTouch::TouchState::TouchPoint &pt,
+                   int radius, std::string text, int pos);
     void drawLine(const Point &ptA, const Point &ptB, int R, int G, int B);
+    void drawCircle(float px, float py, int radius);
 
     static std::string pointToString(gmTouch::TouchState::TouchPoint pt);
 
