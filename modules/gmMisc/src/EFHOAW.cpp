@@ -128,9 +128,6 @@ EFHOAW::polco EFHOAW::estimateCoefficients
 EFHOAW::polco EFHOAW::Impl::estimateCoefficients
 (size_t id, double error, size_t order, size_t *samples) {
 
-  if (order < 1)
-    throw std::invalid_argument("cannot estimate parameters for order less than one");
-
   typename std::map< size_t, time_position_t >::const_iterator hist = history.find(id);
   if (hist == history.end()) {
     if (samples != nullptr)
@@ -221,9 +218,6 @@ void EFHOAW::Impl::cleanup(double time) {
 }
 
 EFHOAW::polco EFHOAW::Impl::findBestFit(size_t id, size_t sample_count, size_t order) const {
-
-  if (sample_count < order + 1)
-    throw std::invalid_argument("too low sample count to estimate specified order");
 
   const time_list_t &time_list = history.at(id).first;
   Eigen::MatrixXd poly(sample_count, order + 1);

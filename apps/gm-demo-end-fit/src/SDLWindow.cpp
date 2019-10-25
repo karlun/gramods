@@ -76,6 +76,17 @@ void SDLWindow::update() {
       else
         SDL_SetRenderDrawColor(sdl_renderer, 190, 190, 255, 255);
 
+      {
+        auto pt = ef.getPolynomialPosition(0, idx);
+
+        SDL_Rect rect;
+        rect.x = int(pt[0]) - 2;
+        rect.y = int(pt[1]) - 2;
+        rect.w = 4;
+        rect.h = 4;
+        SDL_RenderDrawRect(sdl_renderer, &rect);
+      }
+
       for (int c = 0; c < 10; ++c) {
 
         double t = idx + 0.1 * c;
