@@ -8,6 +8,7 @@
 #include <sstream>
 
 #define POLY_ORDER  3
+#define POLY_COUNT 10
 #define POLY_ERROR 20
 
 SDLWindow::SDLWindow() :
@@ -52,7 +53,7 @@ void SDLWindow::update() {
     drawPoint(pt.x, pt.y);
 
   gramods::gmMisc::EFHOAW ef;
-  ef.setHistoryLength(points.size());
+  ef.setHistoryLength(POLY_COUNT);
   ef.setHistoryDuration(points.size());
 
   size_t idx = 0;
@@ -75,6 +76,17 @@ void SDLWindow::update() {
         SDL_SetRenderDrawColor(sdl_renderer, 190, 255, 190, 255);
       else
         SDL_SetRenderDrawColor(sdl_renderer, 190, 190, 255, 255);
+
+      {
+        auto pt = ef.getPolynomialPosition(0, idx);
+
+        SDL_Rect rect;
+        rect.x = int(pt[0]) - 2;
+        rect.y = int(pt[1]) - 2;
+        rect.w = 4;
+        rect.h = 4;
+        SDL_RenderDrawRect(sdl_renderer, &rect);
+      }
 
       for (int c = 0; c < 10; ++c) {
 

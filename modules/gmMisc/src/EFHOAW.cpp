@@ -17,7 +17,7 @@ struct EFHOAW::Impl {
 
   double getLastSampleTime(size_t id);
 
-  void addSample(size_t id, Eigen::Vector3d position, double time);
+  void addSample(size_t id, Eigen::Vector3d position, double time, bool replace);
 
   polco estimateCoefficients
   (size_t id, double error, size_t order = 2, size_t *samples = nullptr);
@@ -35,10 +35,10 @@ struct EFHOAW::Impl {
   void cleanup(double time);
 
   /** The number of samples that are saved. */
-  size_t history_length;
+  size_t history_length = std::numeric_limits<size_t>::max();
 
   /** How old samples should be saved. */
-  double history_duration;
+  double history_duration = std::numeric_limits<double>::max();
 
   /** Type of list containing time values. */
   typedef std::deque<double> time_list_t;
@@ -62,9 +62,7 @@ EFHOAW::EFHOAW()
 
 EFHOAW::~EFHOAW() {}
 
-EFHOAW::Impl::Impl()
-  : history_length(10),
-    history_duration(1.f) {}
+EFHOAW::Impl::Impl() {}
 
 void EFHOAW::setHistoryLength(size_t N){
   _impl->history_length = N; }
@@ -89,19 +87,23 @@ double EFHOAW::Impl::getLastSampleTime(size_t id) {
   return history.at(id).first[0];
 }
 
-void EFHOAW::addSample(size_t id, Eigen::Vector3d position, double time){
-  _impl->addSample(id, position, time);
+void EFHOAW::addSample(size_t id, Eigen::Vector3d position, double time, bool replace){
+  _impl->addSample(id, position, time, replace);
 }
 
-void EFHOAW::Impl::addSample(size_t id, Eigen::Vector3d position, double time) {
+void EFHOAW::Impl::addSample
+(size_t id, Eigen::Vector3d position, double time, bool replace) {
 
   time_list_t &time_list = history[id].first;
   position_list_t &position_list = history[id].second;
 
-  // Remove old samples that have the same time (override old sample)
-  while (! time_list.empty() && fabs(time - time_list.front()) < std::numeric_limits<double>::epsilon()) {
-    position_list.pop_front();
-    time_list.pop_front();
+  if (replace) {
+    // Remove old samples that have the same time (override old sample)
+    while (! time_list.empty() && fabs(time - time_list.front()) <
+           std::numeric_limits<double>::epsilon()) {
+      position_list.pop_front();
+      time_list.pop_front();
+    }
   }
 
   position_list.push_front(position);
@@ -127,9 +129,6 @@ EFHOAW::polco EFHOAW::estimateCoefficients
 
 EFHOAW::polco EFHOAW::Impl::estimateCoefficients
 (size_t id, double error, size_t order, size_t *samples) {
-
-  if (order < 1)
-    throw std::invalid_argument("cannot estimate parameters for order less than one");
 
   typename std::map< size_t, time_position_t >::const_iterator hist = history.find(id);
   if (hist == history.end()) {
@@ -221,9 +220,6 @@ void EFHOAW::Impl::cleanup(double time) {
 }
 
 EFHOAW::polco EFHOAW::Impl::findBestFit(size_t id, size_t sample_count, size_t order) const {
-
-  if (sample_count < order + 1)
-    throw std::invalid_argument("too low sample count to estimate specified order");
 
   const time_list_t &time_list = history.at(id).first;
   Eigen::MatrixXd poly(sample_count, order + 1);
