@@ -8,6 +8,7 @@
 #include <sstream>
 
 #define POLY_ORDER  3
+#define POLY_COUNT 10
 #define POLY_ERROR 20
 
 SDLWindow::SDLWindow() :
@@ -52,7 +53,7 @@ void SDLWindow::update() {
     drawPoint(pt.x, pt.y);
 
   gramods::gmMisc::EFHOAW ef;
-  ef.setHistoryLength(points.size());
+  ef.setHistoryLength(POLY_COUNT);
   ef.setHistoryDuration(points.size());
 
   size_t idx = 0;
