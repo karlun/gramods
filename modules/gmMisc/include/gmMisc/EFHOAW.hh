@@ -35,16 +35,20 @@ public:
 
   ~EFHOAW();
 
-  /** Set how many samples should be saved to be used when
-      estimating the velocity. */
+  /**
+     Set how many samples should be saved to be used when estimating
+     the velocity. Per default all samples are saved and used.
+  */
   void setHistoryLength(size_t N);
 
   /** Get the number of samples that are saved to be used when
       estimating the velocity. */
   size_t getHistoryLength() const;
 
-  /** Set how old samples should be saved to be used when
-      estimating the velocity. */
+  /**
+     Set how old samples should be saved to be used when estimating
+      the velocity. Per default all samples are saved and used.
+  */
   void setHistoryDuration(double t);
 
   /** Get how old samples are saved to be used when estimating the
@@ -65,10 +69,15 @@ public:
      old.
 
      @param[in] id The id to add position sample to.
+
      @param[in] position The position value to use as sample.
+
      @param[in] time The time at which the sample was taken.
+
+     @param[in] replace If true (default), old samples with the same
+     time will be replaced with this new sample value.
   */
-  void addSample(size_t id, Eigen::Vector3d position, double time);
+  void addSample(size_t id, Eigen::Vector3d position, double time, bool replace = true);
 
   /**
      Estimate and return the coefficients of the polynomial, of the
