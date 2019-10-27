@@ -43,18 +43,18 @@ std::istream& operator>> (std::istream &in, gmTypes::angle &v) {
     v = 0.f;
     in.setstate(std::ios_base::failbit);
     if (idx > 0)
-      GM_WRN("operator>>(std::istream, str_angle)",
+      GM_WRN("operator>>(std::istream, angle)",
              "Cannot parse istream data '" << str_angle << "'"
-             " (" << str_angle.substr(idx) << ") into str_angle.");
+             " (" << str_angle.substr(idx) << ") into angle.");
     else
       GM_WRN("operator>>(std::istream, str_angle)",
-             "Cannot parse istream data '" << str_angle << "' into str_angle.");
+             "Cannot parse istream data '" << str_angle << "' into angle.");
   } else {
     v = multiplier * value;
 
     if (idx == 0 && fabsf(value) > 5 * GM_PI)
       GM_WRN("operator>>(std::istream, str_angle)",
-             "Parsed str_angle (" << value << ") is large to be in radians"
+             "Parsed angle (" << value << ") is large to be in radians"
              " - did yoy mean degrees ('d" << str_angle << "')? Otherwise"
              " use 'r" << str_angle << "' do disable this warning.");
   }
