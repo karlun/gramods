@@ -2,7 +2,8 @@
 #include <gtest/gtest.h>
 
 #define gramods_STRIP_PATH_FROM_FILE
-#include "basic.cpp"
+#include "runsync.cpp"
+#include "datasync.cpp"
 
 int main(int argc, char **argv) {
   ::testing::InitGoogleTest(&argc, argv);

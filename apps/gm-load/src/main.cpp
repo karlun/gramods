@@ -4,9 +4,13 @@
 #include <gmCore/CommandLineParser.hh>
 #include <gmCore/OStreamMessageSink.hh>
 #include <gmCore/Updateable.hh>
+#include <gmCore/ExitException.hh>
 
 #include <gmGraphics/Window.hh>
 #include <gmGraphics/CallbackRenderer.hh>
+
+#include <gmNetwork/SyncNode.hh>
+#include <gmNetwork/RunSync.hh>
 
 #include <tclap/CmdLine.h>
 
@@ -36,6 +40,9 @@ int main(int argc, char *argv[]) {
      false, "identifier=value");
   cmd.add(arg_param_dummy);
 
+	TCLAP::SwitchArg sync_start("s","sync-start","Wait for the other nodes specified in the configuration, to start at the same time.", cmd, false);
+	TCLAP::SwitchArg sync_swap("w","sync-swap","Synchronize swap buffers with the other nodes specified in the configuration.", cmd, false);
+
   try {
     cmd.parse(argc, argv);
   } catch (TCLAP::ArgException &e) {
@@ -61,6 +68,18 @@ int main(int argc, char *argv[]) {
   std::vector<std::shared_ptr<gmGraphics::Window>> windows;
   config->getAllObjects(windows);
 
+  gmNetwork::RunSync * run_sync = nullptr;
+  std::shared_ptr<gmNetwork::SyncNode> sync_node;
+  if (config->getObject(sync_node))
+    run_sync = sync_node->getProtocol<gmNetwork::RunSync>();
+
+  if (sync_start.getValue() && run_sync == nullptr)
+    std::cerr << "Cannot synchronize start of execution"
+      " - no RunSync found in the configuration." << std::endl;
+  if (sync_swap.getValue() && run_sync == nullptr)
+    std::cerr << "Cannot synchronize swap buffers"
+      " - no RunSync found in the configuration." << std::endl;
+
   std::vector<std::shared_ptr<gmCore::Object>> objects;
   config->getAllObjects(objects);
 
@@ -72,70 +91,111 @@ int main(int argc, char *argv[]) {
 
   d_seconds update_time = d_seconds();
   d_seconds render_time = d_seconds();
+  d_seconds wait_time = d_seconds();
   d_seconds swap_time = d_seconds();
   d_seconds vsync_time = d_seconds();
 
-  bool alive = true;
-  while (alive) {
+  if (sync_start.getValue() || sync_swap.getValue())
+    sync_node->waitForConnection();
 
-    alive = windows.empty();
+  try{
+    bool alive = true;
+    while (alive) {
 
-    auto t0 = clock::now();
+      alive = windows.empty();
 
-    for (auto window : windows) {
-      window->processEvents();
+      std::vector<clock::time_point> times;
+      times.push_back(clock::now());
+
+      for (auto window : windows) {
+        window->processEvents();
+      }
+      gmCore::Updateable::updateAll();
+
+      times.push_back(clock::now());
+
+      for (auto window : windows) {
+        if (!window->isOpen()) continue;
+        window->RendererDispatcher::renderFullPipeline();
+      }
+
+      times.push_back(clock::now());
+
+      if (sync_swap.getValue())
+        run_sync->wait();
+
+      times.push_back(clock::now());
+
+      for (auto window : windows) {
+        if (!window->isOpen()) continue;
+        window->swap();
+        alive |= true;
+      }
+
+      times.push_back(clock::now());
+
+      for (auto window : windows) {
+        if (!window->isOpen()) continue;
+        window->sync();
+      }
+
+      times.push_back(clock::now());
+
+      frame_count += 1;
+
+      {
+        auto times_it = times.begin();
+        update_time += std::chrono::duration_cast<d_seconds>(*(times_it + 1) - *times_it);
+        times_it++; assert(times_it != times.end());
+        render_time += std::chrono::duration_cast<d_seconds>(*(times_it + 1) - *times_it);
+        times_it++; assert(times_it != times.end());
+        wait_time += std::chrono::duration_cast<d_seconds>(*(times_it + 1) - *times_it);
+        times_it++; assert(times_it != times.end());
+        swap_time += std::chrono::duration_cast<d_seconds>(*(times_it + 1) - *times_it);
+        times_it++; assert(times_it != times.end());
+        vsync_time += std::chrono::duration_cast<d_seconds>(*(times_it + 1) - *times_it);
+      }
+
+      auto current_time = clock::now();
+      auto dt = std::chrono::duration_cast<d_seconds>(current_time - last_print_time);
+
+      if (dt.count() > 2) {
+
+        float to_us = 1e6 / (float)frame_count;
+
+        if (sync_swap.getValue()) {
+          GM_INF("gm-load", "Running at rate " << (frame_count / dt.count()) << " fps" << std::endl
+                 << "updates:   " << (int)(to_us * update_time.count()) << " \u00B5s" << std::endl
+                 << "rendering: " << (int)(to_us * render_time.count()) << " \u00B5s" << std::endl
+                 << "swapping:  " << (int)(to_us * (wait_time.count() +
+                                                    swap_time.count())) << " \u00B5s"
+                 << " (including " << (int)(to_us * wait_time.count()) << " \u00B5s synchronization)" << std::endl
+                 << "v-sync:    " << (int)(to_us * vsync_time.count()) << " \u00B5s");
+        } else {
+          GM_INF("gm-load", "Running at rate " << (frame_count / dt.count()) << " fps" << std::endl
+                 << "updates:   " << (int)(to_us * update_time.count()) << " \u00B5s" << std::endl
+                 << "rendering: " << (int)(to_us * render_time.count()) << " \u00B5s" << std::endl
+                 << "swapping:  " << (int)(to_us * wait_time.count()) << " \u00B5s" << std::endl
+                 << "v-sync:    " << (int)(to_us * vsync_time.count()) << " \u00B5s");
+        }
+
+        last_print_time = current_time;
+        frame_count = 0;
+
+        update_time = d_seconds();
+        render_time = d_seconds();
+        wait_time = d_seconds();
+        swap_time = d_seconds();
+        vsync_time = d_seconds();
+      }
     }
-    gmCore::Updateable::updateAll();
-
-    auto t1 = clock::now();
-
-    for (auto window : windows) {
-      if (!window->isOpen()) continue;
-      window->RendererDispatcher::renderFullPipeline();
-    }
-
-    auto t2 = clock::now();
-
-    for (auto window : windows) {
-      if (!window->isOpen()) continue;
-      window->swap();
-      alive |= true;
-    }
-
-    auto t3 = clock::now();
-
-    for (auto window : windows) {
-      if (!window->isOpen()) continue;
-      window->sync();
-    }
-
-    auto t4 = clock::now();
-
-    frame_count += 1;
-
-    update_time += std::chrono::duration_cast<d_seconds>(t1 - t0);
-    render_time += std::chrono::duration_cast<d_seconds>(t2 - t1);
-    swap_time += std::chrono::duration_cast<d_seconds>(t3 - t2);
-    vsync_time += std::chrono::duration_cast<d_seconds>(t4 - t3);
-
-    auto current_time = clock::now();
-    auto dt = std::chrono::duration_cast<d_seconds>(current_time - last_print_time);
-    if (dt.count() > 2) {
-      float to_us = 1e6 / (float)frame_count;
-      GM_INF("gm-load", "Running at rate " << (frame_count / dt.count()) << " fps" << std::endl
-             << "updates:   " << (int)(to_us * update_time.count()) << " \u00B5s" << std::endl
-             << "rendering: " << (int)(to_us * render_time.count()) << " \u00B5s" << std::endl
-             << "swapping:  " << (int)(to_us * swap_time.count()) << " \u00B5s" << std::endl
-             << "v-sync:    " << (int)(to_us * vsync_time.count()) << " \u00B5s");
-
-      last_print_time = current_time;
-      frame_count = 0;
-
-      update_time = d_seconds();
-      render_time = d_seconds();
-      swap_time = d_seconds();
-      vsync_time = d_seconds();
-    }
+  }
+  catch (gmCore::ExitException e) {
+    return e.exit_code;
+  }
+  catch (...) {
+    GM_ERR("gm-load", "Terminated by unknown exception");
+    return -255;
   }
 
   return 0;

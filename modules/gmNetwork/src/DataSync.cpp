@@ -1,14 +1,14 @@
 
-#include <gmNetwork/SimpleDataSynchronization.hh>
+#include <gmNetwork/DataSync.hh>
 
-#include <gmNetwork/PeersConnection.hh>
+#include <gmNetwork/SyncNode.hh>
+
+#include <gmCore/InvalidArgument.hh>
 #include <gmCore/Console.hh>
 
 BEGIN_NAMESPACE_GMNETWORK;
 
-GM_OFI_DEFINE_SUB(SimpleDataSynchronization, Protocol);
-
-struct SimpleDataSynchronization::Impl {
+struct DataSync::Impl {
 
   void addData(std::shared_ptr<SyncData> d);
   void addData(SyncData * d);
@@ -22,46 +22,53 @@ struct SimpleDataSynchronization::Impl {
   std::vector<std::shared_ptr<SyncData>> ptr_data;
   std::vector<SyncData*> raw_data;
 
+  std::mutex impl_lock;
 };
 
-SimpleDataSynchronization::SimpleDataSynchronization()
-  : _impl(std::make_unique<Impl>()) {}
+DataSync::DataSync
+(std::shared_ptr<SyncNode> sync_node)
+  : Protocol(sync_node),
+    _impl(std::make_unique<Impl>()) {}
 
-SimpleDataSynchronization::~SimpleDataSynchronization() {}
+DataSync::~DataSync() {}
 
-void SimpleDataSynchronization::addData(std::shared_ptr<SyncData> d) {
+void DataSync::addData(std::shared_ptr<SyncData> d) {
   if (!d)
-    throw std::invalid_argument("Attempting to add data by null pointer");
+    throw gmCore::InvalidArgument("Attempting to add data by null pointer");
 
-  auto _this = std::static_pointer_cast<SimpleDataSynchronization>(this->shared_from_this());
+  auto _this = std::static_pointer_cast<DataSync>(this->shared_from_this());
   d->setSynchronizer(_this);
 
   _impl->addData(d);
 }
 
-void SimpleDataSynchronization::Impl::addData(std::shared_ptr<SyncData> d) {
+void DataSync::Impl::addData(std::shared_ptr<SyncData> d) {
+  std::lock_guard<std::mutex> guard(impl_lock);
   ptr_data.push_back(d);
 }
 
-void SimpleDataSynchronization::addData(SyncData * d) {
+void DataSync::addData(SyncData * d) {
   if (!d)
-    throw std::invalid_argument("Attempting to add data by null pointer");
+    throw gmCore::InvalidArgument("Attempting to add data by null pointer");
 
-  auto _this = std::static_pointer_cast<SimpleDataSynchronization>(this->shared_from_this());
+  auto _this = std::static_pointer_cast<DataSync>(this->shared_from_this());
   d->setSynchronizer(_this);
 
   _impl->addData(d);
 }
 
-void SimpleDataSynchronization::Impl::addData(SyncData * d) {
+void DataSync::Impl::addData(SyncData * d) {
+  std::lock_guard<std::mutex> guard(impl_lock);
   raw_data.push_back(d);
 }
 
-void SimpleDataSynchronization::update() {
+void DataSync::update() {
   _impl->update();
 }
 
-void SimpleDataSynchronization::Impl::update() {
+void DataSync::Impl::update() {
+
+  std::lock_guard<std::mutex> guard(impl_lock);
 
   for (auto d : ptr_data)
     d->update();
@@ -70,47 +77,47 @@ void SimpleDataSynchronization::Impl::update() {
     d->update();
 }
 
-void SimpleDataSynchronization::processMessage(Message m) {
-  _impl->processMessage(m, getConnection()->getLocalPeerIdx());
+void DataSync::processMessage(Message m) {
+  _impl->processMessage(m, sync_node.lock()->getLocalPeerIdx());
 }
 
-void SimpleDataSynchronization::Impl::processMessage(Message m, int local_peer_idx) {
+void DataSync::Impl::processMessage(Message m, int local_peer_idx) {
   assert(m.data.size() > 1);
 
   size_t idx = (size_t)m.data[0];
 
   if (idx >= (ptr_data.size() + raw_data.size())) {
-    GM_ERR("SimpleDataSynchronization",
+    GM_ERR("DataSync",
            "Wrong data index - peers may not agree on data to synchronize");
     return;
   }
 
   if (idx < ptr_data.size()) {
-    GM_VVINF("SimpleDataSynchronization",
-             "Incoming data (" << m.peer_idx
+    GM_VVINF("DataSync",
+             "Incoming data (" << m.from_peer_idx
              << " -> " << local_peer_idx
              << ") for ptr cell " << int(idx));
     ptr_data[idx]->decode(m.data);
   } else {
-    GM_VVINF("SimpleDataSynchronization",
-             "Incoming data (" << m.peer_idx
+    GM_VVINF("DataSync",
+             "Incoming data (" << m.from_peer_idx
              << " -> " << local_peer_idx
              << ") for raw cell " << int(idx - ptr_data.size()));
     raw_data[idx - ptr_data.size()]->decode(m.data);
   }
 }
 
-void SimpleDataSynchronization::send(SyncData * d) {
+void DataSync::send(SyncData * d) {
 
   std::vector<char> data;
-  _impl->encode(d, data, getConnection()->getLocalPeerIdx());
+  _impl->encode(d, data, sync_node.lock()->getLocalPeerIdx());
 
   sendMessage(data);
 }
 
-void SimpleDataSynchronization::Impl::encode(SyncData * d,
-                                             std::vector<char> &data,
-                                             int local_peer_idx) {
+void DataSync::Impl::encode(SyncData * d,
+                            std::vector<char> &data,
+                            int local_peer_idx) {
   d->encode(data);
 
   assert(data.size() > 1);
@@ -120,7 +127,7 @@ void SimpleDataSynchronization::Impl::encode(SyncData * d,
       assert(idx < 256);
       data[0] = (char)idx;
 
-      GM_VVINF("SimpleDataSynchronization",
+      GM_VVINF("DataSync",
                "Sending data (" << local_peer_idx
                << " -> all) for ptr cell " << int(idx));
       return;
@@ -131,7 +138,7 @@ void SimpleDataSynchronization::Impl::encode(SyncData * d,
       assert(idx + ptr_data.size() < 256);
       data[0] = (char)(idx + ptr_data.size());
 
-      GM_VVINF("SimpleDataSynchronization",
+      GM_VVINF("DataSync",
                "Sending data (" << local_peer_idx
                << " -> all) for raw cell " << int(idx));
       return;

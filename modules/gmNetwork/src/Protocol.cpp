@@ -1,62 +1,39 @@
 
 #include <gmNetwork/Protocol.hh>
 
-#include <gmNetwork/PeersConnection.hh>
-#include <gmCore/Console.hh>
+#include <gmNetwork/SyncNode.hh>
 
 BEGIN_NAMESPACE_GMNETWORK;
 
-GM_OFI_DEFINE(Protocol);
-GM_OFI_POINTER(Protocol, connection, PeersConnection, Protocol::setConnection);
+const size_t Protocol::HEADER_LENGTH = Message().getHeader().size();
 
-Protocol::~Protocol() {
-  close();
-}
+Protocol::Message::Message(std::vector<char> hdr)
+  : protocol(hdr[0]),
+    length((hdr[1] << 24) +
+           (hdr[2] << 16) +
+           (hdr[3] <<  8) +
+           (hdr[4] <<  0)) {}
 
-void Protocol::setConnection(std::shared_ptr<PeersConnection> conn) {
+Protocol::Message::Message(char protocol, std::vector<char> data)
+  : protocol(protocol),
+    length(data.size()),
+    data(data) {}
 
-  std::lock_guard<std::mutex> guard(connection_lock);
-
-  auto self = std::dynamic_pointer_cast<Protocol>(this->shared_from_this());
-
-  if (connection) connection->removeProtocol(self);
-  connection = conn;
-  if (connection) connection->addProtocol(self);
-}
-
-std::shared_ptr<PeersConnection> Protocol::getConnection() {
-  std::lock_guard<std::mutex> guard(connection_lock);
-  return connection;
-}
-
-void Protocol::close() {
-  std::lock_guard<std::mutex> guard(connection_lock);
-  std::shared_ptr<PeersConnection> old_connection = connection;
-  connection = nullptr;
-  if (old_connection) old_connection->close();
-  GM_INF("PeersConnection", "Protocol closed");
+std::vector<char> Protocol::Message::getHeader() {
+  return { protocol,
+           (char)((length >> 24) & 0xff),
+           (char)((length >> 16) & 0xff),
+           (char)((length >>  8) & 0xff),
+           (char)((length      ) & 0xff) };
 }
 
 void Protocol::sendMessage(std::vector<char> data) {
-  std::lock_guard<std::mutex> guard(connection_lock);
+  //std::lock_guard<std::mutex> guard(connection_lock);
 
-  std::shared_ptr<PeersConnection> _connection = connection;
-  if (!_connection)
-    return;
+  std::shared_ptr<SyncNode> sync_node = this->sync_node.lock();
+  if (!sync_node) return;
 
-  Message m = {
-    -1,
-    getProtocolFlag(),
-    data
-  };
-  _connection->sendMessage(m);
-}
-
-void Protocol::waitForConnection() {
-  std::lock_guard<std::mutex> guard(connection_lock);
-  std::shared_ptr<PeersConnection> _connection = connection;
-  if (connection)
-    _connection->waitForConnection();
+  sync_node->sendMessage(Message(getProtocolFlag(), data));
 }
 
 END_NAMESPACE_GMNETWORK;

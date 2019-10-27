@@ -15,13 +15,17 @@ namespace gramods {
   namespace gmNetwork {}
 }
 
-#define GRAMODS_NETWORK_VERSION "dev"
+// Increment this when making braking changes to how gmNetwork
+// communicates.
+#define GRAMODS_NETWORK_VERSION 0
 
 #cmakedefine _WIN32_WINNT @_WIN32_WINNT@
 
 #cmakedefine gramods_ACTIVATE_ASIO_HANDLER_TRACKING
 #ifdef gramods_ACTIVATE_ASIO_HANDLER_TRACKING
-#define ASIO_ENABLE_HANDLER_TRACKING
+#  ifndef ASIO_ENABLE_HANDLER_TRACKING
+#    define ASIO_ENABLE_HANDLER_TRACKING
+#  endif
 #endif
 
 #endif

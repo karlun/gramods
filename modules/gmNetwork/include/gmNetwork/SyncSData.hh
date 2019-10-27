@@ -3,6 +3,7 @@
 #define GRAMODS_NETWORK_SYNCSDATA
 
 #include <gmNetwork/SyncData.hh>
+#include <gmCore/InvalidArgument.hh>
 
 BEGIN_NAMESPACE_GMNETWORK;
 
@@ -62,7 +63,7 @@ protected:
      Encodes the back data of the container into the specified vector,
      into vector indices 1-N and leaves the zeroth cell empty.
   */
-  void encode(std::vector<char> &d) {
+  void encode(std::vector<char> &d) override {
     std::lock_guard<std::mutex> guard(lock);
 
     d.resize(1 + sizeof(TYPE));
@@ -78,11 +79,11 @@ protected:
      Decodes the specified vector into the back data of the container,
      using vector indices 1-N.
   */
-  void decode(std::vector<char> d) {
+  void decode(std::vector<char> d) override {
     std::lock_guard<std::mutex> guard(lock);
 
     if (d.size() != 1 + sizeof(TYPE))
-      throw std::invalid_argument("incorrect data size for decoding");
+      throw gmCore::InvalidArgument("incorrect data size for decoding");
 
     TYPE value;
     char * m = reinterpret_cast<char*>(&value);
@@ -96,7 +97,7 @@ protected:
   /**
      Copies the back value to the front.
   */
-  void update() {
+  void update() override {
     std::lock_guard<std::mutex> guard(lock);
     front = back;
   }
