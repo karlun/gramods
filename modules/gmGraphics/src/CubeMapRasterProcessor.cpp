@@ -40,6 +40,7 @@ struct CubeMapRasterProcessor::Impl {
 
   int resolution = 2048;
   bool use_linear = false;
+  GLenum pixel_format = GL_RGBA8;
 
   GLuint framebuffer_id[SIDE_COUNT] = { 0 };
   GLuint texture_id[SIDE_COUNT] = { 0 };
@@ -107,7 +108,8 @@ void CubeMapRasterProcessor::Impl::setup() {
     glBindFramebuffer(GL_FRAMEBUFFER, framebuffer_id[idx]);
     glBindTexture(GL_TEXTURE_2D, texture_id[idx]);
 
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, resolution, resolution, 0,GL_RGB, GL_UNSIGNED_BYTE, 0);
+    glTexImage2D(GL_TEXTURE_2D, 0, pixel_format, resolution, resolution, 0,
+                 GL_RGB, GL_UNSIGNED_BYTE, 0);
 
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
@@ -372,6 +374,14 @@ void CubeMapRasterProcessor::setFragmentCode(std::string code) {
 
 void CubeMapRasterProcessor::setCubeMapResolution(int res) {
   _impl->resolution = res;
+}
+
+void CubeMapRasterProcessor::setPixelFormat(GLenum format) {
+  _impl->pixel_format = format;
+}
+
+GLenum CubeMapRasterProcessor::getPixelFormat() {
+  return _impl->pixel_format;
 }
 
 void CubeMapRasterProcessor::setLinearInterpolation(bool on) {

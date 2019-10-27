@@ -20,6 +20,7 @@ struct OffscreenRenderTargets::Impl {
   GLuint rb_depth_id = 0;
 
   bool use_powers_of_two = false;
+  GLenum pixel_format = GL_RGBA8;
   std::vector<std::array<size_t, 2>> tex_size;
   bool use_linear = false;
 
@@ -70,7 +71,7 @@ bool OffscreenRenderTargets::Impl::init(size_t count) {
     glBindFramebuffer(GL_FRAMEBUFFER, fb_id[idx]);
     glBindTexture(GL_TEXTURE_2D, tex_id[idx]);
 
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, 32, 32, 0,GL_RGB, GL_UNSIGNED_BYTE, 0);
+    glTexImage2D(GL_TEXTURE_2D, 0, pixel_format, 32, 32, 0, GL_RGB, GL_UNSIGNED_BYTE, 0);
 
     if (use_linear) {
       glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
@@ -137,7 +138,7 @@ void OffscreenRenderTargets::Impl::bind(size_t vwidth, size_t vheight, size_t id
   glBindFramebuffer(GL_FRAMEBUFFER, fb_id[idx]);
 
   glBindTexture(GL_TEXTURE_2D, tex_id[idx]);
-  glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, 0);
+  glTexImage2D(GL_TEXTURE_2D, 0, pixel_format, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, 0);
   glBindTexture(GL_TEXTURE_2D, 0);
 
   glBindRenderbuffer(GL_RENDERBUFFER, rb_depth_id);
@@ -190,6 +191,14 @@ bool OffscreenRenderTargets::getUsePowersOfTwo() {
 
 void OffscreenRenderTargets::setLinearInterpolation(bool on) {
   _impl->use_linear = on;
+}
+
+void OffscreenRenderTargets::setPixelFormat(GLenum format) {
+  _impl->pixel_format = format;
+}
+
+GLenum OffscreenRenderTargets::getPixelFormat() {
+  return _impl->pixel_format;
 }
 
 void OffscreenRenderTargets::getTextureSize(size_t &width, size_t &height, size_t idx) {

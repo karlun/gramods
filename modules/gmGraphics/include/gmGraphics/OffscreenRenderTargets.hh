@@ -44,6 +44,17 @@ public:
   void setLinearInterpolation(bool on);
 
   /**
+     Set the pixel format to use for the color buffer(s). Default is
+     GL_RGB8.
+  */
+  void setPixelFormat(GLenum format);
+
+  /**
+     Return the pixel format currently used for the color buffer(s).
+  */
+  GLenum getPixelFormat();
+
+  /**
      Provides the size of the specified texture from the last bind
      call. This will be the same as the size provided to the last bind
      call, unless use powers of two is set to true. This will then be

@@ -25,10 +25,22 @@ public:
   void renderFullPipeline(ViewSettings settings);
 
   /**
-     Sets the file path to save the view to. If a sequence of image
-     files should be saved, then set this as a fprint formatted
-     template, for example "frame_%06d.png". Default value is
-     "SaveView.png". Supported suffixes are .png and .jpeg.
+     Sets the file path to save the view to.
+
+     If a sequence of image files should be saved, then set this as a
+     fprint formatted template, for example "frame_%06d.png". Default
+     value is "SaveView.png".
+
+     Supported suffixes are png, jpeg, exr, tiff and pfm. Some of
+     these support alpha and some support float:
+
+     | Format | Alpha | Float |
+     |:-------|:-----:|:-----:|
+     | PNG    |   *   |       |
+     | JPEG   |       |       |
+     | EXR    |       |   *   |
+     | TIFF   |   *   |   *   |
+     | PFM    |       |   *   |
 
      \b XML-attribute: \c file
   */
@@ -41,6 +53,29 @@ public:
      \b XML-attribute: \c resolution
   */
   void setResolution(gmTypes::size2 res);
+
+  /**
+     Set to true if the pixel data should be read off and saved in
+     floating point format. Default is off.
+  */
+  void setUseFloat(bool on);
+
+  /**
+     Returns true iff the pixel data are read off and saved in
+     floating point format, false otherwise.
+  */
+  bool getUseFloat();
+
+  /**
+     Set to true if the alpha channel should be read off and
+     saved. Default is false.
+  */
+  void setUseAlpha(bool on);
+
+  /**
+     Returns true iff the alpha channel is read off and saved.
+  */
+  bool getUseAlpha();
 
   /**
      Sets the view that should be saved to file.
