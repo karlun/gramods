@@ -74,7 +74,7 @@ TEST(gmTypesAngle, ReadDegrees) {
     gmTypes::angle a;
     ss >> a;
     EXPECT_TRUE(ss);
-    EXPECT_LE(fabsf(gramods_PI - a), std::numeric_limits<float>::epsilon());
+    EXPECT_LE(fabsf(GM_PI - a), std::numeric_limits<float>::epsilon());
 
     EXPECT_TRUE(out.str().empty());
   }
@@ -89,7 +89,7 @@ TEST(gmTypesAngle, ReadNegativeDegrees) {
     gmTypes::angle a;
     ss >> a;
     EXPECT_TRUE(ss);
-    EXPECT_LE(fabsf(gramods_PI + a), std::numeric_limits<float>::epsilon());
+    EXPECT_LE(fabsf(GM_PI + a), std::numeric_limits<float>::epsilon());
   }
 }
 
@@ -131,7 +131,7 @@ TEST(gmTypesAngle, ReadMultiple) {
     ss >> a >> b >> c;
     EXPECT_TRUE(ss);
     EXPECT_LE(fabsf(180 - a), std::numeric_limits<float>::epsilon());
-    EXPECT_LE(fabsf(gramods_PI - b), std::numeric_limits<float>::epsilon());
+    EXPECT_LE(fabsf(GM_PI - b), std::numeric_limits<float>::epsilon());
     EXPECT_LE(fabsf(3 - c), std::numeric_limits<float>::epsilon());
 
     EXPECT_TRUE(out.str().empty());

@@ -5,6 +5,7 @@
 
 #include <gmCore/Console.hh>
 #include <gmCore/RunOnce.hh>
+#include <gmCore/MathConstants.hh>
 
 #include <GL/glew.h>
 #include <GL/gl.h>
@@ -113,21 +114,21 @@ void SphereRenderer::Impl::setup() {
 
   for (size_t row = 0; row < ROW_COUNT; ++row) {
 
-    double phi0 = gramods_PI * (double(row    ) / double(ROW_COUNT) - 0.5);
+    double phi0 = GM_PI * (double(row    ) / double(ROW_COUNT) - 0.5);
     double ry0 = sin(phi0);
     double rxz0 = cos(phi0);
 
-    double phi1 = gramods_PI * (double(row + 1) / double(ROW_COUNT) - 0.5);
+    double phi1 = GM_PI * (double(row + 1) / double(ROW_COUNT) - 0.5);
     double ry1 = sin(phi1);
     double rxz1 = cos(phi1);
 
     for (size_t column = 0; column < COLUMN_COUNT; ++column) {
 
-      double theta0 = 2 * gramods_PI * double(column    ) / double(COLUMN_COUNT);
+      double theta0 = GM_2_PI * double(column    ) / double(COLUMN_COUNT);
       double rx0 = sin(theta0);
       double rz0 = cos(theta0);
 
-      double theta1 = 2 * gramods_PI * double(column + 1) / double(COLUMN_COUNT);
+      double theta1 = GM_2_PI * double(column + 1) / double(COLUMN_COUNT);
       double rx1 = sin(theta1);
       double rz1 = cos(theta1);
 

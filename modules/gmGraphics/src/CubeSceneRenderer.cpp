@@ -2,6 +2,7 @@
 #include <gmGraphics/CubeSceneRenderer.hh>
 
 #include <gmGraphics/GLUtils.hh>
+#include <gmCore/MathConstants.hh>
 
 #include <GL/glew.h>
 #include <GL/gl.h>
@@ -220,7 +221,7 @@ void CubeSceneRenderer::Impl::render(Camera camera) {
   typedef std::chrono::duration<double, std::ratio<1>> d_seconds;
 
   static clock::time_point start_time = clock::now();
-  static const double rate = 0.5 * (2.0 * gramods_PI);
+  static const double rate = GM_PI;
   double secs = std::chrono::duration_cast<d_seconds>(clock::now() - start_time).count();
 
   float step = (1.f/N);

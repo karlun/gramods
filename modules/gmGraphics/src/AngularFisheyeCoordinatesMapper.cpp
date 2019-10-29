@@ -1,13 +1,15 @@
 
 #include <gmGraphics/AngularFisheyeCoordinatesMapper.hh>
 
+#include <gmCore/MathConstants.hh>
+
 BEGIN_NAMESPACE_GMGRAPHICS;
 
 GM_OFI_DEFINE(AngularFisheyeCoordinatesMapper);
 GM_OFI_PARAM(AngularFisheyeCoordinatesMapper, coverageAngle, gmTypes::angle, AngularFisheyeCoordinatesMapper::setCoverageAngle);
 
 struct AngularFisheyeCoordinatesMapper::Impl {
-  gmTypes::angle coverage_angle = 2 * gramods_PI;
+  gmTypes::angle coverage_angle = GM_2_PI;
 };
 
 AngularFisheyeCoordinatesMapper::AngularFisheyeCoordinatesMapper()

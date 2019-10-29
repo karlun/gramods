@@ -3,6 +3,7 @@
 #define GRAMODS_TYPES_ANGLE
 
 #include <gmTypes/config.hh>
+#include <gmCore/MathConstants.hh>
 
 #include <array>
 #include <iostream>
@@ -47,10 +48,10 @@ public:
   float value;
 
   /// Multiplier to convert from degrees to radians.
-  static constexpr float from_degrees = (float)(gramods_PI / 180.0);
+  static const float from_degrees;
 
   /// Multiplier to convert from radians to degrees.
-  static constexpr float to_degrees = (float)(180.f / gramods_PI);
+  static const float to_degrees;
 
 };
 

@@ -1,9 +1,19 @@
 
 #include <gmTypes/angle.hh>
 
+#include <gmCore/MathConstants.hh>
 #include <gmCore/Console.hh>
 
 #include <sstream>
+#include <cmath>
+
+BEGIN_NAMESPACE_GMTYPES;
+
+const float angle::from_degrees = (float)(GM_PI / 180.0);
+const float angle::to_degrees = (float)(180.f / GM_PI);
+
+END_NAMESPACE_GMTYPES;
+
 
 BEGIN_NAMESPACE_GRAMODS;
 
@@ -42,7 +52,7 @@ std::istream& operator>> (std::istream &in, gmTypes::angle &v) {
   } else {
     v = multiplier * value;
 
-    if (idx == 0 && fabsf(value) > 5 * gramods_PI)
+    if (idx == 0 && fabsf(value) > 5 * GM_PI)
       GM_WRN("operator>>(std::istream, str_angle)",
              "Parsed str_angle (" << value << ") is large to be in radians"
              " - did yoy mean degrees ('d" << str_angle << "')? Otherwise"

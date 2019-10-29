@@ -2,6 +2,7 @@
 #include <gmGraphics/CubeMapRasterProcessor.hh>
 
 #include <gmGraphics/GLUtils.hh>
+#include <gmCore/MathConstants.hh>
 
 #include <GL/glew.h>
 #include <GL/gl.h>
@@ -21,15 +22,15 @@ struct CubeMapRasterProcessor::Impl {
 
   Eigen::Quaternionf side_orientation[SIDE_COUNT] = {
     Eigen::Quaternionf(Eigen::Quaternionf::AngleAxisType
-                       ( gramods_PI_2, Eigen::Vector3f::UnitY())),
+                       ( GM_PI_2, Eigen::Vector3f::UnitY())),
     Eigen::Quaternionf(Eigen::Quaternionf::AngleAxisType
-                       (-gramods_PI_2, Eigen::Vector3f::UnitY())),
+                       (-GM_PI_2, Eigen::Vector3f::UnitY())),
     Eigen::Quaternionf(Eigen::Quaternionf::AngleAxisType
-                       (-gramods_PI_2, Eigen::Vector3f::UnitX())),
+                       (-GM_PI_2, Eigen::Vector3f::UnitX())),
     Eigen::Quaternionf(Eigen::Quaternionf::AngleAxisType
-                       ( gramods_PI_2, Eigen::Vector3f::UnitX())),
+                       ( GM_PI_2, Eigen::Vector3f::UnitX())),
     Eigen::Quaternionf(Eigen::Quaternionf::AngleAxisType
-                       ( gramods_PI  , Eigen::Vector3f::UnitY())),
+                       ( GM_PI  , Eigen::Vector3f::UnitY())),
     Eigen::Quaternionf::Identity()
   };
 

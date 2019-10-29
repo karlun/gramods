@@ -20,14 +20,6 @@ namespace gramods {
   namespace gmTypes {}
 }
 
-#ifndef gramods_PI
-#  include <cmath>
-#  define gramods_PI   (            std::acos(-1))
-#  define gramods_PI_2 (            std::asin( 1))
-#  define gramods_PI_4 ((1.0/2.0) * std::asin( 1))
-#endif
-
-
 #cmakedefine HAVE_Eigen3
 #ifdef HAVE_Eigen3
 #cmakedefine gramods_ENABLE_Eigen3
