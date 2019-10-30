@@ -31,6 +31,8 @@ void VrpnButtonsTracker::update(gmCore::Updateable::clock::time_point) {
     return;
   }
 
+  latest_sample.buttons.clear();
+
   do {
     got_data = false;
     tracker->mainloop();
@@ -63,13 +65,11 @@ void VRPN_CALLBACK VrpnButtonsTracker::handler(void *data, const vrpn_BUTTONCB i
     (std::chrono::microseconds(info.msg_time.tv_usec));
   auto time = clock::time_point(secs + usecs);
 
-  if (info.button >= 32) return;
-
   _this->latest_sample.time = time;
   if (info.state)
-    _this->latest_sample.buttons |= 0x1 << info.button;
+    _this->latest_sample.buttons[info.button] = true;
   else
-    _this->latest_sample.buttons &= ~(0x1 << info.button);
+    _this->latest_sample.buttons[info.button] = false;
 
   _this->got_data = true;
   _this->have_data = true;

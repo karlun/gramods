@@ -46,10 +46,13 @@ bool ButtonsMapper::getButtons(ButtonsSample &p) {
     return false;
 
   p.time = p0.time;
-  p.buttons = 0;
+  p.buttons.clear();
 
-  for (auto m : mappings)
-    p.buttons |= ((p0.buttons >> m.first) & 1) << m.second;
+  for (auto btn : p0.buttons)
+    if (mappings.count(btn.first))
+      p.buttons[mappings[btn.first]] = btn.second;
+    else
+      p.buttons[btn.first] = btn.second;
 
   return true;
 }

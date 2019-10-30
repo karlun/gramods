@@ -162,8 +162,8 @@ void VrpnServer::Impl::updateButtons() {
     if (!good)
       continue;
 
-    for (size_t idx = 0; idx < 32; ++idx)
-      button_server[idx]->set_button(idx, sample.getButton(idx) ? 1 : 0);
+    for (auto btn : sample.buttons)
+      button_server[idx]->set_button(btn.first, btn.second ? 1 : 0);
 
     button_server[idx]->mainloop();
   }

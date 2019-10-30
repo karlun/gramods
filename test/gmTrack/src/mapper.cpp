@@ -65,20 +65,35 @@ TEST(gmTrackMapper, Buttons) {
 
     gmTrack::ButtonsTracker::ButtonsSample sample;
 
+    // 0
     EXPECT_TRUE(tracker->getButtons(sample));
-    EXPECT_EQ(0, sample.buttons);
+    EXPECT_EQ(0, sample.buttons.size());
 
+    // 1 (0 -> 2)
     EXPECT_TRUE(tracker->getButtons(sample));
-    EXPECT_EQ(4, sample.buttons);
+    EXPECT_EQ(1, sample.buttons.size());
+    EXPECT_EQ(1, sample.buttons.count(2));
+    EXPECT_TRUE(sample.buttons[2]);
 
+    // 2 (1 -> 0)
     EXPECT_TRUE(tracker->getButtons(sample));
-    EXPECT_EQ(1, sample.buttons);
+    EXPECT_EQ(1, sample.buttons.size());
+    EXPECT_EQ(1, sample.buttons.count(0));
+    EXPECT_TRUE(sample.buttons[0]);
 
+    // 3 (0 -> 2 / 1 -> 0)
     EXPECT_TRUE(tracker->getButtons(sample));
-    EXPECT_EQ(5, sample.buttons);
+    EXPECT_EQ(2, sample.buttons.size());
+    EXPECT_EQ(1, sample.buttons.count(0));
+    EXPECT_TRUE(sample.buttons[0]);
+    EXPECT_EQ(1, sample.buttons.count(2));
+    EXPECT_TRUE(sample.buttons[2]);
 
+    // 4 (2 -> 1)
     EXPECT_TRUE(tracker->getButtons(sample));
-    EXPECT_EQ(2, sample.buttons);
+    EXPECT_EQ(1, sample.buttons.size());
+    EXPECT_EQ(1, sample.buttons.count(1));
+    EXPECT_TRUE(sample.buttons[1]);
   }
 }
 
@@ -134,20 +149,35 @@ TEST(gmTrackMapper, Buttons2) {
 
     gmTrack::ButtonsTracker::ButtonsSample sample;
 
+    // 0
     EXPECT_TRUE(tracker->getButtons(sample));
-    EXPECT_EQ(0, sample.buttons);
+    EXPECT_EQ(0, sample.buttons.size());
 
+    // 1 (0 -> 2)
     EXPECT_TRUE(tracker->getButtons(sample));
-    EXPECT_EQ(4, sample.buttons);
+    EXPECT_EQ(1, sample.buttons.size());
+    EXPECT_EQ(1, sample.buttons.count(2));
+    EXPECT_TRUE(sample.buttons[2]);
 
+    // 2 (1 -> 0)
     EXPECT_TRUE(tracker->getButtons(sample));
-    EXPECT_EQ(1, sample.buttons);
+    EXPECT_EQ(1, sample.buttons.size());
+    EXPECT_EQ(1, sample.buttons.count(0));
+    EXPECT_TRUE(sample.buttons[0]);
 
+    // 3 (0 -> 2 / 1 -> 0)
     EXPECT_TRUE(tracker->getButtons(sample));
-    EXPECT_EQ(5, sample.buttons);
+    EXPECT_EQ(2, sample.buttons.size());
+    EXPECT_EQ(1, sample.buttons.count(0));
+    EXPECT_TRUE(sample.buttons[0]);
+    EXPECT_EQ(1, sample.buttons.count(2));
+    EXPECT_TRUE(sample.buttons[2]);
 
+    // 4 (2 -> 1)
     EXPECT_TRUE(tracker->getButtons(sample));
-    EXPECT_EQ(2, sample.buttons);
+    EXPECT_EQ(1, sample.buttons.size());
+    EXPECT_EQ(1, sample.buttons.count(1));
+    EXPECT_TRUE(sample.buttons[1]);
   }
 }
 

@@ -35,7 +35,7 @@ public:
 
      \b XML-attribute: \c buttons
   */
-  void addButtons(int b);
+  void addButtons(size_t b);
 
   /**
      Replaces the contents of p with button data.
