@@ -54,6 +54,7 @@ struct PoseRegistrationEstimator::Impl {
 
   float planar_sphericity = 0.3f;
   std::shared_ptr<gramods::gmTrack::Controller> controller;
+  gramods::gmTrack::ButtonsTracker::ButtonsSample buttons;
 
   Eigen::Matrix4f registration_raw;
   Eigen::Matrix4f registration_unit;
@@ -103,14 +104,10 @@ void PoseRegistrationEstimator::Impl::update(clock::time_point now) {
     return;
   }
 
-  gramods::gmTrack::ButtonsTracker::ButtonsSample buttons;
-  if (! controller->getButtons(buttons)) {
-    GM_RUNONCE(GM_ERR("PoseRegistrationEstimator", "Cannot read controller buttons"));
-    return;
-  }
+  controller->getButtons(buttons);
 
   if (!collecting) {
-    if (buttons.buttons & ButtonsMapper::ButtonMask::MAIN) {
+    if (buttons.buttons[ButtonsMapper::ButtonIdx::MAIN]) {
       collecting = true;
       GM_INF("PoseRegistrationEstimator", "going into collect mode");
     } else {
@@ -118,7 +115,7 @@ void PoseRegistrationEstimator::Impl::update(clock::time_point now) {
     }
   }
 
-  if (buttons.buttons & ButtonsMapper::ButtonMask::MAIN){
+  if (buttons.buttons[ButtonsMapper::ButtonIdx::MAIN]){
     gramods::gmTrack::PoseTracker::PoseSample pose;
     if (! controller->getPose(pose)) {
       GM_RUNONCE(GM_ERR("PoseRegistrationEstimator", "Cannot read controller pose"));

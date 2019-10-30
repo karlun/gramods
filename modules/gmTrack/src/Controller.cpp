@@ -1,6 +1,10 @@
 
 #include <gmTrack/Controller.hh>
 
+#include <gmCore/Console.hh>
+#include <gmCore/RunOnce.hh>
+
+
 BEGIN_NAMESPACE_GMTRACK;
 
 
@@ -11,17 +15,26 @@ GM_OFI_POINTER(Controller, analogsTracker, AnalogsTracker, Controller::setAnalog
 
 
 bool Controller::getPose(SinglePoseTracker::PoseSample &p) {
-  if (!pose_tracker) return false;
+  if (!pose_tracker) {
+    GM_RUNONCE(GM_WRN("Controller", "Pose requested by no pose tracker available."));
+    return false;
+  }
   return pose_tracker->getPose(p);
 }
 
 bool Controller::getButtons(ButtonsTracker::ButtonsSample &b) {
-  if (!buttons_tracker) return false;
+  if (!buttons_tracker) {
+    GM_RUNONCE(GM_WRN("Controller", "Buttons requested by no buttons tracker available."));
+    return false;
+  }
   return buttons_tracker->getButtons(b);
 }
 
 bool Controller::getAnalogs(AnalogsTracker::AnalogsSample &a) {
-  if (!analogs_tracker) return false;
+  if (!analogs_tracker) {
+    GM_RUNONCE(GM_WRN("Controller", "Analogs requested by no analogs tracker available."));
+    return false;
+  }
   return analogs_tracker->getAnalogs(a);
 }
 

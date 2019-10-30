@@ -132,6 +132,36 @@ std::istream& operator>> (std::istream &in, Eigen::Matrix3f &m) {
   return in;
 }
 
+std::istream& operator>> (std::istream &in, Eigen::Matrix4f &m) {
+
+  float a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12;
+
+  in >> a1 >> a2 >> a3 >> a4 >> a5 >> a6 >> a7 >> a8 >> a9 >> a10 >> a11 >> a12;
+
+  std::string val;
+  in >> val;
+  if (!in) {
+    m <<
+      a1, a2, a3, a4,
+      a5, a6, a7, a8,
+      a9, a10, a11, a12,
+      0.f, 0.f, 0.f, 1.f;
+    return in;
+  }
+
+  float a13, a14, a15, a16;
+
+  std::stringstream(val) >> a13;
+  in >> a13 >> a14 >> a15 >> a16;
+  m <<
+    a1, a2, a3, a4,
+    a5, a6, a7, a8,
+    a9, a10, a11, a12,
+    a13, a14, a15, a16;
+
+  return in;
+}
+
 END_NAMESPACE_GRAMODS;
 
 #endif

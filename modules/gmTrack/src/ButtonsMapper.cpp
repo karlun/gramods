@@ -1,6 +1,10 @@
 
 #include <gmTrack/ButtonsMapper.hh>
 
+#include <gmCore/Console.hh>
+#include <gmCore/RunOnce.hh>
+
+
 BEGIN_NAMESPACE_GMTRACK;
 
 GM_OFI_DEFINE(ButtonsMapper);
@@ -32,18 +36,23 @@ void ButtonsMapper::setMenuButton(int idx) {
 
 bool ButtonsMapper::getButtons(ButtonsSample &p) {
 
-  if (!buttonsTracker)
+  if (!buttonsTracker) {
+    GM_RUNONCE(GM_WRN("ButtonsMapper", "Buttons requested by no buttons tracker available."));
     return false;
+  }
 
   ButtonsSample p0;
   if (!buttonsTracker->getButtons(p0))
     return false;
 
   p.time = p0.time;
-  p.buttons = 0;
+  p.buttons.clear();
 
-  for (auto m : mappings)
-    p.buttons |= ((p0.buttons >> m.first) & 1) << m.second;
+  for (auto btn : p0.buttons)
+    if (mappings.count(btn.first))
+      p.buttons[mappings[btn.first]] = btn.second;
+    else
+      p.buttons[btn.first] = btn.second;
 
   return true;
 }

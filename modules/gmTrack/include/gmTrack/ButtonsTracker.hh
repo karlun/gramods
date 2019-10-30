@@ -5,7 +5,9 @@
 #include <gmTrack/config.hh>
 
 #include <gmCore/Object.hh>
+
 #include <chrono>
+#include <map>
 
 BEGIN_NAMESPACE_GMTRACK;
 
@@ -20,19 +22,14 @@ public:
   typedef std::chrono::steady_clock clock;
 
   /**
-     A sample containing the state of potentially up to 32 buttons.
+     A sample containing the state of any number of buttons.
   */
   struct ButtonsSample {
 
     /**
-       A bit mask containing all button states. The zeroth button is
-       extracted by (buttons & 1).
+       The state of the buttons communicated.
     */
-    unsigned int buttons;
-
-    bool getButton(size_t idx) {
-      return ((buttons >> idx) & 1) != 0;
-    }
+    std::map<size_t, bool> buttons;
 
     /**
        The time of the sample.

@@ -10,7 +10,7 @@ BEGIN_NAMESPACE_GMTRACK;
 
 GM_OFI_DEFINE(TimeSampleButtonsTracker);
 GM_OFI_PARAM(TimeSampleButtonsTracker, time, double, TimeSampleButtonsTracker::addTime);
-GM_OFI_PARAM(TimeSampleButtonsTracker, buttons, int, TimeSampleButtonsTracker::addButtons);
+GM_OFI_PARAM(TimeSampleButtonsTracker, buttons, size_t, TimeSampleButtonsTracker::addButtons);
 
 
 struct TimeSampleButtonsTracker::Impl {
@@ -18,13 +18,14 @@ struct TimeSampleButtonsTracker::Impl {
   Impl();
 
   void addTime(double t);
-  void addButtons(int b);
+  void addButtons(size_t b);
+  void setState(std::map<size_t, bool>& buttons, size_t state);
 
   bool getButtons(ButtonsSample &b);
 
   std::vector<double> time;
   size_t sample_idx = 0;
-  std::vector<int> button_states;
+  std::vector<size_t> button_states;
 
   std::chrono::steady_clock::time_point start_time;
 };
@@ -40,7 +41,7 @@ TimeSampleButtonsTracker::Impl::Impl()
 
 void TimeSampleButtonsTracker::Impl::addTime(double t) { time.push_back(t); }
 
-void TimeSampleButtonsTracker::Impl::addButtons(int b) { button_states.push_back(b); }
+void TimeSampleButtonsTracker::Impl::addButtons(size_t b) { button_states.push_back(b); }
 
 bool TimeSampleButtonsTracker::Impl::getButtons(ButtonsSample &b) {
 
@@ -64,7 +65,7 @@ bool TimeSampleButtonsTracker::Impl::getButtons(ButtonsSample &b) {
     // If there is no time specified, iterate per frame
 
     assert(sample_idx < button_states.size());
-    b.buttons = button_states[sample_idx];
+    setState(b.buttons, button_states[sample_idx]);
 
     sample_idx = (sample_idx + 1) % button_states.size();
 
@@ -79,7 +80,7 @@ bool TimeSampleButtonsTracker::Impl::getButtons(ButtonsSample &b) {
     duration -= int(duration / time.back()) * time.back();
 
   if (duration <= time.front()) {
-    b.buttons = 0;
+    b.buttons.clear();
     return true;
   }
 
@@ -91,17 +92,24 @@ bool TimeSampleButtonsTracker::Impl::getButtons(ButtonsSample &b) {
     }
   }
 
-  b.buttons = button_states[last_time];
+  setState(b.buttons, button_states[last_time]);
 
   return true;
 }
 
+void TimeSampleButtonsTracker::Impl::setState(std::map<size_t, bool>& buttons, size_t state) {
+  buttons.clear();
+  for (size_t idx = 0; state > 0; ++idx) {
+    if (state & 1) buttons[idx] = true;
+    state >>= 1;
+  }
+}
 
 void TimeSampleButtonsTracker::addTime(double t) {
   _impl->addTime(t);
 }
 
-void TimeSampleButtonsTracker::addButtons(int b) {
+void TimeSampleButtonsTracker::addButtons(size_t b) {
   _impl->addButtons(b);
 }
 

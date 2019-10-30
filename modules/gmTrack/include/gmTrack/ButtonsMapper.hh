@@ -26,10 +26,10 @@ public:
      if the main button is down, write ```if (sample.buttons &
      ButtomMapper::ButtonMask::MAIN)```.
   */
-  struct ButtonMask {
-    static const unsigned int MAIN      = 1;
-    static const unsigned int SECONDARY = 1 << 1;
-    static const unsigned int MENU      = 1 << 2;
+  struct ButtonIdx {
+    static const size_t MAIN      = 0;
+    static const size_t SECONDARY = 1;
+    static const size_t MENU      = 2;
   };
 
   /**
