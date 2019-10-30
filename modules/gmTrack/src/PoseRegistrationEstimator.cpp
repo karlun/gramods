@@ -192,13 +192,13 @@ void PoseRegistrationEstimator::Impl::update(clock::time_point now) {
   registration_raw = M_reg;
   successful_registration = true;
 
-  GM_VINF("PoseRegistrationEstimator", "Raw registration matrix:\n" << M_reg);
+  GM_INF("PoseRegistrationEstimator", "Raw registration matrix:\n" << M_reg);
 
   Eigen::Matrix4f M_unit;
   estimateUnitRegistration(tracker_data, actual_data, M_reg, M_unit);
   registration_unit = M_unit;
 
-  GM_VINF("PoseRegistrationEstimator", "Unit registration matrix:\n" << M_unit);
+  GM_INF("PoseRegistrationEstimator", "Unit registration matrix:\n" << M_unit);
 }
 
 void PoseRegistrationEstimator::Impl::getIQM3D(std::vector<Eigen::Vector3f> samples, Eigen::Vector3f &x) {
