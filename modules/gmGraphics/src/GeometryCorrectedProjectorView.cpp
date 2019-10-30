@@ -291,6 +291,7 @@ void GeometryCorrectedProjectorView::Impl::renderFullPipeline(ViewSettings setti
   if (!is_setup) {
     is_setup = true;
     raster_processor.setFragmentCode(createFragmentCode());
+    render_target.setPixelFormat(settings.pixel_format);
     if (render_target.init() && raster_processor.init()) is_functional = true;
   }
 
