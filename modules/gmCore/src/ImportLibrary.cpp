@@ -28,8 +28,13 @@ struct ImportLibrary::Impl {
 
 #else
 
+#ifdef __APPLE__
+  std::string prefix = "lib";
+  std::string suffix = ".dylib";
+#else
   std::string prefix = "lib";
   std::string suffix = ".so";
+#endif
 
   void *handle = nullptr;
 
