@@ -9,6 +9,9 @@
 #include <gmCore/Object.hh>
 #include <gmCore/OFactory.hh>
 
+#include <GL/glew.h>
+#include <GL/gl.h>
+
 BEGIN_NAMESPACE_GMGRAPHICS;
 
 /**
@@ -25,11 +28,19 @@ public:
   */
   struct ViewSettings {
 
-    ViewSettings() {}
+    ViewSettings() = delete;
+
+    /// Creates settings associated with the specified viewpoint.
     ViewSettings(std::shared_ptr<Viewpoint> vp) : viewpoint(vp) {}
 
+    /// The renderers to render in the view.
     std::vector<std::shared_ptr<Renderer>> renderers;
+
+    /// The viewpoint currently being rendered.
     std::shared_ptr<Viewpoint> viewpoint;
+
+    /// The preferred pixel format for buffers.
+    GLenum pixel_format = GL_RGB8;
   };
 
   /**

@@ -165,6 +165,7 @@ void ViewMixView::Impl::renderFullPipeline(ViewSettings settings) {
   if (!is_setup) {
     is_setup = true;
     raster_processor.setFragmentCode(fragment_code[type]);
+    render_target.setPixelFormat(settings.pixel_format);
     if (render_target.init(views.size()) &&
         raster_processor.init())
       is_functional = true;

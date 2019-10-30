@@ -55,6 +55,17 @@ public:
   void setLinearInterpolation(bool on);
 
   /**
+     Set the pixel format to use for the color buffer(s). Default is
+     GL_RGB8.
+  */
+  void setPixelFormat(GLenum format);
+
+  /**
+     Return the pixel format currently used for the color buffer(s).
+  */
+  GLenum getPixelFormat();
+
+  /**
      Sets the position and dimensions of a spatial cube map, for
      example for a spatial dome rendering.
   */
