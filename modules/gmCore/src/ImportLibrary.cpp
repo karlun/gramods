@@ -7,8 +7,42 @@ BEGIN_NAMESPACE_GMCORE;
 
 GM_OFI_DEFINE(ImportLibrary);
 GM_OFI_PARAM(ImportLibrary, library, std::string, ImportLibrary::setLibrary);
+GM_OFI_PARAM(ImportLibrary, prefix, std::string, ImportLibrary::setPrefix);
+GM_OFI_PARAM(ImportLibrary, suffix, std::string, ImportLibrary::setSuffix);
 
-ImportLibrary::~ImportLibrary() {
+struct ImportLibrary::Impl {
+
+  ~Impl();
+
+  void initialize();
+
+  bool library_loaded;
+  std::string library;
+
+#ifdef WIN32
+
+  std::string prefix = "";
+  std::string suffix = ".dll";
+
+  HMODULE handle = 0;
+
+#else
+
+  std::string prefix = "lib";
+  std::string suffix = ".so";
+
+  void *handle = nullptr;
+
+#endif
+
+};
+
+ImportLibrary::ImportLibrary()
+  : _impl(std::make_unique<Impl>()) {}
+
+ImportLibrary::~ImportLibrary() {}
+
+ImportLibrary::Impl::~Impl() {
 #ifdef WIN32
   if (handle)
     FreeLibrary(handle);
@@ -21,16 +55,25 @@ ImportLibrary::~ImportLibrary() {
 }
 
 void ImportLibrary::setLibrary(std::string lib) {
-  this->library = lib;
+  this->_impl->library = lib;
+}
+
+bool ImportLibrary::isLoaded() {
+  return _impl->library_loaded;
 }
 
 void ImportLibrary::initialize() {
+  _impl->initialize();
+  Object::initialize();
+}
+
+void ImportLibrary::Impl::initialize() {
 #ifdef WIN32
 
   handle = GetModuleHandle(library.c_str());
 
   if (!handle)
-    LoadLibrary(library.c_str());
+    handle = LoadLibrary(library.c_str());
 
   if (!handle) {
     TCHAR buffer[255];
@@ -52,8 +95,14 @@ void ImportLibrary::initialize() {
   }
 
 #endif
+}
 
-  Object::initialize();
+void ImportLibrary::setPrefix(std::string str) {
+  _impl->prefix = str;
+}
+
+void ImportLibrary::setSuffix(std::string str) {
+  _impl->suffix = str;
 }
 
 END_NAMESPACE_GMCORE;
