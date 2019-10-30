@@ -70,6 +70,9 @@ SET(CPACK_PACKAGE_CONTACT "Karljohan Lundin Palmerius <karljohan.lundin.palmeriu
 
 INCLUDE(CPack)
 
+INSTALL(DIRECTORY config/
+  DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/config)
+
 # --- TESTING ---
 
 FIND_PACKAGE(GTest)

@@ -97,14 +97,19 @@ IF(Inkscape_FOUND)
 
   FOREACH (RESOURCE ${SVG_RESOURCES})
     STRING(REGEX REPLACE
-      "(.*)\\.svg$" "\\1.png"
+      "${CMAKE_CURRENT_SOURCE_DIR}/(.*)\\.svg$"
+      "${CMAKE_CURRENT_BINARY_DIR}/\\1.png"
       PNG_RESOURCE ${RESOURCE})
     convert_svg_to_png(${RESOURCE} ${PNG_RESOURCE})
     LIST (APPEND PNG_RESOURCE_TARGETS ${PNG_RESOURCE})
   ENDFOREACH()
 
   add_custom_target(svg-resources
+    ALL
     DEPENDS ${PNG_RESOURCE_TARGETS})
+  INSTALL(FILES ${PNG_RESOURCE_TARGETS}
+    DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/gmGraphics/resources)
+
   MESSAGE (STATUS "Added 'svg-resources' target for converting SVG resources to PNG.")
 ELSE()
   MESSAGE (STATUS "Not including 'svg-resources' target - requires Inkscape")
@@ -134,3 +139,5 @@ INSTALL(TARGETS gmGraphics
   RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR})
 INSTALL(DIRECTORY include/
   DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
+INSTALL(DIRECTORY config/
+  DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/gmGraphics/config)
