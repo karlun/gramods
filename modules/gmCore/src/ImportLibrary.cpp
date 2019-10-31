@@ -73,30 +73,33 @@ void ImportLibrary::initialize() {
 }
 
 void ImportLibrary::Impl::initialize() {
+
+  std::string library_file = prefix + library + suffix;
+
 #ifdef WIN32
 
-  handle = GetModuleHandle(library.c_str());
+  handle = GetModuleHandle(library_file.c_str());
 
   if (!handle)
-    handle = LoadLibrary(library.c_str());
+    handle = LoadLibrary(library_file.c_str());
 
   if (!handle) {
     TCHAR buffer[255];
     DWORD dw = GetLastError();
     FormatMessage(FORMAT_MESSAGE_FROM_SYSTEM, NULL, dw, 0, buffer, 255, NULL);
-    GM_ERR("ImportLibrary", "" << buffer);
+    GM_ERR("ImportLibrary", "While importing '" << library_file << "': " << buffer);
   } else {
     library_loaded = true;
   }
 
 #else
 
-  handle = dlopen(library.c_str(), RTLD_NOW);
+  handle = dlopen(library_file.c_str(), RTLD_NOW);
   if (handle) {
     library_loaded = true;
   } else {
     char *msg = dlerror();
-    GM_ERR("ImportLibrary", "Could not import library '" << library.c_str() << "':" << msg);
+    GM_ERR("ImportLibrary", "While importing '" << library_file << "': " << msg);
   }
 
 #endif
