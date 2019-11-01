@@ -22,14 +22,13 @@ class ButtonsMapper
 public:
 
   /**
-     Standard button masks, for compatibility. To check, for example,
-     if the main button is down, write ```if (sample.buttons &
-     ButtomMapper::ButtonMask::MAIN)```.
+     Standard button index, in the ButtonsSample::buttons map, for
+     compatibility.
   */
   struct ButtonIdx {
-    static const size_t MAIN      = 0;
-    static const size_t SECONDARY = 1;
-    static const size_t MENU      = 2;
+    static const size_t MAIN;      //< 0
+    static const size_t SECONDARY; //< 1
+    static const size_t MENU;      //< 2
   };
 
   /**

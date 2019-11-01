@@ -14,6 +14,10 @@ GM_OFI_PARAM(ButtonsMapper, secondaryButton, int, ButtonsMapper::setSecondaryBut
 GM_OFI_PARAM(ButtonsMapper, menuButton, int, ButtonsMapper::setMenuButton);
 GM_OFI_POINTER(ButtonsMapper, buttonsTracker, ButtonsTracker, ButtonsMapper::setButtonsTracker);
 
+const size_t ButtonsMapper::ButtonIdx::MAIN      = 0;
+const size_t ButtonsMapper::ButtonIdx::SECONDARY = 1;
+const size_t ButtonsMapper::ButtonIdx::MENU      = 2;
+
 void ButtonsMapper::setButtonsTracker(std::shared_ptr<ButtonsTracker> bt) {
   buttonsTracker = bt;
 }
