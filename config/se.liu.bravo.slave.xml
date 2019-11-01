@@ -18,8 +18,9 @@
     <SdlContext useVideo="true"/>
 
     <SphereRenderer
-        radius="10"
-        textureCoverageAngle="3.1416">
+        radius="10">
+      <AngularFisheyeCoordinatesMapper
+          coverageAngle="3.1416"/>
       <ImageTexture
           file="modules/gmGraphics/resources/fulldome180-coordinates.png"/>
     </SphereRenderer>
