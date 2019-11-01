@@ -6,6 +6,8 @@
 
 BEGIN_NAMESPACE_GMGRAPHICS;
 
+GM_OFI_DEFINE(QuadBufferMultiplexer);
+
 struct QuadBufferMultiplexer::Impl {
   GLint buffer_id;
 };
