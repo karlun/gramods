@@ -18,10 +18,17 @@
     <SdlContext useVideo="true"/>
 
     <SphereRenderer
-        radius="10">
+        radius="8.4">
       <EquirectangularCoordinatesMapper/>
       <ImageTexture
-          file="modules/gmGraphics/resources/equirectangular-coordinates.png"/>
+          file="share/gmGraphics/resources/equirectangular-coordinates.png"/>
+    </SphereRenderer>
+
+    <SphereRenderer
+        radius="6.4">
+      <EquirectangularCoordinatesMapper/>
+      <ImageTexture
+          file="share/gmGraphics/resources/equirectangular-field-of-vision.png"/>
     </SphereRenderer>
 
     <Viewpoint

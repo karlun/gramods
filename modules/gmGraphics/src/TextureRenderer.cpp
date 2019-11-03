@@ -34,7 +34,7 @@ in vec2 v_uv;
 out vec4 fragColor;
 
 void main() {
-  fragColor = vec4(texture(tex, v_uv).rgb, 1);
+  fragColor = texture(tex, v_uv);
 }
 )lang=glsl";
 }
@@ -58,8 +58,12 @@ struct TextureRenderer::Impl {
 TextureRenderer::TextureRenderer()
   : _impl(new Impl) {}
 
-void TextureRenderer::render(Camera camera) {
+void TextureRenderer::render(Camera camera, float near, float far) {
   _impl->render(texture.get(), camera);
+}
+
+void TextureRenderer::getNearFar(Camera camera, float &near, float &far) {
+  near = far = -1;
 }
 
 void TextureRenderer::Impl::render(Texture *texture, Camera &camera) {
@@ -75,6 +79,10 @@ void TextureRenderer::Impl::render(Texture *texture, Camera &camera) {
 
   if (!texture->getGLTextureID()) return;
   GLuint tex_id = texture->getGLTextureID();
+
+  glDisable(GL_DEPTH_TEST);
+  glEnable(GL_BLEND);
+  glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
   glActiveTexture(GL_TEXTURE0 + TEXTURE_IDX);
   glBindTexture(GL_TEXTURE_2D, tex_id);

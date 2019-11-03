@@ -45,7 +45,7 @@ public:
 
   /**
      Set the pixel format to use for the color buffer(s). Default is
-     GL_RGB8.
+     GL_RGBA8.
   */
   void setPixelFormat(GLenum format);
 

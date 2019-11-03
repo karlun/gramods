@@ -65,8 +65,11 @@ void PosedPlanarView::renderFullPipeline(ViewSettings settings) {
 
   camera.setPose(x_VP, q_VP);
 
+  float near, far;
+  Renderer::getNearFar(settings.renderers, camera, near, far);
+
   for (auto renderer : settings.renderers)
-    renderer->render(camera);
+    renderer->render(camera, near, far);
 }
 
 END_NAMESPACE_GMGRAPHICS;
