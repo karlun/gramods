@@ -63,7 +63,9 @@ public:
      Set the clip angles of a *virtual* frustum, as left, right,
      bottom, top. This will help specifying the projection plane,
      together with position and orientation, but will not control the
-     final view angle.
+     final view angle. Left and bottom angles increase left-wise and
+     downwards, respectively, while right and top angles increase
+     right-wise and upwards, respectively.
 
      \b XML-attribute: \c clipAngles
   */

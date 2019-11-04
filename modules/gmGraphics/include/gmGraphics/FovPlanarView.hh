@@ -31,15 +31,17 @@ public:
 
   /**
      Angles between forward direction and the clip planes left, right,
-     bottom and top, in radians. Positive angles are right and up.
+     bottom and top, in radians. Left and bottom angles are positive
+     left-wise and downwards, respectively, while right and top angles
+     are positive right-wise and upwards, respectively.
 
      \b XML-attribute: \c clipAngles
   */
   void setClipAngles(gmTypes::angle4 p) {
-    planes[0] = tan(p[0]);
-    planes[1] = tan(p[1]);
-    planes[2] = tan(p[2]);
-    planes[3] = tan(p[3]);
+    planes[0] = -tanf(p[0]);
+    planes[1] =  tanf(p[1]);
+    planes[2] = -tanf(p[2]);
+    planes[3] =  tanf(p[3]);
   }
 
   /**
