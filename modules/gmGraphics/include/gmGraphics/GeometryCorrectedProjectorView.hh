@@ -100,8 +100,10 @@ public:
   void setIntrinsics(gmTypes::float4 m);
 
   /**
-     Set the projection shape, as left, right, bottom, top clip plane
-     angles, in radians.
+     Angles between forward direction and the clip planes left, right,
+     bottom and top, in radians. Left and bottom angles increase
+     left-wise and downwards, respectively, while right and top angles
+     increase right-wise and upwards, respectively.
 
      \b XML-attribute: \c clipAngles
   */

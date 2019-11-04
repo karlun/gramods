@@ -56,12 +56,12 @@ struct CubeMapRasterProcessor::Impl {
   void setup();
   void teardown();
 
-  void renderFullPipeline(std::vector<std::shared_ptr<Renderer>> renderers,
+  void renderFullPipeline(Renderer::list renderers,
                           Eigen::Vector3f pos,
                           Eigen::Quaternionf rot,
                           Eye eye,
                           bool make_square);
-  void renderSide(std::vector<std::shared_ptr<Renderer>> renderers,
+  void renderSide(Renderer::list renderers,
                   Eigen::Vector3f pos,
                   Eigen::Quaternionf rot,
                   Eye eye,
@@ -81,7 +81,7 @@ CubeMapRasterProcessor::~CubeMapRasterProcessor() {
 }
 
 void CubeMapRasterProcessor::renderFullPipeline
-(std::vector<std::shared_ptr<Renderer>> renderers,
+(Renderer::list renderers,
  Eigen::Vector3f pos,
  Eigen::Quaternionf rot,
  Eye eye,
@@ -221,7 +221,7 @@ GLint CubeMapRasterProcessor::getProgram() {
 }
 
 void CubeMapRasterProcessor::Impl::renderFullPipeline
-(std::vector<std::shared_ptr<Renderer>> renderers,
+(Renderer::list renderers,
  Eigen::Vector3f pos,
  Eigen::Quaternionf rot,
  Eye eye,
@@ -302,7 +302,7 @@ void CubeMapRasterProcessor::Impl::renderFullPipeline
 }
 
 void CubeMapRasterProcessor::Impl::renderSide
-(std::vector<std::shared_ptr<Renderer>> renderers,
+(Renderer::list renderers,
  Eigen::Vector3f pos,
  Eigen::Quaternionf rot,
  Eye eye,
@@ -365,8 +365,11 @@ void CubeMapRasterProcessor::Impl::renderSide
     }
   }
 
+  float near, far;
+  Renderer::getNearFar(renderers, camera, near, far);
+
   for (auto renderer : renderers)
-    renderer->render(camera);
+    renderer->render(camera, near, far);
 }
 
 void CubeMapRasterProcessor::setFragmentCode(std::string code) {

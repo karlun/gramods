@@ -165,7 +165,7 @@ void SpatialSphericalView::Impl::renderFullPipeline(ViewSettings settings, Eye e
 
     cubemap->setFragmentCode(createFragmentCode());
 
-    std::vector<std::shared_ptr<Renderer>> no_renderers;
+    Renderer::list no_renderers;
     cubemap->renderFullPipeline(no_renderers, eye_pos, orientation, eye, make_square);
     program_id = cubemap->getProgram();
 

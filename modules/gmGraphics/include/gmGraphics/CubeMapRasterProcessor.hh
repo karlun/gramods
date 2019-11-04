@@ -26,7 +26,7 @@ public:
   /**
      Renders the cube map.
   */
-  void renderFullPipeline(std::vector<std::shared_ptr<Renderer>> renderers,
+  void renderFullPipeline(Renderer::list renderers,
                           Eigen::Vector3f pos,
                           Eigen::Quaternionf rot,
                           Eye eye,
@@ -56,7 +56,7 @@ public:
 
   /**
      Set the pixel format to use for the color buffer(s). Default is
-     GL_RGB8.
+     GL_RGBA8.
   */
   void setPixelFormat(GLenum format);
 

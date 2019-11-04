@@ -107,7 +107,7 @@ void main() {
 
   if (uv.x >= 0 && uv.x <= 1 &&
       uv.y >= 0 && uv.y <= 1)
-    fragColor = vec4(texture(tex, uv).rgb, 1);
+    fragColor = texture(tex, uv);
   else
     fragColor = vec4(0, 0, 0, 0);
 }
@@ -306,8 +306,11 @@ void GeometryCorrectedProjectorView::Impl::renderFullPipeline(ViewSettings setti
   render_target.push();
   render_target.bind(buffer_width, buffer_height);
 
+  float near, far;
+  Renderer::getNearFar(settings.renderers, render_camera, near, far);
+
   for (auto renderer : settings.renderers)
-    renderer->render(render_camera);
+    renderer->render(render_camera, near, far);
 
   render_target.pop();
 

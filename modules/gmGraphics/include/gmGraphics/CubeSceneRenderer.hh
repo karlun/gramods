@@ -23,7 +23,15 @@ public:
   /**
      Performs rendering of 3D objects in the scene.
   */
-  void render(Camera camera);
+  void render(Camera camera, float near = -1, float far = -1);
+
+  /**
+     Extracts the currently optimal near and far plane distances. This
+     is typically used by a View if there are multiple renderers that
+     need to be rendered with the same near and far planes for correct
+     depth testing.
+  */
+  void getNearFar(Camera camera, float &near, float &far);
 
   /**
      Sets the size of each cube to be drawn.

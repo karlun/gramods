@@ -85,7 +85,7 @@ void InterlaceMultiplexer::Impl::setup() {
     glBindFramebuffer(GL_FRAMEBUFFER, fb_id[eye_idx]);
     glBindTexture(GL_TEXTURE_2D, tex_id[eye_idx]);
 
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, 32, 32, 0,GL_RGB, GL_UNSIGNED_BYTE, 0);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 32, 32, 0,GL_RGB, GL_UNSIGNED_BYTE, 0);
 
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
@@ -255,7 +255,7 @@ void InterlaceMultiplexer::Impl::setupRendering(size_t eye) {
 
   GM_VINF("InterlaceMultiplexer", "Allocating frame buffer texture " << tex_width << "x" << tex_height << " for port " << port_width << "x" << port_height);
   glBindTexture(GL_TEXTURE_2D, tex_id[(size_t)eye]);
-  glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, tex_width, tex_height, 0, GL_RGB, GL_UNSIGNED_BYTE, 0);
+  glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, tex_width, tex_height, 0, GL_RGB, GL_UNSIGNED_BYTE, 0);
   glBindTexture(GL_TEXTURE_2D, 0);
 
   glBindRenderbuffer(GL_RENDERBUFFER, rb_depth_id);

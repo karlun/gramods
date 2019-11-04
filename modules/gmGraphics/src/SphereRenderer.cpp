@@ -25,7 +25,8 @@ struct SphereRenderer::Impl {
 
   void setup();
   std::string createFragmentCode();
-  void render(Camera camera);
+  void render(Camera camera, float near, float far);
+  void getNearFar(Camera camera, float &near, float &far);
   void teardown();
 
   static const std::string vertex_shader_code;
@@ -54,8 +55,21 @@ struct SphereRenderer::Impl {
 SphereRenderer::SphereRenderer()
   : _impl(std::make_unique<Impl>()) {}
 
-void SphereRenderer::render(Camera camera) {
-  _impl->render(camera);
+void SphereRenderer::render(Camera camera, float near, float far) {
+  _impl->render(camera, near, far);
+}
+
+void SphereRenderer::getNearFar(Camera camera, float &near, float &far) {
+  _impl->getNearFar(camera, near, far);
+}
+
+void SphereRenderer::Impl::getNearFar(Camera camera, float &near, float &far) {
+
+  Eigen::Affine3f Mm = Eigen::Translation3f(position) * orientation;
+  Eigen::Affine3f Mv = camera.getViewMatrix();
+
+  near = 0.99f * (-(Mv * Mm).translation().z() - radius);
+  far = 1.01f * (-(Mv * Mm).translation().z() + radius);
 }
 
 const std::string SphereRenderer::Impl::vertex_shader_code = R"lang=glsl(
@@ -92,7 +106,7 @@ void main() {
   vec2 v_uv;
   bool good = mapTo2D(tex_pos, v_uv);
   if (good)
-    fragColor = vec4(texture(tex, 0.5 + 0.5 * v_uv).rgb, 1);
+    fragColor = texture(tex, 0.5 + 0.5 * v_uv);
   else
     fragColor = vec4(0, 0, 0, 0);
 }
@@ -225,7 +239,7 @@ std::string SphereRenderer::Impl::createFragmentCode() {
   return fragment_code;
 }
 
-void SphereRenderer::Impl::render(Camera camera) {
+void SphereRenderer::Impl::render(Camera camera, float near, float far) {
 
   if (!texture)
     GM_RUNONCE(GM_WRN("SphereRenderer", "No texture to render"));
@@ -243,14 +257,19 @@ void SphereRenderer::Impl::render(Camera camera) {
 
   GM_VINF("SphereRenderer", "rendering");
 
+  if (far < 0) {
+    getNearFar(camera, near, far);
+    if (near <= std::numeric_limits<float>::epsilon())
+      near = 1e-3f * radius;
+  }
+
   Eigen::Affine3f Mm = Eigen::Translation3f(position) * orientation;
   Eigen::Affine3f Mv = camera.getViewMatrix();
-  float near = std::max(1e-3f * radius,
-                        0.99f * (-(Mv * Mm).translation().z() - radius));
-  float far = 1.01f * (-(Mv * Mm).translation().z() + radius);
   Eigen::Matrix4f Mp = camera.getProjectionMatrix(near, far);
 
-  glEnable(GL_DEPTH_TEST);
+  glDisable(GL_DEPTH_TEST);
+  glEnable(GL_BLEND);
+  glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
   glActiveTexture(GL_TEXTURE0);
   glBindTexture(GL_TEXTURE_2D, tex_id);

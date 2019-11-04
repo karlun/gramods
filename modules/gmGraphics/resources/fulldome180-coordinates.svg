@@ -14,7 +14,7 @@
    viewBox="0 0 4096 4096"
    id="svg2"
    version="1.1"
-   inkscape:version="0.92.3 (2405546, 2018-03-11)"
+   inkscape:version="0.92.4 (5da689c313, 2019-01-14)"
    sodipodi:docname="fulldome180-coordinates.svg"
    inkscape:export-filename="/home/karlu/private/program/gramods/modules/gmGraphics/resources/fulldome180-coordinates.png"
    inkscape:export-xdpi="96"
@@ -28,14 +28,14 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="0.25366211"
-     inkscape:cx="2048"
+     inkscape:zoom="0.18215436"
+     inkscape:cx="670.04781"
      inkscape:cy="2048"
      inkscape:document-units="px"
-     inkscape:current-layer="layer4"
+     inkscape:current-layer="layer1"
      showgrid="true"
-     inkscape:window-width="2560"
-     inkscape:window-height="1345"
+     inkscape:window-width="1920"
+     inkscape:window-height="996"
      inkscape:window-x="0"
      inkscape:window-y="0"
      inkscape:window-maximized="1"
@@ -71,7 +71,7 @@
      transform="translate(0,565.46558)"
      style="display:inline">
     <rect
-       style="opacity:1;fill:#feffcd;fill-opacity:1;fill-rule:evenodd;stroke:none;stroke-width:10;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:20, 40;stroke-dashoffset:0;stroke-opacity:1"
+       style="opacity:1;fill:#fef800;fill-opacity:0.25098041;fill-rule:evenodd;stroke:none;stroke-width:10;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:20, 40;stroke-dashoffset:0;stroke-opacity:1"
        id="rect853"
        width="4096"
        height="4096"
@@ -277,24 +277,5 @@
      inkscape:groupmode="layer"
      id="layer6"
      inkscape:label="Areas"
-     style="display:inline">
-    <path
-       style="display:inline;fill:#00ff00;fill-opacity:0.49803922;fill-rule:evenodd;stroke:#000000;stroke-width:5;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
-       d="m 2051.6959,2506.2765 c -461.399,0.057 -993.0418,117.4033 -1386.83203,336.8635 C 271.07363,3062.6002 -79.729138,5008.7634 2047.9999,5006.7157 4175.7289,5004.668 3816.549,3062.6001 3422.7588,2843.14 3028.9686,2623.6798 2513.0949,2506.2193 2051.6959,2506.2765 Z"
-       id="path851"
-       inkscape:connector-curvature="0"
-       sodipodi:nodetypes="zszsz" />
-    <path
-       style="fill:#00ff00;fill-opacity:0.49803922;fill-rule:evenodd;stroke:#000000;stroke-width:5;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
-       d="M 2844.1361,3426.9474 C 2616.7811,3033.1571 2356.218,2956.6788 2048,2956.6788 c -308.218,0 -568.781,76.4784 -796.136,470.2686 -227.355,393.7902 386.2812,928.7422 794.1649,929.2412 407.8837,0.499 1025.4622,-535.4509 798.1072,-929.2412 z"
-       id="path860"
-       inkscape:connector-curvature="0"
-       sodipodi:nodetypes="zzzzz" />
-    <circle
-       style="opacity:1;fill:none;fill-opacity:0.49803922;fill-rule:evenodd;stroke:#000000;stroke-width:10;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
-       id="path864"
-       cx="2048.697"
-       cy="3640.2712"
-       r="64" />
-  </g>
+     style="display:inline" />
 </svg>

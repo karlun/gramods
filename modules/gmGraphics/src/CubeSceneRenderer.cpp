@@ -23,7 +23,8 @@ struct CubeSceneRenderer::Impl {
   ~Impl();
 
   void setup();
-  void render(Camera camera);
+  void render(Camera camera, float near, float far);
+  void getNearFar(Camera camera, float &near, float &far);
   void teardown();
 
   GLuint vertex_shader_id = 0;
@@ -43,8 +44,8 @@ struct CubeSceneRenderer::Impl {
 CubeSceneRenderer::CubeSceneRenderer()
   : _impl(std::make_unique<Impl>()) {}
 
-void CubeSceneRenderer::render(Camera camera) {
-  _impl->render(camera);
+void CubeSceneRenderer::render(Camera camera, float near, float far) {
+  _impl->render(camera, near, far);
 }
 
 namespace {
@@ -183,7 +184,27 @@ void CubeSceneRenderer::Impl::setup() {
   is_functional = true;
 }
 
-void CubeSceneRenderer::Impl::render(Camera camera) {
+void CubeSceneRenderer::getNearFar(Camera camera, float &near, float &far){
+  _impl->getNearFar(camera, near, far);
+}
+
+void CubeSceneRenderer::Impl::getNearFar(Camera camera, float &near, float &far){
+
+  Eigen::Affine3f Mm;
+  Mm = Eigen::Translation3f(position);
+  Eigen::Affine3f Mv = camera.getViewMatrix();
+
+  near =
+    -(Mv * Mm).translation().z()
+    - 0.87f * (cube_set_size + cube_size);
+
+  far =
+    -(Mv * Mm).translation().z()
+    + 0.87f * (cube_set_size + cube_size);
+}
+
+void CubeSceneRenderer::Impl::render(Camera camera, float near, float far) {
+
   if (!is_setup)
     setup();
   if (!is_functional)
@@ -191,16 +212,13 @@ void CubeSceneRenderer::Impl::render(Camera camera) {
 
   GM_VINF("CubeSceneRenderer", "rendering");
 
-  Eigen::Affine3f Mm;
-  Mm = Eigen::Translation3f(position);
+  if (far < 0) {
+    getNearFar(camera, near, far);
+    if (near <= std::numeric_limits<float>::epsilon())
+      near = 0.1f * cube_size;
+  }
+
   Eigen::Affine3f Mv = camera.getViewMatrix();
-  float near =
-    -(Mv * Mm).translation().z()
-    - 0.87f * (cube_set_size + cube_size);
-  near = std::max(near, 0.1f * cube_size);
-  float far =
-    -(Mv * Mm).translation().z()
-    + 0.87f * (cube_set_size + cube_size);
   Eigen::Matrix4f Mp = camera.getProjectionMatrix(near, far);
 
   size_t N = (size_t)(cube_set_size / (3.f * cube_size));

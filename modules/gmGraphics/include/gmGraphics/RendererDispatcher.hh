@@ -34,13 +34,13 @@ public:
     ViewSettings(std::shared_ptr<Viewpoint> vp) : viewpoint(vp) {}
 
     /// The renderers to render in the view.
-    std::vector<std::shared_ptr<Renderer>> renderers;
+    Renderer::list renderers;
 
     /// The viewpoint currently being rendered.
     std::shared_ptr<Viewpoint> viewpoint;
 
     /// The preferred pixel format for buffers.
-    GLenum pixel_format = GL_RGB8;
+    GLenum pixel_format = GL_RGBA8;
   };
 
   /**
@@ -80,13 +80,15 @@ public:
 
 protected:
 
+  typedef std::vector<std::shared_ptr<Renderer>> renderer_list;
+
   /**
      Adds the dispatcher's local renderers and viewpoint, if set. Call
      this from overloaded renderFullPipeline.
   */
   void populateViewSettings(ViewSettings &settings);
 
-  std::vector<std::shared_ptr<Renderer>> renderers;
+  Renderer::list renderers;
   std::shared_ptr<Viewpoint> viewpoint;
 
 };
