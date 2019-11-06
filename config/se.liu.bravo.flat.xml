@@ -1,0 +1,107 @@
+<config>
+
+  <OStreamMessageSink stream="err" useAnsiColor="1" level="5"/>
+  <LogFileMessageSink logFilePath="gramods.log" append="false"/>
+
+  <ImportLibrary library="gmGraphics"/>
+
+  <SphereGeometry
+      DEF="GEOMETRY"
+      radius="7.4"
+      frustumSizeRatio="1.1"
+      inside="true"/>
+
+  <QuadBufferMultiplexer DEF="MUX"/>
+  <!--InterlaceMultiplexer DEF="MUX"/-->
+
+  <SdlWindow
+      fullscreen="true"
+      GLMajor="3" GLMinor="3" GLProfile="core">
+
+    <SdlContext useVideo="true"/>
+
+    <SphereRenderer
+        radius="10">
+      <AngularFisheyeCoordinatesMapper
+          coverageAngle="6.2832"/>
+      <ImageTexture
+          file="share/gmGraphics/resources/fulldome360-coordinates.png"/>
+    </SphereRenderer>
+
+    <Viewpoint
+        position="0 0 0"/>
+
+    <if variable="COMPUTERNAME" value="BRAVO-01">
+      <!--FOV left="55.82" right="55.82" up="74.10" down="-7.70" /-->
+      <!--Orientation heading="-45.0" pitch="0.0" roll="0.0" /-->
+      <SpatialPlanarView
+          clipAngles="d58.865 d58.865 d-7.701 d70.238"
+          orientation="ypr d-45.0 d0.0 d0.0"
+          distance="7.4">
+        <Geometry USE="GEOMETRY"/>
+        <Multiplexer USE="MUX"/>
+      </SpatialPlanarView>
+    </if>
+
+    <if variable="COMPUTERNAME" value="BRAVO-02">
+      <!--FOV left="55.82" right="55.82" up="74.10" down="-7.70" /-->
+      <!--Orientation heading="45.0" pitch="0.0" roll="0.0" /-->
+      <SpatialPlanarView
+          clipAngles="d58.865 d58.865 d-7.701 d70.238"
+          orientation="ypr d45.0 d0.0 d0.0"
+          distance="7.4">
+        <Geometry USE="GEOMETRY"/>
+        <Multiplexer USE="MUX"/>
+      </SpatialPlanarView>
+    </if>
+
+    <if variable="COMPUTERNAME" value="BRAVO-03">
+      <!--FOV left="55.82" right="55.82" up="74.10" down="-7.70" /-->
+      <!--Orientation heading="135.0" pitch="0.0" roll="0.0" /-->
+      <SpatialPlanarView
+          clipAngles="d58.865 d58.865 d-7.701 d70.238"
+          orientation="ypr d135.0 d0.0 d0.0"
+          distance="7.4">
+        <Geometry USE="GEOMETRY"/>
+        <Multiplexer USE="MUX"/>
+      </SpatialPlanarView>
+    </if>
+
+    <if variable="COMPUTERNAME" value="BRAVO-04">
+      <!--FOV left="55.82" right="55.82" up="74.10" down="-7.70" /-->
+      <!--Orientation heading="-135.0" pitch="0.0" roll="0.0" /-->
+      <SpatialPlanarView
+          clipAngles="d58.865 d58.865 d-7.701 d70.238"
+          orientation="ypr d-135.0 d0.0 d0.0"
+          distance="7.4">
+        <Geometry USE="GEOMETRY"/>
+        <Multiplexer USE="MUX"/>
+      </SpatialPlanarView>
+    </if>
+
+    <if variable="COMPUTERNAME" value="BRAVO-05">
+      <!--FOV left="57.05" right="57.05" up="65.31" down="6.50" /-->
+      <!--Orientation heading="57.0" pitch="49.5" roll="0.0" /-->
+      <SpatialPlanarView
+          clipAngles="d58.992 d58.992 d11.608 d55.336"
+          orientation="ypr d57.0 d48.0 d0.0"
+          distance="7.4">
+        <Geometry USE="GEOMETRY"/>
+        <Multiplexer USE="MUX"/>
+      </SpatialPlanarView>
+    </if>
+
+    <if variable="COMPUTERNAME" value="BRAVO-06">
+      <!--FOV left="57.05" right="57.05" up="65.31" down="6.50" /-->
+      <!--Orientation heading="-123.0" pitch="49.5" roll="0.0" /-->
+      <SpatialPlanarView
+          clipAngles="d58.992 d58.992 d11.608 d55.336"
+          orientation="ypr d-123.0 d48.0 d0.0"
+          distance="7.4">
+        <Geometry USE="GEOMETRY"/>
+        <Multiplexer USE="MUX"/>
+      </SpatialPlanarView>
+    </if>
+
+  </SdlWindow>
+</config>
