@@ -73,7 +73,7 @@ public:
 
 private:
 
-  class Impl;
+  struct Impl;
   Impl * _impl;
 
 };

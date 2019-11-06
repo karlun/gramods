@@ -88,7 +88,7 @@ public:
 
 private:
 
-  class Impl;
+  struct Impl;
   std::unique_ptr<Impl> _impl;
 
 };
