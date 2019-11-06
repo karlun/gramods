@@ -8,7 +8,7 @@
 BEGIN_NAMESPACE_GMGRAPHICS;
 
 GM_OFI_DEFINE_SUB(PosedPlanarView, View);
-GM_OFI_PARAM(PosedPlanarView, fieldOfView, gmTypes::float2, PosedPlanarView::setFieldOfView);
+GM_OFI_PARAM(PosedPlanarView, fieldOfView, gmTypes::angle2, PosedPlanarView::setFieldOfView);
 
 void PosedPlanarView::renderFullPipeline(ViewSettings settings) {
 

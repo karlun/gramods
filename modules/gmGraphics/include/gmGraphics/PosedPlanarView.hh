@@ -2,7 +2,7 @@
 #ifndef GRAMODS_GRAPHICS_POSEDPLANARVIEW
 #define GRAMODS_GRAPHICS_POSEDPLANARVIEW
 
-#include <gmTypes/float.hh>
+#include <gmTypes/angle.hh>
 #include <gmGraphics/View.hh>
 
 BEGIN_NAMESPACE_GMGRAPHICS;
@@ -26,7 +26,7 @@ public:
 
      \b XML-attribute: \c fieldOfView
   */
-  void setFieldOfView(gmTypes::float2 fov) {
+  void setFieldOfView(gmTypes::angle2 fov) {
     field_of_view = fov;
   }
 
@@ -34,7 +34,7 @@ public:
 
 private:
 
-  gmTypes::float2 field_of_view = { 1, -1 };
+  gmTypes::angle2 field_of_view = { 1, -1 };
 
 };
 
