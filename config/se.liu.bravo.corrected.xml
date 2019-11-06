@@ -12,7 +12,6 @@
       inside="true"/>
 
   <QuadBufferMultiplexer DEF="MUX"/>
-  <!--InterlaceMultiplexer DEF="MUX"/-->
 
   <SdlWindow
       fullscreen="true"
@@ -23,7 +22,7 @@
     <SphereRenderer
         radius="10">
       <AngularFisheyeCoordinatesMapper
-          coverageAngle="6.2832"/>
+          coverageAngle="d360"/>
       <ImageTexture
           file="share/gmGraphics/resources/fulldome360-coordinates.png"/>
     </SphereRenderer>
@@ -32,7 +31,12 @@
         position="0 0 0"/>
 
     <if variable="COMPUTERNAME" value="BRAVO-00">
-    <!-- MASTER -->
+      <SpatialSphericalView
+          makeSquare="true"
+          radius="7.4">
+        <AngularFisheyeCoordinatesMapper
+            coverageAngle="d165"/>
+      </SpatialSphericalView>
     </if>
 
     <if variable="COMPUTERNAME" value="BRAVO-01">
