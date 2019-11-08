@@ -15,6 +15,7 @@
 
   <SdlWindow
       fullscreen="true"
+      useQuadBuffers="true"
       GLMajor="3" GLMinor="3" GLProfile="core">
 
     <SdlContext useVideo="true"/>
