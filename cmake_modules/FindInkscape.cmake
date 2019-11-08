@@ -17,6 +17,7 @@ find_program(Inkscape_EXECUTABLE
 function (convert_svg_to_png arg1 arg2)
   ADD_CUSTOM_COMMAND(
     OUTPUT ${arg2}
+    DEPENDS ${arg1}
     COMMAND ${Inkscape_EXECUTABLE} --export-area-page --export-png=${arg2} ${arg1}
     )
 endfunction()
