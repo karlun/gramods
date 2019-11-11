@@ -84,7 +84,7 @@ ENDIF(FreeImage_FOUND)
 FIND_PACKAGE(Inkscape)
 IF(Inkscape_FOUND)
 
-  SET (PNG_RESOURCE_TARGETS CACHE INTERNAL "The list of png resources that can be built.")
+  SET (SVGPNG_RESOURCE_TARGETS CACHE INTERNAL "The list of png resources that can be built from svg.")
 
   FILE(GLOB_RECURSE SVG_RESOURCES ${CMAKE_CURRENT_SOURCE_DIR}/resources/*.svg)
   SOURCE_GROUP("svg-resources" FILES ${SVG_RESOURCES})
@@ -93,21 +93,50 @@ IF(Inkscape_FOUND)
     STRING(REGEX REPLACE
       "${CMAKE_CURRENT_SOURCE_DIR}/(.*)\\.svg$"
       "${CMAKE_CURRENT_BINARY_DIR}/\\1.png"
-      PNG_RESOURCE ${RESOURCE})
-    convert_svg_to_png(${RESOURCE} ${PNG_RESOURCE})
-    LIST (APPEND PNG_RESOURCE_TARGETS ${PNG_RESOURCE})
+      SVGPNG_RESOURCE ${RESOURCE})
+    convert_svg_to_png(${RESOURCE} ${SVGPNG_RESOURCE})
+    LIST (APPEND SVGPNG_RESOURCE_TARGETS ${SVGPNG_RESOURCE})
   ENDFOREACH()
 
   add_custom_target(svg-resources
     ALL
-    DEPENDS ${PNG_RESOURCE_TARGETS})
-  INSTALL(FILES ${PNG_RESOURCE_TARGETS}
+    DEPENDS ${SVGPNG_RESOURCE_TARGETS})
+  INSTALL(FILES ${SVGPNG_RESOURCE_TARGETS}
     DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/gmGraphics/resources)
 
   MESSAGE (STATUS "Added 'svg-resources' target for converting SVG resources to PNG.")
 ELSE()
   MESSAGE (STATUS "Not including 'svg-resources' target - requires Inkscape")
 ENDIF()
+
+FIND_PACKAGE(GimpConsole)
+IF(GimpConsole_FOUND)
+
+  SET (PYPNG_RESOURCE_TARGETS CACHE INTERNAL "The list of png resources that can be built with gimp python-fu.")
+
+  FILE(GLOB_RECURSE PY_RESOURCES ${CMAKE_CURRENT_SOURCE_DIR}/resources/*.py)
+  SOURCE_GROUP("python-fu-resources" FILES ${PY_RESOURCES})
+
+  FOREACH (RESOURCE ${PY_RESOURCES})
+    STRING(REGEX REPLACE
+      "${CMAKE_CURRENT_SOURCE_DIR}/(.*)\\.py$"
+      "${CMAKE_CURRENT_BINARY_DIR}/\\1.png"
+      PNG_RESOURCE ${RESOURCE})
+    gimp_build_image(${RESOURCE} ${PNG_RESOURCE})
+    LIST (APPEND PYPNG_RESOURCE_TARGETS ${PNG_RESOURCE})
+  ENDFOREACH()
+
+  add_custom_target(python-fu-resources
+    ALL
+    DEPENDS ${PYPNG_RESOURCE_TARGETS})
+  INSTALL(FILES ${PYPNG_RESOURCE_TARGETS}
+    DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/gmGraphics/resources)
+
+  MESSAGE (STATUS "Added 'python-fu-resources' target for creating PNG with gimp python-fu.")
+ELSE()
+  MESSAGE (STATUS "Not including 'python-fu-resources' target - requires gimp-console")
+ENDIF()
+
 
 CONFIGURE_FILE(
   ${CMAKE_CURRENT_SOURCE_DIR}/include/gmGraphics/config_cmake.hh
