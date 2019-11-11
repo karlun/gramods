@@ -99,7 +99,7 @@ IF(Inkscape_FOUND)
   ENDFOREACH()
 
   add_custom_target(svg-resources
-    ALL
+    ${RESOURCE_ALL}
     DEPENDS ${SVGPNG_RESOURCE_TARGETS})
   INSTALL(FILES ${SVGPNG_RESOURCE_TARGETS}
     DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/gmGraphics/resources)
@@ -127,7 +127,7 @@ IF(GimpConsole_FOUND)
   ENDFOREACH()
 
   add_custom_target(python-fu-resources
-    ALL
+    ${RESOURCE_ALL}
     DEPENDS ${PYPNG_RESOURCE_TARGETS})
   INSTALL(FILES ${PYPNG_RESOURCE_TARGETS}
     DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/gmGraphics/resources)

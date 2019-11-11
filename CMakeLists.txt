@@ -16,6 +16,15 @@ MACRO(SUBDIRLIST result curdir)
   SET(${result} ${dirlist})
 ENDMACRO()
 
+# --- GENERAL OPTIONS ---
+
+OPTION(gramods_BUILD_RESOURCES "Include building resources in the ALL target." ON)
+IF (gramods_BUILD_RESOURCES)
+  SET(RESOURCE_ALL "ALL" CACHE INTERNAL "The keyword 'ALL' for all resource targets")
+ELSE()
+  SET(RESOURCE_ALL "" CACHE INTERNAL "The keyword 'ALL' omitted for all resource targets")
+ENDIF()
+
 # --- HANDLE MODULES ---
 
 SUBDIRLIST(gramods_MODULES ${gramods_SOURCE_DIR}/modules)
@@ -101,11 +110,11 @@ IF (DOXYGEN_FOUND)
   FIND_PACKAGE(PlantUML)
   FIND_PACKAGE(Python3)
 
-  OPTION(gramods_DOCS_IN_ALL "Include building documentation in the ALL target." ON)
-  IF (gramods_DOCS_IN_ALL)
-    SET(gramods_DOCS_ALL "ALL")
+  OPTION(gramods_BUILD_DOCUMENTATION "Include building documentation in the ALL target." ON)
+  IF (gramods_BUILD_DOCUMENTATION)
+    SET(DOCUMENTATION_ALL "ALL" CACHE INTERNAL "The keyword 'ALL' for all documentation targets")
   ELSE()
-    SET(gramods_DOCS_ALL "")
+    SET(DOCUMENTATION_ALL "" CACHE INTERNAL "The keyword 'ALL' omitted for all documentation targets")
   ENDIF()
 
   CONFIGURE_FILE (
