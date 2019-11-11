@@ -1,7 +1,7 @@
 <config>
 
-  <OStreamMessageSink stream="err" useAnsiColor="1" level="5"/>
-  <LogFileMessageSink logFilePath="gramods.log" append="false"/>
+  <OStreamMessageSink stream="err" useAnsiColor="1" level="1"/>
+  <!--LogFileMessageSink logFilePath="gramods.log" append="false"/-->
 
   <ImportLibrary library="gmGraphics"/>
 
@@ -21,11 +21,19 @@
     <SdlContext useVideo="true"/>
 
     <SphereRenderer
+        radius="11">
+      <AngularFisheyeCoordinatesMapper
+          coverageAngle="d180"/>
+      <ImageTexture
+          file="share/gmGraphics/resources/color_cubes_texture.png"/>
+    </SphereRenderer>
+
+    <SphereRenderer
         radius="10">
       <AngularFisheyeCoordinatesMapper
-          coverageAngle="d360"/>
+          coverageAngle="d180"/>
       <ImageTexture
-          file="share/gmGraphics/resources/fulldome360-coordinates.png"/>
+          file="share/gmGraphics/resources/fulldome180-coordinates.png"/>
     </SphereRenderer>
 
     <Viewpoint
