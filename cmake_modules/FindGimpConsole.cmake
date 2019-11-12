@@ -20,7 +20,7 @@ function (gimp_build_image script filename)
   ADD_CUSTOM_COMMAND(
     OUTPUT ${filename}
     DEPENDS ${script}
-    COMMAND ${GimpConsole_EXECUTABLE} -idf --batch-interpreter python-fu-eval -b "import sys; sys.path=['${script_path}']+sys.path; import color_cubes_texture; ${script_name}.run(output='${filename}')" -b "pdb.gimp_quit(1)" VERBATIM
+    COMMAND ${GimpConsole_EXECUTABLE} -idf --batch-interpreter python-fu-eval -b "import sys; sys.dont_write_bytecode = True; sys.path = ['${script_path}'] + sys.path; import color_cubes_texture; ${script_name}.run(output='${filename}')" -b "pdb.gimp_quit(1)" VERBATIM
     )
 endfunction()
 
