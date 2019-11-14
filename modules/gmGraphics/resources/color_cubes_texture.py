@@ -43,7 +43,7 @@ def run(size, output):
                                    0.0, 0.0, 1.0)
 
   final_layer = image.flatten()
-  pdb.plug_in_cubism(image, final_layer, 16, 1.6, 0)
+  pdb.plug_in_cubism(image, final_layer, size/128.0, 1.6, 0)
 
   pdb.gimp_file_save(image, final_layer, output, '?')
   pdb.gimp_image_delete(image)
