@@ -117,12 +117,14 @@ IF(GimpConsole_FOUND)
   FILE(GLOB_RECURSE PY_RESOURCES ${CMAKE_CURRENT_SOURCE_DIR}/resources/*.py)
   SOURCE_GROUP("python-fu-resources" FILES ${PY_RESOURCES})
 
+  SET(gramods_PNG_RESOURCE_SIZE 4096 CACHE STRING "The width of generated image resources, in pixels.")
+
   FOREACH (RESOURCE ${PY_RESOURCES})
     STRING(REGEX REPLACE
       "${CMAKE_CURRENT_SOURCE_DIR}/(.*)\\.py$"
       "${CMAKE_CURRENT_BINARY_DIR}/\\1.png"
       PNG_RESOURCE ${RESOURCE})
-    gimp_build_image(${RESOURCE} ${PNG_RESOURCE})
+    gimp_build_image(${RESOURCE} ${PNG_RESOURCE} ${gramods_PNG_RESOURCE_SIZE})
     LIST (APPEND PYPNG_RESOURCE_TARGETS ${PNG_RESOURCE})
   ENDFOREACH()
 

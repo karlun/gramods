@@ -2,16 +2,15 @@
 # -*- coding: utf-8 -*-
 
 # Script for Gimp - run with:
-# gimp -idf --batch-interpreter python-fu-eval -b "import sys; sys.path=['.']+sys.path; import color_cubes_texture; color_cubes_texture.run()" -b "pdb.gimp_quit(1)"
+# gimp -idf --batch-interpreter python-fu-eval -b "import sys; sys.path=['.']+sys.path; import color_cubes_texture; color_cubes_texture.run(size = 4096, output = 'color_cubes_texture.png')" -b "pdb.gimp_quit(1)"
 
 import os, glob, sys, time
 from gimpfu import *
 
-def run(output):
+def run(size, output):
 
   gimp.set_background((0, 0, 0))
 
-  size = 4096
   image = gimp.Image(size, size, RGB)
 
   background = gimp.Layer(image, "background", size, size,

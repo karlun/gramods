@@ -14,13 +14,13 @@ find_program(GimpConsole_EXECUTABLE
   C:/Program Files/
   )
 
-function (gimp_build_image script filename)
+function (gimp_build_image script filename size)
   GET_FILENAME_COMPONENT(script_path ${script} DIRECTORY)
   GET_FILENAME_COMPONENT(script_name ${script} NAME_WE)
   ADD_CUSTOM_COMMAND(
     OUTPUT ${filename}
     DEPENDS ${script}
-    COMMAND ${GimpConsole_EXECUTABLE} -idf --batch-interpreter python-fu-eval -b "import sys; sys.dont_write_bytecode = True; sys.path = ['${script_path}'] + sys.path; import ${script_name}; ${script_name}.run(output='${filename}')" -b "pdb.gimp_quit(1)" VERBATIM
+    COMMAND ${GimpConsole_EXECUTABLE} -idf --batch-interpreter python-fu-eval -b "import sys; sys.dont_write_bytecode = True; sys.path = ['${script_path}'] + sys.path; import ${script_name}; ${script_name}.run(size = ${size}, output='${filename}')" -b "pdb.gimp_quit(1)" VERBATIM
     )
 endfunction()
 
