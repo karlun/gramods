@@ -9,17 +9,17 @@ BEGIN_NAMESPACE_GMTRACK;
 
 
 GM_OFI_DEFINE(Controller);
-GM_OFI_POINTER(Controller, poseTracker, SinglePoseTracker, Controller::setPoseTracker);
+GM_OFI_POINTER(Controller, singlePoseTracker, SinglePoseTracker, Controller::setSinglePoseTracker);
 GM_OFI_POINTER(Controller, buttonsTracker, ButtonsTracker, Controller::setButtonsTracker);
 GM_OFI_POINTER(Controller, analogsTracker, AnalogsTracker, Controller::setAnalogsTracker);
 
 
 bool Controller::getPose(SinglePoseTracker::PoseSample &p) {
-  if (!pose_tracker) {
+  if (!single_pose_tracker) {
     GM_RUNONCE(GM_WRN("Controller", "Pose requested by no pose tracker available."));
     return false;
   }
-  return pose_tracker->getPose(p);
+  return single_pose_tracker->getPose(p);
 }
 
 bool Controller::getButtons(ButtonsTracker::ButtonsSample &b) {
@@ -38,8 +38,8 @@ bool Controller::getAnalogs(AnalogsTracker::AnalogsSample &a) {
   return analogs_tracker->getAnalogs(a);
 }
 
-void Controller::setPoseTracker(std::shared_ptr<SinglePoseTracker> spt) {
-  pose_tracker = spt;
+void Controller::setSinglePoseTracker(std::shared_ptr<SinglePoseTracker> spt) {
+  single_pose_tracker = spt;
 }
 
 void Controller::setButtonsTracker(std::shared_ptr<ButtonsTracker> bt) {

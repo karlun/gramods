@@ -10,7 +10,7 @@
 BEGIN_NAMESPACE_GMTRACK;
 
 GM_OFI_DEFINE(OffsetSinglePoseTracker);
-GM_OFI_POINTER(OffsetSinglePoseTracker, poseTracker, SinglePoseTracker, OffsetSinglePoseTracker::setPoseTracker);
+GM_OFI_POINTER(OffsetSinglePoseTracker, singlePoseTracker, SinglePoseTracker, OffsetSinglePoseTracker::setSinglePoseTracker);
 GM_OFI_PARAM(OffsetSinglePoseTracker, positionOffset, Eigen::Vector3f, OffsetSinglePoseTracker::setPositionOffset);
 GM_OFI_PARAM(OffsetSinglePoseTracker, orientationOffset, Eigen::Quaternionf, OffsetSinglePoseTracker::setOrientationOffset);
 

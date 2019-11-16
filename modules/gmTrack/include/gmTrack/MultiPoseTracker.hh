@@ -17,9 +17,15 @@ class MultiPoseTracker
 public:
 
   /**
-     Replaces the contents of p with pose data. Returns true if data
-     could be read, false otherwise. Use sample time to check if data
-     are fresh.
+     Returns the default key, in Configuration, for the
+     Object. Returns multiPoseTracker.
+  */
+  virtual std::string getDefaultKey() { return "multiPoseTracker"; }
+
+  /**
+     Adds or updates pose data in the specified map. Returns true if
+     data could be read, false otherwise. Use sample time to check if
+     data of a specific sensor are fresh.
   */
   virtual bool getPose(std::map<int, PoseSample> &p) = 0;
 

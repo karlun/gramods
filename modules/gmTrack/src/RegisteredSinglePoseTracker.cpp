@@ -10,7 +10,7 @@
 BEGIN_NAMESPACE_GMTRACK;
 
 GM_OFI_DEFINE(RegisteredSinglePoseTracker);
-GM_OFI_POINTER(RegisteredSinglePoseTracker, poseTracker, SinglePoseTracker, RegisteredSinglePoseTracker::setPoseTracker);
+GM_OFI_POINTER(RegisteredSinglePoseTracker, singlePoseTracker, SinglePoseTracker, RegisteredSinglePoseTracker::setSinglePoseTracker);
 GM_OFI_PARAM(RegisteredSinglePoseTracker, registrationMatrix, Eigen::Matrix4f, RegisteredSinglePoseTracker::setRegistrationMatrix);
 
 

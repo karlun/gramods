@@ -19,7 +19,7 @@ public:
   /**
      Sets the SinglePoseTracker to register data from.
   */
-  void setPoseTracker(std::shared_ptr<SinglePoseTracker> tracker) {
+  void setSinglePoseTracker(std::shared_ptr<SinglePoseTracker> tracker) {
     this->tracker = tracker;
   }
 

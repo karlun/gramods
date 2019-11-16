@@ -16,12 +16,6 @@ BEGIN_NAMESPACE_GMTRACK;
 class PoseTracker
   : public gmCore::Object {
 
-  /**
-     Returns the default key, in Configuration, for the
-     Object.
-  */
-  virtual std::string getDefaultKey() { return "poseTracker"; }
-
 public:
 
   typedef std::chrono::steady_clock clock;

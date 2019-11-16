@@ -48,12 +48,11 @@ public:
   bool getAnalogs(AnalogsTracker::AnalogsSample &a);
 
   /**
-     Sets the pose tracker associated with this controller. This is
-     associated with the attribute poseTracker in configuration data.
+     Sets the pose tracker associated with this controller.
 
-     \b XML-key: \c poseTracker
+     \b XML-key: \c singlePoseTracker
   */
-  void setPoseTracker(std::shared_ptr<SinglePoseTracker> spt);
+  void setSinglePoseTracker(std::shared_ptr<SinglePoseTracker> spt);
 
   /**
      Sets the buttons tracker associated with this controller. This is
@@ -83,7 +82,7 @@ public:
 
 private:
 
-  std::shared_ptr<SinglePoseTracker> pose_tracker;
+  std::shared_ptr<SinglePoseTracker> single_pose_tracker;
 
   std::shared_ptr<ButtonsTracker> buttons_tracker;
 

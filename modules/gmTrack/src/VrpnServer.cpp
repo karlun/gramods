@@ -19,7 +19,8 @@ GM_OFI_PARAM(VrpnServer, port, int, VrpnServer::setPort);
 GM_OFI_PARAM(VrpnServer, trackerName, std::string, VrpnServer::addTrackerName);
 GM_OFI_POINTER(VrpnServer, analogsTracker, AnalogsTracker, VrpnServer::addAnalogsTracker);
 GM_OFI_POINTER(VrpnServer, buttonsTracker, ButtonsTracker, VrpnServer::addButtonsTracker);
-GM_OFI_POINTER(VrpnServer, poseTracker, PoseTracker, VrpnServer::addPoseTracker);
+GM_OFI_POINTER(VrpnServer, multiPoseTracker, MultiPoseTracker, VrpnServer::addMultiPoseTracker);
+GM_OFI_POINTER(VrpnServer, singlePoseTracker, SinglePoseTracker, VrpnServer::addSinglePoseTracker);
 
 #define ANALOG_IDX      0
 #define BUTTON_IDX      1
@@ -245,24 +246,16 @@ void VrpnServer::addButtonsTracker(std::shared_ptr<ButtonsTracker> t) {
   _impl->buttons_trackers.push_back(t);
 }
 
-void VrpnServer::addPoseTracker(std::shared_ptr<PoseTracker> t) {
-  if (isInitialized()) throw std::logic_error("Add PoseTracker after initialization");
+void VrpnServer::addMultiPoseTracker(std::shared_ptr<MultiPoseTracker> t) {
+  if (isInitialized()) throw std::logic_error("Add MultiPoseTracker after initialization");
+  _impl->name_map.push_back(MULTI_POSE_IDX);
+  _impl->multi_pose_trackers.push_back(t);
+}
 
-  auto multi = std::dynamic_pointer_cast<MultiPoseTracker>(t);
-  if (multi) {
-    _impl->name_map.push_back(MULTI_POSE_IDX);
-    _impl->multi_pose_trackers.push_back(multi);
-    return;
-  }
-
-  auto single = std::dynamic_pointer_cast<SinglePoseTracker>(t);
-  if (single) {
-    _impl->name_map.push_back(SINGLE_POSE_IDX);
-    _impl->single_pose_trackers.push_back(single);
-    return;
-  }
-
-  throw std::invalid_argument("PoseTracker of unknown type - MultiPoseTracker and SinglePoseTracker supported");
+void VrpnServer::addSinglePoseTracker(std::shared_ptr<SinglePoseTracker> t) {
+  if (isInitialized()) throw std::logic_error("Add SinglePoseTracker after initialization");
+  _impl->name_map.push_back(SINGLE_POSE_IDX);
+  _impl->single_pose_trackers.push_back(t);
 }
 
 END_NAMESPACE_GMTRACK;

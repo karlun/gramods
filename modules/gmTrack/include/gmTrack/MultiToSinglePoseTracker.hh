@@ -20,7 +20,7 @@ public:
   /**
      Sets the MultiPoseTracker to extract a single sensor data from.
   */
-  void setPoseTracker(std::shared_ptr<MultiPoseTracker> tracker) {
+  void setMultiPoseTracker(std::shared_ptr<MultiPoseTracker> tracker) {
     this->tracker = tracker;
   }
 

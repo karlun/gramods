@@ -38,7 +38,7 @@ TEST(gmTrackBaseEstimation, FullSamplesByInverse) {
     ts_pose_tracker->initialize();
 
     auto controller = std::make_shared<gmTrack::Controller>();
-    controller->setPoseTracker(ts_pose_tracker);
+    controller->setSinglePoseTracker(ts_pose_tracker);
     controller->setButtonsTracker(ts_buttons_tracker);
     controller->initialize();
 
@@ -119,7 +119,7 @@ TEST(gmTrackBaseEstimation, OverDeterminedSamplesByQR) {
     ts_pose_tracker->initialize();
 
     auto controller = std::make_shared<gmTrack::Controller>();
-    controller->setPoseTracker(ts_pose_tracker);
+    controller->setSinglePoseTracker(ts_pose_tracker);
     controller->setButtonsTracker(ts_buttons_tracker);
     controller->initialize();
 

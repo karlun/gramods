@@ -12,7 +12,8 @@
 
 #include <gmTrack/AnalogsTracker.hh>
 #include <gmTrack/ButtonsTracker.hh>
-#include <gmTrack/PoseTracker.hh>
+#include <gmTrack/MultiPoseTracker.hh>
+#include <gmTrack/SinglePoseTracker.hh>
 
 BEGIN_NAMESPACE_GMTRACK;
 
@@ -71,10 +72,16 @@ public:
   void addButtonsTracker(std::shared_ptr<ButtonsTracker> t);
 
   /**
-     Add a PoseTracker to serve from this VRPN server. There must be
+     Add a MultiPoseTracker to serve from this VRPN server. There must be
      exactly one name for each tracker served.
   */
-  void addPoseTracker(std::shared_ptr<PoseTracker> t);
+  void addMultiPoseTracker(std::shared_ptr<MultiPoseTracker> t);
+
+  /**
+     Add a SinglePoseTracker to serve from this VRPN server. There must be
+     exactly one name for each tracker served.
+  */
+  void addSinglePoseTracker(std::shared_ptr<SinglePoseTracker> t);
 
   GM_OFI_DECLARE;
 

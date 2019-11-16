@@ -15,6 +15,12 @@ class SinglePoseTracker
 public:
 
   /**
+     Returns the default key, in Configuration, for the
+     Object. Returns singlePoseTracker.
+  */
+  virtual std::string getDefaultKey() { return "singlePoseTracker"; }
+
+  /**
      Replaces the contents of p with pose data. Returns true if data
      could be read, false otherwise. Use sample time to check if data
      are fresh.

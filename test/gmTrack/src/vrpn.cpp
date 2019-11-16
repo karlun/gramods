@@ -121,7 +121,7 @@ TEST(gmTrackVrpn, VrpnPoseTrackerConfigurationAndMultiToSinglePoseTracker) {
       vrpn_tracker->initialize();
 
       auto m2s_tracker = std::make_shared<gmTrack::MultiToSinglePoseTracker>();
-      m2s_tracker->setPoseTracker(vrpn_tracker);
+      m2s_tracker->setMultiPoseTracker(vrpn_tracker);
       m2s_tracker->setSensor(0);
       m2s_tracker->initialize();
 
