@@ -1,0 +1,129 @@
+<?xml version="1.0" ?>
+<!--
+
+SGCT configuration template for two step calibration of the head and
+wand tracking relative the screen in the Vortex system at LiU.
+
+(double-dash replaced with single dash, because of XML syntax)
+
+Calibration of helmet mounted tracker:
+
+gm-tracker-registration
+  -output-file output.xml
+  -output-template share/config/se.liu.vortex.sgct-calibration-template.xml
+  -config share/config/se.liu.G524.calibration-tracker-relative.xml
+  -point -0.05,0,0
+  -point +0.05,0,0
+  -point 0,-0.12,0
+
+Subsequent calibration of room coordinates:
+
+gm-tracker-registration
+  -output-file share/config/se.liu.vortex.sgct-calibration.xml
+  -output-template output.xml
+  -config share/config/se.liu.G524.calibration-tracker.xml
+  -point -0.68,-0.375,-0.5
+  -point -0.68,+0.375,-0.5
+  -point +0.68,+0.375,-0.5
+  -point +0.68,-0.375,-0.5
+
+-->
+<Cluster masterAddress="127.0.0.1">
+
+  <Node address="127.0.0.1" port="20401">
+    <Window fullscreen="true" border="false" monitor="1" numberOfSamples="4">
+      <Stereo type="side_by_side" />
+      <Pos x="0" y="0" />
+      <Size x="1920" y="1080" />
+      <Viewport tracked="true">
+        <Pos x="0.0" y="0.0" />
+        <Size x="1.0" y="1.0" />
+        <Viewplane>
+          Bottom left: -0.68 -0.375 -0.50
+          <Pos x="-0.68" y="-0.375" z="-0.5" />
+          <Pos x="-0.68" y=" 0.375" z="-0.5" />
+          <Pos x=" 0.68" y=" 0.375" z="-0.5" />
+        </Viewplane>
+      </Viewport>
+    </Window>
+  </Node>
+
+  <Node address="127.0.0.2" port="20402">
+    <Window fullscreen="false">
+      <Stereo type="none" />
+      <Pos x="0" y="0" />
+      <Size x="1024" y="1024" />
+      <Viewport user="topUser"><!-- Top View -->
+        <Pos  x="0.0" y="0.5" />
+        <Size x="0.5" y="0.5" />
+        <Viewplane>
+          <Pos x="-1.0" y=" 0.0" z=" 1.0" /><!-- Lower left -->
+          <Pos x="-1.0" y=" 0.0" z="-1.0" /><!-- Upper left -->
+          <Pos x=" 1.0" y=" 0.0" z="-1.0" /><!-- Upper right -->
+        </Viewplane>
+      </Viewport>
+      <Viewport user="frontUser"><!-- Front View -->
+        <Pos  x="0.0" y="0.0" />
+        <Size x="0.5" y="0.5" />
+        <Viewplane>
+          <Pos x="-1.0" y="-1.0" z=" 0.0" /><!-- Lower left -->
+          <Pos x="-1.0" y=" 1.0" z=" 0.0" /><!-- Upper left -->
+          <Pos x=" 1.0" y=" 1.0" z=" 0.0" /><!-- Upper right -->
+        </Viewplane>
+      </Viewport>
+      <Viewport user="rightUser"><!-- Right View -->
+        <Pos  x="0.5" y="0.0" />
+        <Size x="0.5" y="0.5" />
+        <Viewplane>
+          <Pos x=" 0.0" y="-1.0" z=" 1.0" /><!-- Lower left -->
+          <Pos x=" 0.0" y=" 1.0" z=" 1.0" /><!-- Upper left -->
+          <Pos x=" 0.0" y=" 1.0" z="-1.0" /><!-- Upper right -->
+        </Viewplane>
+      </Viewport>
+    </Window>
+  </Node>
+
+  <User eyeSeparation="0.060">
+    <Pos x="0.0" y="0.0" z="1.0" />
+    <Tracking tracker="Vive-Head" device="Head" />
+  </User>
+  <User name="topUser">
+    <Pos x="0.0" y="2.0" z="0.0" />
+  </User>
+  <User name="frontUser">
+    <Pos x="0.0" y="0.0" z="2.0" />
+  </User>
+  <User name="rightUser">
+    <Pos x="2.0" y="0.0" z="0.0" />
+  </User>
+
+  <Tracker name="Vive-Wand">
+    <Device name="Wand">
+      <Sensor id="0" vrpnAddress="openvr/device/LHR-FFAF7B46@itn-vrhmd-01.ad.liu.se" />
+      <Buttons count="34" vrpnAddress="openvr/device/LHR-FFAF7B46@itn-vrhmd-01.ad.liu.se" />
+      <Axes count="3" vrpnAddress="openvr/device/LHR-FFAF7B46@itn-vrhmd-01.ad.liu.se" />
+    </Device>
+    <Matrix transpose="false"
+            x0="%%M0x" x1="%%M1x" x2="%%M2x" x3="%%M3x"
+            y0="%%M0y" y1="%%M1y" y2="%%M2y" y3="%%M3y"
+            z0="%%M0z" z1="%%M1z" z2="%%M2z" z3="%%M3z"
+            w0="0"    w1="0"    w2="0"    w3="1" />
+  </Tracker>
+
+  <Tracker name="Vive-Head">
+    <Device name="Head">
+      <Sensor id="0" vrpnAddress="openvr/device/LHR-1BDC55AF@itn-vrhmd-01.ad.liu.se" />
+      <Matrix transpose="false"
+              x0="%Mi0x" x1="%Mi1x" x2="%Mi2x" x3="%Mi3x"
+              y0="%Mi0y" y1="%Mi1y" y2="%Mi2y" y3="%Mi3y"
+              z0="%Mi0z" z1="%Mi1z" z2="%Mi2z" z3="%Mi3z"
+              w0="0"    w1="0"    w2="0"    w3="1" />
+    </Device>
+    <Matrix transpose="false"
+            x0="%%M0x" x1="%%M1x" x2="%%M2x" x3="%%M3x"
+            y0="%%M0y" y1="%%M1y" y2="%%M2y" y3="%%M3y"
+            z0="%%M0z" z1="%%M1z" z2="%%M2z" z3="%%M3z"
+            w0="0"    w1="0"    w2="0"    w3="1" />
+  </Tracker>
+
+</Cluster>
