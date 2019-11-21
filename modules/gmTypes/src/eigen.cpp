@@ -146,6 +146,7 @@ std::istream& operator>> (std::istream &in, Eigen::Matrix4f &m) {
       a5, a6, a7, a8,
       a9, a10, a11, a12,
       0.f, 0.f, 0.f, 1.f;
+    in.clear();
     return in;
   }
 
