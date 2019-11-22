@@ -31,8 +31,6 @@ void VrpnButtonsTracker::update(gmCore::Updateable::clock::time_point) {
     return;
   }
 
-  latest_sample.buttons.clear();
-
   do {
     got_data = false;
     tracker->mainloop();
