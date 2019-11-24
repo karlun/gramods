@@ -214,11 +214,11 @@ void Configuration::load(tinyxml2::XMLNode *node) {
       std::string param_path = node_path + "." + param_name;
       GM_INF("Configuration", "Checking parameter override for " << param_path);
 
+      std::vector<std::string> values;
+      node_conf.getAllParams(param_name, values);
+
       if (parameter_overrides->find(param_path) ==
           parameter_overrides->end()) {
-
-        std::vector<std::string> values;
-        node_conf.getAllParams(param_name, values);
 
         for (std::string value : values) {
           GM_INF("Configuration", name << " -> " <<
