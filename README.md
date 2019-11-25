@@ -115,10 +115,18 @@ component gmCore
 component gmNetwork
 component gmTrack
 component gmGraphics
+component gmTypes
+component gmMisc
+component gmTouch
 gmCore <-- gmNetwork
 gmCore <- gmGraphics
-gmCore <- gmTrack
+gmCore <-- gmTrack
+gmTypes <- gmTrack
+gmCore <-- gmTouch
+gmMisc <-- gmTouch
 gmTrack <-- gmGraphics
+gmTypes <-- gmGraphics
+gmCore <- gmTypes
 @enduml
 
 
@@ -126,9 +134,10 @@ gmTrack <-- gmGraphics
 
 The gmCore module specifies utilities for loading other modules and configure them based on configuration files, for handling library and application error, warning and debugging output, and possibly also for initialization of third party libraries that may be used by other modules.
 
-Required dependencies:
+Optional dependencies:
 
- - TinyXML2
+ - TinyXML2, for XML-based configuration
+ - SDL2, for initialization of the SDL2 library
 
 
 ### Module Program Design Principles
@@ -142,7 +151,7 @@ A Simple example of how configuration works:
 struct MyClass : gramods::gmCore::Object {
   int parameter;
   void setParameter(int value) { parameter = value; }
-  GM_OFI_DECLARE(MyClass);
+  GM_OFI_DECLARE;
 };
 
 /// Typically in c++ file (myclass.cpp)
@@ -162,7 +171,7 @@ and the `parameter` value can be overridden by command line `--param MyClass.par
 
 ~~~~~~~~~~~~~{.cpp}
 int main(int argc, char *argv[]) {
-  gmCore::Configuration config(argc, argv);
+  gramods::gmCore::Configuration config(argc, argv);
 
   std::shared_ptr<MyClass> node;
   config.getObject(node);
@@ -222,10 +231,14 @@ Required dependences:
 
  - Eigen3 (at least version 3.3)
  - GLEW
+ - OpenGL
 
 Optional dependencies:
 
  - SDL2, for SDL-based window
+ - FreeImage, for reading and writing images
+ - Gimp, for generating textures using Python-fu
+ - Inkscape, for generating textures from SVG
  - libuvc, for UVC support, reading image data from video class USB devices.
 
 
@@ -304,4 +317,8 @@ Optional dependencies:
 
 ## gmTypes
 
-Special types and operators for use in the other modules. In particular, this module defines stream operator for advanced parsing of types such as Eigen::Quaternionf for orientation, and float and size_t array types.
+The gmTypes modules provides types and operators for use in the other modules. In particular, this module defines stream operator for advanced parsing of types such as Eigen::Quaternionf for orientation, and float and size_t array types.
+
+Optional dependencies:
+
+ - Eigen3 (at least version 3.3), for Eigen types stream operators
