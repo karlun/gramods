@@ -135,11 +135,14 @@ std::istream& operator>> (std::istream &in, Eigen::Matrix3f &m) {
 std::istream& operator>> (std::istream &in, Eigen::Matrix4f &m) {
 
   float a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12;
-
   in >> a1 >> a2 >> a3 >> a4 >> a5 >> a6 >> a7 >> a8 >> a9 >> a10 >> a11 >> a12;
 
-  std::string val;
-  in >> val;
+  if (!in)
+    return in;
+
+  float a13;
+  in >> a13;
+
   if (!in) {
     m <<
       a1, a2, a3, a4,
@@ -150,10 +153,12 @@ std::istream& operator>> (std::istream &in, Eigen::Matrix4f &m) {
     return in;
   }
 
-  float a13, a14, a15, a16;
+  float a14, a15, a16;
+  in >> a14 >> a15 >> a16;
 
-  std::stringstream(val) >> a13;
-  in >> a13 >> a14 >> a15 >> a16;
+  if (!in)
+    return in;
+
   m <<
     a1, a2, a3, a4,
     a5, a6, a7, a8,
