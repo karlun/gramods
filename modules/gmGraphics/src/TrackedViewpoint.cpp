@@ -1,6 +1,9 @@
 
 #include <gmGraphics/TrackedViewpoint.hh>
 
+#include <gmCore/Console.hh>
+#include <gmCore/RunOnce.hh>
+
 BEGIN_NAMESPACE_GMGRAPHICS;
 
 GM_OFI_DEFINE_SUB(TrackedViewpoint, Viewpoint);
@@ -17,19 +20,23 @@ struct TrackedViewpoint::Impl {
 TrackedViewpoint::TrackedViewpoint()
   : _impl(std::make_unique<Impl>()) {}
 
-Eigen::Vector3f TrackedViewpoint::getPosition() {
+Eigen::Vector3f TrackedViewpoint::getPosition(Eye eye) {
   _impl->getPosition(position);
-  return position;
+  std::cerr << position.transpose() << std::endl;
+  return Viewpoint::getPosition(eye);
 }
 
-Eigen::Quaternionf TrackedViewpoint::getOrientation() {
+Eigen::Quaternionf TrackedViewpoint::getOrientation(Eye eye) {
   _impl->getOrientation(orientation);
-  return orientation;
+  return Viewpoint::getOrientation(eye);
 }
 
 void TrackedViewpoint::Impl::getPosition(Eigen::Vector3f &p) {
 
-  if (!tracker) return;
+  if (!tracker) {
+    GM_RUNONCE(GM_WRN("TrackedViewpoint", "Tracker requested but no tracker available."));
+    return;
+  }
 
   gmTrack::PoseTracker::PoseSample pose;
   if (tracker->getPose(pose))

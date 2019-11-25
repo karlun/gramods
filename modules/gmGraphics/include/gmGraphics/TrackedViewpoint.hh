@@ -22,12 +22,12 @@ public:
   /**
      Returns the position of the Viewpoint.
   */
-  Eigen::Vector3f getPosition();
+  Eigen::Vector3f getPosition(Eye eye = Eye::MONO);
 
   /**
      Returns the orientation of the TrackedViewpoint.
   */
-  Eigen::Quaternionf getOrientation();
+  Eigen::Quaternionf getOrientation(Eye eye = Eye::MONO);
 
   /**
      Sets the tracker to read pose data from.
