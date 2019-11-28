@@ -23,60 +23,7 @@ Gramods, short for Graphics Modules, is a collection of weakly inter dependent a
 
 ## Purpose
 
-The main purpose of the Gramods library is to simplify loading of platform dependent configurations into a pre-compiled application, while also simplifying the implementation of such applications. The aim is to be able to implement an application that employs execution and data synchronization over network and synchronized multi window rendering in a flexible and configurable way, similar to this example code:
-
-~~~~~~~~~~~~~{.cpp}
-int main(int argc, char *argv[]) {
-
-  gmCore::Configuration config(argc, argv);
-
-  std::shared_ptr<gmNetwork::ExecutionSynchronization> sync;
-  if (! config.getObject(sync)) {
-    GM_ERR("main", "Cannot run without cluster synchronization settings!");
-    return -1;
-  }
-
-  std::vector<std::shared_ptr<gmGraphics::Window>> windows;
-  config->getAllObjects(windows);
-  if (windows.empty()) {
-    GM_ERR("main", "Cannot run without graphics pipeline!");
-    return -1;
-  }
-
-  GM_INF("main", "Configuration loaded");
-
-  std::shared_ptr<gmTrack::SinglePoseTracker> head_tracker;
-  config.getObject("head tracker", head_tracker);
-  GM_INF("main", "Head tracker: " << head_tracker);
-
-  std::shared_ptr<gmTrack::Controller> wand_primary;
-  config.getObject("primary controller", wand_primary);
-  GM_INF("main", "Primary controller: " << wand_primary);
-
-  ...
-
-  graphics->callOnceWithGLContext([=] (gmGraphics::FrameData info) {
-      myInitFunction(info.getGLContextIndex());
-    });
-
-  bool alive = true;
-  while (alive) {
-
-    alive = false;
-    for (auto window : windows) {
-
-      window->processEvents();
-      if (!window->isOpen()) continue;
-
-      window->renderFullPipeline();
-      window->swap();
-
-      alive |= true;
-    }
-
-    Updateable::updateAll();
-  }
-~~~~~~~~~~~~~
+The main purpose of the Gramods library is to simplify loading of platform dependent configurations into a pre-compiled application, while also simplifying the implementation of such applications. The aim is to be able to implement an application that employs execution and data synchronization over network and synchronized multi window rendering in a flexible and configurable way.
 
 
 ## Repository Structure
