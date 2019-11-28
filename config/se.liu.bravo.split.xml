@@ -21,7 +21,7 @@
         radius="10">
       <EquirectangularCoordinatesMapper/>
       <ImageTexture
-          file="modules/gmGraphics/resources/equirectangular-coordinates.png"/>
+          file="share/gmGraphics/resources/equirectangular-coordinates.png"/>
     </SphereRenderer>
 
     <Viewpoint

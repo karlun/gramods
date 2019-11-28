@@ -26,7 +26,7 @@
             focalOffset="0.5033575445536847 0.47472503212529356667"
             distortion="3.3884550481307715e-02 0 0 0"/>
         <ImageTexture
-            file="modules/gmGraphics/resources/gopro/stairs_%05d.jpg"
+            file="share/gmGraphics/resources/gopro/stairs_%05d.jpg"
             range="56 111"
             loop="1"/>
       </SphereRenderer>

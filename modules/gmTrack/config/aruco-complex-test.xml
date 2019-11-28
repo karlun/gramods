@@ -7,7 +7,7 @@
 
   <ArucoPoseTracker
       showDebug="true"
-      cameraConfigurationFile="config/camera-calibration.yaml">
+      cameraConfigurationFile="share/config/camera-calibration.yaml">
 
     <OpenCvVideoCapture cameraId="0"/>
 
