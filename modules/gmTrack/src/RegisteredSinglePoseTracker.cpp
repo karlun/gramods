@@ -17,7 +17,7 @@ GM_OFI_PARAM(RegisteredSinglePoseTracker, registrationMatrix, Eigen::Matrix4f, R
 bool RegisteredSinglePoseTracker::getPose(PoseSample &p) {
 
   if (!tracker) {
-    GM_RUNONCE(GM_WRN("RegisteredSinglePoseTracker", "Pose requested by no pose tracker available."));
+    GM_RUNONCE(GM_WRN("RegisteredSinglePoseTracker", "Pose requested but no pose tracker available."));
     return false;
   }
 

@@ -15,7 +15,7 @@ GM_OFI_PARAM(MultiToSinglePoseTracker, sensor, int, MultiToSinglePoseTracker::se
 bool MultiToSinglePoseTracker::getPose(PoseSample &p) {
 
   if (!tracker) {
-    GM_RUNONCE(GM_WRN("MultiToSinglePoseTracker", "Pose requested by no pose tracker available."));
+    GM_RUNONCE(GM_WRN("MultiToSinglePoseTracker", "Pose requested but no pose tracker available."));
     return false;
   }
 

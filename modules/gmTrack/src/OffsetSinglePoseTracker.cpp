@@ -18,7 +18,7 @@ GM_OFI_PARAM(OffsetSinglePoseTracker, orientationOffset, Eigen::Quaternionf, Off
 bool OffsetSinglePoseTracker::getPose(PoseSample &p) {
 
   if (!tracker) {
-    GM_RUNONCE(GM_WRN("OffsetSinglePoseTracker", "Pose requested by no pose tracker available."));
+    GM_RUNONCE(GM_WRN("OffsetSinglePoseTracker", "Pose requested but no pose tracker available."));
     return false;
   }
 
