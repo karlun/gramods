@@ -22,7 +22,6 @@ TrackedViewpoint::TrackedViewpoint()
 
 Eigen::Vector3f TrackedViewpoint::getPosition(Eye eye) {
   _impl->getPosition(position);
-  std::cerr << position.transpose() << std::endl;
   return Viewpoint::getPosition(eye);
 }
 
