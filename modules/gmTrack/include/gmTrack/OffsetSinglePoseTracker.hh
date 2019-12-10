@@ -32,12 +32,18 @@ public:
   }
 
   /**
-     Sets the orientation offset, in local tracker coordinates, to add to the pose
-     data.
+     Sets the orientation offset, in local tracker coordinates, to add
+     to the pose data.
   */
   void setOrientationOffset(Eigen::Quaternionf q) {
     orientation_offset = q;
   }
+
+  /**
+     Sets the orientation and position offset by extracting these data
+     from an offset matrix.
+  */
+  void setOffsetMatrix(Eigen::Matrix4f m);
 
   /**
      Replaces the contents of p with pose data.
