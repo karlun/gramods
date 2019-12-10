@@ -266,7 +266,7 @@ float PoseRegistrationEstimator::Impl::estimateSphericity(std::vector<Eigen::Vec
   GM_VINF("PoseRegistrationEstimator", "singular values: " << singular_values.transpose());
 
   if (singular_values[1] / singular_values[0] < 0.3f) //<< Arbitrarily choosen for warning only
-    GM_WRN("PoseRegistrationEstimator", "poor second axis sphericity - points may be too linearly dependent for a good registration estimation");
+    GM_WRN("PoseRegistrationEstimator", "Poor second axis sphericity (" << (singular_values[1] / singular_values[0]) << ") - points may be too linearly dependent for a good registration estimation");
 
   return singular_values[2] / singular_values[0];
 }
