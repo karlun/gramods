@@ -67,7 +67,7 @@ void VRPN_CALLBACK VrpnPoseTracker::handler(void *data, const vrpn_TRACKERCB inf
   _this->latest_samples[info.sensor].position =
     Eigen::Vector3f(info.pos[0], info.pos[1], info.pos[2]);
   _this->latest_samples[info.sensor].orientation =
-    Eigen::Quaternionf(info.quat[0], info.quat[1], info.quat[2], info.quat[3]);
+    Eigen::Quaternionf(info.quat[3], info.quat[0], info.quat[1], info.quat[2]);
 
   _this->got_data = true;
   _this->have_data = true;
