@@ -67,6 +67,66 @@ void SDLWindow::process() {
     }
   }
 
+
+  if (current.size() >= 2) {
+
+    Eigen::Vector2f cp = Eigen::Vector2f::Zero();
+    for (auto pt : current)
+      cp += Eigen::Vector2f(pt.x, pt.y);
+    cp /= (float)current.size();
+
+    Eigen::MatrixXf data_matrix(2, current.size());
+
+    for (size_t idx = 0; idx < current.size(); ++idx) {
+      data_matrix.col(idx) = (Eigen::Vector2f(current[idx].x,
+                                              current[idx].y) - cp);
+    }
+
+    Eigen::JacobiSVD<Eigen::MatrixXf> svd(data_matrix, Eigen::ComputeFullU);
+    auto U = svd.matrixU();
+    auto S = svd.singularValues();
+
+    Eigen::Vector2f data_X = U.col(0);
+    Eigen::Vector2f data_Y = U.col(1);
+
+    SDL_SetRenderDrawColor(sdl_renderer, 255, 0, 0, 255);
+    SDL_RenderDrawLine(sdl_renderer,
+                       (int)cp.x(), (int)cp.y(),
+                       (int)(cp.x() + S[0] * data_X.x()), (int)(cp.y() + S[0] * data_X.y()));
+
+    SDL_SetRenderDrawColor(sdl_renderer, 0, 255, 0, 255);
+    SDL_RenderDrawLine(sdl_renderer,
+                       (int)cp.x(), (int)cp.y(),
+                       (int)(cp.x() + S[1] * data_Y.x()), (int)(cp.y() + S[1] * data_Y.y()));
+
+    SDL_SetRenderDrawColor(sdl_renderer, 255, 255, 255, 255);
+    SDL_RenderDrawLine(sdl_renderer,
+                       (int)(cp.x() + S[0] * data_X.x() + S[1] * data_Y.x()),
+                       (int)(cp.y() + S[0] * data_X.y() + S[1] * data_Y.y()),
+                       (int)(cp.x() - S[0] * data_X.x() + S[1] * data_Y.x()),
+                       (int)(cp.y() - S[0] * data_X.y() + S[1] * data_Y.y())
+                       );
+    SDL_RenderDrawLine(sdl_renderer,
+                       (int)(cp.x() - S[0] * data_X.x() + S[1] * data_Y.x()),
+                       (int)(cp.y() - S[0] * data_X.y() + S[1] * data_Y.y()),
+                       (int)(cp.x() - S[0] * data_X.x() - S[1] * data_Y.x()),
+                       (int)(cp.y() - S[0] * data_X.y() - S[1] * data_Y.y())
+                       );
+    SDL_RenderDrawLine(sdl_renderer,
+                       (int)(cp.x() - S[0] * data_X.x() - S[1] * data_Y.x()),
+                       (int)(cp.y() - S[0] * data_X.y() - S[1] * data_Y.y()),
+                       (int)(cp.x() + S[0] * data_X.x() - S[1] * data_Y.x()),
+                       (int)(cp.y() + S[0] * data_X.y() - S[1] * data_Y.y())
+                       );
+    SDL_RenderDrawLine(sdl_renderer,
+                       (int)(cp.x() + S[0] * data_X.x() - S[1] * data_Y.x()),
+                       (int)(cp.y() + S[0] * data_X.y() - S[1] * data_Y.y()),
+                       (int)(cp.x() + S[0] * data_X.x() + S[1] * data_Y.x()),
+                       (int)(cp.y() + S[0] * data_X.y() + S[1] * data_Y.y())
+                       );
+  }
+
+
   if (have_released_point) {
     drawPoint(releasedPoint, 50, pointToString(releasedPoint), 3);
   }
