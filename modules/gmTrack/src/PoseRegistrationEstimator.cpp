@@ -320,17 +320,11 @@ void PoseRegistrationEstimator::Impl::expandPlanar(std::vector<Eigen::Vector3f> 
     }
 
     GM_VINF("PoseRegistrationEstimator", "Estimated primary samples: " << idx0 << " (" << best_value0 << ") and " << idx1 << "(" << best_value1 << ")");
+  }
 
-    if ((data[idx0] - cp).cross(data[idx1] - cp).dot(data_normal) < 0) {
-      GM_VINF("PoseRegistrationEstimator", "Flipping");
-      data_normal = -data_normal;
-    }
-
-  } else {
-    if ((data[idx0] - cp).cross(data[idx1] - cp).dot(data_normal) < 0) {
-      GM_VINF("PoseRegistrationEstimator", "Flipping");
-      data_normal = -data_normal;
-    }
+  if ((data[idx0] - cp).cross(data[idx1] - cp).dot(data_normal) < 0) {
+    GM_VINF("PoseRegistrationEstimator", "Flipping");
+    data_normal = -data_normal;
   }
 
   std::vector<Eigen::Vector3f> new_data;
