@@ -69,6 +69,28 @@ public:
   }
 
   /**
+     Removes the specified renderer from the view. Does nothing if the
+     specified renderer has not been added.
+  */
+  void removeRenderer(std::shared_ptr<Renderer> renderer) {
+    renderers.erase(std::remove(renderers.begin(),
+                                renderers.end(), renderer),
+                    renderers.end());
+  }
+
+  /**
+     Removes all renderers on this dispatcher and, if recursive is set
+     to true, also renderers added to sub dispatchers.
+
+     Sub classes that have sub dispatchers should override this method
+     to, when requested, call the clearRenderers method of those sub
+     dispatchers.
+  */
+  virtual void clearRenderers(bool recursive = false) {
+    renderers.clear();
+  }
+
+  /**
      Sets the viewpoint to use in the views rendered by this
      RendererDispatcher.
   */

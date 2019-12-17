@@ -306,6 +306,12 @@ void SaveView::setView(std::shared_ptr<View> view) {
   _impl->view = view;
 }
 
+void SaveView::clearRenderers(bool recursive) {
+  if (recursive)
+    _impl->view->clearRenderers(recursive);
+  RendererDispatcher::clearRenderers(recursive);
+}
+
 END_NAMESPACE_GMGRAPHICS;
 
 #endif

@@ -111,6 +111,12 @@ public:
   */
   virtual void sync() {}
 
+  /**
+     Removes all renderers and, if recursive is set to true, also
+     renderers added to sub dispatchers.
+  */
+  virtual void clearRenderers(bool recursive = false);
+
   GM_OFI_DECLARE;
 
 protected:

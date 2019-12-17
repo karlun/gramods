@@ -118,4 +118,11 @@ void TiledView::Impl::addView(gmTypes::size4 tile_location,
   tiles.push_back(Impl::Tile({ tile_location, view }));
 }
 
+void TiledView::clearRenderers(bool recursive) {
+  if (recursive)
+    for (auto tile : _impl->tiles)
+      tile.view->clearRenderers(recursive);
+  RendererDispatcher::clearRenderers(recursive);
+}
+
 END_NAMESPACE_GMGRAPHICS;

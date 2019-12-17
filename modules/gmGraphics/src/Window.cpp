@@ -43,4 +43,11 @@ void Window::renderFullPipeline(ViewSettings settings) {
   glFlush();
 }
 
+void Window::clearRenderers(bool recursive) {
+  if (recursive)
+    for (auto view : views)
+      view->clearRenderers(recursive);
+  RendererDispatcher::clearRenderers(recursive);
+}
+
 END_NAMESPACE_GMGRAPHICS;

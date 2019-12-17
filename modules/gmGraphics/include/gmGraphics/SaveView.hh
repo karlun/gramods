@@ -84,6 +84,12 @@ public:
   */
   void setView(std::shared_ptr<View> view);
 
+  /**
+     Removes all renderers and, if recursive is set to true, also
+     renderers added to sub dispatchers.
+  */
+  virtual void clearRenderers(bool recursive = false);
+
   GM_OFI_DECLARE;
 
 private:
