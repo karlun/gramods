@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+H3D configuration template for two step calibration of the head
+tracking relative the screen in the haptic displays at LiU.
+
+(double-dash replaced with single dash, because of XML syntax)
+
+Calibration of helmet mounted tracker:
+
+gm-tracker-registration
+  -output-file output.xml
+  -output-template share/config/se.liu.haptics.head-tracked-stereo-view-template.x3d
+  -config share/config/se.liu.haptics.head-tracked-stereo-view.x3d
+  -point -0.05,0,0
+  -point +0.05,0,0
+  -point 0,-0.12,0
+
+Subsequent calibration of room coordinates:
+
+gm-tracker-registration
+  -output-file share/config/se.liu.vortex.sgct-calibration.xml
+  -output-template output.xml
+  -config share/config/se.liu.vortex.calibration-tracker.xml
+  -point -0.267,0.277,0.125
+  -point -0.267,0.277,0.429
+  -point +0.267,0.277,0.429
+  -point +0.267,0.277,0.125
+
+-->
+<Group>
+  <PythonScript url="urn:candy:python/AutoLoadSO.py"/>
+  <PythonScript url="urn:candy:python/CorrectViewpoint.py"/>
+  <StereoInfo
+      interocularDistance="0.06"/>
+  <SMViewpoint
+      DEF="VIEWPOINT"
+      useHeadOrientation="true"
+      position="0 0 1.0"
+      screenLowerLeft="-0.267 -0.152 0"
+      screenUpperRight="0.267  0.152 0">
+    <SinglePointTrackerFilter
+        index="0">
+      <MappedTrackerFilter>
+        <VRPNTracker
+            DEF="TRACKER"
+            sensorId="0"
+            connectionString="openvr/device/LHR-1BDC55AF@itn-vrhmd-01.ad.liu.se"/>
+        <AffineMapping
+            orientationPreCalibration="%Rix %Riy %Riz %Ria"
+            orientationPostCalibration="%%Rx %%Ry %%Rz %%Ra"
+            offset="%Mi3x %Mi3y %Mi3z"
+            positionCalibration="%%M0x %%M1x %%M2x %%M3x
+                                 %%M0y %%M1y %%M2y %%M3y
+                                 %%M0z %%M1z %%M2z %%M3z
+                                 0 0 0 1"/>
+      </MappedTrackerFilter>
+    </SinglePointTrackerFilter>
+  </SMViewpoint>
+</Group>
