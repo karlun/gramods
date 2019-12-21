@@ -400,14 +400,20 @@ void PoseRegistrationEstimator::Impl::estimateUnitRegistration
  Eigen::Matrix4f M_raw,
  Eigen::Matrix4f &M_unit) {
 
-  Eigen::JacobiSVD<Eigen::MatrixXf> svd(M_raw.block(0,0,3,3),
+  if (tracker_data.empty() || actual_data.empty())
+    throw std::invalid_argument("empty vector of data not supported");
+
+  if (tracker_data.size() != actual_data.size())
+    throw std::invalid_argument("tracker and actual point vectors must be of equal size");
+
+  Eigen::JacobiSVD<Eigen::MatrixXf> svd(M_raw.block<3,3>(0,0),
                                         Eigen::ComputeFullU | Eigen::ComputeFullV);
   auto U = svd.matrixU();
   auto S = svd.singularValues();
   auto V = svd.matrixV();
 
   M_unit = Eigen::Matrix4f::Identity();
-  M_unit.block(0,0,3,3) = U * V.transpose();
+  M_unit.block<3,3>(0,0) = U * V.transpose();
 
   Eigen::Vector3f tracker_cp = Eigen::Vector3f::Zero();
   for (auto pt : tracker_data)
@@ -419,8 +425,8 @@ void PoseRegistrationEstimator::Impl::estimateUnitRegistration
     actual_cp += pt;
   actual_cp /= (float)actual_data.size();
 
-  Eigen::Vector3f offset = (actual_cp - (M_unit * tracker_cp.homogeneous()).hnormalized());
-  M_unit.block(0,3,3,1) = offset;
+  Eigen::Vector3f offset = actual_cp - (M_unit * tracker_cp.homogeneous()).hnormalized();
+  M_unit.block<3,1>(0,3) = offset;
 }
 
 END_NAMESPACE_GMTRACK;
