@@ -1,0 +1,25 @@
+
+image: ubuntu:20.04
+services:
+    - jamesbrink/opengl
+
+BuildMini:
+    script:
+        - apt-get update
+        - DEBIAN_FRONTEND="noninteractive" apt-get -y install cmake build-essential libgtest-dev
+        - mkdir build
+        - cd build
+        - cmake ..
+        - make
+        - make test
+
+BuildMaxi:
+    script:
+        - apt-get update
+        - DEBIAN_FRONTEND="noninteractive" apt-get -y install cmake build-essential libgtest-dev libtinyxml2-dev libsdl2-dev libeigen3-dev libglew-dev libasio-dev libuvc-dev libfreeimage-dev inkscape
+        - mkdir build
+        - cd build
+        - cmake ..
+        - mkdir -p /builds/karlu20/gramods/build/modules/gmGraphics/resources/
+        - make
+        - make test
