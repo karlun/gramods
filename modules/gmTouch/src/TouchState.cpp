@@ -446,7 +446,17 @@ void TouchState::eventsInit(int width, int height) {
 void TouchState::addTouchState(TouchPointId id, float x, float y, double time) {
   assert(state == 1);
 
-  if (use_mouse && remove_mouse_upon_touch) use_mouse = false;
+  if (use_mouse && remove_mouse_upon_touch) {
+
+    if (previous_state.find(MOUSE_STATE_ID) == previous_state.end() &&
+        current_state.find(MOUSE_STATE_ID) != current_state.end())
+      current_state.erase(MOUSE_STATE_ID);
+    else
+      addMouseState(x, y, time, false);
+
+    mouse_down = false;
+    use_mouse = false;
+  }
 
   addState(id, x, y, time);
 }
