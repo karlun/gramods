@@ -184,8 +184,8 @@ Optional dependencies:
 
  - SDL2, for SDL-based window
  - FreeImage, for reading and writing images
- - Gimp, for generating textures using Python-fu
- - Inkscape, for generating textures from SVG
+ - Gimp (binaries), for generating textures using Python-fu
+ - Inkscape (binaries), for generating textures from SVG
  - libuvc, for UVC support, reading image data from video class USB devices.
 
 
