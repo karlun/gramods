@@ -14,6 +14,8 @@ BEGIN_NAMESPACE_GMTOUCH;
 #define DEFAULT_CLICK_DELAY_MS 500
 #define DEFAULT_MULTI_DELAY_MS 500
 
+const TouchState::TouchPointId TouchState::MOUSE_STATE_ID = std::numeric_limits<TouchPointId>::max();
+
 TouchState::TouchState()
   : smoothing(DEFAULT_SMOOTHING),
     move_magnitude(DEFAULT_MOVE_MAGNITUDE),
@@ -402,9 +404,9 @@ void TouchState::EventAdaptor::removeTouchState(TouchPointId id, float x, float 
   owner->removeTouchState(id, x, y);
 }
 
-void TouchState::EventAdaptor::addMouseState(TouchPointId id, float x, float y, double time, bool down) {
+void TouchState::EventAdaptor::addMouseState(float x, float y, double time, bool down) {
   assert(owner);
-  owner->addMouseState(id, x, y, time, down);
+  owner->addMouseState(x, y, time, down);
 }
 
 void TouchState::EventAdaptor::addMouseWheel(float s) {
@@ -466,7 +468,7 @@ void TouchState::removeTouchState(TouchPointId id, float x, float y) {
   current_state[id].state |= State::RELEASE;
 }
 
-void TouchState::addMouseState(TouchPointId id, float x, float y, double time, bool down) {
+void TouchState::addMouseState(float x, float y, double time, bool down) {
   assert(state == 1);
   
   mouse_down = down;
@@ -476,10 +478,10 @@ void TouchState::addMouseState(TouchPointId id, float x, float y, double time, b
 
   if (down) {
     if (!use_mouse) return;
-    addState(id, x, y, time);
+    addState(MOUSE_STATE_ID, x, y, time);
   } else {
-    if (current_state.find(id) == current_state.end()) return;
-    removeTouchState(id, x, y);
+    if (current_state.find(MOUSE_STATE_ID) == current_state.end()) return;
+    removeTouchState(MOUSE_STATE_ID, x, y);
   }
 }
 

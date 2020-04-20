@@ -82,6 +82,11 @@ public:
   typedef int64_t TouchPointId;
 
   /**
+   * The touch point id used for mouse pointer simulating touch.
+   */
+  static const TouchPointId MOUSE_STATE_ID;
+
+  /**
    * Touch states that can be bitwise combined (except NONE). Check
    * with bitwise AND, e g <tt>if (tp.state & State::DRAG)</tt>.
    */
@@ -625,7 +630,7 @@ public:
      * Add the specified mouse state. This will also add and remove
      * simulated touch states.
      */
-    void addMouseState(TouchPointId id, float x, float y, double time, bool mouse_down);
+    void addMouseState(float x, float y, double time, bool mouse_down);
 
     /**
      * Sets the wheel value, positive up and negative down.
@@ -691,7 +696,7 @@ private:
    * Add the specified mouse state. This will also add and remove
    * simulated touch states.
    */
-  void addMouseState(TouchPointId id, float x, float y, double time, bool mouse_down);
+  void addMouseState(float x, float y, double time, bool mouse_down);
 
   /**
    * Sets the wheel value, positive up and negative down.
