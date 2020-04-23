@@ -223,6 +223,7 @@ void SDLWindow::drawPoint(const gmTouch::TouchState::TouchPoint &pt,
 
   if (radius > 0) {
     drawCircle(pt.x, pt.y, radius);
+    drawCircle(pt.ex, pt.ey, radius);
     drawCircle(pt.x + pt.vx, pt.y + pt.vy, radius);
     SDL_RenderDrawLine(sdl_renderer,
                        (int)pt.x, (int)pt.y,

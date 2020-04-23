@@ -394,9 +394,9 @@ TouchState::clock::duration TouchState::getMultiClickTime() {
   return multi_time;
 }
 
-void TouchState::EventAdaptor::addTouchState(TouchPointId id, float x, float y, double time) {
+void TouchState::EventAdaptor::addTouchState(TouchPointId id, float x, float y) {
   assert(owner);
-  owner->addTouchState(id, x, y, time);
+  owner->addTouchState(id, x, y);
 }
 
 void TouchState::EventAdaptor::removeTouchState(TouchPointId id, float x, float y) {
@@ -404,9 +404,9 @@ void TouchState::EventAdaptor::removeTouchState(TouchPointId id, float x, float 
   owner->removeTouchState(id, x, y);
 }
 
-void TouchState::EventAdaptor::addMouseState(float x, float y, double time, bool down) {
+void TouchState::EventAdaptor::addMouseState(float x, float y, bool down) {
   assert(owner);
-  owner->addMouseState(x, y, time, down);
+  owner->addMouseState(x, y, down);
 }
 
 void TouchState::EventAdaptor::addMouseWheel(float s) {
@@ -439,11 +439,12 @@ void TouchState::eventsInit(int width, int height) {
     it.second->init(width, height);
   
   mouse_wheel = 0.f;
+  point_with_fresh_state.clear();
 
   clearReleasedStates();
 }
 
-void TouchState::addTouchState(TouchPointId id, float x, float y, double time) {
+void TouchState::addTouchState(TouchPointId id, float x, float y) {
   assert(state == 1);
 
   if (use_mouse && remove_mouse_upon_touch) {
@@ -452,22 +453,31 @@ void TouchState::addTouchState(TouchPointId id, float x, float y, double time) {
         current_state.find(MOUSE_STATE_ID) != current_state.end())
       current_state.erase(MOUSE_STATE_ID);
     else
-      addMouseState(x, y, time, false);
+      addMouseState(x, y, false);
 
     mouse_down = false;
     use_mouse = false;
   }
 
-  addState(id, x, y, time);
+  addState(id, x, y);
 }
 
-void TouchState::addState(TouchPointId id, float x, float y, double time) {
+void TouchState::addState(TouchPointId id, float x, float y) {
   if (current_state.find(id) == current_state.end()) {
-    TouchPoint p(id, 0, 0);
+    TouchPoint p(id, x, y);
     current_state.insert(std::make_pair(id, p));
+  } else {
+    current_state[id].x = x;
+    current_state[id].y = y;
   }
 
-  velocityEstimator.addSample(id, {x, y, 0}, time);
+  double epoch =
+      std::chrono::duration_cast<std::chrono::duration<double, std::ratio<1>>>(
+          clock::now().time_since_epoch())
+          .count();
+  velocityEstimator.addSample(id, {x, y, 0}, epoch);
+
+  point_with_fresh_state.insert(id);
 }
 
 void TouchState::removeTouchState(TouchPointId id, float x, float y) {
@@ -476,9 +486,11 @@ void TouchState::removeTouchState(TouchPointId id, float x, float y) {
   if (current_state.find(id) == current_state.end()) return;
   
   current_state[id].state |= State::RELEASE;
+
+  point_with_fresh_state.insert(id);
 }
 
-void TouchState::addMouseState(float x, float y, double time, bool down) {
+void TouchState::addMouseState(float x, float y, bool down) {
   assert(state == 1);
   
   mouse_down = down;
@@ -488,7 +500,7 @@ void TouchState::addMouseState(float x, float y, double time, bool down) {
 
   if (down) {
     if (!use_mouse) return;
-    addState(MOUSE_STATE_ID, x, y, time);
+    addState(MOUSE_STATE_ID, x, y);
   } else {
     if (current_state.find(MOUSE_STATE_ID) == current_state.end()) return;
     removeTouchState(MOUSE_STATE_ID, x, y);
@@ -501,13 +513,27 @@ void TouchState::addMouseWheel(float s) {
 
 void TouchState::eventsDone() {
   assert(state == 1);
-  
+
   for (auto it : event_adaptors)
     it.second->done();
   for (auto it : camera_adaptors)
     it.second->done();
-  
-  
+
+  clock::time_point now = clock::now();
+  double now_epoch =
+      std::chrono::duration_cast<std::chrono::duration<double, std::ratio<1>>>(
+          now.time_since_epoch())
+          .count();
+
+  for (auto &pt : current_state) {
+    if (point_with_fresh_state.find(pt.second.id)
+        != point_with_fresh_state.end())
+      continue;
+    velocityEstimator.addSample(pt.second.id,
+                                {pt.second.x, pt.second.y, 0},
+                                now_epoch);
+  }
+
   for (auto &pt : current_state) {
     
     double last_time = velocityEstimator.getLastSampleTime(pt.first);
@@ -515,8 +541,11 @@ void TouchState::eventsDone() {
     size_t samples;
     auto pos = velocityEstimator.estimatePosition(pt.first, move_magnitude, last_time, &samples);
     if (samples > 0) {
-      pt.second.x = float(pos[0]);
-      pt.second.y = float(pos[1]);
+      pt.second.ex = float(pos[0]);
+      pt.second.ey = float(pos[1]);
+    } else {
+      pt.second.ex = pt.second.x;
+      pt.second.ey = pt.second.y;
     }
 
     auto vel = velocityEstimator.estimateVelocity(pt.first, move_magnitude);
@@ -531,7 +560,7 @@ void TouchState::eventsDone() {
 
       pt.second.state |= State::TOUCH_DOWN;
 
-      HistoryState hs = { pt.second, clock::now() };
+      HistoryState hs = { pt.second, now };
       history[pt.first] = hs;
       
       pt.second.sx = pt.second.x;
