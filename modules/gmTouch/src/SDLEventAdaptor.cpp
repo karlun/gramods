@@ -20,30 +20,27 @@ void SDLEventAdaptor::handleEvent(const SDL_Event& event) {
     return;
     
   case SDL_MOUSEMOTION:
-    addMouseState(event.motion.which, event.motion.x, event.motion.y,
-                  1e-3 * event.motion.timestamp, mouse_down);
+    addMouseState(event.motion.x, event.motion.y, mouse_down);
     return;
     
   case SDL_MOUSEBUTTONUP:
   case SDL_MOUSEBUTTONDOWN:
     if (event.button.button != SDL_BUTTON_LEFT) return;
     mouse_down = event.button.state;
-    addMouseState(event.button.which, event.button.x, event.button.y,
-                  1e-3 * event.button.timestamp, mouse_down);
+    addMouseState(event.button.x, event.button.y, mouse_down);
     return;
     
   case SDL_FINGERDOWN: {
     float x = event.tfinger.x * width;
     float y = event.tfinger.y * height;
-    addTouchState(event.tfinger.fingerId, x, y,
-                  1e-3 * event.tfinger.timestamp);
+    addTouchState(event.tfinger.fingerId, x, y);
     return;
   }
     
   case SDL_FINGERMOTION: {
     float x = event.tfinger.x * width;
     float y = event.tfinger.y * height;
-    addTouchState(event.tfinger.fingerId, x, y, 1e-3 * event.tfinger.timestamp);
+    addTouchState(event.tfinger.fingerId, x, y);
     return;
   }
     

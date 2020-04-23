@@ -14,6 +14,7 @@
 #include <typeindex>
 #include <typeinfo>
 #include <unordered_map>
+#include <unordered_set>
 
 #include <assert.h>
 
@@ -82,6 +83,11 @@ public:
   typedef int64_t TouchPointId;
 
   /**
+   * The touch point id used for mouse pointer simulating touch.
+   */
+  static const TouchPointId MOUSE_STATE_ID;
+
+  /**
    * Touch states that can be bitwise combined (except NONE). Check
    * with bitwise AND, e g <tt>if (tp.state & State::DRAG)</tt>.
    */
@@ -134,6 +140,12 @@ public:
 
     /// y velocity in pixels per second from top edge.
     float vy;
+
+    /// x position estimated by the recent motion.
+    float ex;
+
+    /// y position estimated by the recent motion.
+    float ey;
 
     /// smoothed version of the x position.
     float sx;
@@ -614,7 +626,7 @@ public:
      * @param y position in (sub) pixels from top edge.
      * @param time the time of the event in seconds.
      */
-    void addTouchState(TouchPointId id, float x, float y, double time);
+    void addTouchState(TouchPointId id, float x, float y);
 
     /**
      * Removes the touch point with the specified id.
@@ -625,7 +637,7 @@ public:
      * Add the specified mouse state. This will also add and remove
      * simulated touch states.
      */
-    void addMouseState(TouchPointId id, float x, float y, double time, bool mouse_down);
+    void addMouseState(float x, float y, bool mouse_down);
 
     /**
      * Sets the wheel value, positive up and negative down.
@@ -680,7 +692,7 @@ private:
    * @param y position in (sub) pixels from top edge.
    * @param time the time of the event in seconds.
    */
-  void addTouchState(TouchPointId id, float x, float y, double time);
+  void addTouchState(TouchPointId id, float x, float y);
 
   /**
    * Removes the touch point with the specified id.
@@ -691,7 +703,7 @@ private:
    * Add the specified mouse state. This will also add and remove
    * simulated touch states.
    */
-  void addMouseState(TouchPointId id, float x, float y, double time, bool mouse_down);
+  void addMouseState(float x, float y, bool mouse_down);
 
   /**
    * Sets the wheel value, positive up and negative down.
@@ -701,7 +713,7 @@ private:
   /**
    * Internal
    */
-  void addState(TouchPointId id, float x, float y, double time);
+  void addState(TouchPointId id, float x, float y);
 
   float smoothing;
   float move_magnitude;
@@ -717,6 +729,8 @@ private:
 
   std::map<TouchPointId, void*> association;
   std::map<TouchPointId, HistoryState> history;
+
+  std::unordered_set<TouchPointId> point_with_fresh_state;
 
   /**
    * Checks if this new touch point is really a multi click, based
