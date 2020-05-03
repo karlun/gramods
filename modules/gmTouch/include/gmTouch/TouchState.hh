@@ -715,6 +715,10 @@ private:
    */
   void addState(TouchPointId id, float x, float y);
 
+  clock::time_point start_time = clock::time_point::min();
+  float noise_level;
+  float velocity_reestimation_rate;
+
   float smoothing;
   float move_magnitude;
   clock::duration hold_time;
@@ -729,8 +733,6 @@ private:
 
   std::map<TouchPointId, void*> association;
   std::map<TouchPointId, HistoryState> history;
-
-  std::unordered_set<TouchPointId> point_with_fresh_state;
 
   /**
    * Checks if this new touch point is really a multi click, based

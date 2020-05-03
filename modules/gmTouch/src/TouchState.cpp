@@ -9,15 +9,20 @@ BEGIN_NAMESPACE_GMTOUCH;
 #define DEFAULT_SMOOTHING 0.2f
 #define DEFAULT_MOVE_MAGNITUDE 10
 #define DEFAULT_MOVE_HISTORY_LENGTH 100
-#define DEFAULT_MOVE_HISTORY_DURATION 2.0
+#define DEFAULT_MOVE_HISTORY_DURATION 1.f
 #define DEFAULT_HOLD_DELAY_MS 2000
 #define DEFAULT_CLICK_DELAY_MS 500
 #define DEFAULT_MULTI_DELAY_MS 500
+#define DEFAULT_NOISE_LEVEL 5
+#define DEFAULT_VELOCITY_REESTIMATION_RATE 3.f
 
 const TouchState::TouchPointId TouchState::MOUSE_STATE_ID = std::numeric_limits<TouchPointId>::max();
 
 TouchState::TouchState()
-  : smoothing(DEFAULT_SMOOTHING),
+  : start_time(clock::now()),
+    noise_level(DEFAULT_NOISE_LEVEL),
+    velocity_reestimation_rate(DEFAULT_VELOCITY_REESTIMATION_RATE),
+    smoothing(DEFAULT_SMOOTHING),
     move_magnitude(DEFAULT_MOVE_MAGNITUDE),
     hold_time(std::chrono::milliseconds(DEFAULT_HOLD_DELAY_MS)),
     click_time(std::chrono::milliseconds(DEFAULT_CLICK_DELAY_MS)),
@@ -439,7 +444,6 @@ void TouchState::eventsInit(int width, int height) {
     it.second->init(width, height);
   
   mouse_wheel = 0.f;
-  point_with_fresh_state.clear();
 
   clearReleasedStates();
 }
@@ -473,11 +477,9 @@ void TouchState::addState(TouchPointId id, float x, float y) {
 
   double epoch =
       std::chrono::duration_cast<std::chrono::duration<double, std::ratio<1>>>(
-          clock::now().time_since_epoch())
+          clock::now() - start_time)
           .count();
   velocityEstimator.addSample(id, {x, y, 0}, epoch);
-
-  point_with_fresh_state.insert(id);
 }
 
 void TouchState::removeTouchState(TouchPointId id, float x, float y) {
@@ -486,8 +488,6 @@ void TouchState::removeTouchState(TouchPointId id, float x, float y) {
   if (current_state.find(id) == current_state.end()) return;
   
   current_state[id].state |= State::RELEASE;
-
-  point_with_fresh_state.insert(id);
 }
 
 void TouchState::addMouseState(float x, float y, bool down) {
@@ -522,24 +522,29 @@ void TouchState::eventsDone() {
   clock::time_point now = clock::now();
   double now_epoch =
       std::chrono::duration_cast<std::chrono::duration<double, std::ratio<1>>>(
-          now.time_since_epoch())
+          now - start_time)
           .count();
 
   for (auto &pt : current_state) {
-    if (point_with_fresh_state.find(pt.second.id)
-        != point_with_fresh_state.end())
-      continue;
-    velocityEstimator.addSample(pt.second.id,
-                                {pt.second.x, pt.second.y, 0},
-                                now_epoch);
-  }
-
-  for (auto &pt : current_state) {
     
+    double sec_last_time = velocityEstimator.getLastSampleTime(pt.first, 1);
     double last_time = velocityEstimator.getLastSampleTime(pt.first);
 
+    bool added_temporary_sample = false;
+    if (velocity_reestimation_rate > 1 && sec_last_time > -1 &&
+        (now_epoch - last_time) >
+            velocity_reestimation_rate * (last_time - sec_last_time)) {
+
+      // It's been a while since last sample: assume that the finger
+      // is stationary, so temporarily add a copy of the most recent
+      // sample when estimating finger position and velocity.
+
+      velocityEstimator.addSample(pt.first, {pt.second.x, pt.second.y, 0}, now_epoch);
+      added_temporary_sample = true;
+    }
+
     size_t samples;
-    auto pos = velocityEstimator.estimatePosition(pt.first, move_magnitude, last_time, &samples);
+    auto pos = velocityEstimator.estimatePosition(pt.first, noise_level, last_time, &samples);
     if (samples > 0) {
       pt.second.ex = float(pos[0]);
       pt.second.ey = float(pos[1]);
@@ -548,9 +553,12 @@ void TouchState::eventsDone() {
       pt.second.ey = pt.second.y;
     }
 
-    auto vel = velocityEstimator.estimateVelocity(pt.first, move_magnitude);
+    auto vel = velocityEstimator.estimateVelocity(pt.first, noise_level, &samples);
     pt.second.vx = float(vel[0]);
     pt.second.vy = float(vel[1]);
+
+    if (added_temporary_sample)
+      velocityEstimator.removeLastSample(pt.first);
 
     if (history.find(pt.first) == history.end() ||
         history[pt.first].point.state & State::RELEASE) {
@@ -585,7 +593,7 @@ void TouchState::eventsDone() {
   }
 
   velocityEstimator.cleanup();
-  
+
   state = 0;
 }
 
