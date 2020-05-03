@@ -560,8 +560,8 @@ void TouchState::eventsDone() {
     if (added_temporary_sample)
       velocityEstimator.removeLastSample(pt.first);
 
-    if (history.find(pt.first) == history.end() ||
-        history[pt.first].point.state & State::RELEASE) {
+    if (history.find(pt.first) == history.end()) {
+
       // This is a new point, that has no history
 
       check_multi(pt.second);
@@ -573,6 +573,19 @@ void TouchState::eventsDone() {
       
       pt.second.sx = pt.second.x;
       pt.second.sy = pt.second.y;
+
+    } else if (history[pt.first].point.state & State::RELEASE) {
+
+      HistoryState hs = { pt.second, now };
+      history[pt.first] = hs;
+
+      pt.second.state &= ~State::TOUCH_DOWN;
+
+      assert(previous_state.find(pt.first) != previous_state.end());
+      TouchPoint old_pt = previous_state.find(pt.first)->second;
+
+      pt.second.sx = smoothing * old_pt.sx + (1 - smoothing) * pt.second.x;
+      pt.second.sy = smoothing * old_pt.sy + (1 - smoothing) * pt.second.y;
 
     } else {
 
