@@ -16,6 +16,9 @@ BEGIN_NAMESPACE_GMTOUCH;
 #define DEFAULT_NOISE_LEVEL 5
 #define DEFAULT_VELOCITY_REESTIMATION_RATE 3.f
 
+#define MUST_BE_CALLED(METH) #METH "must be called between eventsInit and eventsDone"
+#define CANNOT_BE_CALLED(METH) #METH "can not be called between eventsInit and eventsDone"
+
 const TouchState::TouchPointId TouchState::MOUSE_STATE_ID = std::numeric_limits<TouchPointId>::max();
 
 TouchState::TouchState()
@@ -40,7 +43,7 @@ TouchState::~TouchState() {
 }
 
 int TouchState::getTouchPoints(TouchPoints &current) const {
-  assert(state == 0);
+  if (state != 0) throw std::logic_error(CANNOT_BE_CALLED(getTouchPoints));
   
   current.clear();
   current.reserve(current_state.size());
@@ -52,7 +55,7 @@ int TouchState::getTouchPoints(TouchPoints &current) const {
 }
 
 int TouchState::getTouchPoints(TouchPoints &current, TouchPoints &previous) const {
-  assert(state == 0);
+  if (state != 0) throw std::logic_error(CANNOT_BE_CALLED(getTouchPoints));
   
   current.clear();
   previous.clear();
@@ -87,7 +90,7 @@ int TouchState::getTouchPoints(void *ass, TouchPoints &current, TouchPoints &pre
 }
 
 int TouchState::getTouchPoints(std::map<void*, TouchPoints> &current) const {
-  assert(state == 0);
+  if (state != 0) throw std::logic_error(CANNOT_BE_CALLED(getTouchPoints));
 
   current.clear();
 
@@ -113,7 +116,7 @@ int TouchState::getTouchPoints(std::map<void*, TouchPoints> &current) const {
 
 int TouchState::getTouchPoints(std::map<void*, TouchPoints> &current,
                                std::map<void*, TouchPoints> &previous) const {
-  assert(state == 0);
+  if (state != 0) throw std::logic_error(CANNOT_BE_CALLED(getTouchPoints));
   
   current.clear();
   previous.clear();
@@ -156,7 +159,7 @@ int TouchState::getTouchPoints(std::map<void*, TouchPoints> &current,
 
 
 bool TouchState::setAssociation(TouchPointId id, void* pt) {
-  assert(state == 0);
+  if (state != 0) throw std::logic_error(CANNOT_BE_CALLED(setAssociation));
   if (pt == nullptr) throw std::invalid_argument("pt == nullptr");
   if (current_state.count(id) == 0) return false;
   association[id] = pt;
@@ -164,7 +167,7 @@ bool TouchState::setAssociation(TouchPointId id, void* pt) {
 }
 
 bool TouchState::unsetAssociation(TouchPointId id, void* pt) {
-  assert(state == 0);
+  if (state != 0) throw std::logic_error(CANNOT_BE_CALLED(unsetAssociation));
   if (association.count(id) != 1) return false;
   if (association[id] != pt) return false;
   association.erase(id);
@@ -172,7 +175,7 @@ bool TouchState::unsetAssociation(TouchPointId id, void* pt) {
 }
 
 bool TouchState::getAssociation(TouchPointId id, void** pt) const {
-  assert(state == 0);
+  if (state != 0) throw std::logic_error(CANNOT_BE_CALLED(getAssociation));
   if (association.find(id) == association.end()) return false;
   if (pt) *pt = association.find(id)->second;
   return true;
@@ -180,13 +183,13 @@ bool TouchState::getAssociation(TouchPointId id, void** pt) const {
 
 
 void TouchState::setCurrentProjection(Eigen::Matrix4f WPV_inv) {
-  assert(state == 1);
+  if (state != 1) throw std::logic_error(MUST_BE_CALLED(setCurrentProjection));
   current_WPV_inv = WPV_inv;
   current_WPV_inv_valid = true;
 }
 
 bool TouchState::getTouchLines(TouchLines &current) const {
-  assert(state == 0);
+  if (state != 0) throw std::logic_error(CANNOT_BE_CALLED(getTouchLines));
   if (!current_WPV_inv_valid) return false;
   
   current.clear();
@@ -202,7 +205,7 @@ bool TouchState::getTouchLines(TouchLines &current) const {
 }
 
 bool TouchState::getTouchLines(TouchLines &current, TouchLines &previous) const {
-  assert(state == 0);
+  if (state != 0) throw std::logic_error(CANNOT_BE_CALLED(getTouchLines));
   if (!current_WPV_inv_valid) return false;
   if (!previous_WPV_inv_valid) return false;
 
@@ -231,7 +234,7 @@ bool TouchState::getTouchLines(void *ass, TouchLines &current) const {
 }
 
 bool TouchState::getTouchLines(std::map<void*, TouchLines> &current) const {
-  assert(state == 0);
+  if (state != 0) throw std::logic_error(CANNOT_BE_CALLED(getTouchLines));
   if (!current_WPV_inv_valid) return false;
 
   current.clear();
@@ -262,7 +265,7 @@ bool TouchState::getTouchLines(void *ass, TouchLines &current, TouchLines &previ
 
 bool TouchState::getTouchLines(std::map<void*, TouchLines> &current,
                                std::map<void*, TouchLines> &previous) const {
-  assert(state == 0);
+  if (state != 0) throw std::logic_error(CANNOT_BE_CALLED(getTouchLines));
   if (!current_WPV_inv_valid) return false;
   if (!previous_WPV_inv_valid) return false;
 
@@ -425,7 +428,7 @@ void TouchState::CameraAdaptor::setCurrentProjection(Eigen::Matrix4f WPV_inv) {
 }
 
 void TouchState::eventsInit(int width, int height) {
-  assert(state == 0);
+  if (state != 0) throw std::logic_error("eventsInit and eventsDone must be called once each");
   state = 1;
 
   previous_state = current_state;
@@ -449,7 +452,7 @@ void TouchState::eventsInit(int width, int height) {
 }
 
 void TouchState::addTouchState(TouchPointId id, float x, float y) {
-  assert(state == 1);
+  if (state != 1) throw std::logic_error(MUST_BE_CALLED(addTouchState));
 
   if (use_mouse && remove_mouse_upon_touch) {
 
@@ -483,15 +486,15 @@ void TouchState::addState(TouchPointId id, float x, float y) {
 }
 
 void TouchState::removeTouchState(TouchPointId id, float x, float y) {
-  assert(state == 1);
-  
+  if (state != 1) throw std::logic_error(MUST_BE_CALLED(removeTouchState));
+
   if (current_state.find(id) == current_state.end()) return;
   
   current_state[id].state |= State::RELEASE;
 }
 
 void TouchState::addMouseState(float x, float y, bool down) {
-  assert(state == 1);
+  if (state != 1) throw std::logic_error(MUST_BE_CALLED(addMouseState));
   
   mouse_down = down;
 
@@ -512,7 +515,7 @@ void TouchState::addMouseWheel(float s) {
 }
 
 void TouchState::eventsDone() {
-  assert(state == 1);
+  if (state != 1) throw std::logic_error("eventsInit and eventsDone must be called once each");
 
   for (auto it : event_adaptors)
     it.second->done();
