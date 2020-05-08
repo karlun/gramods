@@ -170,7 +170,7 @@ void SpatialSphericalView::Impl::renderFullPipeline(ViewSettings settings, Eye e
     program_id = cubemap->getProgram();
 
     if (!program_id) {
-      GM_RUNONCE(GM_WRN("SpatialSphericalView", "Could not initialize cubemap"));
+      GM_RUNONCE(GM_ERR("SpatialSphericalView", "Could not initialize cubemap"));
       return;
     }
   }
