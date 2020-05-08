@@ -95,22 +95,42 @@ int TouchState::getTouchPoints(std::map<void*, TouchPoints> &current) const {
   current.clear();
 
   std::map<TouchPointId, TouchPoint>::const_iterator tp_it = current_state.begin();
-  std::map<TouchPointId, void*>::const_iterator ass_it = association.begin();
+  std::map<TouchPointId, void*>::const_iterator ass_it = current_association.begin();
 
-  while (tp_it != current_state.end() && ass_it != association.end())
+  while (tp_it != current_state.end() && ass_it != current_association.end()) {
+
     if (tp_it->first < ass_it->first) {
       current[nullptr].push_back(tp_it->second);
       ++tp_it;
     } else if (tp_it->first > ass_it->first) {
       ++ass_it;
     } else {
+
+      // Make a *released* copy of recently re-associated points
+      if (last_association.find(tp_it->first) != last_association.end() &&
+          last_association.find(tp_it->first)->second != ass_it->second) {
+        current[last_association.find(tp_it->first)->second].push_back(tp_it->second);
+        current[last_association.find(tp_it->first)->second].back().state |= State::RELEASE;
+      }
+
       current[ass_it->second].push_back(tp_it->second);
+
       ++tp_it;
       ++ass_it;
     }
-  for (; tp_it != current_state.end(); ++tp_it)
+  }
+
+  for (; tp_it != current_state.end(); ++tp_it) {
+
+    // Make a *released* copy of recently un-associated points
+    if (last_association.find(tp_it->first) != last_association.end()) {
+      current[last_association.find(tp_it->first)->second].push_back(tp_it->second);
+      current[last_association.find(tp_it->first)->second].back().state |= State::RELEASE;
+    }
+
     current[nullptr].push_back(tp_it->second);
-  
+  }
+
   return current.size();
 }
 
@@ -122,9 +142,9 @@ int TouchState::getTouchPoints(std::map<void*, TouchPoints> &current,
   previous.clear();
 
   std::map<TouchPointId, TouchPoint>::const_iterator tp_it = current_state.begin();
-  std::map<TouchPointId, void*>::const_iterator ass_it = association.begin();
+  std::map<TouchPointId, void*>::const_iterator ass_it = current_association.begin();
 
-  while (tp_it != current_state.end() && ass_it != association.end()) {
+  while (tp_it != current_state.end() && ass_it != current_association.end()) {
     if (tp_it->first < ass_it->first) {
       
       if (previous_state.find(tp_it->second.id) != previous_state.end()) {
@@ -162,22 +182,22 @@ bool TouchState::setAssociation(TouchPointId id, void* pt) {
   if (state != 0) throw std::logic_error(CANNOT_BE_CALLED(setAssociation));
   if (pt == nullptr) throw std::invalid_argument("pt == nullptr");
   if (current_state.count(id) == 0) return false;
-  association[id] = pt;
+  current_association[id] = pt;
   return true;
 }
 
 bool TouchState::unsetAssociation(TouchPointId id, void* pt) {
   if (state != 0) throw std::logic_error(CANNOT_BE_CALLED(unsetAssociation));
-  if (association.count(id) != 1) return false;
-  if (association[id] != pt) return false;
-  association.erase(id);
+  if (current_association.count(id) != 1) return false;
+  if (current_association[id] != pt) return false;
+  current_association.erase(id);
   return true;
 }
 
 bool TouchState::getAssociation(TouchPointId id, void** pt) const {
   if (state != 0) throw std::logic_error(CANNOT_BE_CALLED(getAssociation));
-  if (association.find(id) == association.end()) return false;
-  if (pt) *pt = association.find(id)->second;
+  if (current_association.find(id) == current_association.end()) return false;
+  if (pt) *pt = current_association.find(id)->second;
   return true;
 }
 
@@ -448,6 +468,7 @@ void TouchState::eventsInit(int width, int height) {
   
   mouse_wheel = 0.f;
 
+  last_association = current_association;
   clearReleasedStates();
 }
 
@@ -470,6 +491,7 @@ void TouchState::addTouchState(TouchPointId id, float x, float y) {
 }
 
 void TouchState::addState(TouchPointId id, float x, float y) {
+  x += 500;
   if (current_state.find(id) == current_state.end()) {
     TouchPoint p(id, x, y);
     current_state.insert(std::make_pair(id, p));
@@ -632,12 +654,12 @@ void TouchState::clearReleasedStates() {
     if (pt.second.point.state & State::RELEASE &&
         clock::now() - pt.second.time > multi_time) continue;
     
-    if (association.find(pt.first) != association.end())
-      new_association[pt.first] = association[pt.first];
+    if (current_association.find(pt.first) != current_association.end())
+      new_association[pt.first] = current_association[pt.first];
     new_history[pt.first] = history[pt.first];
   }
   
-  association.swap(new_association);
+  current_association.swap(new_association);
   history.swap(new_history);
   current_state.swap(new_current);
 }
@@ -650,6 +672,7 @@ TouchState::TouchPoint::TouchPoint(TouchPointId id, float x, float y)
 
 
 void TouchState::check_multi(TouchPoint &new_pt) {
+
   std::map<TouchPointId, void*> new_association;
   std::map<TouchPointId, HistoryState> new_history;
 
@@ -658,8 +681,8 @@ void TouchState::check_multi(TouchPoint &new_pt) {
 
     // Not a release, therefore an active finger, not multi
     if (! (point.state & State::RELEASE)) {
-      if (association.find(pt.first) != association.end())
-        new_association[pt.first] = association[pt.first];
+      if (current_association.find(pt.first) != current_association.end())
+        new_association[pt.first] = current_association[pt.first];
       new_history[pt.first] = history[pt.first];
       continue;
     }
@@ -668,22 +691,23 @@ void TouchState::check_multi(TouchPoint &new_pt) {
     if ((point.x - new_pt.x) * (point.x - new_pt.x) +
         (point.y - new_pt.y) * (point.y - new_pt.y)
         > move_magnitude * move_magnitude) {
-      if (association.find(pt.first) != association.end())
-        new_association[pt.first] = association[pt.first];
+      if (current_association.find(pt.first) != current_association.end())
+        new_association[pt.first] = current_association[pt.first];
       new_history[pt.first] = history[pt.first];
       continue;
     }
 
     // Copy old association to this new (multi) touch point
-    if (association.find(pt.first) != association.end())
-      new_association[new_pt.id] = association[pt.first];
+    if (current_association.find(pt.first) != current_association.end())
+      new_association[new_pt.id] = current_association[pt.first];
+
     new_pt.clicks = point.clicks + 1;
     new_pt.state |= State::MULTI;
 
     break;
   }
 
-  association.swap(new_association);
+  current_association.swap(new_association);
   history.swap(new_history);
 }
 

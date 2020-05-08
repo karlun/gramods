@@ -731,7 +731,9 @@ private:
   std::map<TouchPointId, TouchPoint> current_state;
   std::map<TouchPointId, TouchPoint> previous_state;
 
-  std::map<TouchPointId, void*> association;
+  std::map<TouchPointId, void*> last_association;
+  std::map<TouchPointId, void*> current_association;
+
   std::map<TouchPointId, HistoryState> history;
 
   /**
