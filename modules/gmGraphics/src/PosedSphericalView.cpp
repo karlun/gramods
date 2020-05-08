@@ -35,7 +35,6 @@ struct PosedSphericalView::Impl {
 
   Impl() : cubemap(std::make_unique<CubeMapRasterProcessor>()) {}
 
-  bool is_setup = false;
 };
 
 const std::string PosedSphericalView::Impl::mapper_pattern = "MAPPER;";
@@ -118,17 +117,6 @@ void PosedSphericalView::Impl::renderFullPipeline(ViewSettings settings) {
     return;
   }
 
-  if (!is_setup) {
-    cubemap->setFragmentCode(createFragmentCode());
-    is_setup = true;
-  }
-
-  GLint program_id = cubemap->getProgram();
-  if (program_id) {
-    glUseProgram(program_id);
-    mapper->setMapperUniforms(program_id);
-  }
-
   Eigen::Vector3f eye_pos = Eigen::Vector3f::Zero();
   Eigen::Quaternionf head_rot = Eigen::Quaternionf::Identity();
 
@@ -136,6 +124,25 @@ void PosedSphericalView::Impl::renderFullPipeline(ViewSettings settings) {
     eye_pos = settings.viewpoint->getPosition();
     head_rot = settings.viewpoint->getOrientation();
   }
+
+  GLint program_id = cubemap->getProgram();
+  if (!program_id) {
+
+    cubemap->setFragmentCode(createFragmentCode());
+
+    Renderer::list no_renderers;
+    cubemap->renderFullPipeline(no_renderers, eye_pos, head_rot, Eye::MONO, make_square);
+    program_id = cubemap->getProgram();
+
+    if (!program_id) {
+      GM_RUNONCE(GM_ERR("SpatialSphericalView", "Could not initialize cubemap"));
+      return;
+    }
+  }
+
+  glUseProgram(program_id);
+  mapper->setMapperUniforms(program_id);
+  glUseProgram(0);
 
   cubemap->renderFullPipeline(settings.renderers, eye_pos, head_rot, Eye::MONO, make_square);
 }
