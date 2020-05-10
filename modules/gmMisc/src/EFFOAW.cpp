@@ -9,9 +9,11 @@ struct EFFOAW::Impl {
 
   Impl();
 
-  double getLastSampleTime(size_t id);
+  double getLastSampleTime(size_t id, size_t N);
 
   void addSample(size_t id, Eigen::Vector3d position, double time);
+
+  void removeLastSample(size_t id);
 
   Eigen::Vector3d estimateVelocity(size_t id, double error_threshold, size_t *samples) const;
 
@@ -60,15 +62,15 @@ void EFFOAW::setHistoryDuration(double t){
 double EFFOAW::getHistoryDuration() const {
   return _impl->history_duration; }
 
-double EFFOAW::getLastSampleTime(size_t id) {
-  return _impl->getLastSampleTime(id);
+double EFFOAW::getLastSampleTime(size_t id, size_t N) {
+  return _impl->getLastSampleTime(id, N);
 }
 
-double EFFOAW::Impl::getLastSampleTime(size_t id) {
+double EFFOAW::Impl::getLastSampleTime(size_t id, size_t N) {
   if (history.find(id) == history.end() ||
-      history[id].first.size() < 1)
+      history[id].first.size() < 1 + N)
     return -1;
-  return history[id].first[0];
+  return history[id].first[N];
 }
 
 void EFFOAW::addSample(size_t id, Eigen::Vector3d position, double time){
@@ -88,6 +90,15 @@ void EFFOAW::Impl::addSample(size_t id, Eigen::Vector3d position, double time){
 
   position_list.push_front(position);
   time_list.push_front(time);
+}
+
+void EFFOAW::removeLastSample(size_t id) {
+  _impl->removeLastSample(id);
+}
+
+void EFFOAW::Impl::removeLastSample(size_t id) {
+  history[id].first.pop_front();
+  history[id].second.pop_front();
 }
 
 Eigen::Vector3d EFFOAW::estimateVelocity

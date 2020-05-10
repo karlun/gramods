@@ -9,15 +9,23 @@ BEGIN_NAMESPACE_GMTOUCH;
 #define DEFAULT_SMOOTHING 0.2f
 #define DEFAULT_MOVE_MAGNITUDE 10
 #define DEFAULT_MOVE_HISTORY_LENGTH 100
-#define DEFAULT_MOVE_HISTORY_DURATION 2.0
+#define DEFAULT_MOVE_HISTORY_DURATION 1.f
 #define DEFAULT_HOLD_DELAY_MS 2000
 #define DEFAULT_CLICK_DELAY_MS 500
 #define DEFAULT_MULTI_DELAY_MS 500
+#define DEFAULT_NOISE_LEVEL 5
+#define DEFAULT_VELOCITY_REESTIMATION_RATE 3.f
+
+#define MUST_BE_CALLED(METH) #METH "must be called between eventsInit and eventsDone"
+#define CANNOT_BE_CALLED(METH) #METH "can not be called between eventsInit and eventsDone"
 
 const TouchState::TouchPointId TouchState::MOUSE_STATE_ID = std::numeric_limits<TouchPointId>::max();
 
 TouchState::TouchState()
-  : smoothing(DEFAULT_SMOOTHING),
+  : start_time(clock::now()),
+    noise_level(DEFAULT_NOISE_LEVEL),
+    velocity_reestimation_rate(DEFAULT_VELOCITY_REESTIMATION_RATE),
+    smoothing(DEFAULT_SMOOTHING),
     move_magnitude(DEFAULT_MOVE_MAGNITUDE),
     hold_time(std::chrono::milliseconds(DEFAULT_HOLD_DELAY_MS)),
     click_time(std::chrono::milliseconds(DEFAULT_CLICK_DELAY_MS)),
@@ -35,7 +43,7 @@ TouchState::~TouchState() {
 }
 
 int TouchState::getTouchPoints(TouchPoints &current) const {
-  assert(state == 0);
+  if (state != 0) throw std::logic_error(CANNOT_BE_CALLED(getTouchPoints));
   
   current.clear();
   current.reserve(current_state.size());
@@ -47,7 +55,7 @@ int TouchState::getTouchPoints(TouchPoints &current) const {
 }
 
 int TouchState::getTouchPoints(TouchPoints &current, TouchPoints &previous) const {
-  assert(state == 0);
+  if (state != 0) throw std::logic_error(CANNOT_BE_CALLED(getTouchPoints));
   
   current.clear();
   previous.clear();
@@ -82,41 +90,61 @@ int TouchState::getTouchPoints(void *ass, TouchPoints &current, TouchPoints &pre
 }
 
 int TouchState::getTouchPoints(std::map<void*, TouchPoints> &current) const {
-  assert(state == 0);
+  if (state != 0) throw std::logic_error(CANNOT_BE_CALLED(getTouchPoints));
 
   current.clear();
 
   std::map<TouchPointId, TouchPoint>::const_iterator tp_it = current_state.begin();
-  std::map<TouchPointId, void*>::const_iterator ass_it = association.begin();
+  std::map<TouchPointId, void*>::const_iterator ass_it = current_association.begin();
 
-  while (tp_it != current_state.end() && ass_it != association.end())
+  while (tp_it != current_state.end() && ass_it != current_association.end()) {
+
     if (tp_it->first < ass_it->first) {
       current[nullptr].push_back(tp_it->second);
       ++tp_it;
     } else if (tp_it->first > ass_it->first) {
       ++ass_it;
     } else {
+
+      // Make a *released* copy of recently re-associated points
+      if (last_association.find(tp_it->first) != last_association.end() &&
+          last_association.find(tp_it->first)->second != ass_it->second) {
+        current[last_association.find(tp_it->first)->second].push_back(tp_it->second);
+        current[last_association.find(tp_it->first)->second].back().state |= State::RELEASE;
+      }
+
       current[ass_it->second].push_back(tp_it->second);
+
       ++tp_it;
       ++ass_it;
     }
-  for (; tp_it != current_state.end(); ++tp_it)
+  }
+
+  for (; tp_it != current_state.end(); ++tp_it) {
+
+    // Make a *released* copy of recently un-associated points
+    if (last_association.find(tp_it->first) != last_association.end()) {
+      current[last_association.find(tp_it->first)->second].push_back(tp_it->second);
+      current[last_association.find(tp_it->first)->second].back().state |= State::RELEASE;
+    }
+
     current[nullptr].push_back(tp_it->second);
-  
+  }
+
   return current.size();
 }
 
 int TouchState::getTouchPoints(std::map<void*, TouchPoints> &current,
                                std::map<void*, TouchPoints> &previous) const {
-  assert(state == 0);
+  if (state != 0) throw std::logic_error(CANNOT_BE_CALLED(getTouchPoints));
   
   current.clear();
   previous.clear();
 
   std::map<TouchPointId, TouchPoint>::const_iterator tp_it = current_state.begin();
-  std::map<TouchPointId, void*>::const_iterator ass_it = association.begin();
+  std::map<TouchPointId, void*>::const_iterator ass_it = current_association.begin();
 
-  while (tp_it != current_state.end() && ass_it != association.end()) {
+  while (tp_it != current_state.end() && ass_it != current_association.end()) {
     if (tp_it->first < ass_it->first) {
       
       if (previous_state.find(tp_it->second.id) != previous_state.end()) {
@@ -151,37 +179,37 @@ int TouchState::getTouchPoints(std::map<void*, TouchPoints> &current,
 
 
 bool TouchState::setAssociation(TouchPointId id, void* pt) {
-  assert(state == 0);
+  if (state != 0) throw std::logic_error(CANNOT_BE_CALLED(setAssociation));
   if (pt == nullptr) throw std::invalid_argument("pt == nullptr");
   if (current_state.count(id) == 0) return false;
-  association[id] = pt;
+  current_association[id] = pt;
   return true;
 }
 
 bool TouchState::unsetAssociation(TouchPointId id, void* pt) {
-  assert(state == 0);
-  if (association.count(id) != 1) return false;
-  if (association[id] != pt) return false;
-  association.erase(id);
+  if (state != 0) throw std::logic_error(CANNOT_BE_CALLED(unsetAssociation));
+  if (current_association.count(id) != 1) return false;
+  if (current_association[id] != pt) return false;
+  current_association.erase(id);
   return true;
 }
 
 bool TouchState::getAssociation(TouchPointId id, void** pt) const {
-  assert(state == 0);
-  if (association.find(id) == association.end()) return false;
-  if (pt) *pt = association.find(id)->second;
+  if (state != 0) throw std::logic_error(CANNOT_BE_CALLED(getAssociation));
+  if (current_association.find(id) == current_association.end()) return false;
+  if (pt) *pt = current_association.find(id)->second;
   return true;
 }
 
 
 void TouchState::setCurrentProjection(Eigen::Matrix4f WPV_inv) {
-  assert(state == 1);
+  if (state != 1) throw std::logic_error(MUST_BE_CALLED(setCurrentProjection));
   current_WPV_inv = WPV_inv;
   current_WPV_inv_valid = true;
 }
 
 bool TouchState::getTouchLines(TouchLines &current) const {
-  assert(state == 0);
+  if (state != 0) throw std::logic_error(CANNOT_BE_CALLED(getTouchLines));
   if (!current_WPV_inv_valid) return false;
   
   current.clear();
@@ -197,7 +225,7 @@ bool TouchState::getTouchLines(TouchLines &current) const {
 }
 
 bool TouchState::getTouchLines(TouchLines &current, TouchLines &previous) const {
-  assert(state == 0);
+  if (state != 0) throw std::logic_error(CANNOT_BE_CALLED(getTouchLines));
   if (!current_WPV_inv_valid) return false;
   if (!previous_WPV_inv_valid) return false;
 
@@ -226,7 +254,7 @@ bool TouchState::getTouchLines(void *ass, TouchLines &current) const {
 }
 
 bool TouchState::getTouchLines(std::map<void*, TouchLines> &current) const {
-  assert(state == 0);
+  if (state != 0) throw std::logic_error(CANNOT_BE_CALLED(getTouchLines));
   if (!current_WPV_inv_valid) return false;
 
   current.clear();
@@ -257,7 +285,7 @@ bool TouchState::getTouchLines(void *ass, TouchLines &current, TouchLines &previ
 
 bool TouchState::getTouchLines(std::map<void*, TouchLines> &current,
                                std::map<void*, TouchLines> &previous) const {
-  assert(state == 0);
+  if (state != 0) throw std::logic_error(CANNOT_BE_CALLED(getTouchLines));
   if (!current_WPV_inv_valid) return false;
   if (!previous_WPV_inv_valid) return false;
 
@@ -420,7 +448,7 @@ void TouchState::CameraAdaptor::setCurrentProjection(Eigen::Matrix4f WPV_inv) {
 }
 
 void TouchState::eventsInit(int width, int height) {
-  assert(state == 0);
+  if (state != 0) throw std::logic_error("eventsInit and eventsDone must be called once each");
   state = 1;
 
   previous_state = current_state;
@@ -439,13 +467,13 @@ void TouchState::eventsInit(int width, int height) {
     it.second->init(width, height);
   
   mouse_wheel = 0.f;
-  point_with_fresh_state.clear();
 
+  last_association = current_association;
   clearReleasedStates();
 }
 
 void TouchState::addTouchState(TouchPointId id, float x, float y) {
-  assert(state == 1);
+  if (state != 1) throw std::logic_error(MUST_BE_CALLED(addTouchState));
 
   if (use_mouse && remove_mouse_upon_touch) {
 
@@ -463,6 +491,7 @@ void TouchState::addTouchState(TouchPointId id, float x, float y) {
 }
 
 void TouchState::addState(TouchPointId id, float x, float y) {
+  x += 500;
   if (current_state.find(id) == current_state.end()) {
     TouchPoint p(id, x, y);
     current_state.insert(std::make_pair(id, p));
@@ -473,25 +502,21 @@ void TouchState::addState(TouchPointId id, float x, float y) {
 
   double epoch =
       std::chrono::duration_cast<std::chrono::duration<double, std::ratio<1>>>(
-          clock::now().time_since_epoch())
+          clock::now() - start_time)
           .count();
   velocityEstimator.addSample(id, {x, y, 0}, epoch);
-
-  point_with_fresh_state.insert(id);
 }
 
 void TouchState::removeTouchState(TouchPointId id, float x, float y) {
-  assert(state == 1);
-  
+  if (state != 1) throw std::logic_error(MUST_BE_CALLED(removeTouchState));
+
   if (current_state.find(id) == current_state.end()) return;
   
   current_state[id].state |= State::RELEASE;
-
-  point_with_fresh_state.insert(id);
 }
 
 void TouchState::addMouseState(float x, float y, bool down) {
-  assert(state == 1);
+  if (state != 1) throw std::logic_error(MUST_BE_CALLED(addMouseState));
   
   mouse_down = down;
 
@@ -512,7 +537,7 @@ void TouchState::addMouseWheel(float s) {
 }
 
 void TouchState::eventsDone() {
-  assert(state == 1);
+  if (state != 1) throw std::logic_error("eventsInit and eventsDone must be called once each");
 
   for (auto it : event_adaptors)
     it.second->done();
@@ -522,24 +547,29 @@ void TouchState::eventsDone() {
   clock::time_point now = clock::now();
   double now_epoch =
       std::chrono::duration_cast<std::chrono::duration<double, std::ratio<1>>>(
-          now.time_since_epoch())
+          now - start_time)
           .count();
 
   for (auto &pt : current_state) {
-    if (point_with_fresh_state.find(pt.second.id)
-        != point_with_fresh_state.end())
-      continue;
-    velocityEstimator.addSample(pt.second.id,
-                                {pt.second.x, pt.second.y, 0},
-                                now_epoch);
-  }
-
-  for (auto &pt : current_state) {
     
+    double sec_last_time = velocityEstimator.getLastSampleTime(pt.first, 1);
     double last_time = velocityEstimator.getLastSampleTime(pt.first);
 
+    bool added_temporary_sample = false;
+    if (velocity_reestimation_rate > 1 && sec_last_time > -1 &&
+        (now_epoch - last_time) >
+            velocity_reestimation_rate * (last_time - sec_last_time)) {
+
+      // It's been a while since last sample: assume that the finger
+      // is stationary, so temporarily add a copy of the most recent
+      // sample when estimating finger position and velocity.
+
+      velocityEstimator.addSample(pt.first, {pt.second.x, pt.second.y, 0}, now_epoch);
+      added_temporary_sample = true;
+    }
+
     size_t samples;
-    auto pos = velocityEstimator.estimatePosition(pt.first, move_magnitude, last_time, &samples);
+    auto pos = velocityEstimator.estimatePosition(pt.first, noise_level, last_time, &samples);
     if (samples > 0) {
       pt.second.ex = float(pos[0]);
       pt.second.ey = float(pos[1]);
@@ -548,12 +578,15 @@ void TouchState::eventsDone() {
       pt.second.ey = pt.second.y;
     }
 
-    auto vel = velocityEstimator.estimateVelocity(pt.first, move_magnitude);
+    auto vel = velocityEstimator.estimateVelocity(pt.first, noise_level, &samples);
     pt.second.vx = float(vel[0]);
     pt.second.vy = float(vel[1]);
 
-    if (history.find(pt.first) == history.end() ||
-        history[pt.first].point.state & State::RELEASE) {
+    if (added_temporary_sample)
+      velocityEstimator.removeLastSample(pt.first);
+
+    if (history.find(pt.first) == history.end()) {
+
       // This is a new point, that has no history
 
       check_multi(pt.second);
@@ -565,6 +598,19 @@ void TouchState::eventsDone() {
       
       pt.second.sx = pt.second.x;
       pt.second.sy = pt.second.y;
+
+    } else if (history[pt.first].point.state & State::RELEASE) {
+
+      HistoryState hs = { pt.second, now };
+      history[pt.first] = hs;
+
+      pt.second.state &= ~State::TOUCH_DOWN;
+
+      assert(previous_state.find(pt.first) != previous_state.end());
+      TouchPoint old_pt = previous_state.find(pt.first)->second;
+
+      pt.second.sx = smoothing * old_pt.sx + (1 - smoothing) * pt.second.x;
+      pt.second.sy = smoothing * old_pt.sy + (1 - smoothing) * pt.second.y;
 
     } else {
 
@@ -585,7 +631,7 @@ void TouchState::eventsDone() {
   }
 
   velocityEstimator.cleanup();
-  
+
   state = 0;
 }
 
@@ -608,12 +654,12 @@ void TouchState::clearReleasedStates() {
     if (pt.second.point.state & State::RELEASE &&
         clock::now() - pt.second.time > multi_time) continue;
     
-    if (association.find(pt.first) != association.end())
-      new_association[pt.first] = association[pt.first];
+    if (current_association.find(pt.first) != current_association.end())
+      new_association[pt.first] = current_association[pt.first];
     new_history[pt.first] = history[pt.first];
   }
   
-  association.swap(new_association);
+  current_association.swap(new_association);
   history.swap(new_history);
   current_state.swap(new_current);
 }
@@ -626,6 +672,7 @@ TouchState::TouchPoint::TouchPoint(TouchPointId id, float x, float y)
 
 
 void TouchState::check_multi(TouchPoint &new_pt) {
+
   std::map<TouchPointId, void*> new_association;
   std::map<TouchPointId, HistoryState> new_history;
 
@@ -634,8 +681,8 @@ void TouchState::check_multi(TouchPoint &new_pt) {
 
     // Not a release, therefore an active finger, not multi
     if (! (point.state & State::RELEASE)) {
-      if (association.find(pt.first) != association.end())
-        new_association[pt.first] = association[pt.first];
+      if (current_association.find(pt.first) != current_association.end())
+        new_association[pt.first] = current_association[pt.first];
       new_history[pt.first] = history[pt.first];
       continue;
     }
@@ -644,22 +691,23 @@ void TouchState::check_multi(TouchPoint &new_pt) {
     if ((point.x - new_pt.x) * (point.x - new_pt.x) +
         (point.y - new_pt.y) * (point.y - new_pt.y)
         > move_magnitude * move_magnitude) {
-      if (association.find(pt.first) != association.end())
-        new_association[pt.first] = association[pt.first];
+      if (current_association.find(pt.first) != current_association.end())
+        new_association[pt.first] = current_association[pt.first];
       new_history[pt.first] = history[pt.first];
       continue;
     }
 
     // Copy old association to this new (multi) touch point
-    if (association.find(pt.first) != association.end())
-      new_association[new_pt.id] = association[pt.first];
+    if (current_association.find(pt.first) != current_association.end())
+      new_association[new_pt.id] = current_association[pt.first];
+
     new_pt.clicks = point.clicks + 1;
     new_pt.state |= State::MULTI;
 
     break;
   }
 
-  association.swap(new_association);
+  current_association.swap(new_association);
   history.swap(new_history);
 }
 

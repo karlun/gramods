@@ -61,8 +61,13 @@ public:
      Returns the time associated with the last sample associated
      with the specified id, or -1 if there is no last sample
      available.
+
+     @param[in] id The id to read off the last sample for.
+
+     @param[in] N Read off the Nth last sample, 0 (default) being the
+     last sample.
   */
-  double getLastSampleTime(size_t id);
+  double getLastSampleTime(size_t id, size_t N = 0);
 
   /**
      Add a position sample. Each sample is associated to an id and a
@@ -75,6 +80,16 @@ public:
      @param[in] time The time at which the sample was taken.
   */
   void addSample(size_t id, Eigen::Vector3d position, double time);
+
+  /**
+     Remove the last sample for the specified id. This will remove the
+     last sample what was actually added to the id; it will not
+     restore a sample that was overwritten by another with the same
+     time.
+
+     @param[in] id The id to remove the last sample for.
+  */
+  void removeLastSample(size_t id);
 
   /**
      Estimate and return the velocity using samples associated to
