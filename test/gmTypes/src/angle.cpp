@@ -6,6 +6,8 @@
 #include <gmCore/Console.hh>
 #include <gmCore/OStreamMessageSink.hh>
 
+#include <math.h>
+
 #include <memory>
 #include <sstream>
 
