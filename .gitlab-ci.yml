@@ -9,7 +9,7 @@ BuildMini:
         - DEBIAN_FRONTEND="noninteractive" apt-get -y install cmake build-essential libgtest-dev
         - mkdir build
         - cd build
-        - cmake ..
+        - cmake -D gramods_TEST_gmGraphics=OFF ..
         - make
         - make test
 
@@ -19,7 +19,7 @@ BuildMaxi:
         - DEBIAN_FRONTEND="noninteractive" apt-get -y install cmake build-essential libgtest-dev libtinyxml2-dev libsdl2-dev libeigen3-dev libglew-dev libasio-dev libuvc-dev libfreeimage-dev inkscape
         - mkdir build
         - cd build
-        - cmake ..
+        - cmake -D gramods_TEST_gmGraphics=OFF ..
         - mkdir -p /builds/karlu20/gramods/build/modules/gmGraphics/resources/
         - make
         - make test

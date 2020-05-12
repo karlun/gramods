@@ -93,6 +93,13 @@ IF (GTest_FOUND)
   SUBDIRLIST(SUBDIRS ${gramods_SOURCE_DIR}/test)
   
   FOREACH (TEST ${SUBDIRS})
+
+    OPTION(gramods_TEST_${TEST} "Include test ${TEST}" ON)
+
+    IF (NOT gramods_TEST_${TEST})
+      CONTINUE()
+    ENDIF()
+
     IF (EXISTS ${gramods_SOURCE_DIR}/test/${TEST}/CMakeLists.txt)
       MESSAGE (STATUS "Adding test suite ${TEST}" )
       ADD_SUBDIRECTORY (${gramods_SOURCE_DIR}/test/${TEST})
