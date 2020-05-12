@@ -1,25 +1,40 @@
 
 image: ubuntu:20.04
-services:
-    - jamesbrink/opengl
+
+stages:
+  - build
+  - test
 
 BuildMini:
-    script:
-        - apt-get update
-        - DEBIAN_FRONTEND="noninteractive" apt-get -y install cmake build-essential libgtest-dev
-        - mkdir build
-        - cd build
-        - cmake -D gramods_TEST_gmGraphics=OFF ..
-        - make
-        - make test
+  stage: build
+  script:
+    - apt-get update
+    - DEBIAN_FRONTEND="noninteractive" apt-get -y install cmake build-essential libgtest-dev
+    - mkdir build
+    - cd build
+    - cmake -D gramods_TEST_gmGraphics=OFF ..
+    - make
+    - make test
 
 BuildMaxi:
-    script:
-        - apt-get update
-        - DEBIAN_FRONTEND="noninteractive" apt-get -y install cmake build-essential libgtest-dev libtinyxml2-dev libsdl2-dev libeigen3-dev libglew-dev libasio-dev libuvc-dev libfreeimage-dev inkscape
-        - mkdir build
-        - cd build
-        - cmake -D gramods_TEST_gmGraphics=OFF ..
-        - mkdir -p /builds/karlu20/gramods/build/modules/gmGraphics/resources/
-        - make
-        - make test
+  stage: build
+  script:
+    - apt-get update
+    - DEBIAN_FRONTEND="noninteractive" apt-get -y install cmake build-essential libgtest-dev libtinyxml2-dev libsdl2-dev libsdl2-ttf-dev libeigen3-dev libglew-dev libasio-dev libuvc-dev libfreeimage-dev inkscape
+    - mkdir build
+    - cd build
+    - cmake -D gramods_TEST_gmGraphics=OFF -D CPACK_BINARY_DEB=ON -D CPACK_DEBIAN_PACKAGE_DEPENDS="libtinyxml2-6a, libsdl2-2.0-0, libsdl2-ttf-2.0-0, libglew2.1, libuvc0, libfreeimage3" ..
+    - mkdir -p /builds/karlu20/gramods/build/modules/gmGraphics/resources/
+    - make
+    - make test
+    - make package
+  artifacts:
+    paths: ['build/libgramods*.deb']
+
+TestInstall:
+  stage: test
+  script:
+    - apt update
+    - apt install -y ./build/libgramods*.deb
+  dependencies:
+    - BuildMaxi
