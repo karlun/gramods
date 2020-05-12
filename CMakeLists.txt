@@ -32,14 +32,14 @@ ENDIF()
 SUBDIRLIST(gramods_MODULES ${gramods_SOURCE_DIR}/modules)
 FOREACH (MODULE ${gramods_MODULES})
 
-  OPTION(gramods_INCLUDE_${MODULE} "Include the module ${MODULE}" ON)
+  OPTION(gramods_MODULE_${MODULE} "Include the module ${MODULE}" ON)
 
-  IF (NOT gramods_INCLUDE_${MODULE})
+  IF (NOT gramods_MODULE_${MODULE})
     CONTINUE()
   ENDIF()
 
   IF (NOT EXISTS ${gramods_SOURCE_DIR}/modules/${MODULE}/CMakeLists.txt)
-    MESSAGE (STATUS "Skipping ${MODULE} - not a module")
+    MESSAGE (STATUS "Could not find build configuration modules/${MODULE}/CMakeLists.txt")
     CONTINUE()
   ENDIF ()
 
@@ -53,14 +53,14 @@ ENDFOREACH ()
 SUBDIRLIST(gramods_APPS ${gramods_SOURCE_DIR}/apps)
 FOREACH (APP ${gramods_APPS})
 
-  OPTION(gramods_INCLUDE_${APP} "Include the app ${APP}" ON)
+  OPTION(gramods_APP_${APP} "Include the app ${APP}" ON)
 
-  IF (NOT gramods_INCLUDE_${APP})
+  IF (NOT gramods_APP_${APP})
     CONTINUE()
   ENDIF()
 
   IF (NOT EXISTS ${gramods_SOURCE_DIR}/apps/${APP}/CMakeLists.txt)
-    MESSAGE (STATUS "Skipping ${APP} - not an app")
+    MESSAGE (STATUS "Could not find build configuration apps/${APP}/CMakeLists.txt")
     CONTINUE()
   ENDIF ()
 
@@ -100,12 +100,14 @@ IF (GTest_FOUND)
       CONTINUE()
     ENDIF()
 
-    IF (EXISTS ${gramods_SOURCE_DIR}/test/${TEST}/CMakeLists.txt)
-      MESSAGE (STATUS "Adding test suite ${TEST}" )
-      ADD_SUBDIRECTORY (${gramods_SOURCE_DIR}/test/${TEST})
-    ELSE ()
-      MESSAGE (WARNING "Unable to include test suite ${TEST} --- missing file test/${TEST}/CMakeLists.txt")
+    IF (NOT EXISTS ${gramods_SOURCE_DIR}/test/${TEST}/CMakeLists.txt)
+      MESSAGE (WARNING "Could not find build configuration test/${TEST}/CMakeLists.txt")
+      CONTINUE()
     ENDIF ()
+
+    MESSAGE (STATUS "Adding test suite ${TEST}" )
+    ADD_SUBDIRECTORY (${gramods_SOURCE_DIR}/test/${TEST})
+
   ENDFOREACH ()
 ELSE ()
   MESSAGE ("Include gTest to enable building test suites")
