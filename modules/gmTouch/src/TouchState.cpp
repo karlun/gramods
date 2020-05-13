@@ -491,7 +491,6 @@ void TouchState::addTouchState(TouchPointId id, float x, float y) {
 }
 
 void TouchState::addState(TouchPointId id, float x, float y) {
-  x += 500;
   if (current_state.find(id) == current_state.end()) {
     TouchPoint p(id, x, y);
     current_state.insert(std::make_pair(id, p));
