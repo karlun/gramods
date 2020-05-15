@@ -4,8 +4,8 @@ CMAKE_MINIMUM_REQUIRED(VERSION 2.8.3)
 SET (MODULE_INCLUDE_DIRS CACHE INTERNAL "The list of include folders to search for the misc module.")
 SET (MODULE_LIBS CACHE INTERNAL "The list of libraries that the misc module should link against.")
 
-SET (MODULE_INCLUDE_DIRS ${MODULE_INCLUDE_DIRS} ${CMAKE_CURRENT_SOURCE_DIR}/include)
-SET (MODULE_INCLUDE_DIRS ${MODULE_INCLUDE_DIRS} ${CMAKE_CURRENT_BINARY_DIR}/include)
+LIST (APPEND MODULE_INCLUDE_DIRS ${CMAKE_CURRENT_SOURCE_DIR}/include)
+LIST (APPEND MODULE_INCLUDE_DIRS ${CMAKE_CURRENT_BINARY_DIR}/include)
 
 
 FIND_PACKAGE (Eigen3 QUIET NO_MODULE)
@@ -13,7 +13,7 @@ IF (Eigen3_FOUND)
   SET(HAVE_Eigen3 1)
   OPTION(gramods_ENABLE_Eigen3 "Enable functionality that requires Eigen3" ON)
   IF (gramods_ENABLE_Eigen3)
-    SET (MODULE_LIBS ${MODULE_LIBS} Eigen3::Eigen)
+    LIST (APPEND MODULE_LIBS Eigen3::Eigen)
   ENDIF()
 ENDIF()
 

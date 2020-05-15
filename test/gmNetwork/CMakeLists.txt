@@ -4,28 +4,28 @@ CMAKE_MINIMUM_REQUIRED(VERSION 2.8.3)
 SET (TEST_INCLUDE_DIRS CACHE INTERNAL "The list of include folders to search for the network test.")
 SET (TEST_LIBS CACHE INTERNAL "The list of libraries that the network test should link against.")
 
-SET (TEST_INCLUDE_DIRS ${TEST_INCLUDE_DIRS} ${CMAKE_CURRENT_SOURCE_DIR}/include)
+LIST (APPEND TEST_INCLUDE_DIRS ${CMAKE_CURRENT_SOURCE_DIR}/include)
 
 IF (NOT TARGET gmNetwork)
   MESSAGE(STATUS "gmNetwork test will not be built without gmNetwork module")
   RETURN()
 ENDIF ()
-SET (TEST_LIBS ${TEST_LIBS} gmNetwork)
+LIST (APPEND TEST_LIBS gmNetwork)
 
 FIND_PACKAGE(GTest)
 IF (NOT GTest_FOUND)
   MESSAGE(STATUS "gmNetwork test will not be built without gtest")
   RETURN()
 ENDIF ()
-SET (TEST_INCLUDE_DIRS ${TEST_INCLUDE_DIRS} ${GTEST_INCLUDE_DIRS})
-SET (TEST_LIBS ${TEST_LIBS} ${GTEST_BOTH_LIBRARIES})
+LIST (APPEND TEST_INCLUDE_DIRS ${GTEST_INCLUDE_DIRS})
+LIST (APPEND TEST_LIBS ${GTEST_BOTH_LIBRARIES})
 
 FIND_PACKAGE(Threads)
 IF (NOT Threads_FOUND)
   MESSAGE(STATUS "gmNetwork test will not be built without threads")
   RETURN()
 ENDIF ()
-SET (TEST_LIBS ${TEST_LIBS} Threads::Threads)
+LIST (APPEND TEST_LIBS Threads::Threads)
 
 ADD_EXECUTABLE(test_gmNetwork src/main.cpp)
 

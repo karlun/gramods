@@ -4,15 +4,15 @@ CMAKE_MINIMUM_REQUIRED(VERSION 2.8.3)
 SET (APP_INCLUDE_DIRS CACHE INTERNAL "The list of include folders to search for the app.")
 SET (APP_LIBS CACHE INTERNAL "The list of libraries that the app should link against.")
 
-SET (APP_INCLUDE_DIRS ${APP_INCLUDE_DIRS} ${CMAKE_CURRENT_SOURCE_DIR}/include)
-SET (APP_INCLUDE_DIRS ${APP_INCLUDE_DIRS} ${CMAKE_CURRENT_BINARY_DIR}/include)
+LIST (APPEND APP_INCLUDE_DIRS ${CMAKE_CURRENT_SOURCE_DIR}/include)
+LIST (APPEND APP_INCLUDE_DIRS ${CMAKE_CURRENT_BINARY_DIR}/include)
 
 
 IF (NOT TARGET gmCore)
   MESSAGE (STATUS "Not including gm-load - requires gmCore")
   RETURN()
 ENDIF ()
-SET (APP_LIBS ${APP_LIBS} gmCore)
+LIST (APPEND APP_LIBS gmCore)
 
 IF (NOT gramods_ENABLE_TinyXML2)
   MESSAGE (STATUS "Not including gm-load - requires XML support")
@@ -23,7 +23,7 @@ IF (NOT TARGET gmGraphics)
   MESSAGE (STATUS "Not including gm-load - requires gmGraphics")
   RETURN()
 ENDIF ()
-SET (APP_LIBS ${APP_LIBS} gmGraphics)
+LIST (APPEND APP_LIBS gmGraphics)
 
 
 FIND_PACKAGE (TCLAP)
@@ -31,14 +31,14 @@ IF (NOT TCLAP_FOUND)
   MESSAGE (STATUS "Not including gm-load - requires TCLAP")
   RETURN()
 ENDIF ()
-SET (APP_INCLUDE_DIRS ${APP_INCLUDE_DIRS} ${TCLAP_INCLUDE_DIRS})
+LIST (APPEND APP_INCLUDE_DIRS ${TCLAP_INCLUDE_DIRS})
 
 FIND_PACKAGE(Threads)
 IF (NOT Threads_FOUND)
   MESSAGE (STATUS "Not including gm-load - requires Threads")
   RETURN()
 ENDIF ()
-SET (APP_LIBS ${APP_LIBS} Threads::Threads)
+LIST (APPEND APP_LIBS Threads::Threads)
 
 
 ADD_EXECUTABLE(gm-load src/main.cpp)
