@@ -4,6 +4,7 @@
 #ifdef gramods_ENABLE_Eigen3
 
 #include <gmTypes/eigen.hh>
+#include <gmTypes/angle.hh>
 
 #include <sstream>
 
@@ -82,7 +83,7 @@ ypr
   }
 }
 
-TEST(gmTypesEigen, XML_axisangle) {
+TEST(gmTypesEigen, XML_axisangle_rad) {
 
   Eigen::Quaternionf q;
   std::stringstream ss(R"lang=xml(
@@ -96,7 +97,7 @@ axisangle 1 2 3 0.1
   EXPECT_EQ_EIGEN_QUAT(Q, q);
 }
 
-TEST(gmTypesEigen, XML_angleaxis) {
+TEST(gmTypesEigen, XML_angleaxis_rad) {
 
   Eigen::Quaternionf q;
   std::stringstream ss(R"lang=xml(
@@ -106,6 +107,36 @@ angleaxis 0.1 1 2 3
   ss >> q;
 
   Eigen::AngleAxisf A(0.1, Eigen::Vector3f(1, 2, 3).normalized());
+  Eigen::Quaternionf Q(A);
+  EXPECT_EQ_EIGEN_QUAT(Q, q);
+}
+
+TEST(gmTypesEigen, XML_axisangle_deg) {
+
+  Eigen::Quaternionf q;
+  std::stringstream ss(R"lang=xml(
+axisangle 1 2 3 d10
+)lang=xml");
+
+  ss >> q;
+
+  Eigen::AngleAxisf A(gmTypes::angle::from_degrees * 10.f,
+                      Eigen::Vector3f(1, 2, 3).normalized());
+  Eigen::Quaternionf Q(A);
+  EXPECT_EQ_EIGEN_QUAT(Q, q);
+}
+
+TEST(gmTypesEigen, XML_angleaxis_deg) {
+
+  Eigen::Quaternionf q;
+  std::stringstream ss(R"lang=xml(
+angleaxis d10 1 2 3
+)lang=xml");
+
+  ss >> q;
+
+  Eigen::AngleAxisf A(gmTypes::angle::from_degrees * 10.f,
+                      Eigen::Vector3f(1, 2, 3).normalized());
   Eigen::Quaternionf Q(A);
   EXPECT_EQ_EIGEN_QUAT(Q, q);
 }
