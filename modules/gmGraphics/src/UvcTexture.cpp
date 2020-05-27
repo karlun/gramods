@@ -254,7 +254,7 @@ bool UvcTexture::Impl::negotiate_format() {
   if (res < 0) {
     closeAll();
 
-    GM_ERR("UvcTexture", "Unable to nagotiate UVC format: " << uvc_strerror(res));
+    GM_ERR("UvcTexture", "Unable to negotiate UVC format: " << uvc_strerror(res));
     return false;
   }
   GM_INF("UvcTexture", "Successful UVC format negotiation");

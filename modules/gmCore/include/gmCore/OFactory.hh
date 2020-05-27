@@ -8,6 +8,7 @@
 
 #include <map>
 #include <string>
+#include <iomanip>
 #include <typeinfo>
 
 #include <assert.h>
@@ -355,7 +356,7 @@ void OFactory::ParamSetter<Node, T>::setValueFromString
   Node *node = static_cast<Node*>(n);
   std::stringstream ss(s);
   T val;
-  ss >> val;
+  ss >> std::setbase(0) >> val;
 
   if (!ss) {
     GM_ERR("Configuration", "cannot parse '" << s << "' as type " << typeid(T).name());

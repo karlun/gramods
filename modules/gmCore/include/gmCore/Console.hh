@@ -218,7 +218,7 @@ namespace detail {
 /**
    Console for easier handling of runtime and debugging
    information. For convenience, use the macros GM_ERR, GM_WRN,
-   GM_INF, GM_VINF and GM_VINF
+   GM_INF, GM_VINF and GM_VVINF
 */
 struct Console
   : public std::ostream {
