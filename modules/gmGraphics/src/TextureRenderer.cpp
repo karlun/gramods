@@ -9,7 +9,7 @@
 BEGIN_NAMESPACE_GMGRAPHICS;
 
 GM_OFI_DEFINE(TextureRenderer);
-GM_OFI_POINTER(TextureRenderer, texture, gmGraphics::Texture, TextureRenderer::setTexture);
+GM_OFI_POINTER(TextureRenderer, texture, gmGraphics::TextureInterface, TextureRenderer::setTexture);
 
 namespace {
   const char * vertex_shader_code = R"lang=glsl(
@@ -43,7 +43,7 @@ struct TextureRenderer::Impl {
 
   ~Impl();
 
-  void render(Texture *tex, Camera &camera);
+  void render(TextureInterface *tex, Camera &camera);
   void setup();
 
   GLuint vertex_shader_id = 0;
@@ -66,7 +66,7 @@ void TextureRenderer::getNearFar(Camera camera, float &near, float &far) {
   near = far = -1;
 }
 
-void TextureRenderer::Impl::render(Texture *texture, Camera &camera) {
+void TextureRenderer::Impl::render(TextureInterface *texture, Camera &camera) {
   if (!texture) {
     GM_RUNONCE(GM_WRN("TextureRenderer", "No texture to render"));
     return;

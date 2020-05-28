@@ -16,7 +16,7 @@ GM_OFI_DEFINE(SphereRenderer);
 GM_OFI_PARAM(SphereRenderer, radius, float, SphereRenderer::setRadius);
 GM_OFI_PARAM(SphereRenderer, position, Eigen::Vector3f, SphereRenderer::setPosition);
 GM_OFI_PARAM(SphereRenderer, orientation, Eigen::Quaternionf, SphereRenderer::setOrientation);
-GM_OFI_POINTER(SphereRenderer, texture, gmGraphics::Texture, SphereRenderer::setTexture);
+GM_OFI_POINTER(SphereRenderer, texture, gmGraphics::TextureInterface, SphereRenderer::setTexture);
 GM_OFI_POINTER(SphereRenderer, coordinatesMapper, gmGraphics::CoordinatesMapper, SphereRenderer::setCoordinatesMapper);
 
 struct SphereRenderer::Impl {
@@ -45,7 +45,7 @@ struct SphereRenderer::Impl {
   Eigen::Vector3f position = Eigen::Vector3f::Zero();
   Eigen::Quaternionf orientation = Eigen::Quaternionf::Identity();
 
-  std::shared_ptr<Texture> texture;
+  std::shared_ptr<TextureInterface> texture;
   std::shared_ptr<CoordinatesMapper> mapper;
 
   bool is_setup = false;
@@ -326,7 +326,7 @@ void SphereRenderer::setOrientation(Eigen::Quaternionf q) {
   _impl->orientation = q;
 }
 
-void SphereRenderer::setTexture(std::shared_ptr<Texture> tex) {
+void SphereRenderer::setTexture(std::shared_ptr<TextureInterface> tex) {
   _impl->texture = tex;
 }
 
