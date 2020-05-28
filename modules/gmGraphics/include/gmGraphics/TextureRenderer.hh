@@ -3,7 +3,7 @@
 #define GRAMODS_GRAPHICS_TEXTURERENDERER
 
 #include <gmGraphics/Renderer.hh>
-#include <gmGraphics/Texture.hh>
+#include <gmGraphics/TextureInterface.hh>
 
 #include <gmCore/OFactory.hh>
 
@@ -38,7 +38,7 @@ public:
 
      \b XML-key: \c texture
   */
-  void setTexture(std::shared_ptr<Texture> tex) {
+  void setTexture(std::shared_ptr<TextureInterface> tex) {
     texture = tex;
   }
 
@@ -46,7 +46,7 @@ public:
 
 private:
 
-  std::shared_ptr<Texture> texture;
+  std::shared_ptr<TextureInterface> texture;
 
   struct Impl;
   std::unique_ptr<Impl> _impl;

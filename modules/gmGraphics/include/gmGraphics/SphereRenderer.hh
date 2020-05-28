@@ -3,7 +3,7 @@
 #define GRAMODS_GRAPHICS_SPHERERENDERER
 
 #include <gmGraphics/Renderer.hh>
-#include <gmGraphics/Texture.hh>
+#include <gmGraphics/TextureInterface.hh>
 #include <gmGraphics/CoordinatesMapper.hh>
 
 #include <gmTypes/eigen.hh>
@@ -74,7 +74,7 @@ public:
 
      \b XML-key: \c texture
   */
-  void setTexture(std::shared_ptr<Texture> tex);
+  void setTexture(std::shared_ptr<TextureInterface> tex);
 
   /**
      Sets the coordinates mapper that should be used to map the 2D

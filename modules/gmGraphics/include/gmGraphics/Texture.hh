@@ -6,9 +6,7 @@
 #include <gmGraphics/config.hh>
 
 #include <gmCore/Object.hh>
-
-#include <GL/glew.h>
-#include <GL/gl.h>
+#include <gmGraphics/TextureInterface.hh>
 
 BEGIN_NAMESPACE_GMGRAPHICS;
 
@@ -16,20 +14,10 @@ BEGIN_NAMESPACE_GMGRAPHICS;
    The base of classes providing texture data for rendering.
 */
 class Texture
-  : public gmCore::Object {
+  : public gmCore::Object,
+    public TextureInterface {
 
 public:
-
-  /**
-     Updates the texture with new data. Must be called with GL
-     context.
-  */
-  virtual void update() = 0;
-
-  /**
-     Returns the ID of the associated GL texture object.
-  */
-  virtual GLuint getGLTextureID() = 0;
 
   /**
      Returns the default key, in Configuration, for the
