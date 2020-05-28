@@ -1,0 +1,32 @@
+<config>
+
+  <if variable="GM_DEBUG" value="true">
+    <OStreamMessageSink stream="out" useAnsiColor="1" level="2"/>
+  </if>
+
+  <Controller>
+    <RelativeSinglePoseTracker>
+      <OffsetSinglePoseTracker
+          AS="targetTracker"
+          positionOffset="0 -0.0904 0">
+        <MultiToSinglePoseTracker
+            sensor="0">
+          <VrpnPoseTracker
+              connectionString="openvr/device/LHR-0FC1EC83@itn-vrhmd-01.ad.liu.se"/>
+        </MultiToSinglePoseTracker>
+      </OffsetSinglePoseTracker>
+      <MultiToSinglePoseTracker
+          AS="originTracker"
+          sensor="0">
+        <VrpnPoseTracker
+            connectionString="openvr/device/LHR-1BDC55AF@itn-vrhmd-01.ad.liu.se"/>
+      </MultiToSinglePoseTracker>
+    </RelativeSinglePoseTracker>
+    <ButtonsMapper
+        mainButton="33">
+      <VrpnButtonsTracker
+          connectionString="openvr/device/LHR-0FC1EC83@itn-vrhmd-01.ad.liu.se"/>
+    </ButtonsMapper>
+  </Controller>
+
+</config>

@@ -16,7 +16,7 @@ GM_OFI_POINTER(Controller, analogsTracker, AnalogsTracker, Controller::setAnalog
 
 bool Controller::getPose(SinglePoseTracker::PoseSample &p) {
   if (!single_pose_tracker) {
-    GM_RUNONCE(GM_WRN("Controller", "Pose requested by no pose tracker available."));
+    GM_RUNONCE(GM_WRN("Controller", "Pose requested but no pose tracker available."));
     return false;
   }
   return single_pose_tracker->getPose(p);
@@ -24,7 +24,7 @@ bool Controller::getPose(SinglePoseTracker::PoseSample &p) {
 
 bool Controller::getButtons(ButtonsTracker::ButtonsSample &b) {
   if (!buttons_tracker) {
-    GM_RUNONCE(GM_WRN("Controller", "Buttons requested by no buttons tracker available."));
+    GM_RUNONCE(GM_WRN("Controller", "Buttons requested but no buttons tracker available."));
     return false;
   }
   return buttons_tracker->getButtons(b);
@@ -32,7 +32,7 @@ bool Controller::getButtons(ButtonsTracker::ButtonsSample &b) {
 
 bool Controller::getAnalogs(AnalogsTracker::AnalogsSample &a) {
   if (!analogs_tracker) {
-    GM_RUNONCE(GM_WRN("Controller", "Analogs requested by no analogs tracker available."));
+    GM_RUNONCE(GM_WRN("Controller", "Analogs requested but no analogs tracker available."));
     return false;
   }
   return analogs_tracker->getAnalogs(a);

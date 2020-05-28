@@ -2,18 +2,21 @@
 
 # Table of Content
 
-1. [Introduction](#introduction)
-     1. [Purpose](#purpose)
-     2. [Repository Structure](#repository-structure)
-2. [Build and Install](#build-and-install)
-3. [Modules and Dependencies](#modules-and-dependencies)
-     1. [gmCore](#gmcore)
-     2. [gmTrack](#gmtrack)
-     3. [gmNetwork](#gmnetwork)
-     4. [gmGraphics](#gmgraphics)
-     5. [gmTouch](#gmtouch)
-     6. [gmMisc](#gmmisc)
-     7. [gmTypes](#gmtypes)
+1. Introduction
+     1. Purpose
+     2. Repository Structure
+2. Build and Install
+3. Apps and Dependencies
+     1. gm-load
+     2. gm-tracker-registration
+3. Modules and Dependencies
+     1. gmCore
+     2. gmTrack
+     3. gmNetwork
+     4. gmGraphics
+     5. gmTouch
+     6. gmMisc
+     7. gmTypes
 
 
 # Introduction
@@ -51,6 +54,48 @@ cmake ..
 make
 make install
 ~~~~~~~~~~~~~
+
+
+# Apps and Dependencies
+
+The Gramods package includes a number of apps, for the purpose of testing or demonstrating Gramods functionality, of for running Gramods configurations.
+
+## gm-load
+
+The `gm-load` app loads one or more configuration files and executes them by calling `Updateable::updateAll` and by calling `Window` instances if such are defined in the configuration.
+
+This app will not be build if these required dependencies are not configured for:
+
+ - gmCore
+ - gmGraphics
+ - TinyXML2
+ - TCLAP
+
+## gm-tracker-registration
+
+The `gm-tracker-registration` app does not open any graphical interface, but instead silently (depending on output verbosity) registers tracker positions, and subsequently calculates and outputs tracker registration data. It uses the top-most `Controller` in the specified configuration for reading off tracker position data and registers these against real world position data specified on the command line.
+
+Whenever the main button (`ButtonsMapper::MAIN`) is pressed, the app samples data. If more than one data sample was captured during the button press, an average is calculated (IQM) and used. The app then estimates sphericity of the data and if three dimensions are considere linearly independent a full registration is automatically either solved or estimated, using least-squares estimation. If the data only span two dimensions the registered points are automatically expanded into the third dimension, assuming uniformity of both the tracker and real world coordinates, before estimating the registration.
+
+The estimated registration data are written to a specified output file, `output.xml` per default, based on an output template. This template can be in any text-based format and the following keys are replaced by their corresponding registration data:
+
+| Keys              | Data                                                                 |
+|-------------------|----------------------------------------------------------------------|
+| `%M0x %M0y %M0z`  | The first vector of the rotation part of the registration 4x4 matrix |
+| `%M1x %M1y %M1z`  | The first vector of the rotation part of the registration 4x4 matrix |
+| `%M2x %M2y %M2z`  | The first vector of the rotation part of the registration 4x4 matrix |
+| `%M3x %M3y %M3z`  | The translation vector part of the registration 4x4 matrix           |
+| `%Rx %Ry %Rz`     | The rotation axis of the rotation part of the registration           |
+| `%Ra %Rd`         | The rotation angle expressed in radians and degrees, respectively    |
+| `%Qx %Qy %Qz %Qw` | The rotation part expressed in quaternion format                     |
+
+`%M`, `%R` and `%Q` can also be replaced with `%Mi`, `%Ri` and `%Qi,` respectively, for use of the inverse transform instead of the forward registration transform. To enter a literal `%` use `%%`.
+
+This app will not be build if these required dependencies are not configured for:
+
+ - gmCore
+ - gmTrack
+ - TCLAP
 
 
 # Modules and Dependencies

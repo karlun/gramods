@@ -1,8 +1,9 @@
 
 #include <gmTrack/RelativeSinglePoseTracker.hh>
 
-BEGIN_NAMESPACE_GMTRACK;
+#include <gmCore/RunOnce.hh>
 
+BEGIN_NAMESPACE_GMTRACK;
 
 GM_OFI_DEFINE(RelativeSinglePoseTracker);
 GM_OFI_POINTER(RelativeSinglePoseTracker, originTracker,
@@ -12,7 +13,16 @@ GM_OFI_POINTER(RelativeSinglePoseTracker, targetTracker,
 
 
 bool RelativeSinglePoseTracker::getPose(PoseSample &p) {
-  if (!origin_tracker || !target_tracker) return false;
+
+  if (!target_tracker) {
+    GM_RUNONCE(GM_WRN("RelativeSinglePoseTracker", "Pose requested but no target tracker available."));
+    return false;
+  }
+
+  if (!origin_tracker) {
+    GM_RUNONCE(GM_WRN("RelativeSinglePoseTracker", "Pose requested but no origin tracker available."));
+    return false;
+  }
 
   PoseSample origin_sample;
   if (!origin_tracker->getPose(origin_sample))

@@ -192,13 +192,13 @@ void PoseRegistrationEstimator::Impl::update(clock::time_point now) {
   registration_raw = M_reg;
   successful_registration = true;
 
-  GM_VINF("PoseRegistrationEstimator", "Raw registration matrix:\n" << M_reg);
+  GM_INF("PoseRegistrationEstimator", "Raw registration matrix:\n" << M_reg);
 
   Eigen::Matrix4f M_unit;
   estimateUnitRegistration(tracker_data, actual_data, M_reg, M_unit);
   registration_unit = M_unit;
 
-  GM_VINF("PoseRegistrationEstimator", "Unit registration matrix:\n" << M_unit);
+  GM_INF("PoseRegistrationEstimator", "Unit registration matrix:\n" << M_unit);
 }
 
 void PoseRegistrationEstimator::Impl::getIQM3D(std::vector<Eigen::Vector3f> samples, Eigen::Vector3f &x) {
@@ -266,7 +266,7 @@ float PoseRegistrationEstimator::Impl::estimateSphericity(std::vector<Eigen::Vec
   GM_VINF("PoseRegistrationEstimator", "singular values: " << singular_values.transpose());
 
   if (singular_values[1] / singular_values[0] < 0.3f) //<< Arbitrarily choosen for warning only
-    GM_WRN("PoseRegistrationEstimator", "poor second axis sphericity - points may be too linearly dependent for a good registration estimation");
+    GM_WRN("PoseRegistrationEstimator", "Poor second axis sphericity (" << (singular_values[1] / singular_values[0]) << ") - points may be too linearly dependent for a good registration estimation");
 
   return singular_values[2] / singular_values[0];
 }
@@ -320,17 +320,11 @@ void PoseRegistrationEstimator::Impl::expandPlanar(std::vector<Eigen::Vector3f> 
     }
 
     GM_VINF("PoseRegistrationEstimator", "Estimated primary samples: " << idx0 << " (" << best_value0 << ") and " << idx1 << "(" << best_value1 << ")");
+  }
 
-    if ((data[idx0] - cp).cross(data[idx1] - cp).dot(data_normal) < 0) {
-      GM_VINF("PoseRegistrationEstimator", "Flipping");
-      data_normal = -data_normal;
-    }
-
-  } else {
-    if ((data[idx0] - cp).cross(data[idx1] - cp).dot(data_normal) < 0) {
-      GM_VINF("PoseRegistrationEstimator", "Flipping");
-      data_normal = -data_normal;
-    }
+  if ((data[idx0] - cp).cross(data[idx1] - cp).dot(data_normal) < 0) {
+    GM_VINF("PoseRegistrationEstimator", "Flipping");
+    data_normal = -data_normal;
   }
 
   std::vector<Eigen::Vector3f> new_data;
@@ -406,14 +400,20 @@ void PoseRegistrationEstimator::Impl::estimateUnitRegistration
  Eigen::Matrix4f M_raw,
  Eigen::Matrix4f &M_unit) {
 
-  Eigen::JacobiSVD<Eigen::MatrixXf> svd(M_raw.block(0,0,3,3),
+  if (tracker_data.empty() || actual_data.empty())
+    throw std::invalid_argument("empty vector of data not supported");
+
+  if (tracker_data.size() != actual_data.size())
+    throw std::invalid_argument("tracker and actual point vectors must be of equal size");
+
+  Eigen::JacobiSVD<Eigen::MatrixXf> svd(M_raw.block<3,3>(0,0),
                                         Eigen::ComputeFullU | Eigen::ComputeFullV);
   auto U = svd.matrixU();
   auto S = svd.singularValues();
   auto V = svd.matrixV();
 
   M_unit = Eigen::Matrix4f::Identity();
-  M_unit.block(0,0,3,3) = U * V.transpose();
+  M_unit.block<3,3>(0,0) = U * V.transpose();
 
   Eigen::Vector3f tracker_cp = Eigen::Vector3f::Zero();
   for (auto pt : tracker_data)
@@ -425,8 +425,8 @@ void PoseRegistrationEstimator::Impl::estimateUnitRegistration
     actual_cp += pt;
   actual_cp /= (float)actual_data.size();
 
-  Eigen::Vector3f offset = (actual_cp - (M_unit * tracker_cp.homogeneous()).hnormalized());
-  M_unit.block(0,3,3,1) = offset;
+  Eigen::Vector3f offset = actual_cp - (M_unit * tracker_cp.homogeneous()).hnormalized();
+  M_unit.block<3,1>(0,3) = offset;
 }
 
 END_NAMESPACE_GMTRACK;

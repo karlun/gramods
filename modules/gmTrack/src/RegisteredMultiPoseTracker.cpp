@@ -17,7 +17,7 @@ GM_OFI_PARAM(RegisteredMultiPoseTracker, registrationMatrix, Eigen::Matrix4f, Re
 bool RegisteredMultiPoseTracker::getPose(std::map<int, PoseSample> &p) {
 
   if (!tracker) {
-    GM_RUNONCE(GM_WRN("RegisteredMultiPoseTracker", "Pose requested by no pose tracker available."));
+    GM_RUNONCE(GM_WRN("RegisteredMultiPoseTracker", "Pose requested but no pose tracker available."));
     return false;
   }
 

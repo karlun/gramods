@@ -41,7 +41,7 @@ void ButtonsMapper::setMenuButton(int idx) {
 bool ButtonsMapper::getButtons(ButtonsSample &p) {
 
   if (!buttonsTracker) {
-    GM_RUNONCE(GM_WRN("ButtonsMapper", "Buttons requested by no buttons tracker available."));
+    GM_RUNONCE(GM_WRN("ButtonsMapper", "Buttons requested but no buttons tracker available."));
     return false;
   }
 
