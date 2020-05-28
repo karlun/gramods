@@ -18,6 +18,8 @@ ENDMACRO()
 
 # --- GENERAL OPTIONS ---
 
+OPTION(gramods_INSTALL_RESOURCES "Include module resources in INSTALL target." ON)
+
 OPTION(gramods_BUILD_RESOURCES "Include building resources in the ALL target." ON)
 IF (gramods_BUILD_RESOURCES)
   SET(RESOURCE_ALL "ALL" CACHE INTERNAL "The keyword 'ALL' for all resource targets")
@@ -138,9 +140,12 @@ IF (DOXYGEN_FOUND)
       )
   ENDIF()
 
-  INSTALL(
-    DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/doc_doxygen/html/
-    DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/docs)
+  OPTION(gramods_INSTALL_DOCUMENTATION "Install documentation." ON)
+  IF (gramods_INSTALL_DOCUMENTATION)
+    INSTALL(
+      DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/doc_doxygen/html/
+      DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/docs)
+  ENDIF()
 
 ELSE ()
   MESSAGE ("Include Doxygen to enable building documentation")

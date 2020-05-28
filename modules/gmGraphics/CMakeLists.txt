@@ -101,8 +101,10 @@ IF(Inkscape_FOUND)
   add_custom_target(svg-resources
     ${RESOURCE_ALL}
     DEPENDS ${SVGPNG_RESOURCE_TARGETS})
-  INSTALL(FILES ${SVGPNG_RESOURCE_TARGETS}
-    DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/gmGraphics/resources)
+  IF (gramods_INSTALL_RESOURCES)
+    INSTALL(FILES ${SVGPNG_RESOURCE_TARGETS}
+      DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/gmGraphics/resources)
+  ENDIF()
 
   MESSAGE (STATUS "Added 'svg-resources' target for converting SVG resources to PNG.")
 ELSE()
@@ -131,8 +133,10 @@ IF(GimpConsole_FOUND)
   add_custom_target(python-fu-resources
     ${RESOURCE_ALL}
     DEPENDS ${PYPNG_RESOURCE_TARGETS})
-  INSTALL(FILES ${PYPNG_RESOURCE_TARGETS}
-    DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/gmGraphics/resources)
+  IF (gramods_INSTALL_RESOURCES)
+    INSTALL(FILES ${PYPNG_RESOURCE_TARGETS}
+      DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/gmGraphics/resources)
+  ENDIF()
 
   MESSAGE (STATUS "Added 'python-fu-resources' target for creating PNG with gimp python-fu.")
 ELSE()
