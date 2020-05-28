@@ -48,7 +48,8 @@ public:
 
   /**
      Sets the resolution to render and save at, regarless of
-     resolution of the parent. Default is to use the parent.
+     resolution of the view itself. Default is to use the view
+     resolution.
 
      \b XML-attribute: \c resolution
   */

@@ -93,7 +93,7 @@ void SaveView::Impl::renderFullPipeline(ViewSettings settings) {
     return;
   }
 
-  if (resolution[0] <= 0 || resolution[1] <= 0) {
+  if (resolution[0] < 0 || resolution[1] < 0) {
     GM_RUNONCE(GM_ERR("SaveView", "Cannot create view of resolution " << resolution[0] << "x" << resolution[1] << "."));
     return;
   }
