@@ -1,47 +1,44 @@
 
-#include <gmGraphics/ChromaKeyView.hh>
 
-#include <gmGraphics/GLUtils.hh>
-#include <gmCore/RunOnce.hh>
+#include <gmGraphics/ChromaKeyTexture.hh>
 
 #include <gmGraphics/OffscreenRenderTargets.hh>
 #include <gmGraphics/RasterProcessor.hh>
 
-#include <Eigen/Eigen>
+#include <gmCore/RunOnce.hh>
 
 BEGIN_NAMESPACE_GMGRAPHICS;
 
-GM_OFI_DEFINE_SUB(ChromaKeyView, View);
-GM_OFI_PARAM(ChromaKeyView, key, gmTypes::float3, ChromaKeyView::setKey);
-GM_OFI_PARAM(ChromaKeyView, tolerance, gmTypes::float2, ChromaKeyView::setTolerance);
-GM_OFI_POINTER(ChromaKeyView, view, View, ChromaKeyView::setView);
+GM_OFI_DEFINE(ChromaKeyTexture);
+GM_OFI_POINTER(ChromaKeyTexture, texture, Texture, ChromaKeyTexture::setTexture);
+GM_OFI_PARAM(ChromaKeyTexture, key, gmTypes::float3, ChromaKeyTexture::setKey);
+GM_OFI_PARAM(ChromaKeyTexture, tolerance, gmTypes::float2, ChromaKeyTexture::setTolerance);
 
-struct ChromaKeyView::Impl {
+struct ChromaKeyTexture::Impl {
+
+  void update();
+  GLuint getGLTextureID() { return texture_id; }
 
   static const std::string fragment_code;
 
   OffscreenRenderTargets render_target;
   RasterProcessor raster_processor;
 
+  GLuint texture_id = 0;
   bool is_setup = false;
   bool is_functional = false;
 
-  void renderFullPipeline(ViewSettings settings);
-
-  std::shared_ptr<View> view;
+  std::shared_ptr<Texture> texture;
   gmTypes::float3 key = { 0, 1, 0 };
   gmTypes::float2 tolerance = { 0.48, 0.5 };
 };
 
-const std::string
-ChromaKeyView::
-Impl::fragment_code = R"lang=glsl(
+const std::string ChromaKeyTexture::Impl::fragment_code =
+  R"lang=glsl(
 #version 330 core
 
 uniform sampler2D tex;
-
 uniform vec3 key_rgb;
-
 uniform float r0;
 uniform float r1;
 
@@ -79,58 +76,54 @@ void main() {
 }
 )lang=glsl";
 
-ChromaKeyView::ChromaKeyView()
+ChromaKeyTexture::ChromaKeyTexture()
   : _impl(std::make_unique<Impl>()) {}
 
-ChromaKeyView::~ChromaKeyView() {}
-
-void ChromaKeyView::setView(std::shared_ptr<View> v) {
-  _impl->view = v;
+void ChromaKeyTexture::update() {
+  _impl->update();
 }
 
-void ChromaKeyView::renderFullPipeline(ViewSettings settings) {
-  populateViewSettings(settings);
-  _impl->renderFullPipeline(settings);
-}
+void ChromaKeyTexture::Impl::update() {
 
-void ChromaKeyView::Impl::renderFullPipeline(ViewSettings settings) {
-
-  if (!view) {
-    GM_RUNONCE(GM_ERR("ChromaKeyView", "Missing view to mask by chroma key."));
+  if (!texture) {
+    GM_RUNONCE(GM_ERR("ChromaKeyTexture", "No texture to process."));
     return;
   }
+
+  texture->update();
 
   if (!is_setup) {
     is_setup = true;
     raster_processor.setFragmentCode(fragment_code);
-    render_target.setPixelFormat(settings.pixel_format);
-    if (render_target.init() &&
-        raster_processor.init())
+    render_target.setLinearInterpolation(false);
+    if (render_target.init(1) &&
+        raster_processor.init()) {
       is_functional = true;
+      texture_id = render_target.getTexId(0);
+    }
   }
 
   if (!is_functional) {
-    GM_RUNONCE(GM_ERR("ChromaKeyView", "Dysfunctional internal GL workings."));
+    GM_RUNONCE(GM_ERR("ChromaKeyTexture", "Dysfunctional internal GL workings."));
     return;
   }
 
-  GM_VINF("ChromaKeyView", "Rendering view");
+  GLuint tex_id = texture->getGLTextureID();
+
+  GLint width, height;
+  glGetTextureLevelParameteriv(tex_id, 0, GL_TEXTURE_WIDTH, &width);
+  glGetTextureLevelParameteriv(tex_id, 0, GL_TEXTURE_HEIGHT, &height);
+
+  if (width <= 0 || height <= 0) {
+    GM_RUNONCE(GM_ERR("ChromaKeyTexture", "Invalid texture size " << width << "x" << height));
+    return;
+  }
 
   render_target.push();
-  render_target.bind();
-  view->renderFullPipeline(settings);
-  render_target.pop();
-
-  // Render offscreen buffer to active render target
-
-  GM_VINF("ChromaKeyView", "Render offscreen buffer to active render target");
-
-  glDisable(GL_DEPTH_TEST);
-  glEnable(GL_BLEND);
-  glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+  render_target.bind(2 * width, height);
 
   glActiveTexture(GL_TEXTURE0);
-  glBindTexture(GL_TEXTURE_2D, render_target.getTexId());
+  glBindTexture(GL_TEXTURE_2D, tex_id);
 
   GLuint program_id = raster_processor.getProgramId();
   glUseProgram(program_id);
@@ -141,22 +134,25 @@ void ChromaKeyView::Impl::renderFullPipeline(ViewSettings settings) {
 
   raster_processor.run();
 
-  glActiveTexture(GL_TEXTURE0);
   glBindTexture(GL_TEXTURE_2D, 0);
+
+  render_target.pop();
 }
 
-void ChromaKeyView::setKey(gmTypes::float3 key) {
+GLuint ChromaKeyTexture::getGLTextureID() {
+  return _impl->getGLTextureID();
+}
+
+void ChromaKeyTexture::setTexture(std::shared_ptr<Texture> texture) {
+  _impl->texture = texture;
+}
+
+void ChromaKeyTexture::setKey(gmTypes::float3 key) {
   _impl->key = key;
 }
 
-void ChromaKeyView::setTolerance(gmTypes::float2 tol) {
+void ChromaKeyTexture::setTolerance(gmTypes::float2 tol) {
   _impl->tolerance = tol;
-}
-
-void ChromaKeyView::clearRenderers(bool recursive) {
-  if (recursive && _impl->view)
-    _impl->view->clearRenderers(recursive);
-  RendererDispatcher::clearRenderers(recursive);
 }
 
 END_NAMESPACE_GMGRAPHICS;

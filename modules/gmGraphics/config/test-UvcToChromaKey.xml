@@ -1,0 +1,45 @@
+<config>
+
+  <OStreamMessageSink stream="err" useAnsiColor="1" level="1"/>
+  <LogFileMessageSink logFilePath="gramods.log" append="0"/>
+
+  <ImportLibrary library="gmGraphics"/>
+
+  <SdlWindow
+      size="900 900"
+      title="ChromaKey"
+      GLMajor="3" GLMinor="3">
+
+    <SdlContext
+        DEF="SDLContext"
+        useVideo="1"/>
+
+    <PosedPlanarView
+        fieldOfView="1 -1">
+
+      <Viewpoint/>
+
+      <TextureRenderer>
+        <ImageTexture
+            file="share/gmGraphics/resources/color_cubes_texture.png"/>
+      </TextureRenderer>
+
+      <TextureRenderer>
+        <ChromaKeyTexture
+            key="0 1 0"
+            tolerance="0.4 0.5">
+          <YuvDecodeTexture>
+            <UvcTexture
+                DEF="CAM"
+                resolution="640 480"
+                framerate="20"
+                format="YUYV"
+                convertToRgb="false"/>
+          </YuvDecodeTexture>
+        </ChromaKeyTexture>
+      </TextureRenderer>
+
+    </PosedPlanarView>
+  </SdlWindow>
+
+</config>
