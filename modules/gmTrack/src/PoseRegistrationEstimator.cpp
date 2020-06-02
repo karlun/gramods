@@ -15,6 +15,7 @@ BEGIN_NAMESPACE_GMTRACK;
 GM_OFI_DEFINE(PoseRegistrationEstimator);
 GM_OFI_PARAM(PoseRegistrationEstimator, samplesPerSecond, float, PoseRegistrationEstimator::setSamplesPerSecond);
 GM_OFI_PARAM(PoseRegistrationEstimator, point, Eigen::Vector3f, PoseRegistrationEstimator::addPoint);
+GM_OFI_PARAM(PoseRegistrationEstimator, trackerPoint, Eigen::Vector3f, PoseRegistrationEstimator::addTrackerPoint);
 GM_OFI_POINTER(PoseRegistrationEstimator, controller, Controller, PoseRegistrationEstimator::setController);
 
 struct PoseRegistrationEstimator::Impl {
@@ -32,6 +33,8 @@ struct PoseRegistrationEstimator::Impl {
 
   void getIQM3D(std::vector<Eigen::Vector3f> samples, Eigen::Vector3f &x);
   float estimateSphericity(std::vector<Eigen::Vector3f> samples);
+
+  void performRegistration();
 
   /**
      Identifies the degenerate dimension and copies the data into two
@@ -83,6 +86,10 @@ void PoseRegistrationEstimator::addPoint(Eigen::Vector3f p) {
   _impl->actual_positions.push_back(p);
 }
 
+void PoseRegistrationEstimator::addTrackerPoint(Eigen::Vector3f p) {
+  _impl->tracker_positions.push_back(p);
+}
+
 void PoseRegistrationEstimator::setSamplesPerSecond(float n) {
   _impl->samples_per_second = n;
 }
@@ -102,6 +109,12 @@ bool PoseRegistrationEstimator::getRegistration(Eigen::Matrix4f * RAW, Eigen::Ma
 }
 
 void PoseRegistrationEstimator::Impl::update(clock::time_point now) {
+
+  if (!tracker_positions.empty() &&
+      tracker_positions.size() == actual_positions.size()) {
+    performRegistration();
+    return;
+  }
 
   if (!controller) {
     GM_RUNONCE(GM_ERR("PoseRegistrationEstimator", "No controller to calibrate"));
@@ -166,7 +179,12 @@ void PoseRegistrationEstimator::Impl::update(clock::time_point now) {
 
   if (tracker_positions.size() < actual_positions.size())
     return;
+
   GM_INF("PoseRegistrationEstimator", "have all " << actual_positions.size() << " samples");
+  performRegistration();
+}
+
+void PoseRegistrationEstimator::Impl::performRegistration() {
 
   float tracker_data_sph = estimateSphericity(tracker_positions);
   float actual_data_sph = estimateSphericity(actual_positions);
@@ -203,6 +221,8 @@ void PoseRegistrationEstimator::Impl::update(clock::time_point now) {
   registration_unit = M_unit;
 
   GM_INF("PoseRegistrationEstimator", "Unit registration matrix:\n" << M_unit);
+
+  tracker_positions.clear();
 }
 
 void PoseRegistrationEstimator::Impl::getIQM3D(std::vector<Eigen::Vector3f> samples, Eigen::Vector3f &x) {
@@ -269,8 +289,13 @@ float PoseRegistrationEstimator::Impl::estimateSphericity(std::vector<Eigen::Vec
   GM_VINF("PoseRegistrationEstimator", "data matrix:\n" << data_matrix);
   GM_VINF("PoseRegistrationEstimator", "singular values: " << singular_values.transpose());
 
-  if (singular_values[1] / singular_values[0] < 0.3f) //<< Arbitrarily choosen for warning only
+  if (singular_values[1] < std::numeric_limits<typeof(singular_values[1])>::epsilon()) {
+    GM_ERR("PoseRegistrationEstimator", "Points are too linearly dependent for any further processing");
+    throw std::runtime_error("Points are too linearly dependent for any further processing");
+  } else if (singular_values[1] / singular_values[0] < 0.3f) {
+    // Arbitrarily choosen sphericity limit for warning only
     GM_WRN("PoseRegistrationEstimator", "Poor second axis sphericity (" << (singular_values[1] / singular_values[0]) << ") - points may be too linearly dependent for a good registration estimation");
+  }
 
   return singular_values[2] / singular_values[0];
 }

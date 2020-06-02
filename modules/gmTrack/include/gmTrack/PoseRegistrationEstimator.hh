@@ -49,6 +49,13 @@ public:
   void addPoint(Eigen::Vector3f p);
 
   /**
+     Adds the tracker coordinates position of a calibration point.
+
+     \b XML-attribute: \c trackerPoint
+  */
+  void addTrackerPoint(Eigen::Vector3f p);
+
+  /**
      Sets the frequency at which samples are collected when the
      controller button is pressed. Default is 1. At most one sample
      per frame will be used regardless of this value.

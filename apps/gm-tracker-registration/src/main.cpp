@@ -198,12 +198,13 @@ int main(int argc, char *argv[]) {
   TCLAP::MultiArg<std::string> arg_config_dummy
     ("", "config",
      "Configuration file(s) load.",
-     true, "file");
+     false, "file");
+  cmd.add(arg_config_dummy);
   TCLAP::MultiArg<std::string> arg_xml_dummy
     ("", "xml",
      "XML configuration(s) to load.",
-     true, "string");
-  cmd.xorAdd(arg_config_dummy, arg_xml_dummy);
+     false, "string");
+  cmd.add(arg_xml_dummy);
 
   TCLAP::MultiArg<std::string> arg_param_dummy
     ("", "param",
@@ -216,6 +217,12 @@ int main(int argc, char *argv[]) {
      "Specification of point in the registered coordinate system.",
      true, "x,y,z");
   cmd.add(arg_point);
+
+  TCLAP::MultiArg<std::string> arg_tpoint
+    ("q", "t-point",
+     "Specification of point in the tracker coordinate system.",
+     true, "x,y,z");
+  cmd.add(arg_tpoint);
 
   TCLAP::ValueArg<std::string> arg_outputfile
     ("o", "output-file",
@@ -251,34 +258,31 @@ int main(int argc, char *argv[]) {
   }
 
   std::unique_ptr<gmCore::Configuration> config;
-  try {
-    config = std::make_unique<gmCore::Configuration>(argc, argv);
-  }
-  catch (const std::exception &ex) {
-    std::cerr << "Error: Configuration error: " << ex.what() << std::endl;
-  }
-  catch (...) {
-    std::cerr << "Error: Unknown internal error while creating Configuration instance." << std::endl;
-  }
-
-  if (!config) {
-    std::cerr << std::endl
-              << "Error: No valid configuration available." << std::endl
-              << std::endl;
-    return 2;
-  }
-
-  std::shared_ptr<gmTrack::Controller> controller;
-  if (!config->getObject(controller)) {
-    std::cerr << std::endl
-              << "Error: No controller available in the specified configuration." << std::endl
-              << std::endl;
-    return 3;
+  if (!arg_config_dummy.getValue().empty() ||
+      !arg_xml_dummy.getValue().empty()) {
+    try {
+      config = std::make_unique<gmCore::Configuration>(argc, argv);
+    }
+    catch (const std::exception &ex) {
+      std::cerr << "Error: Configuration error: " << ex.what() << std::endl;
+    }
+    catch (...) {
+      std::cerr << "Error: Unknown internal error while creating Configuration instance." << std::endl;
+    }
+  } else {
+    std::shared_ptr<gmCore::OStreamMessageSink> osms =
+      std::make_shared<gmCore::OStreamMessageSink>();
+    osms->setUseAnsiColor(true);
+    osms->setLevel(1);
+    osms->initialize();
   }
 
   std::shared_ptr<gmTrack::PoseRegistrationEstimator> registrator =
     std::make_shared<gmTrack::PoseRegistrationEstimator>();
-  registrator->setController(controller);
+
+  std::shared_ptr<gmTrack::Controller> controller;
+  if (config && config->getObject(controller))
+    registrator->setController(controller);
 
   if (! arg_point.getValue().empty()) {
 
@@ -294,7 +298,7 @@ int main(int argc, char *argv[]) {
         std::cerr << "Warning: could not parse '" << str_point << "' as a 3D point." << std::endl;
     }
 
-  } else if (config->hasParam("point")) {
+  } else if (config && config->hasParam("point")) {
 
     std::vector<std::string> str_points;
     std::size_t count = config->getAllParams("point", str_points);
@@ -313,6 +317,35 @@ int main(int argc, char *argv[]) {
               << "Error: No points available for registering coordinate systems. Add 'point' parameters to the configuration or use the 'point' command line argument." << std::endl
               << std::endl;
     return 4;
+  }
+
+  if (! arg_tpoint.getValue().empty()) {
+
+    auto str_points = arg_tpoint.getValue();
+
+    for (auto str_point : str_points) {
+      std::replace(str_point.begin(), str_point.end(), ',', ' ');
+      std::stringstream ss(str_point);
+      Eigen::Vector3f p;
+      if (ss >> p)
+        registrator->addTrackerPoint(p);
+      else
+        std::cerr << "Warning: could not parse '" << str_point << "' as a 3D point." << std::endl;
+    }
+
+  } else if (config && config->hasParam("trackerPoint")) {
+
+    std::vector<std::string> str_points;
+    std::size_t count = config->getAllParams("trackerPoint", str_points);
+
+    for (auto str_point : str_points) {
+      std::stringstream ss(str_point);
+      Eigen::Vector3f p;
+      if (ss >> p)
+        registrator->addTrackerPoint(p);
+      else
+        std::cerr << "Warning: could not parse '" << str_point << "' as a 3D point." << std::endl;
+    }
   }
 
   Eigen::Matrix4f Raw = Eigen::Matrix4f::Identity();
@@ -361,7 +394,14 @@ int main(int argc, char *argv[]) {
 
     std::stringstream fin(default_template);
 
-    return process(fin, fout, Mat, Unit);
+    int res = process(fin, fout, Mat, Unit);
+
+    if (res)
+      std::cerr << "Could not write data" << std::endl;
+    else
+      std::cout << "Results written to " << output_file << std::endl;
+
+    return res;
   }
 
   std::ifstream fin(input_file);
@@ -373,5 +413,12 @@ int main(int argc, char *argv[]) {
     return 5;
   }
 
-  return process(fin, fout, Mat, Unit);
+  int res = process(fin, fout, Mat, Unit);
+
+  if (res)
+    std::cerr << "Could not write data" << std::endl;
+  else
+    std::cout << "Results written to " << output_file << std::endl;
+
+  return res;
 }
