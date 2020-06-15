@@ -54,6 +54,13 @@ public:
   */
   void setPosition(Eigen::Vector3f c);
 
+  /**
+     Set animation on or off.
+
+     \b XML-attribute: \c animate
+  */
+  void setAnimate(bool on);
+
   GM_OFI_DECLARE;
 
 private:

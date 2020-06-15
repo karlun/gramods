@@ -15,6 +15,7 @@ GM_OFI_DEFINE(CubeSceneRenderer);
 GM_OFI_PARAM(CubeSceneRenderer, cubeSize, float, CubeSceneRenderer::setCubeSize);
 GM_OFI_PARAM(CubeSceneRenderer, cubeSetSize, float, CubeSceneRenderer::setCubeSetSize);
 GM_OFI_PARAM(CubeSceneRenderer, position, Eigen::Vector3f, CubeSceneRenderer::setPosition);
+GM_OFI_PARAM(CubeSceneRenderer, animate, bool, CubeSceneRenderer::setAnimate);
 
 #define N_VERTICES 108
 
@@ -35,7 +36,8 @@ struct CubeSceneRenderer::Impl {
 
   float cube_size = 0.1;
   float cube_set_size = 1.0;
-  Eigen::Vector3f position;
+  Eigen::Vector3f position = Eigen::Vector3f::Zero();
+  bool animate = true;
 
   bool is_setup = false;
   bool is_functional = false;
@@ -238,9 +240,13 @@ void CubeSceneRenderer::Impl::render(Camera camera, float near, float far) {
   typedef std::chrono::steady_clock clock;
   typedef std::chrono::duration<double, std::ratio<1>> d_seconds;
 
-  static clock::time_point start_time = clock::now();
+  static const clock::time_point start_time = clock::now();
   static const double rate = GM_PI;
-  double secs = std::chrono::duration_cast<d_seconds>(clock::now() - start_time).count();
+  double secs;
+  if (animate)
+    secs = std::chrono::duration_cast<d_seconds>(clock::now() - start_time).count();
+  else
+    secs = 0.0;
 
   float step = (1.f/N);
   for (size_t idx_z = 0; idx_z < N; ++idx_z)
@@ -311,6 +317,10 @@ void CubeSceneRenderer::setCubeSetSize(float d) {
 
 void CubeSceneRenderer::setPosition(Eigen::Vector3f p) {
   _impl->position = p;
+}
+
+void CubeSceneRenderer::setAnimate(bool on) {
+  _impl->animate = on;
 }
 
 END_NAMESPACE_GMGRAPHICS;
