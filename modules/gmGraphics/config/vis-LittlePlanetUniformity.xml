@@ -1,0 +1,32 @@
+<config>
+
+  <OStreamMessageSink stream="err" useAnsiColor="1" level="1"/>
+  <LogFileMessageSink logFilePath="gramods.log" append="0"/>
+
+  <ImportLibrary library="gmGraphics"/>
+
+  <SdlWindow
+      size="1536 1024"
+      title="Little Planet Uniformity"
+      GLMajor="3" GLMinor="3">
+
+    <SdlContext
+        DEF="SDLContext"
+        useVideo="1"/>
+
+    <SphereSceneRenderer
+        sphereRadius="0.5"
+        sphereSetRadius="10.0"/>
+
+    <PosedSphericalView
+        cubeMapResolution="1024"
+        linearInterpolation="1">
+
+      <AngularFisheyeCoordinatesMapper
+          coverageAngle="6.283"/>
+
+    </PosedSphericalView>
+
+  </SdlWindow>
+
+</config>

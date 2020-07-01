@@ -1,0 +1,53 @@
+<config>
+
+  <OStreamMessageSink stream="err" useAnsiColor="1" level="1"/>
+  <LogFileMessageSink logFilePath="gramods.log" append="0"/>
+
+  <ImportLibrary library="gmGraphics"/>
+
+  <SdlWindow
+      size="1024 1024"
+      title="Uniformity - Little Planet, Fisheye, Equirectangular"
+      GLMajor="3" GLMinor="3">
+
+    <SdlContext
+        DEF="SDLContext"
+        useVideo="1"/>
+
+    <SphereSceneRenderer
+        sphereRadius="0.1"
+        sphereSetRadius="1.0"
+        color="0.5 0.6 0.9"/>
+
+    <TiledView>
+
+      <!-- Little Planet -->
+      <param name="tileLocation" value="0 0 1 1"/>
+      <PosedSphericalView
+          cubeMapResolution="1024"
+          linearInterpolation="1">
+        <AngularFisheyeCoordinatesMapper
+            coverageAngle="d360"/>
+      </PosedSphericalView>
+
+      <!-- Fisheye -->
+      <param name="tileLocation" value="0 1 1 1"/>
+      <PosedSphericalView
+          cubeMapResolution="1024"
+          linearInterpolation="1">
+        <AngularFisheyeCoordinatesMapper
+            coverageAngle="d180"/>
+      </PosedSphericalView>
+
+      <!-- Equirectangular -->
+      <param name="tileLocation" value="1 0 1 2"/>
+      <PosedSphericalView
+          cubeMapResolution="1024"
+          linearInterpolation="1">
+        <EquirectangularCoordinatesMapper/>
+      </PosedSphericalView>
+
+    </TiledView>
+  </SdlWindow>
+
+</config>
