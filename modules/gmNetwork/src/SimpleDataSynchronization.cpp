@@ -2,6 +2,7 @@
 #include <gmNetwork/SimpleDataSynchronization.hh>
 
 #include <gmNetwork/PeersConnection.hh>
+#include <gmCore/Console.hh>
 
 BEGIN_NAMESPACE_GMNETWORK;
 

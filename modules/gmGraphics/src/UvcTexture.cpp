@@ -4,11 +4,13 @@
 #ifdef gramods_ENABLE_libuvc
 
 #include <gmCore/RunOnce.hh>
+#include <gmCore/Console.hh>
 
 #include <libuvc/libuvc.h>
 #include <stdio.h>
 #include <string.h>
 #include <thread>
+#include <vector>
 #include <sstream>
 #include <mutex>
 
@@ -267,10 +269,8 @@ bool UvcTexture::Impl::start_streaming() {
     closeAll();
 
     uvc_perror(res, "start_streaming"); /* unable to start stream */
-    std::stringstream msg;
-    msg << "Unable to start stream: "
-        << uvc_strerror(res);
-    throw std::runtime_error(msg.str());
+    throw std::runtime_error(GM_STR("Unable to start stream: "
+                                    << uvc_strerror(res)));
   }
   GM_INF("UvcTexture", "Started UVC streaming");
   return true;

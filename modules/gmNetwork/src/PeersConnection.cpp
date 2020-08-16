@@ -1,6 +1,8 @@
 
 #include <gmNetwork/PeersConnection.hh>
 
+#include <gmCore/Console.hh>
+
 BEGIN_NAMESPACE_GMNETWORK;
 
 GM_OFI_DEFINE(PeersConnection);

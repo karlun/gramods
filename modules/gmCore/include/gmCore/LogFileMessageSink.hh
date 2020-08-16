@@ -4,8 +4,6 @@
 
 #include <gmCore/MessageSink.hh>
 
-#include <gmCore/OFactory.hh>
-
 #include <mutex>
 #include <fstream>
 
@@ -42,8 +40,6 @@ public:
   GM_OFI_DECLARE;
 
 private:
-
-  void outputLevelAndTag(std::ostream &out, Message msg);
 
   bool append;
   std::string logfile_path;

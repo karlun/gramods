@@ -1,6 +1,8 @@
 
 #include <gmGraphics/Viewpoint.hh>
 
+#include <gmCore/Console.hh>
+
 BEGIN_NAMESPACE_GMGRAPHICS;
 
 GM_OFI_DEFINE(Viewpoint);

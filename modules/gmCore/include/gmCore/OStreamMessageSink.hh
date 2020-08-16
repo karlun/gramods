@@ -4,8 +4,6 @@
 
 #include <gmCore/MessageSink.hh>
 
-#include <gmCore/OFactory.hh>
-
 #include <mutex>
 
 BEGIN_NAMESPACE_GMCORE;
@@ -74,8 +72,6 @@ public:
   GM_OFI_DECLARE;
 
 private:
-
-  void outputLevelAndTag(Message msg, std::ostream &out);
 
   std::ostream *raw_out;
   std::shared_ptr<std::ostream> shared_out;

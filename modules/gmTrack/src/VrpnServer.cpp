@@ -6,6 +6,8 @@
 #include <gmTrack/SinglePoseTracker.hh>
 #include <gmTrack/MultiPoseTracker.hh>
 
+#include <gmCore/Console.hh>
+
 #include <vrpn_Tracker.h>
 #include <vrpn_Analog.h>
 #include <vrpn_Button.h>

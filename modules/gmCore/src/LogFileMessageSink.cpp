@@ -1,9 +1,11 @@
 
 #include <gmCore/LogFileMessageSink.hh>
 
+#include <gmCore/Console.hh>
+
 BEGIN_NAMESPACE_GMCORE;
 
-GM_OFI_DEFINE(LogFileMessageSink);
+GM_OFI_DEFINE_SUB(LogFileMessageSink, MessageSink);
 GM_OFI_PARAM(LogFileMessageSink, logFilePath, std::string, LogFileMessageSink::setLogFilePath);
 GM_OFI_PARAM(LogFileMessageSink, append, bool, LogFileMessageSink::setAppend);
 
@@ -40,31 +42,9 @@ void LogFileMessageSink::output(Message msg) {
     }
   }
 
-  outputLevelAndTag(logfile, msg);
-
+  outputMetadata(logfile, msg);
   logfile << msg.message;
   logfile.flush();
 }
-
-void LogFileMessageSink::outputLevelAndTag(std::ostream &out, Message msg) {
-  switch (msg.level) {
-  case ConsoleLevel::Error:
-    out << "EE"; break;
-  case ConsoleLevel::Warning:
-    out << "WW"; break;
-  case ConsoleLevel::Information:
-    out << "II"; break;
-  case ConsoleLevel::VerboseInformation:
-    out << "I2"; break;
-  case ConsoleLevel::VeryVerboseInformation:
-    out << "I3"; break;
-  default:
-    assert(0);
-  }
-
-  if (msg.tag.length() == 0) out << ": "; 
-  else out << " (" << msg.tag << ") ";
-}
-
 
 END_NAMESPACE_GMCORE;

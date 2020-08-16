@@ -2,6 +2,7 @@
 #include <gmTrack/RelativeSinglePoseTracker.hh>
 
 #include <gmCore/RunOnce.hh>
+#include <gmCore/Console.hh>
 
 BEGIN_NAMESPACE_GMTRACK;
 

@@ -4,7 +4,7 @@
 
 #include <gmCore/config.hh>
 #include <gmCore/Object.hh>
-#include <gmCore/Configuration.hh>
+#include <gmCore/Stringify.hh>
 
 #include <map>
 #include <string>
@@ -14,6 +14,8 @@
 #include <assert.h>
 
 BEGIN_NAMESPACE_GMCORE;
+
+class Configuration;
 
 /**\def GM_OFI_DECLARE
    Macro for declaring the registration of OFactoryInformation as a
@@ -359,8 +361,7 @@ void OFactory::ParamSetter<Node, T>::setValueFromString
   ss >> std::setbase(0) >> val;
 
   if (!ss) {
-    GM_ERR("Configuration", "cannot parse '" << s << "' as type " << typeid(T).name());
-    throw new std::invalid_argument("type cannot parse string");
+    throw new std::invalid_argument(GM_STR("cannot parse '" << s << "' as type " << typeid(T).name()));
   }
 
   (node->*method)(val);
@@ -412,8 +413,7 @@ void OFactory::PointerSetter<Node, T>::setPointer
   std::shared_ptr<T> _ptr = std::dynamic_pointer_cast<T>(ptr);
 
   if (!_ptr) {
-    GM_ERR("Configuration", "cannot cast " << typeid(ptr).name() << " to type " << typeid(T).name());
-    throw new std::invalid_argument("cannot cast pointer");
+    throw new std::invalid_argument(GM_STR("cannot cast " << typeid(ptr).name() << " to type " << typeid(T).name()));
   }
 
   (node->*method)(_ptr);

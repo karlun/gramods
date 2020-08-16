@@ -4,6 +4,7 @@
 #ifdef gramods_ENABLE_FreeImage
 
 #include <gmGraphics/FreeImage.hh>
+#include <gmCore/Console.hh>
 
 #include <FreeImage.h>
 #include <stdlib.h>

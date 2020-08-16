@@ -2,6 +2,7 @@
 #include <gmGraphics/LinearAnaglyphsMultiplexer.hh>
 
 #include <gmGraphics/GLUtils.hh>
+#include <gmCore/Console.hh>
 
 #include <GL/glew.h>
 #include <GL/gl.h>

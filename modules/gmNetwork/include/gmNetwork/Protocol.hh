@@ -8,6 +8,7 @@
 #include <gmCore/OFactory.hh>
 
 #include <mutex>
+#include <vector>
 
 BEGIN_NAMESPACE_GMNETWORK;
 
