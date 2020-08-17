@@ -5,6 +5,7 @@
 #include <gmGraphics/RendererDispatcher.hh>
 
 #include <gmTypes/size.hh>
+#include <gmTypes/float.hh>
 
 BEGIN_NAMESPACE_GMGRAPHICS;
 
@@ -83,6 +84,15 @@ public:
   virtual void setTitle(std::string t) { title = t; }
 
   /**
+     Set the background color of the window.
+
+     \b XML-attribute: \c backgroundColor
+  */
+  virtual void setBackgroundColor(gmTypes::float4 c) {
+    background_color = c;
+  }
+
+  /**
      Triggers the windows to process its incoming events. This must be
      called at even intervals for the window to behave properly.
   */
@@ -126,6 +136,7 @@ protected:
   bool fullscreen;
   std::string title;
   gmTypes::size2 size;
+  gmTypes::float4 background_color;
   
 };
 
