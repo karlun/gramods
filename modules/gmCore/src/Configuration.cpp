@@ -15,7 +15,8 @@ Configuration::Configuration()
     parameter_overrides(std::make_shared<overrides_list>()),
     warn_unused_overrides(false) {}
 
-Configuration::Configuration(std::string xml)
+Configuration::Configuration(std::string xml,
+                             std::vector<std::string> *error_list)
   : def_objects(std::make_shared<def_list>()),
     parameter_overrides(std::make_shared<overrides_list>()),
     warn_unused_overrides(false) {
@@ -25,10 +26,11 @@ Configuration::Configuration(std::string xml)
   int xml_err = doc.Parse(xml.c_str());
   if (xml_err != 0) throw std::invalid_argument(doc.ErrorStr());
 
-  load(&doc);
+  load(&doc, error_list);
 }
 
-Configuration::Configuration(int &argc, char *argv[])
+Configuration::Configuration(int &argc, char *argv[],
+                             std::vector<std::string> *error_list)
   : def_objects(std::make_shared<def_list>()),
     parameter_overrides(std::make_shared<overrides_list>()),
     warn_unused_overrides(true) {
@@ -94,7 +96,7 @@ Configuration::Configuration(int &argc, char *argv[])
       throw std::invalid_argument(doc.ErrorStr());
     }
 
-    load(&doc);
+    load(&doc, error_list);
   }
 
   for (auto xml : xmls) {
@@ -107,22 +109,25 @@ Configuration::Configuration(int &argc, char *argv[])
       throw std::invalid_argument(doc.ErrorStr());
     }
 
-    load(&doc);
+    load(&doc, error_list);
   }
 }
 
 Configuration::Configuration(tinyxml2::XMLNode *node,
                              std::shared_ptr<def_list> defs,
                              std::string param_path,
-                             std::shared_ptr<overrides_list> overrides)
+                             std::shared_ptr<overrides_list> overrides,
+                             std::vector<std::string> *error_list)
   : def_objects(defs),
     param_path(param_path),
     parameter_overrides(overrides),
     warn_unused_overrides(false) {
-  load(node);
+  load(node, error_list);
 }
 
-void Configuration::load(tinyxml2::XMLNode *node) {
+void Configuration::load(tinyxml2::XMLNode *node,
+                         std::vector<std::string> *error_list) {
+
   tinyxml2::XMLDocument *doc = node->ToDocument();
   if (doc != NULL)
     node = doc->RootElement();
@@ -149,13 +154,13 @@ void Configuration::load(tinyxml2::XMLNode *node) {
     }
 
     if (strcmp(node_it->Value(), "if") == 0) {
-      if (parse_if(node_element))
+      if (parse_if(node_element, error_list))
         load(node_it);
       continue;
     }
 
     if (strcmp(node_it->Value(), "param") == 0) {
-      parse_param(node_element);
+      parse_param(node_element, error_list);
       continue;
     }
     
@@ -176,8 +181,10 @@ void Configuration::load(tinyxml2::XMLNode *node) {
     if (USE != "") {
 
       if (def_objects->count(USE) == 0) {
-        GM_ERR("Configuration", "no DEF to match USE " << USE << " in " << type);
-        throw std::invalid_argument("no DEF to match USE");
+        GM_WRN("Configuration", "no DEF to match USE " << USE << " in " << type);
+        if (error_list) error_list->push_back(GM_STR("no DEF to match USE " << USE << " in " << type));
+        else throw std::invalid_argument(GM_STR("no DEF to match USE " << USE << " in " << type));
+        continue;
       }
 
       if (as_attribute != NULL)
@@ -190,14 +197,17 @@ void Configuration::load(tinyxml2::XMLNode *node) {
 
     std::shared_ptr<Object> nn(OFactory::createObject(type));
     if (nn == NULL){
-      GM_ERR("Configuration", "Could not create object of type '" << type << "'");
+      GM_WRN("Configuration", "Could not create object of type '" << type << "'");
+      if (error_list) error_list->push_back(GM_STR("Could not create object of type '" << type << "'"));
+      else throw std::invalid_argument(GM_STR("Could not create object of type '" << type << "'"));
       continue;
     }
 
     if (DEF != "") {
       if (def_objects->count(USE) != 0) {
-        GM_ERR("Configuration", "DEF " << DEF << " has multiple associations");
-        throw std::invalid_argument("DEF has multiple associations");
+        GM_WRN("Configuration", "DEF " << DEF << " has multiple associations");
+        if (error_list) error_list->push_back(GM_STR("DEF " << DEF << " has multiple associations"));
+        else throw std::invalid_argument(GM_STR("DEF " << DEF << " has multiple associations"));
       }
       (*def_objects)[DEF] = nn;
     }
@@ -221,13 +231,22 @@ void Configuration::load(tinyxml2::XMLNode *node) {
           parameter_overrides->end()) {
 
         for (std::string value : values) {
+
           GM_INF("Configuration", name << " -> " <<
                  type << "::" << param_name << " = " << value);
-          bool good = OFactory::getOFI(type)->
-            setParamValueFromString(nn.get(), param_name, value);
-          if (!good) {
-            GM_ERR("Configuration", "no parameter " << param_name << " available in " << type);
-            throw std::invalid_argument("no parameter to match xml attribute");
+
+          try {
+            bool good = OFactory::getOFI(type)->
+              setParamValueFromString(nn.get(), param_name, value);
+            if (!good) {
+              GM_WRN("Configuration", "no parameter " << param_name << " available in " << type);
+              if (error_list) error_list->push_back(GM_STR("no parameter " << param_name << " available in " << type));
+              else throw std::invalid_argument(GM_STR("no parameter " << param_name << " available in " << type));
+            }
+          } catch (std::invalid_argument &e) {
+            GM_WRN("Configuration", e.what());
+            if (error_list) error_list->push_back(e.what());
+            else throw e;
           }
         }
 
@@ -238,11 +257,18 @@ void Configuration::load(tinyxml2::XMLNode *node) {
         GM_INF("Configuration", name << " -> " <<
                type << "::" << param_name << " = " << value << " (overridden)");
 
-        bool good = OFactory::getOFI(type)->
-          setParamValueFromString(nn.get(), param_name, value);
-        if (!good) {
-          GM_ERR("Configuration", "no parameter " << param_name << " available in " << type);
-          throw std::invalid_argument("no parameter to match xml attribute");
+        try {
+          bool good = OFactory::getOFI(type)->
+            setParamValueFromString(nn.get(), param_name, value);
+          if (!good) {
+            GM_WRN("Configuration", "no parameter " << param_name << " available in " << type);
+            if (error_list) error_list->push_back(GM_STR("no parameter " << param_name << " available in " << type));
+            else throw std::invalid_argument(GM_STR("no parameter " << param_name << " available in " << type));
+          }
+        } catch (std::invalid_argument &e) {
+          GM_WRN("Configuration", e.what());
+          if (error_list) error_list->push_back(e.what());
+          else throw e;
         }
       }
     }
@@ -256,17 +282,26 @@ void Configuration::load(tinyxml2::XMLNode *node) {
       assert(ptrs.size() > 0);
       for (auto ptr : ptrs) {
         GM_INF("Configuration", name << " -> " << type << "::" << child_key << " = ptr");
-        bool good = OFactory::getOFI(type)->setPointerValue(nn.get(), child_key, ptr);
-        if (!good) {
-          GM_ERR("Configuration", "no pointer '" << child_key << "' to match instance of '" << typeid(*ptr).name() << "' available in " << type);
-          throw std::invalid_argument("no parameter to match xml attribute");
+        try {
+          bool good = OFactory::getOFI(type)->setPointerValue(nn.get(), child_key, ptr);
+          if (!good) {
+            GM_WRN("Configuration", "no pointer '" << child_key << "' to match instance of '" << typeid(*ptr).name() << "' available in " << type);
+            if (error_list) error_list->push_back(GM_STR("no pointer '" << child_key << "' to match instance of '" << typeid(*ptr).name() << "' available in " << type));
+            else throw std::invalid_argument(GM_STR("no pointer '" << child_key << "' to match instance of '" << typeid(*ptr).name() << "' available in " << type));
+          }
+        } catch (std::invalid_argument &e) {
+          GM_WRN("Configuration", e.what());
+          if (error_list) error_list->push_back(e.what());
+          else throw e;
         }
       }
     }
 
     nn->initialize();
     if (!nn->isInitialized()) {
-      GM_ERR("Configuration", "Could not initialize instance of " << type);
+      GM_WRN("Configuration", "Could not initialize instance of " << type);
+      if (error_list) error_list->push_back(GM_STR("Could not initialize instance of " << type));
+      else throw std::invalid_argument(GM_STR("Could not initialize instance of " << type));
       continue;
     }
 
@@ -331,24 +366,31 @@ size_t Configuration::getAllObjectNames(std::vector<std::string> &name) {
   return new_names.size();
 }
 
-bool Configuration::parse_if(tinyxml2::XMLElement *element) {
+bool Configuration::parse_if(tinyxml2::XMLElement *element,
+                             std::vector<std::string> *error_list) {
 
   const char* variable_attribute = element->Attribute("variable");
   if (variable_attribute == NULL) {
-    GM_ERR("Configuration", "Node if is missing expected attribute \"variable\"");
+    GM_WRN("Configuration", "Node \"if\" is missing expected attribute \"variable\"");
+    if (error_list) error_list->push_back("Node if is missing expected attribute \"variable\"");
+    else throw std::invalid_argument("Node if is missing expected attribute \"variable\"");
     return false;
   }
 
   char * variable_value = getenv(variable_attribute);
   if (variable_value == NULL) {
     GM_WRN("Configuration", "Environment variable \"" << variable_attribute << "\" not found - cannot compare.");
+    if (error_list) error_list->push_back(GM_STR("Environment variable \"" << variable_attribute << "\" not found - cannot compare."));
+    else throw std::invalid_argument(GM_STR("Environment variable \"" << variable_attribute << "\" not found - cannot compare."));
     return false;
   }
   std::string variable = variable_value;
 
   const char* value_attribute = element->Attribute("value");
   if (value_attribute == NULL) {
-    GM_ERR("Configuration", "Node if is missing expected attribute \"value\"");
+    GM_WRN("Configuration", "Node \"if\" is missing expected attribute \"value\"");
+    if (error_list) error_list->push_back("Node if is missing expected attribute \"value\"");
+    else throw std::invalid_argument("Node if is missing expected attribute \"value\"");
     return false;
   }
   std::string value = value_attribute;
@@ -356,14 +398,26 @@ bool Configuration::parse_if(tinyxml2::XMLElement *element) {
   return variable == value;
 }
 
-void Configuration::parse_param(tinyxml2::XMLElement *element){
+void Configuration::parse_param(tinyxml2::XMLElement *element,
+                                std::vector<std::string> *error_list){
   
   const char* name_attribute = element->Attribute("name");
-  if (name_attribute == NULL) { return; }
-  std::string name = name_attribute;
+  if (name_attribute == NULL) {
+    GM_WRN("Configuration", "Node \"param\" is missing expected attribute \"name\"");
+    if (error_list) error_list->push_back("Node \"param\" is missing expected attribute \"name\"");
+    else throw std::invalid_argument("Node \"param\" is missing expected attribute \"name\"");
+    return;
+  }
   
   const char* value_attribute = element->Attribute("value");
-  if (value_attribute == NULL) { return; }
+  if (value_attribute == NULL) {
+    GM_WRN("Configuration", "Node \"param\" is missing expected attribute \"value\"");
+    if (error_list) error_list->push_back("Node \"param\" is missing expected attribute \"value\"");
+    else throw std::invalid_argument("Node \"param\" is missing expected attribute \"value\"");
+    return;
+  }
+
+  std::string name = name_attribute;
   std::string value = value_attribute;
 
   GM_INF("Configuration", "Parsed param: " << name << " = " << value);

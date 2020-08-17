@@ -10,6 +10,7 @@
 #include <string>
 #include <iomanip>
 #include <typeinfo>
+#include <iostream>
 
 #include <assert.h>
 
@@ -360,9 +361,8 @@ void OFactory::ParamSetter<Node, T>::setValueFromString
   T val;
   ss >> std::setbase(0) >> val;
 
-  if (!ss) {
-    throw new std::invalid_argument(GM_STR("cannot parse '" << s << "' as type " << typeid(T).name()));
-  }
+  if (!ss)
+    throw std::invalid_argument(GM_STR("cannot parse '" << s << "' as type " << typeid(T).name()));
 
   (node->*method)(val);
 }
@@ -412,9 +412,8 @@ void OFactory::PointerSetter<Node, T>::setPointer
   Node *node = static_cast<Node*>(n);
   std::shared_ptr<T> _ptr = std::dynamic_pointer_cast<T>(ptr);
 
-  if (!_ptr) {
-    throw new std::invalid_argument(GM_STR("cannot cast " << typeid(ptr).name() << " to type " << typeid(T).name()));
-  }
+  if (!_ptr)
+    throw std::invalid_argument(GM_STR("cannot cast " << typeid(ptr).name() << " to type " << typeid(T).name()));
 
   (node->*method)(_ptr);
 }

@@ -127,13 +127,25 @@ TEST(gmCoreBaseFunctionality, ConfigCommandLine) {
   {
     char *argv[] = { arg0, arg1 };
     int argc = 2;
-    EXPECT_THROW(gmCore::Configuration config(argc, argv), std::invalid_argument);
+    EXPECT_THROW(gmCore::Configuration config(argc, argv),
+                 std::invalid_argument);
+
+    std::vector<std::string> errors;
+    EXPECT_THROW(gmCore::Configuration config(argc, argv, &errors),
+                 std::invalid_argument);
+    EXPECT_TRUE(errors.empty());
   }
 
   {
     char *argv[] = { arg0, arg1, arg2 };
     int argc = 3;
-    EXPECT_THROW(gmCore::Configuration config(argc, argv), std::invalid_argument);
+    EXPECT_THROW(gmCore::Configuration config(argc, argv),
+                 std::invalid_argument);
+
+    std::vector<std::string> errors;
+    EXPECT_THROW(gmCore::Configuration config(argc, argv, &errors),
+                 std::invalid_argument);
+    EXPECT_TRUE(errors.empty());
   }
 
   {

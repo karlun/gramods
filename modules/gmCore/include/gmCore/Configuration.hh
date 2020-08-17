@@ -56,19 +56,22 @@ public:
      file parameters. For example --param
      head.connectionString=WAND\@localhost
   */
-  Configuration(int &argc, char *argv[]);
+  Configuration(int &argc, char *argv[],
+                std::vector<std::string> *error_list = nullptr);
 
   /**
      Loads an XML string, create objects as specified by the XML data
      and configure the objects.
    */
-  Configuration(std::string config);
+  Configuration(std::string config,
+                std::vector<std::string> *error_list = nullptr);
 
   /**
      Read the XML data, create objects as specified by the XML data
      and configure the objects.
    */
-  Configuration(tinyxml2::XMLNode *node);
+  Configuration(tinyxml2::XMLNode *node,
+                std::vector<std::string> *error_list = nullptr);
 
   /**
      Cleans up and checks that all configuration variables have been read.
@@ -190,7 +193,8 @@ private:
   typedef std::map<std::string, std::shared_ptr<Object>> def_list;
   typedef std::map<std::string, std::string> override_list;
 
-  void load(tinyxml2::XMLNode *node);
+  void load(tinyxml2::XMLNode *node,
+            std::vector<std::string> *error_list = nullptr);
 
   struct parameter_t {
     parameter_t(std::string value = "")
@@ -211,8 +215,10 @@ private:
   std::shared_ptr<overrides_list> parameter_overrides;
   bool warn_unused_overrides;
 
-  bool parse_if(tinyxml2::XMLElement *element);
-  void parse_param(tinyxml2::XMLElement *element);
+  bool parse_if(tinyxml2::XMLElement *element,
+                std::vector<std::string> *error_list);
+  void parse_param(tinyxml2::XMLElement *element,
+                   std::vector<std::string> *error_list);
 
   /**
      Read the XML data, create objects as specified by the XML data
@@ -221,7 +227,8 @@ private:
   Configuration(tinyxml2::XMLNode *node,
                 std::shared_ptr<def_list> defs,
                 std::string param_path,
-                std::shared_ptr<overrides_list> overrides);
+                std::shared_ptr<overrides_list> overrides,
+                std::vector<std::string> *error_list = nullptr);
 };
 
 
@@ -314,7 +321,7 @@ void Configuration::addObject(std::string name, std::shared_ptr<T> ptr) {
 }
 
 template<class T>
-bool Configuration::getParam(std::string name, T &value) const{
+bool Configuration::getParam(std::string name, T &value) const {
 
   std::string string_value;
   if (!getParam(name, string_value))
@@ -327,11 +334,16 @@ bool Configuration::getParam(std::string name, T &value) const{
     T _value;
     string_value_stream >> _value;
 
+    if (!string_value_stream) {
+      GM_WRN("Configuration", "While getting '" << name << "', could not parse '" << string_value << "' as " << typeid(T).name() << "!");
+      return false;
+    }
+
     value = _value;
     return true;
   }
-  catch(std::exception e){
-    GM_WRN("Configuration", "Could not parse '" << string_value << "' as " << typeid(T).name() << "!");
+  catch(std::exception &e){
+    GM_WRN("Configuration", "While getting '" << name << "', could not parse '" << string_value << "' as " << typeid(T).name() << "!");
     return false;
   }
 }
@@ -417,7 +429,7 @@ inline std::size_t Configuration::getAllParams(std::string name, std::vector<boo
 
       GM_WRN("Configuration", "Could not parse '" << string_value << "' as bool!");
     }
-    catch(std::exception&){
+    catch(std::exception &e){
       GM_WRN("Configuration", "Could not parse '" << string_value << "' as bool!");
     }
   return value.size() - original_size;
@@ -431,13 +443,21 @@ inline std::size_t Configuration::getAllParams(std::string name, std::vector<T> 
   std::size_t original_size = value.size();
   for (auto string_value : values)
     try {
+
+      std::stringstream string_value_stream(string_value);
+
       T _value;
-      std::stringstream(string_value) >> _value;
+      string_value_stream >> _value;
+
+      if (!string_value_stream) {
+      GM_WRN("Configuration", "While getting '" << name << "', could not parse '" << string_value << "' as " << typeid(T).name() << "!");
+        return false;
+      }
 
       value.push_back(_value);
     }
-    catch(std::exception e){
-      GM_WRN("Configuration", "Could not parse '" << string_value << "' as bool!");
+    catch(std::exception &e){
+      GM_WRN("Configuration", "While getting '" << name << "', could not parse '" << string_value << "' as " << typeid(T).name() << "!");
     }
   return value.size() - original_size;
 }

@@ -47,9 +47,6 @@ int main(int argc, char *argv[]) {
   try {
     config = std::make_unique<gmCore::Configuration>(argc, argv);
   }
-  catch (const std::exception &ex) {
-    std::cerr << "Configuration error: " << ex.what() << std::endl;
-  }
   catch(...) {
     std::cerr << "Unknown internal error while creating Configuration instance." << std::endl;
   }
