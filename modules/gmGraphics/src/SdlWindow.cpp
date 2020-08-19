@@ -111,9 +111,30 @@ void SdlWindow::initialize() {
     video_flags |= SDL_WINDOW_FULLSCREEN_DESKTOP;
   video_flags |= SDL_WINDOW_RESIZABLE;
 
-  GM_INF("SdlWindow", "Requesting window (" << title << ") " << size[0] << "x" << size[1] << " " << (fullscreen?"fullscreen":""));
+  int display_count = SDL_GetNumVideoDisplays();
+  if (display >= display_count) {
+    GM_ERR("SdlWindow", GM_STR("requested display " << display << " is not available (" << display_count << " available)."));
+    throw std::invalid_argument(GM_STR("requested display " << display << " is not available (" << display_count << " available)."));
+  }
+
+  SDL_Rect display_bounds;
+  if (SDL_GetDisplayBounds(display, &display_bounds)) {
+    GM_ERR("SdlWindow", SDL_GetError());
+    throw std::runtime_error("Could not get display bounds");
+  }
+
+  int win_pos_x = position[0] == std::numeric_limits<size_t>::max() ?
+    SDL_WINDOWPOS_UNDEFINED_DISPLAY(display) : display_bounds.x + position[0];
+  int win_pos_y = position[1] == std::numeric_limits<size_t>::max() ?
+    SDL_WINDOWPOS_UNDEFINED_DISPLAY(display) : display_bounds.y + position[1];
+
+  GM_INF("SdlWindow",
+         "Requesting window (" << title << ") "
+         << size[0] << "x" << size[1]
+         << " @" << win_pos_x << "," << win_pos_y
+         << (fullscreen?" fullscreen":"") << " (display " << display << ")");
   window = SDL_CreateWindow(title.c_str(),
-                            SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED,
+                            win_pos_x, win_pos_y,
                             size[0], size[1], video_flags);
   if (!window) {
     GM_ERR("SdlWindow", SDL_GetError());

@@ -9,16 +9,14 @@ BEGIN_NAMESPACE_GMGRAPHICS;
 
 GM_OFI_DEFINE_SUB(Window, RendererDispatcher);
 GM_OFI_PARAM(Window, fullscreen, bool, Window::setFullscreen);
+GM_OFI_PARAM(Window, display, size_t, Window::setDisplay);
 GM_OFI_PARAM(Window, title, std::string, Window::setTitle);
 GM_OFI_PARAM(Window, size, gmTypes::size2, Window::setSize);
+GM_OFI_PARAM(Window, position, gmTypes::int2, Window::setPosition);
 GM_OFI_PARAM(Window, backgroundColor, gmTypes::float4, Window::setBackgroundColor);
 GM_OFI_POINTER(Window, view, gmGraphics::View, Window::addView);
 
-Window::Window()
-  : fullscreen(false),
-    title("untitled gramods window"),
-    size({640, 480}),
-    background_color({0.f, 0.f, 0.f, 0.f}) {}
+Window::Window() {}
 
 void Window::renderFullPipeline(ViewSettings settings) {
   populateViewSettings(settings);

@@ -4,8 +4,9 @@
 
 #include <gmGraphics/RendererDispatcher.hh>
 
-#include <gmTypes/size.hh>
 #include <gmTypes/float.hh>
+#include <gmTypes/int.hh>
+#include <gmTypes/size.hh>
 
 BEGIN_NAMESPACE_GMGRAPHICS;
 
@@ -60,6 +61,13 @@ public:
   virtual void setFullscreen(bool on) { fullscreen = on; }
 
   /**
+     Set on which display the window should be shown.
+
+     \b XML-attribute: \c display
+  */
+  virtual void setDisplay(size_t N) { display = N; }
+
+  /**
      Sets the size of the drawable canvas of this window, in
      pixels. This should be overloaded by sub classes to also support
      run-time changes.
@@ -67,6 +75,13 @@ public:
      \b XML-attribute: \c size
   */
   virtual void setSize(gmTypes::size2 s) { size = s; }
+
+  /**
+     Sets the position of the window.
+
+     \b XML-attribute: \c position
+  */
+  virtual void setPosition(gmTypes::int2 p) { position = p; }
 
   /**
      Returns the size of the drawable canvas of this window, in
@@ -133,11 +148,14 @@ protected:
 
   std::vector<std::shared_ptr<View>> views;
 
-  bool fullscreen;
-  std::string title;
-  gmTypes::size2 size;
-  gmTypes::float4 background_color;
-  
+  bool fullscreen = false;
+  size_t display = 0;
+  std::string title = "untitled gramods window";
+  gmTypes::size2 size = {640, 480};
+  gmTypes::int2 position = {std::numeric_limits<int>::max(),
+                            std::numeric_limits<int>::max() };
+  gmTypes::float4 background_color = {0.f, 0.f, 0.f, 0.f};
+
 };
 
 END_NAMESPACE_GMGRAPHICS;
