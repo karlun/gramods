@@ -3,6 +3,7 @@
 
 #ifdef gramods_ENABLE_aruco
 
+#include <gmCore/Console.hh>
 #include <gmCore/RunLimited.hh>
 #include <gmCore/RunOnce.hh>
 

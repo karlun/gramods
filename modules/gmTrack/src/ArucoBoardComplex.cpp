@@ -3,6 +3,7 @@
 
 #ifdef gramods_ENABLE_aruco
 
+#include <gmCore/Console.hh>
 #include <gmCore/RunOnce.hh>
 
 BEGIN_NAMESPACE_GMTRACK;

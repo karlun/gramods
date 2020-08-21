@@ -3,6 +3,8 @@
 
 #ifdef gramods_ENABLE_aruco
 
+#include <gmCore/Console.hh>
+
 BEGIN_NAMESPACE_GMTRACK;
 
 GM_OFI_DEFINE(OpenCvVideoCapture);
