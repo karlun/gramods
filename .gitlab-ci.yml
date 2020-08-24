@@ -1,11 +1,10 @@
 
-image: ubuntu:20.04
-
 stages:
   - build
   - test
 
 BuildMini:
+  image: $CI_REGISTRY/karlu20/gramods:20.04-mini
   stage: build
   script:
     - apt-get update
@@ -17,6 +16,7 @@ BuildMini:
     - make test
 
 BuildMaxi:
+  image: $CI_REGISTRY/karlu20/gramods:20.04-maxi
   stage: build
   script:
     - apt-get update
@@ -32,6 +32,7 @@ BuildMaxi:
     paths: ['build/libgramods*.deb']
 
 TestInstall:
+  image: $CI_REGISTRY/karlu20/gramods:20.04-mini
   stage: test
   script:
     - apt update
