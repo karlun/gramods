@@ -177,14 +177,14 @@ int main(int argc, char *argv[]) {
 
 The gmTrack module provides primarily pose tracking clients, servers and filters.
 
-Required dependences:
+Required dependencies:
 
  - gmCore
  - gmTypes
 
  - Eigen3
 
-Optional dependences:
+Optional dependencies:
 
  - VRPN, for VRPN support
  - OpenCV (version 4) with aruco module, for marker-based tracking
@@ -199,7 +199,7 @@ Abstraction of tracking using Decorator design pattern for flexible filtering, c
 
 The gmNetwork module provides network data synchronization and execution synchronization.
 
-Required dependences:
+Required dependencies:
 
  - gmCore
 
@@ -215,7 +215,7 @@ Thread encapsulation and role agnostic synchronization.
 
 The gmGraphics module provides nodes primarily for graphics rendering pipeline definition and handling.
 
-Required dependences:
+Required dependencies:
 
  - gmCore
  - gmTypes
@@ -285,7 +285,7 @@ Since shaders are tightly coupled with the C++ code together with which they are
 
 The *touch* module provides touch handling functionality for the implementation of touch screen or touch table interaction.
 
-Required dependences:
+Required dependencies:
 
  - gmMisc
 
