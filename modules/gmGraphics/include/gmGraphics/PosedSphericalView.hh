@@ -8,10 +8,12 @@
 BEGIN_NAMESPACE_GMGRAPHICS;
 
 /**
-   The PosedSphericalView maps the renderers' graphics into one
-   selected representation of spherical projection, from the
-   viewpoint's position and orientation. Supported projections are
-   equirectangular and angular fisheye.
+   This view provides a symmetrical projection of the renderers, on a
+   spherical projection surface.
+
+   The PosedSphericalView maps the renderers' graphics into a
+   spherical projection surface, centered on the viewpoint's position,
+   from the viewpoint's position and orientation.
 */
 class PosedSphericalView
   : public View {

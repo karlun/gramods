@@ -10,11 +10,13 @@
 BEGIN_NAMESPACE_GMGRAPHICS;
 
 /**
+   This view provides skewed frustum projection of the renderers, on a
+   spherical projection surface.
+
    The SpatialSphericalView maps the renderers' graphics onto a
    spherical projection surface, a dome at a fixed position, in a
    selected representation of spherical projection, from the
-   viewpoint's position and orientation. Supported projections are
-   equirectangular and angular fisheye. This skews the view from the
+   viewpoint's position and orientation. This skews the view from the
    viewpoint position relative the dome surface, to compensate for the
    distortion due to the curved surface.
 */

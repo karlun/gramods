@@ -11,7 +11,8 @@
 BEGIN_NAMESPACE_GMGRAPHICS;
 
 /**
-   This view provides skewed frustum projection of the renderers.
+   This view provides skewed frustum projection of the renderers, on a
+   planar projection surface.
 
    The projection plane can be specified in two ways. The primary way
    is to explicitly set the top-left and bottom-right corners and up

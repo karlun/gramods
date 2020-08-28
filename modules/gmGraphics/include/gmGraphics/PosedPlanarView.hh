@@ -8,8 +8,8 @@
 BEGIN_NAMESPACE_GMGRAPHICS;
 
 /**
-   This view provides specified frustum projection from the
-   viewpoint's point of view.
+   This view provides a projection of the renderers using the
+   specified frustum projection from the viewpoint's point of view.
 */
 class PosedPlanarView
   : public View {
