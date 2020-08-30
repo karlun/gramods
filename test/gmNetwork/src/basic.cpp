@@ -45,7 +45,7 @@ struct Peer {
     data_sync->addData(data_int64);
     data_sync->addData(data_float64);
     data_sync->addData(data_vec_float64);
-    is_master = data_sync->getConnection()->getLocalPeerIdx() == 0;
+    is_primary = data_sync->getConnection()->getLocalPeerIdx() == 0;
 
     thread = std::make_unique<std::thread>([this](){ this->run(); });
   }
@@ -60,7 +60,7 @@ struct Peer {
     thread->join();
   }
 
-  bool is_master = false;
+  bool is_primary = false;
   int state = 0;
 
   std::shared_ptr<gmNetwork::ExecutionSynchronization> exec_sync;
@@ -88,7 +88,7 @@ struct Peer {
       exec_sync->waitForConnection();
     }
 
-    if (is_master) {
+    if (is_primary) {
       data_bool = true;
       data_int32 = std::numeric_limits<int32_t>::max() - 41;
       *data_int64 = std::numeric_limits<int64_t>::max() - 97;

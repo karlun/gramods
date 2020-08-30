@@ -24,11 +24,11 @@ BEGIN_NAMESPACE_GMNETWORK;
    peers, and forward incoming messages from the peers to the protocol
    instances.
 
-   The PeersConnection does not enforce a master-slave or
-   client-server architecture, but employ a peer-to-peer architecture.
+   The PeersConnection does not enforce any hierarchical relationship
+   between the nodes, but employ a peer-to-peer architecture.
    However, client software may use the local peer index
    (getLocalPeerIdx) and assume, for example, that the peer with local
-   peer index of zero is the master.
+   peer index of zero is the primary.
 
    The connection object will only hold weak pointers to the protocol
    instances, so the client code retain shared pointers to keep them
