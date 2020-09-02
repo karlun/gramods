@@ -51,16 +51,26 @@ public:
   void setPDistortion(gmTypes::float2 p);
 
   /**
-     Set the focal distance (fx fy) for the camera model. Calibration
-     output from OpenCV is typically expressed in pixels so divide by
-     resolution before entering values here.
+     Set the focal distance (fx fy) for the camera model, expressed
+     relative to the image size. Calibration output from OpenCV is
+     typically expressed in pixels so divide by the pixel size in each
+     dimension, respectively, before entering values here.
+
+     To convert from focal distance in mm and sensor ratio, multiply
+     the focal distance of the lens by the sensor ratio (e.g. 28 mm x
+     1.6 = 44.8 mm) and calculate 36 divided by this value (e.g. 36 /
+     44.8 ≈ 0.8). This will be the focal distance for your largest
+     dimension. For the other dimension you divide the previous value
+     with the image ratio (e.g. 0.8 / (4/3) = 0.6).
   */
   void setFocalDistance(gmTypes::float2 f);
 
   /**
-     Set the focal offset (cx cy) for the camera model. Calibration
-     output from OpenCV is typically expressed in pixels so divide by
-     resolution before entering values here.
+     Set the focal offset (cx cy) for the camera model, expressed
+     relative to the image size. A straight projection should have an
+     offset close to (0.5 0.5). Calibration output from OpenCV is
+     typically expressed in pixels so divide by resolution before
+     entering values here.
   */
   void setFocalOffset(gmTypes::float2 c);
 

@@ -11,7 +11,7 @@
 BEGIN_NAMESPACE_GMGRAPHICS;
 
 GM_OFI_DEFINE(ChromaKeyTexture);
-GM_OFI_POINTER(ChromaKeyTexture, texture, Texture, ChromaKeyTexture::setTexture);
+GM_OFI_POINTER(ChromaKeyTexture, texture, TextureInterface, ChromaKeyTexture::setTexture);
 GM_OFI_PARAM(ChromaKeyTexture, key, gmTypes::float3, ChromaKeyTexture::setKey);
 GM_OFI_PARAM(ChromaKeyTexture, tolerance, gmTypes::float2, ChromaKeyTexture::setTolerance);
 
@@ -29,7 +29,7 @@ struct ChromaKeyTexture::Impl {
   bool is_setup = false;
   bool is_functional = false;
 
-  std::shared_ptr<Texture> texture;
+  std::shared_ptr<TextureInterface> texture;
   gmTypes::float3 key = { 0, 1, 0 };
   gmTypes::float2 tolerance = { 0.48, 0.5 };
 };
@@ -144,7 +144,7 @@ GLuint ChromaKeyTexture::getGLTextureID() {
   return _impl->getGLTextureID();
 }
 
-void ChromaKeyTexture::setTexture(std::shared_ptr<Texture> texture) {
+void ChromaKeyTexture::setTexture(std::shared_ptr<TextureInterface> texture) {
   _impl->texture = texture;
 }
 

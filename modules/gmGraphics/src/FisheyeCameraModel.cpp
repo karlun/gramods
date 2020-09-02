@@ -12,9 +12,9 @@ struct FisheyeCameraModel::Impl {
 
   void setMapperUniforms(GLuint program_id);
 
-  gmTypes::float4 k_dist;
-  gmTypes::float2 focal;
-  gmTypes::float2 offset;
+  gmTypes::float4 k_dist = { 0.f, 0.f, 0.f, 0.f };
+  gmTypes::float2 focal = { 1.f, 1.f };
+  gmTypes::float2 offset = { 0.5f, 0.5f };
 };
 
 FisheyeCameraModel::FisheyeCameraModel()

@@ -37,7 +37,7 @@ public:
   /**
      Sets the texture to decode.
   */
-  void setTexture(std::shared_ptr<Texture> texture);
+  void setTexture(std::shared_ptr<TextureInterface> texture);
 
   /**
      Set the RGB key to mask with. Default is [0, 1, 0].
