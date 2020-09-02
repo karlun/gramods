@@ -67,7 +67,7 @@ bool mapTo2D(vec3 pos3, out vec2 pos2) {
 }
 
 void RectilinearCameraModel::setMapperUniforms(GLuint program_id) {
-  setMapperUniforms(program_id);
+  _impl->setMapperUniforms(program_id);
 }
 
 void RectilinearCameraModel::Impl::setMapperUniforms(GLuint program_id) {
