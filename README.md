@@ -9,7 +9,7 @@
 3. Apps and Dependencies
      1. gm-load
      2. gm-tracker-registration
-3. Modules and Dependencies
+4. Modules and Dependencies
      1. gmCore
      2. gmTrack
      3. gmNetwork

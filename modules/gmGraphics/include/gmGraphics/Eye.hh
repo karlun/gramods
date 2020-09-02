@@ -43,7 +43,7 @@ struct Eye {
   }
 
   /**
-     Returns true iff idx is not smaller than count.
+     Returns true iff idx is smaller than count.
    */
   bool valid() { return idx < count; }
 
