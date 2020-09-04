@@ -4,7 +4,30 @@ import sys, os
 import re
 import argparse
 
-def extract_tags(path, filename, attrs):
+def add_param(re_par, mod_name, attrs):
+
+  ofi_type = re_par.group(1).lower()
+  class_name = re_par.group(2)
+  attr_name = re_par.group(4)
+  type_name = re_par.group(6)
+  method_name = re_par.group(8)
+
+  if not mod_name in attrs:
+    attrs[mod_name] = {}
+
+  if not class_name in attrs[mod_name]:
+    attrs[mod_name][class_name] = []
+
+  attrs[mod_name][class_name].append([attr_name, type_name, method_name, ofi_type])
+
+def add_type_base(re_par, mod_name, type_base):
+
+  type_name = re_par.group(1)
+  base_name = re_par.group(3)
+
+  type_base[type_name] = base_name
+
+def extract_tags(path, filename, attrs, type_base):
 
   pathsep = "\\\\" if os.sep == "\\" else os.sep
   m = re.search(pathsep + '(gm[A-Z][a-zA-Z]+)' + pathsep, os.path.normpath(path))
@@ -14,23 +37,15 @@ def extract_tags(path, filename, attrs):
 
     for line in fin:
 
-      re_par = re.search('^GM_OFI_(PARAM|POINTER)\(([a-zA-Z0-9]+)([^a-zA-Z0-9]*)([a-zA-Z0-9]+)([^a-zA-Z0-9]*)([a-zA-Z0-9:]+)([^a-zA-Z0-9]*)([a-zA-Z0-9:]+)\)', line)
-      if re_par is None:
+      re_par = re.search('^GM_OFI_(PARAM|POINTER)\(\s*([a-zA-Z0-9]+)([^a-zA-Z0-9]*)([a-zA-Z0-9]+)([^a-zA-Z0-9]*)([a-zA-Z0-9:]+)([^a-zA-Z0-9]*)([a-zA-Z0-9:]+)\)', line)
+      if re_par is not None:
+        add_param(re_par, mod_name, attrs)
         continue
 
-      ofi_type = re_par.group(1).lower()
-      class_name = re_par.group(2)
-      attr_name = re_par.group(4)
-      type_name = re_par.group(6)
-      method_name = re_par.group(8)
+      re_par = re.search('^GM_OFI_DEFINE_SUB\(\s*([a-zA-Z0-9]+)([^a-zA-Z0-9]*)([a-zA-Z0-9]+)\)', line)
+      if re_par is not None:
+        add_type_base(re_par, mod_name, type_base)
 
-      if not mod_name in attrs:
-        attrs[mod_name] = {}
-
-      if not class_name in attrs[mod_name]:
-        attrs[mod_name][class_name] = []
-
-      attrs[mod_name][class_name].append([attr_name, type_name, method_name, ofi_type])
 
 def first_element(e):
   return e[0]
@@ -48,11 +63,12 @@ def main(argv):
   args = parser.parse_args()
 
   attrs = {}
+  type_base = {}
   for dirName, subdirList, fileList in os.walk(args.modules):
     for filename in fileList:
       for suffix in suffices:
         if filename.rfind(suffix) - len(filename) + len(suffix) == 0:
-          extract_tags(dirName, filename, attrs)
+          extract_tags(dirName, filename, attrs, type_base)
 
   # attrs[(mod, class)][N][0-2] (attr, type, method)
   for mod in attrs:
@@ -70,7 +86,10 @@ def main(argv):
         continue
 
       #mod_string += f"\n\n\\link gramods::{mod}::{clas} \\b {clas} \\endlink\n\n"
-      mod_string += f"\n\n\\section xml-{mod}-{clas} {clas}\n\n"
+      if clas not in type_base:
+        mod_string += f"\n\n\\section xml-{mod}-{clas} {clas}\n\n"
+      else:
+        mod_string += f"\n\n\\section xml-{mod}-{clas} {clas} (extends {type_base[clas]})\n\n"
       mod_string += f"\n\n\\copybrief gramods::{mod}::{clas} \\link gramods::{mod}::{clas} (more)\\endlink\n\n"
       attrs[mod][clas].sort(key=first_element)
 
