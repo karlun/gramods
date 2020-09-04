@@ -14,7 +14,7 @@ BEGIN_NAMESPACE_GMGRAPHICS;
 GM_OFI_DEFINE_SUB(ChromaKeyView, View);
 GM_OFI_PARAM(ChromaKeyView, key, gmTypes::float3, ChromaKeyView::setKey);
 GM_OFI_PARAM(ChromaKeyView, tolerance, gmTypes::float2, ChromaKeyView::setTolerance);
-GM_OFI_POINTER(ChromaKeyView, view, View, ChromaKeyView::setView);
+GM_OFI_POINTER(ChromaKeyView, view, View, ChromaKeyView::addView);
 
 struct ChromaKeyView::Impl {
 
@@ -28,7 +28,7 @@ struct ChromaKeyView::Impl {
 
   void renderFullPipeline(ViewSettings settings);
 
-  std::shared_ptr<View> view;
+  std::vector<std::shared_ptr<View>> views;
   gmTypes::float3 key = { 0, 1, 0 };
   gmTypes::float2 tolerance = { 0.48, 0.5 };
 };
@@ -84,8 +84,8 @@ ChromaKeyView::ChromaKeyView()
 
 ChromaKeyView::~ChromaKeyView() {}
 
-void ChromaKeyView::setView(std::shared_ptr<View> v) {
-  _impl->view = v;
+void ChromaKeyView::addView(std::shared_ptr<View> view) {
+  _impl->views.push_back(view);
 }
 
 void ChromaKeyView::renderFullPipeline(ViewSettings settings) {
@@ -95,7 +95,7 @@ void ChromaKeyView::renderFullPipeline(ViewSettings settings) {
 
 void ChromaKeyView::Impl::renderFullPipeline(ViewSettings settings) {
 
-  if (!view) {
+  if (views.empty()) {
     GM_RUNONCE(GM_ERR("ChromaKeyView", "Missing view to mask by chroma key."));
     return;
   }
@@ -118,7 +118,8 @@ void ChromaKeyView::Impl::renderFullPipeline(ViewSettings settings) {
 
   render_target.push();
   render_target.bind();
-  view->renderFullPipeline(settings);
+  for (auto view : views)
+    view->renderFullPipeline(settings);
   render_target.pop();
 
   // Render offscreen buffer to active render target
@@ -154,8 +155,9 @@ void ChromaKeyView::setTolerance(gmTypes::float2 tol) {
 }
 
 void ChromaKeyView::clearRenderers(bool recursive) {
-  if (recursive && _impl->view)
-    _impl->view->clearRenderers(recursive);
+  if (recursive)
+    for (auto view : _impl->views)
+      view->clearRenderers(recursive);
   RendererDispatcher::clearRenderers(recursive);
 }
 

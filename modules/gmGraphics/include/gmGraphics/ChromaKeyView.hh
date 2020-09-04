@@ -27,11 +27,11 @@ public:
   void renderFullPipeline(ViewSettings settings);
 
   /**
-     Set the view to mask with the chroma key.
+     Adds a view to mask with chroma key.
 
      \b XML-key: \c view
   */
-  void setView(std::shared_ptr<View>);
+  void addView(std::shared_ptr<View>);
 
   /**
      Set the RGB key to mask with. Default is [0, 1, 0].

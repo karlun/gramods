@@ -31,7 +31,7 @@ public:
   void renderFullPipeline(ViewSettings settings);
 
   /**
-     Sets the resolution to render and save at, regarless of
+     Sets the resolution to render sub views at, regarless of
      resolution of the parent. Default is 1024x1024.
 
      \b XML-attribute: \c resolution
@@ -39,34 +39,34 @@ public:
   void setResolution(gmTypes::size2 res);
 
   /**
-     Set to true if the pixel data should be read off and saved in
-     floating point format. Default is off.
+     Set to true if the texture should be floating point
+     format. Default is off.
   */
   void setUseFloat(bool on);
 
   /**
-     Returns true iff the pixel data are read off and saved in
-     floating point format, false otherwise.
+     Returns true iff the texture is in floating point format, false
+     otherwise.
   */
   bool getUseFloat();
 
   /**
-     Set to true if the alpha channel should be read off and
-     saved. Default is false.
+     Set to true if the texture should have an alpha channel. Default
+     is true.
   */
   void setUseAlpha(bool on);
 
   /**
-     Returns true iff the alpha channel is read off and saved.
+     Returns true iff the texture should have an alpha channel.
   */
   bool getUseAlpha();
 
   /**
-     Sets the view that should be saved to file.
+     Adds a view to render to this texture.
 
      \b XML-key: \c view
   */
-  void setView(std::shared_ptr<View> view);
+  void addView(std::shared_ptr<View> view);
 
   /**
      Removes all renderers and, if recursive is set to true, also

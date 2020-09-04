@@ -23,7 +23,7 @@ GM_OFI_PARAM(SaveView, file, std::string, SaveView::setFile);
 GM_OFI_PARAM(SaveView, resolution, gmTypes::size2, SaveView::setResolution);
 GM_OFI_PARAM(SaveView, useAlpha, bool, SaveView::setUseAlpha);
 GM_OFI_PARAM(SaveView, useFloat, bool, SaveView::setUseFloat);
-GM_OFI_POINTER(SaveView, view, gmGraphics::View, SaveView::setView);
+GM_OFI_POINTER(SaveView, view, gmGraphics::View, SaveView::addView);
 
 struct SaveView::Impl {
 
@@ -42,7 +42,7 @@ struct SaveView::Impl {
   RasterProcessor raster_processor;
   GLenum pixel_format;
 
-  std::shared_ptr<View> view;
+  std::vector<std::shared_ptr<View>> views;
   int frame = 0;
 
   std::shared_ptr<FreeImage> free_image;
@@ -83,7 +83,7 @@ void SaveView::renderFullPipeline(ViewSettings settings) {
 
 void SaveView::Impl::renderFullPipeline(ViewSettings settings) {
 
-  if (!view) {
+  if (views.empty()) {
     GM_RUNONCE(GM_ERR("SaveView", "No view to save."));
     return;
   }
@@ -93,7 +93,7 @@ void SaveView::Impl::renderFullPipeline(ViewSettings settings) {
     return;
   }
 
-  if (resolution[0] < 0 || resolution[1] < 0) {
+  if (resolution[0] <= 0 || resolution[1] <= 0) {
     GM_RUNONCE(GM_ERR("SaveView", "Cannot create view of resolution " << resolution[0] << "x" << resolution[1] << "."));
     return;
   }
@@ -111,8 +111,7 @@ void SaveView::Impl::renderFullPipeline(ViewSettings settings) {
   if (!is_setup) {
     is_setup = true;
     pixel_format = use_float ?
-      use_alpha ? GL_RGBA32F : GL_RGB32F :
-      use_alpha ? GL_RGBA8 : GL_RGB8;
+      GL_RGBA32F : GL_RGBA8;
     render_target.setPixelFormat(pixel_format);
     raster_processor.setFragmentCode(fragment_code);
     if (render_target.init(1) &&
@@ -129,7 +128,8 @@ void SaveView::Impl::renderFullPipeline(ViewSettings settings) {
   render_target.bind(resolution[0], resolution[1]);
 
   settings.pixel_format = pixel_format;
-  view->renderFullPipeline(settings);
+  for (auto view : views)
+    view->renderFullPipeline(settings);
 
   auto t0 = std::chrono::steady_clock::now();
 
@@ -302,13 +302,14 @@ bool SaveView::getUseAlpha() {
   return _impl->use_alpha;
 }
 
-void SaveView::setView(std::shared_ptr<View> view) {
-  _impl->view = view;
+void SaveView::addView(std::shared_ptr<View> view) {
+  _impl->views.push_back(view);
 }
 
 void SaveView::clearRenderers(bool recursive) {
   if (recursive)
-    _impl->view->clearRenderers(recursive);
+    for (auto view : _impl->views)
+      view->clearRenderers(recursive);
   RendererDispatcher::clearRenderers(recursive);
 }
 

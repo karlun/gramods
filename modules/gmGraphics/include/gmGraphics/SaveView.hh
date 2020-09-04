@@ -79,11 +79,11 @@ public:
   bool getUseAlpha();
 
   /**
-     Sets the view that should be saved to file.
+     Adds a view that should be saved to file.
 
      \b XML-key: \c view
   */
-  void setView(std::shared_ptr<View> view);
+  void addView(std::shared_ptr<View> view);
 
   /**
      Removes all renderers and, if recursive is set to true, also

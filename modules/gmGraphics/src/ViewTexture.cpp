@@ -20,7 +20,7 @@ GM_OFI_DEFINE_SUB(ViewTexture, View);
 GM_OFI_PARAM(ViewTexture, resolution, gmTypes::size2, ViewTexture::setResolution);
 GM_OFI_PARAM(ViewTexture, useAlpha, bool, ViewTexture::setUseAlpha);
 GM_OFI_PARAM(ViewTexture, useFloat, bool, ViewTexture::setUseFloat);
-GM_OFI_POINTER(ViewTexture, view, gmGraphics::View, ViewTexture::setView);
+GM_OFI_POINTER(ViewTexture, view, gmGraphics::View, ViewTexture::addView);
 
 struct ViewTexture::Impl {
 
@@ -35,7 +35,7 @@ struct ViewTexture::Impl {
   RasterProcessor raster_processor;
   GLenum pixel_format;
 
-  std::shared_ptr<View> view;
+  std::vector<std::shared_ptr<View>> views;
   int frame = 0;
 
   bool is_setup = false;
@@ -68,7 +68,7 @@ void main() {
 )lang=glsl";
 
 bool ViewTexture::Impl::setup() {
-  if (!view) {
+  if (views.empty()) {
     GM_RUNONCE(GM_ERR("ViewTexture", "No view to save."));
     return false;
   }
@@ -140,7 +140,8 @@ void ViewTexture::Impl::update(ViewSettings settings) {
   render_target.bind(resolution[0], resolution[1]);
 
   settings.pixel_format = pixel_format;
-  view->renderFullPipeline(settings);
+  for (auto view : views)
+    view->renderFullPipeline(settings);
 
   render_target.pop();
 }
@@ -165,13 +166,14 @@ bool ViewTexture::getUseAlpha() {
   return _impl->use_alpha;
 }
 
-void ViewTexture::setView(std::shared_ptr<View> view) {
-  _impl->view = view;
+void ViewTexture::addView(std::shared_ptr<View> view) {
+  _impl->views.push_back(view);
 }
 
 void ViewTexture::clearRenderers(bool recursive) {
   if (recursive)
-    _impl->view->clearRenderers(recursive);
+    for (auto view : _impl->views)
+      view->clearRenderers(recursive);
   RendererDispatcher::clearRenderers(recursive);
 }
 
