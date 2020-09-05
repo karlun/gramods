@@ -1,6 +1,6 @@
 
-#ifndef GRAMODS_NETWORK_SIMPLEDATASYNCHRONIZATION
-#define GRAMODS_NETWORK_SIMPLEDATASYNCHRONIZATION
+#ifndef GRAMODS_NETWORK_DATASYNC
+#define GRAMODS_NETWORK_DATASYNC
 
 #include <gmNetwork/Protocol.hh>
 #include <gmNetwork/SyncData.hh>
@@ -30,7 +30,7 @@ BEGIN_NAMESPACE_GMNETWORK;
 
    Global variables:
    @code{.cpp}
-   std::shared_ptr<gmNetwork::SimpleDataSynchronization> data_sync;
+   std::shared_ptr<gmNetwork::SyncNode> sync_node;
    std::shared_ptr<gmNetwork::SyncSFloat> shared_time;
    std::shared_ptr<gmNetwork::SyncSBool> shared_button;
    @endcode
@@ -42,9 +42,11 @@ BEGIN_NAMESPACE_GMNETWORK;
 
    gmCore::Configuration config(argc, argv);
 
-   if (!config.getObject(data_sync))
+   if (!config.getObject(sync_node))
      exit(1);
 
+   gmNetwork::DataSync * data_sync 
+       = sync_node->getProtocol<gmNetwork::DataSync>();
    data_sync->addData(shared_time);
    data_sync->addData(shared_button);
    @endcode
@@ -55,20 +57,22 @@ BEGIN_NAMESPACE_GMNETWORK;
    *shared_time = 14.32;
    *shared_button = false;
 
-   exec_sync->waitForAll();
-   data_sync->update(); // <- moves received data to the front
+   sync_node->getProtocol<gmNetwork::RunSync>()
+       ->waitForAll();
+   sync_node->getProtocol<gmNetwork::DataSync>()
+       ->update(); // <- moves received data to the front
 
    // Read off front buffer
    std::cerr << *shared_time << std::endl;
    @endcode
 */
-class SimpleDataSynchronization
+class DataSync
   : public Protocol {
 
 public:
 
-  SimpleDataSynchronization();
-  virtual ~SimpleDataSynchronization();
+  DataSync(std::shared_ptr<SyncNode> sync_node);
+  virtual ~DataSync();
 
   /**
      Adds a data container to be synchronized by the
@@ -121,8 +125,6 @@ public:
      for interpretation and processing.
   */
   char getProtocolFlag() { return 11; }
-
-  GM_OFI_DECLARE;
 
 private:
 

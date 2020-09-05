@@ -4,88 +4,28 @@
 
 #include <gmNetwork/config.hh>
 
-#include <gmCore/Object.hh>
-#include <gmCore/OFactory.hh>
-
+#include <memory>
 #include <mutex>
 #include <vector>
 
 BEGIN_NAMESPACE_GMNETWORK;
 
-class PeersConnection;
+class SyncNode;
 
 /**
-   The base of communication protocols. A protocol implementation will
-   send data through a PeersConnnection instance, which will in turn
-   forward incoming data to the designated protocol implementation.
+   TODO: write this
 */
 class Protocol
-  : public gmCore::Object {
+  : public std::enable_shared_from_this<Protocol> {
 
 public:
 
-  ~Protocol();
+  static const size_t HEADER_LENGTH;
 
-  /**
-     Data entity communicated by the connection to the designated
-     protocol.
-  */
-  struct Message {
+  Protocol(std::shared_ptr<SyncNode> sync_node)
+    : sync_node(sync_node) {}
 
-    /**
-       The index of the peer from which this message originated.
-    */
-    int peer_idx;
-
-    /**
-       Flag indicating which protocol this message is encoded for.
-    */
-    char protocol;
-
-    /**
-       The complete set of data sent by the peer.
-    */
-    std::vector<char> data;
-  };
-
-public:
-
-  /**
-     Sets the connection to read messages from. This method will also
-     register the protocol with the connection, for receiving messages
-     with this protocols flag.
-
-     \b XML-key: \c connection
-  */
-  void setConnection(std::shared_ptr<PeersConnection> conn);
-
-  /**
-     Returns the connection that this protocol reads messages from.
-  */
-  std::shared_ptr<PeersConnection> getConnection();
-
-  /**
-     Closes the protocol and, if available, closes also its connection
-     and sets it to nullptr. Call setConnection(nullptr) first to
-     avoid closing the connection. This method is called by the
-     connection if it is closed, directly or by another protocol.
-
-     Sub classes should extend this method if necessary to react to
-     closing the connection, but make sure to call Protocol::close to
-     extend the default behaviour.
-  */
-  virtual void close();
-
-  /**
-     Called by the connection when data with this protocols flag has
-     been received. The message is complete, as sent by the peer.
-
-     It should be assumed that the call is made from a non-main
-     thread. Also, the method should return promptly and leave heavy
-     processing to either another, worker thread or to the client,
-     main thread.
-  */
-  virtual void processMessage(Message) {}
+  virtual ~Protocol() {}
 
   /**
      Returns the byte sent in the message to indicate which protocol
@@ -96,18 +36,78 @@ public:
   virtual char getProtocolFlag() { return 0; }
 
   /**
-     Waits and does not return until all peers have connected to the
-     connection associated with this protocol.
+     Data entity communicated by the connection to the designated
+     protocol.
   */
-  void waitForConnection();
+  struct Message {
+
+    /**
+       Create an empty message.
+    */
+    Message() {}
+
+    /**
+       Create an incoming message initialized with the specified
+       header data.
+    */
+    Message(std::vector<char> hdr);
+
+    /**
+       Create an outgoing message template with protocol id and data.
+    */
+    Message(char protocol, std::vector<char> data);
+
+    /**
+       Returns a vector filled with header data for this message. The
+       length of the header is HEADER_LENGTH.
+    */
+    std::vector<char> getHeader();
+
+    /**
+       The index of the peer from which this message originated, or
+       the maximum value of the type if not set.
+    */
+    size_t from_peer_idx = std::numeric_limits<size_t>::max();
+
+    /**
+       The index of the peer to which this message is sent, or the
+       maximum value of the type if not set.
+    */
+    size_t to_peer_idx = std::numeric_limits<size_t>::max();
+
+    /**
+       Flag indicating which protocol this message is encoded for.
+    */
+    char protocol = 0;
+
+    /**
+       Expected length of the message as expressed in the message
+       header. A complete message will satisfy the expression
+       `data.length() == message_length`.
+    */
+    size_t length = 0;
+
+    /**
+       The complete set of data sent by the peer.
+    */
+    std::vector<char> data;
+  };
 
   /**
-     Returns the default key, in Configuration, for the
-     Object.
-  */
-  virtual std::string getDefaultKey() { return "protocol"; }
+     Called by the sync node when data with this protocols flag has
+     been received. The message is complete, as sent by the peer.
 
-  GM_OFI_DECLARE;
+     It should be assumed that the call is made from a non-main
+     thread. Also, the method should return promptly and leave heavy
+     processing to either another worker thread or to the main thread.
+  */
+  virtual void processMessage(Message) {}
+
+  /**
+     Called by the sync node when connection to one of the peers has
+     been broken.
+  */
+  virtual void lostPeer(size_t idx) {}
 
 protected:
 
@@ -118,13 +118,10 @@ protected:
   void sendMessage(std::vector<char> data);
 
   /**
-     The connection that the protocol is communicating through.
+     The SyncNode instance this protocol communicates through.
   */
-  std::shared_ptr<PeersConnection> connection;
+  std::weak_ptr<SyncNode> sync_node;
 
-private:
-
-  std::mutex connection_lock;
 };
 
 END_NAMESPACE_GMNETWORK;

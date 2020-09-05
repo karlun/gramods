@@ -9,7 +9,7 @@
 
 BEGIN_NAMESPACE_GMNETWORK;
 
-class SimpleDataSynchronization;
+class DataSync;
 
 /**
    Simple synchronizeable data container.
@@ -35,9 +35,9 @@ protected:
 
 private:
 
-  void setSynchronizer(std::shared_ptr<SimpleDataSynchronization> sync);
+  void setSynchronizer(std::shared_ptr<DataSync> sync);
 
-  friend SimpleDataSynchronization;
+  friend DataSync;
 
 private:
 

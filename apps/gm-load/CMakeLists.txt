@@ -25,6 +25,12 @@ IF (NOT TARGET gmGraphics)
 ENDIF ()
 LIST (APPEND APP_LIBS gmGraphics)
 
+IF (NOT TARGET gmNetwork)
+  MESSAGE (STATUS "Not including gm-load - requires gmNetwork")
+  RETURN()
+ENDIF ()
+SET (APP_LIBS ${APP_LIBS} gmNetwork)
+
 
 FIND_PACKAGE (TCLAP)
 IF (NOT TCLAP_FOUND)
