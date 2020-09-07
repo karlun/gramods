@@ -12,6 +12,8 @@ BEGIN_NAMESPACE_GMTRACK;
 GM_OFI_DEFINE(RegisteredMultiPoseTracker);
 GM_OFI_POINTER(RegisteredMultiPoseTracker, multiPoseTracker, MultiPoseTracker, RegisteredMultiPoseTracker::setMultiPoseTracker);
 GM_OFI_PARAM(RegisteredMultiPoseTracker, registrationMatrix, Eigen::Matrix4f, RegisteredMultiPoseTracker::setRegistrationMatrix);
+GM_OFI_PARAM(RegisteredMultiPoseTracker, positionBias, Eigen::Vector3f, RegisteredMultiPoseTracker::setPositionBias);
+GM_OFI_PARAM(RegisteredMultiPoseTracker, orientationBias, Eigen::Quaternionf, RegisteredMultiPoseTracker::setOrientationBias);
 
 
 bool RegisteredMultiPoseTracker::getPose(std::map<int, PoseSample> &p) {
