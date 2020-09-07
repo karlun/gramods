@@ -101,6 +101,8 @@ public:
      board.
 
      \b XML-attribute: \c position
+
+     \sa gramods::operator>>(std::istream &, Eigen::Vector3f &)
   */
   void setPosition(Eigen::Vector3f p);
 
@@ -108,6 +110,8 @@ public:
      Set the orientation of the board grid.
 
      \b XML-attribute: \c orientation
+
+     \sa gramods::operator>>(std::istream &, Eigen::Quaternionf &)
   */
   void setOrientation(Eigen::Quaternionf q);
 

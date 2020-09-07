@@ -27,6 +27,10 @@ public:
   /**
      Sets the matrix that describes the transform from the tracker
      space to the registered space.
+
+     \b XML-attribute: \c registrationMatrix
+
+     \sa gramods::operator>>(std::istream &, Eigen::Matrix4f &)
   */
   void setRegistrationMatrix(Eigen::Matrix4f m) {
     registration = m;
@@ -35,6 +39,10 @@ public:
   /**
      Sets a position bias to the registration. This is typically not
      needed.
+
+     \b XML-attribute: \c positionBias
+
+     \sa gramods::operator>>(std::istream &, Eigen::Vector3f &)
   */
   void setPositionBias(Eigen::Vector3f p) {
     position_bias = p;
@@ -43,6 +51,10 @@ public:
   /**
      Sets an orientation bias to the registration. This is typically
      not needed.
+
+     \b XML-attribute: \c orientationBias
+
+     \sa gramods::operator>>(std::istream &, Eigen::Quaternionf &)
   */
   void setOrientationBias(Eigen::Quaternionf q) {
     orientation_bias = q;

@@ -34,6 +34,8 @@ public:
      Position of the top left corner of the view.
 
      \b XML-attribute: \c topLeftCorner
+
+     \sa gramods::operator>>(std::istream &, Eigen::Vector3f &)
   */
   void setTopLeftCorner(Eigen::Vector3f tlc);
 
@@ -41,6 +43,8 @@ public:
      Position of bottom right corner of the view.
 
      \b XML-attribute: \c bottomRightCorner
+
+     \sa gramods::operator>>(std::istream &, Eigen::Vector3f &)
   */
   void setBottomRightCorner(Eigen::Vector3f brc);
 
@@ -48,6 +52,8 @@ public:
      Set up direction of the view.
 
      \b XML-attribute: \c upDirection
+
+     \sa gramods::operator>>(std::istream &, Eigen::Vector3f &)
   */
   void setUpDirection(Eigen::Vector3f up);
 
@@ -57,6 +63,8 @@ public:
      not control the viewpoint.
 
      \b XML-attribute: \c position
+
+     \sa gramods::operator>>(std::istream &, Eigen::Vector3f &)
   */
   void setPosition(Eigen::Vector3f p);
 
@@ -69,6 +77,8 @@ public:
      right-wise and upwards, respectively.
 
      \b XML-attribute: \c clipAngles
+
+     \sa operator>>(std::istream &, gmTypes::angle &)
   */
   void setClipAngles(gmTypes::angle4 a);
 
@@ -78,6 +88,8 @@ public:
      will not control the viewpoint.
 
      \b XML-attribute: \c orientation
+
+     \sa gramods::operator>>(std::istream &, Eigen::Quaternionf &)
   */
   void setOrientation(Eigen::Quaternionf q);
 

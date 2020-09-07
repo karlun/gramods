@@ -69,10 +69,12 @@ END_NAMESPACE_GMTYPES;
 BEGIN_NAMESPACE_GRAMODS;
 
 /**
-   Stream operator reading into a angle. This is typically used
-   to read XML angle attributes. Default behavior is to read a single
+   Stream operator reading into a angle. This is typically used to
+   read XML angle attributes. Default behavior is to read a single
    value in radians, but the value is interpreted as degrees if it is
-   prepended by a 'd' (as in 'd180').
+   prepended by a 'd' (as in 'd180'). The value can also be prepended
+   by an 'r' (as in r3.14) to suppress the warnings that degrees
+   probably was ment for large values.
 */
 std::istream& operator>> (std::istream &in, gmTypes::angle &v);
 

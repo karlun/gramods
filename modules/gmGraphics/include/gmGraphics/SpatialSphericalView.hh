@@ -66,6 +66,8 @@ public:
      surface, in meters. Default is zero.
 
      \b XML-attribute: \c position
+
+     \sa gramods::operator>>(std::istream &, Eigen::Vector3f &)
   */
   void setPosition(Eigen::Vector3f p);
 
@@ -81,6 +83,8 @@ public:
      forward tilt common in dome theaters.
 
      \b XML-attribute: \c orientation
+
+     \sa gramods::operator>>(std::istream &, Eigen::Quaternionf &)
   */
   void setOrientation(Eigen::Quaternionf q);
 
