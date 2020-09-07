@@ -23,6 +23,8 @@ public:
      Set the position of the plane.
 
      \b XML-attribute: \c position
+
+     \sa gramods::operator>>(std::istream &, Eigen::Vector3f &)
   */
   void setPosition(Eigen::Vector3f p);
 
@@ -30,6 +32,8 @@ public:
      Set the orientation of the plane by defining its normal.
 
      \b XML-attribute: \c normal
+
+     \sa gramods::operator>>(std::istream &, Eigen::Vector3f &)
   */
   void setNormal(Eigen::Vector3f n);
 
@@ -38,6 +42,8 @@ public:
      the x-y plane.
 
      \b XML-attribute: \c orientation
+
+     \sa gramods::operator>>(std::istream &, Eigen::Quaternionf &)
   */
   void setOrientation(Eigen::Quaternionf q);
 

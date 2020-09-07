@@ -50,6 +50,8 @@ public:
      position value.
 
      \b XML-attribute: \c position
+
+     \sa gramods::operator>>(std::istream &, Eigen::Vector3f &)
   */
   virtual void setPosition(Eigen::Vector3f p);
 
@@ -71,6 +73,8 @@ public:
      updates of the position value.
 
      \b XML-attribute: \c orientation
+
+     \sa gramods::operator>>(std::istream &, Eigen::Quaternionf &)
   */
   virtual void setOrientation(Eigen::Quaternionf q);
 
@@ -79,6 +83,8 @@ public:
      setLookAt. This does nothing if setLookAt is not used.
 
      \b XML-attribute: \c upDirection
+
+     \sa gramods::operator>>(std::istream &, Eigen::Vector3f &)
   */
   virtual void setUpDirection(Eigen::Vector3f up);
 
@@ -92,6 +98,8 @@ public:
      camera orientation will not automatically toe-in to this point.
 
      \b XML-attribute: \c lookAt
+
+     \sa gramods::operator>>(std::istream &, Eigen::Vector3f &)
   */
   virtual void setLookAt(Eigen::Vector3f p);
 

@@ -51,6 +51,8 @@ public:
      Sets the position of the cube set.
 
      \b XML-attribute: \c position
+
+     \sa gramods::operator>>(std::istream &, Eigen::Vector3f &)
   */
   void setPosition(Eigen::Vector3f c);
 

@@ -61,6 +61,8 @@ public:
      specifications must be provided.
 
      \b XML-attribute: \c orientation
+
+     \sa gramods::operator>>(std::istream &, Eigen::Quaternionf &)
   */
   void addOrientation(Eigen::Quaternionf q);
 

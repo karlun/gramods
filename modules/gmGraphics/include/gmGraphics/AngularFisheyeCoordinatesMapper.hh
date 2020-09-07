@@ -52,6 +52,8 @@ public:
      should have in the 3D sphere, as angle expressed as a value in
      radians between 0 and 2π. The typical fulldome format uses a
      coverage angle of π, which is also the default.
+
+     \sa operator>>(std::istream &, gmTypes::angle &)
   */
   void setCoverageAngle(gmTypes::angle a);
 

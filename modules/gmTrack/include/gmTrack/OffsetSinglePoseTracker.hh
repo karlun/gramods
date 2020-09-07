@@ -26,6 +26,10 @@ public:
   /**
      Sets the position offset, in local tracker coordinates, to add to
      the pose data.
+
+     \b XML-attribute: \c positionOffset
+
+     \sa gramods::operator>>(std::istream &, Eigen::Vector3f &)
   */
   void setPositionOffset(Eigen::Vector3f p) {
     position_offset = p;
@@ -34,6 +38,10 @@ public:
   /**
      Sets the orientation offset, in local tracker coordinates, to add
      to the pose data.
+
+     \b XML-attribute: \c orientationOffset
+
+     \sa gramods::operator>>(std::istream &, Eigen::Quaternionf &)
   */
   void setOrientationOffset(Eigen::Quaternionf q) {
     orientation_offset = q;
@@ -42,6 +50,10 @@ public:
   /**
      Sets the orientation and position offset by extracting these data
      from an offset matrix.
+
+     \b XML-attribute: \c offsetMatrix
+
+     \sa gramods::operator>>(std::istream &, Eigen::Matrix4f &)
   */
   void setOffsetMatrix(Eigen::Matrix4f m);
 

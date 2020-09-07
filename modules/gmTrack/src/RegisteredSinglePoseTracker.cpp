@@ -12,6 +12,8 @@ BEGIN_NAMESPACE_GMTRACK;
 GM_OFI_DEFINE(RegisteredSinglePoseTracker);
 GM_OFI_POINTER(RegisteredSinglePoseTracker, singlePoseTracker, SinglePoseTracker, RegisteredSinglePoseTracker::setSinglePoseTracker);
 GM_OFI_PARAM(RegisteredSinglePoseTracker, registrationMatrix, Eigen::Matrix4f, RegisteredSinglePoseTracker::setRegistrationMatrix);
+GM_OFI_PARAM(RegisteredSinglePoseTracker, positionBias, Eigen::Vector3f, RegisteredSinglePoseTracker::setPositionBias);
+GM_OFI_PARAM(RegisteredSinglePoseTracker, orientationBias, Eigen::Quaternionf, RegisteredSinglePoseTracker::setOrientationBias);
 
 
 bool RegisteredSinglePoseTracker::getPose(PoseSample &p) {

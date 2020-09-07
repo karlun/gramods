@@ -51,11 +51,15 @@ public:
      Sets the position of the sphere set.
 
      \b XML-attribute: \c position
+
+     \sa gramods::operator>>(std::istream &, Eigen::Vector3f &)
   */
   void setPosition(Eigen::Vector3f c);
 
   /**
      Sets the color of the spheres in the set. Shading will be added.
+
+     \sa gramods::operator>>(std::istream &, Eigen::Vector3f &)
   */
   void setColor(Eigen::Vector3f c);
 

@@ -49,7 +49,8 @@ public:
      the number of time samples.
 
      \b XML-attribute: \c orientation
-     @see gramods::operator>>(std::istream &in, Eigen::Quaternionf &v)
+
+     \sa gramods::operator>>(std::istream &, Eigen::Quaternionf &)
   */
   void addOrientation(Eigen::Quaternionf q);
 

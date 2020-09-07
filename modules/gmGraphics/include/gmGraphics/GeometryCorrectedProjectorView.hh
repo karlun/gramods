@@ -66,6 +66,8 @@ public:
      Set the top left corner of the projection.
 
      \b XML-attribute: \c topLeftCorner
+
+     \sa gramods::operator>>(std::istream &, Eigen::Vector3f &)
   */
   void setTopLeftCorner(Eigen::Vector3f tlc);
 
@@ -73,6 +75,8 @@ public:
      Set the bottom right corner of the projection.
 
      \b XML-attribute: \c bottomRightCorner
+
+     \sa gramods::operator>>(std::istream &, Eigen::Vector3f &)
   */
   void setBottomRightCorner(Eigen::Vector3f brc);
 
@@ -80,6 +84,8 @@ public:
      Set the position of the optic center of the projection.
 
      \b XML-attribute: \c position
+
+     \sa gramods::operator>>(std::istream &, Eigen::Vector3f &)
   */
   void setPosition(Eigen::Vector3f p);
 
@@ -106,6 +112,8 @@ public:
      increase right-wise and upwards, respectively.
 
      \b XML-attribute: \c clipAngles
+
+     \sa operator>>(std::istream &, gmTypes::angle &)
   */
   void setClipAngles(gmTypes::angle4 a);
 
@@ -113,6 +121,8 @@ public:
      Set orientation of the projection, of the extrinsics.
 
      \b XML-attribute: \c orientation
+
+     \sa gramods::operator>>(std::istream &, Eigen::Quaternionf &)
   */
   void setOrientation(Eigen::Quaternionf q);
 

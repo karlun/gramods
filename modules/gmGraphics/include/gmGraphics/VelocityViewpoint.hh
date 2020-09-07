@@ -25,6 +25,8 @@ public:
      per second.
 
      \b XML-attribute: \c velocity
+
+     \sa gramods::operator>>(std::istream &, Eigen::Vector3f &)
   */
   void setVelocity(Eigen::Vector3f vel);
 
@@ -33,6 +35,8 @@ public:
      second.
 
      \b XML-attribute: \c rotation
+
+     \sa gramods::operator>>(std::istream &, Eigen::Quaternionf &)
   */
   void setRotation(Eigen::Quaternionf q);
 

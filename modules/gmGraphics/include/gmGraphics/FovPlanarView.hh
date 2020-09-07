@@ -36,6 +36,8 @@ public:
      are positive right-wise and upwards, respectively.
 
      \b XML-attribute: \c clipAngles
+
+     \sa operator>>(std::istream &, gmTypes::angle &)
   */
   void setClipAngles(gmTypes::angle4 p) {
     planes[0] = -tanf(p[0]);
@@ -48,6 +50,8 @@ public:
      Sets the orientation of the View.
 
      \b XML-attribute: \c orientation
+
+     \sa gramods::operator>>(std::istream &, Eigen::Quaternionf &)
   */
   void setOrientation(Eigen::Quaternionf q) {
     orientation = q;

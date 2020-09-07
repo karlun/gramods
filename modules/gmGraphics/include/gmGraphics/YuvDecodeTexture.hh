@@ -42,11 +42,17 @@ public:
   /**
      Sets the conversion matrix from YUV space to RGB. Default is
      BT.601.
+
+     \b XML-attribute: \c yuvToRgb
+
+     \sa gramods::operator>>(std::istream &, Eigen::Matrix3f &)
   */
   void setYuvToRgb(Eigen::Matrix3f m);
 
   /**
      Sets the range of the UV values. Default is BT.601.
+
+     \b XML-attribute: \c uvRange
   */
   void setUvRange(gmTypes::float2 v);
 

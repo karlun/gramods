@@ -25,6 +25,8 @@ public:
      horizontal.
 
      \b XML-attribute: \c fieldOfView
+
+     \sa operator>>(std::istream &, gmTypes::angle &)
   */
   void setFieldOfView(gmTypes::angle2 fov) {
     field_of_view = fov;
