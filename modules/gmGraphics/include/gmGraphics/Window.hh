@@ -154,10 +154,9 @@ protected:
   size_t display = 0;
   std::string title = "untitled gramods window";
   gmTypes::size2 size = {640, 480};
-  gmTypes::int2 position = {std::numeric_limits<int>::max(),
-                            std::numeric_limits<int>::max() };
+  gmTypes::int2 position = { (std::numeric_limits<int>::max)(),
+                             (std::numeric_limits<int>::max)() };
   gmTypes::float4 background_color = {0.f, 0.f, 0.f, 0.f};
-
 };
 
 END_NAMESPACE_GMGRAPHICS;
