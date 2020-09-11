@@ -8,6 +8,7 @@
 #include <gmCore/Stringify.hh>
 
 #include <unordered_map>
+#include <limits>
 
 BEGIN_NAMESPACE_GMNETWORK;
 

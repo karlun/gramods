@@ -8,6 +8,8 @@
 
 #include <Eigen/LU>
 
+#include <limits>
+
 BEGIN_NAMESPACE_GMTRACK;
 
 GM_OFI_DEFINE(PoseRegistrationEstimator);

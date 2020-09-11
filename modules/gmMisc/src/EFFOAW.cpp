@@ -3,6 +3,8 @@
 
 #ifdef gramods_ENABLE_Eigen3
 
+#include <limits>
+
 BEGIN_NAMESPACE_GMMISC;
 
 struct EFFOAW::Impl {

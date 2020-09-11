@@ -3,6 +3,8 @@
 
 #include <gmCore/Console.hh>
 
+#include <limits>
+
 BEGIN_NAMESPACE_GMGRAPHICS;
 
 GM_OFI_DEFINE(Viewpoint);

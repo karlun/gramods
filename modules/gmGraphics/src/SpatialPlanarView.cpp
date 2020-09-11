@@ -3,6 +3,8 @@
 #include <gmCore/RunOnce.hh>
 #include <gmCore/RunLimited.hh>
 
+#include <limits>
+
 BEGIN_NAMESPACE_GMGRAPHICS;
 
 GM_OFI_DEFINE_SUB(SpatialPlanarView, MultiscopicView);

@@ -8,6 +8,7 @@
 #include <GL/gl.h>
 
 #include <chrono>
+#include <limits>
 
 BEGIN_NAMESPACE_GMGRAPHICS;
 

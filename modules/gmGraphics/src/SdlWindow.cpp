@@ -8,6 +8,8 @@
 #include <GL/glew.h>
 #include <GL/gl.h>
 
+#include <limits>
+
 BEGIN_NAMESPACE_GMGRAPHICS;
 
 GM_OFI_DEFINE_SUB(SdlWindow, Window);

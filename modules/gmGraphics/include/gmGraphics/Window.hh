@@ -8,6 +8,8 @@
 #include <gmTypes/int.hh>
 #include <gmTypes/size.hh>
 
+#include <limits>
+
 BEGIN_NAMESPACE_GMGRAPHICS;
 
 class View;
