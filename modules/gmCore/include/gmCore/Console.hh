@@ -12,6 +12,9 @@
 
 #include <gmCore/ConsoleLevel.hh>
 #include <gmCore/MessageSink.hh>
+
+#include <gmCore/export.hh>
+
 #include <memory>
 #include <vector>
 #include <sstream>
@@ -266,7 +269,7 @@ private:
   static ConsoleBuffer getBuffer(ConsoleLevel level, std::string tag,
                                  std::string file, int line, std::string function);
 
-  static std::vector<std::shared_ptr<MessageSink>> message_sinks;
+  static gmCore_API std::vector<std::shared_ptr<MessageSink>> message_sinks;
 
   ConsoleBuffer buffer;
 };
