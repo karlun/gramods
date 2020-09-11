@@ -108,7 +108,7 @@ void SDLWindow::update() {
       drawPoint(points[idx].x, points[idx].y);
 
   }
-  catch(std::invalid_argument &e) {
+  catch (const std::invalid_argument &e) {
     std::cerr << e.what() << std::endl;
   }
 

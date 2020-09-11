@@ -343,7 +343,7 @@ bool Configuration::getParam(std::string name, T &value) const {
     value = _value;
     return true;
   }
-  catch(std::exception &e){
+  catch (std::exception){
     GM_WRN("Configuration", "While getting '" << name << "', could not parse '" << string_value << "' as " << typeid(T).name() << "!");
     return false;
   }
@@ -430,7 +430,7 @@ inline std::size_t Configuration::getAllParams(std::string name, std::vector<boo
 
       GM_WRN("Configuration", "Could not parse '" << string_value << "' as bool!");
     }
-    catch(std::exception &e){
+    catch (std::exception){
       GM_WRN("Configuration", "Could not parse '" << string_value << "' as bool!");
     }
   return value.size() - original_size;
@@ -457,7 +457,7 @@ inline std::size_t Configuration::getAllParams(std::string name, std::vector<T> 
 
       value.push_back(_value);
     }
-    catch(std::exception &e){
+    catch (std::exception){
       GM_WRN("Configuration", "While getting '" << name << "', could not parse '" << string_value << "' as " << typeid(T).name() << "!");
     }
   return value.size() - original_size;

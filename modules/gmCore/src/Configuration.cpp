@@ -243,7 +243,7 @@ void Configuration::load(tinyxml2::XMLNode *node,
               if (error_list) error_list->push_back(GM_STR("no parameter " << param_name << " available in " << type));
               else throw std::invalid_argument(GM_STR("no parameter " << param_name << " available in " << type));
             }
-          } catch (std::invalid_argument &e) {
+          } catch (const std::invalid_argument &e) {
             GM_WRN("Configuration", e.what());
             if (error_list) error_list->push_back(e.what());
             else throw e;
@@ -265,7 +265,7 @@ void Configuration::load(tinyxml2::XMLNode *node,
             if (error_list) error_list->push_back(GM_STR("no parameter " << param_name << " available in " << type));
             else throw std::invalid_argument(GM_STR("no parameter " << param_name << " available in " << type));
           }
-        } catch (std::invalid_argument &e) {
+        } catch (const std::invalid_argument &e) {
           GM_WRN("Configuration", e.what());
           if (error_list) error_list->push_back(e.what());
           else throw e;
@@ -289,7 +289,7 @@ void Configuration::load(tinyxml2::XMLNode *node,
             if (error_list) error_list->push_back(GM_STR("no pointer '" << child_key << "' to match instance of '" << typeid(*ptr).name() << "' available in " << type));
             else throw std::invalid_argument(GM_STR("no pointer '" << child_key << "' to match instance of '" << typeid(*ptr).name() << "' available in " << type));
           }
-        } catch (std::invalid_argument &e) {
+        } catch (const std::invalid_argument &e) {
           GM_WRN("Configuration", e.what());
           if (error_list) error_list->push_back(e.what());
           else throw e;

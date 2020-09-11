@@ -245,7 +245,7 @@ int main(int argc, char *argv[]) {
 
   try {
     cmd.parse(argc, argv);
-  } catch (TCLAP::ArgException &e) {
+  } catch (const TCLAP::ArgException &e) {
     std::cerr << "Error: " << e.error() << " for arg " << e.argId() << std::endl;
     return 1;
   }
@@ -257,7 +257,7 @@ int main(int argc, char *argv[]) {
   catch (const std::exception &ex) {
     std::cerr << "Error: Configuration error: " << ex.what() << std::endl;
   }
-  catch(...) {
+  catch (...) {
     std::cerr << "Error: Unknown internal error while creating Configuration instance." << std::endl;
   }
 
