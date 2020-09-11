@@ -5,6 +5,7 @@
 #include <gmCore/InvalidArgument.hh>
 #include <gmCore/ExitException.hh>
 #include <gmCore/Console.hh>
+#include <gmCore/Stringify.hh>
 
 #include <unordered_map>
 
@@ -961,15 +962,15 @@ void SyncNode::Impl::addProtocol(std::string name, std::shared_ptr<Protocol> pro
 
   if (protocol_id_by_name.count(name) > 0)
     throw gmCore::PreConditionViolation
-      (static_cast<std::stringstream&>(std::stringstream() << "There is already a protocol named " << name).str());
+      (GM_STR("There is already a protocol named " << name));
 
   char id = prot->getProtocolFlag();
   if (id < 10)
     throw gmCore::PreConditionViolation
-      (static_cast<std::stringstream&>(std::stringstream() << "Protocol id " << id << " is reserved for internal protocols").str());
+      (GM_STR("Protocol id " << id << " is reserved for internal protocols"));
   if (protocols.count(id) > 0)
     throw gmCore::PreConditionViolation
-      (static_cast<std::stringstream&>(std::stringstream() << "There is already a protocol with id " << id).str());
+      (GM_STR("There is already a protocol with id " << id));
 
   protocols[id] = prot;
   protocol_id_by_name[name] = id;
