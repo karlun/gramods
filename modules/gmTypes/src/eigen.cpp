@@ -7,6 +7,8 @@
 
 #include <gmCore/Console.hh>
 
+#include <cctype>
+
 BEGIN_NAMESPACE_GRAMODS;
 
 std::istream& operator>> (std::istream &in, Eigen::Vector3f &v) {
@@ -18,7 +20,8 @@ std::istream& operator>> (std::istream &in, Eigen::Quaternionf &q) {
 
   std::string key;
   in >> key;
-  std::transform(key.begin(), key.end(), key.begin(), ::tolower);
+  std::transform(key.begin(), key.end(), key.begin(),
+                 [](unsigned char c){ return std::tolower(c); });
 
   if (key == "quaternion") {
 

@@ -10,6 +10,7 @@
 #include <string>
 #include <algorithm>
 #include <memory>
+#include <cctype>
 
 #ifdef gramods_ENABLE_TinyXML2
 
@@ -377,8 +378,8 @@ inline bool Configuration::getParam(std::string name, bool &value) const {
   if (!getParam(name, string_value))
     return false;
 
-  std::transform(string_value.begin(), string_value.end(),
-                 string_value.begin(), ::tolower);
+  std::transform(string_value.begin(), string_value.end(), string_value.begin(),
+                 [](unsigned char c){ return std::tolower(c); });
 
   if (string_value == "true") { value = true; return true; }
   if (string_value == "on") { value = true; return true; }
@@ -416,8 +417,8 @@ inline std::size_t Configuration::getAllParams(std::string name, std::vector<boo
   std::size_t original_size = value.size();
   for (auto string_value : values)
     try {
-      std::transform(string_value.begin(), string_value.end(),
-                     string_value.begin(), ::tolower);
+      std::transform(string_value.begin(), string_value.end(), string_value.begin(),
+                     [](unsigned char c){ return std::tolower(c); });
 
       if (string_value == "true") { value.push_back(true); continue; }
       if (string_value == "on") { value.push_back(true); continue; }

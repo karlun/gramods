@@ -13,6 +13,7 @@
 #include <vector>
 #include <sstream>
 #include <mutex>
+#include <cctype>
 
 BEGIN_NAMESPACE_GMGRAPHICS;
 
@@ -341,12 +342,12 @@ void UvcTexture::setConvertToRbg(bool on) {
 
 uvc_frame_format UvcTexture::Impl::formatFromString(std::string s) {
 
-#define FORMAT(A,B)                                 \
-  if (std::equal(s.begin(), s.end(),                \
-                 #B, #B + strlen(#B),               \
-                 [](char a, char b) {               \
-                   return tolower(a) == tolower(b); \
-                 }))                                \
+#define FORMAT(A,B)                                                     \
+  if (std::equal(s.begin(), s.end(),                                    \
+                 #B, #B + strlen(#B),                                   \
+                 [](unsigned char a, unsigned char b) {                 \
+                   return std::tolower(a) == std::tolower(b);           \
+                 }))                                                    \
     return A;
 
   FORMAT(UVC_FRAME_FORMAT_ANY, ANY);
