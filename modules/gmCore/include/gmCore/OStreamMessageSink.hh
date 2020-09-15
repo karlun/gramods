@@ -73,7 +73,7 @@ public:
 
 private:
 
-  std::ostream *raw_out;
+  std::ostream *raw_out = nullptr;
   std::shared_ptr<std::ostream> shared_out;
   std::mutex lock;
 
