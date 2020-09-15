@@ -42,11 +42,15 @@ public:
 
   /**
      Set the k distortion parameters (k1 k2 k3).
+
+     \b XML-key: \c kDistortion
   */
   void setKDistortion(gmTypes::float3 k);
 
   /**
      Set the p distortion parameters (p1 p2).
+
+     \b XML-key: \c pDistortion
   */
   void setPDistortion(gmTypes::float2 p);
 
@@ -62,6 +66,8 @@ public:
      44.8 ≈ 0.8). This will be the focal distance for your largest
      dimension. For the other dimension you divide the previous value
      with the image ratio (e.g. 0.8 / (4/3) = 0.6).
+
+     \b XML-key: \c focalDistance
   */
   void setFocalDistance(gmTypes::float2 f);
 
@@ -71,6 +77,8 @@ public:
      offset close to (0.5 0.5). Calibration output from OpenCV is
      typically expressed in pixels so divide by resolution before
      entering values here.
+
+     \b XML-key: \c focalOffset
   */
   void setFocalOffset(gmTypes::float2 c);
 
