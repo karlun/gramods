@@ -3,6 +3,85 @@
   <OStreamMessageSink useAnsiColor="1" level="1"/>
   <!--LogFileMessageSink logFilePath="gramods.log" append="false"/-->
 
+  <if variable="COMPUTERNAME" value="BRAVO-01">
+    <SyncNode
+        exitWhenAPeerIsDisconnected="true"
+        localPeerIdx="1">
+      <param name="peer" value="172.19.2.10:20400"/>
+      <param name="peer" value="172.19.2.11:20401"/>
+      <param name="peer" value="172.19.2.12:20402"/>
+      <param name="peer" value="172.19.2.13:20403"/>
+      <param name="peer" value="172.19.2.14:20404"/>
+      <param name="peer" value="172.19.2.15:20405"/>
+      <param name="peer" value="172.19.2.16:20406"/>
+    </SyncNode>
+  </if>
+  <if variable="COMPUTERNAME" value="BRAVO-02">
+    <SyncNode
+        exitWhenAPeerIsDisconnected="true"
+        localPeerIdx="2">
+      <param name="peer" value="172.19.2.10:20400"/>
+      <param name="peer" value="172.19.2.11:20401"/>
+      <param name="peer" value="172.19.2.12:20402"/>
+      <param name="peer" value="172.19.2.13:20403"/>
+      <param name="peer" value="172.19.2.14:20404"/>
+      <param name="peer" value="172.19.2.15:20405"/>
+      <param name="peer" value="172.19.2.16:20406"/>
+    </SyncNode>
+  </if>
+  <if variable="COMPUTERNAME" value="BRAVO-03">
+    <SyncNode
+        exitWhenAPeerIsDisconnected="true"
+        localPeerIdx="3">
+      <param name="peer" value="172.19.2.10:20400"/>
+      <param name="peer" value="172.19.2.11:20401"/>
+      <param name="peer" value="172.19.2.12:20402"/>
+      <param name="peer" value="172.19.2.13:20403"/>
+      <param name="peer" value="172.19.2.14:20404"/>
+      <param name="peer" value="172.19.2.15:20405"/>
+      <param name="peer" value="172.19.2.16:20406"/>
+    </SyncNode>
+  </if>
+  <if variable="COMPUTERNAME" value="BRAVO-04">
+    <SyncNode
+        exitWhenAPeerIsDisconnected="true"
+        localPeerIdx="4">
+      <param name="peer" value="172.19.2.10:20400"/>
+      <param name="peer" value="172.19.2.11:20401"/>
+      <param name="peer" value="172.19.2.12:20402"/>
+      <param name="peer" value="172.19.2.13:20403"/>
+      <param name="peer" value="172.19.2.14:20404"/>
+      <param name="peer" value="172.19.2.15:20405"/>
+      <param name="peer" value="172.19.2.16:20406"/>
+    </SyncNode>
+  </if>
+  <if variable="COMPUTERNAME" value="BRAVO-05">
+    <SyncNode
+        exitWhenAPeerIsDisconnected="true"
+        localPeerIdx="5">
+      <param name="peer" value="172.19.2.10:20400"/>
+      <param name="peer" value="172.19.2.11:20401"/>
+      <param name="peer" value="172.19.2.12:20402"/>
+      <param name="peer" value="172.19.2.13:20403"/>
+      <param name="peer" value="172.19.2.14:20404"/>
+      <param name="peer" value="172.19.2.15:20405"/>
+      <param name="peer" value="172.19.2.16:20406"/>
+    </SyncNode>
+  </if>
+  <if variable="COMPUTERNAME" value="BRAVO-06">
+    <SyncNode
+        exitWhenAPeerIsDisconnected="true"
+        localPeerIdx="6">
+      <param name="peer" value="172.19.2.10:20400"/>
+      <param name="peer" value="172.19.2.11:20401"/>
+      <param name="peer" value="172.19.2.12:20402"/>
+      <param name="peer" value="172.19.2.13:20403"/>
+      <param name="peer" value="172.19.2.14:20404"/>
+      <param name="peer" value="172.19.2.15:20405"/>
+      <param name="peer" value="172.19.2.16:20406"/>
+    </SyncNode>
+  </if>
+
   <ImportLibrary library="gmGraphics"/>
 
   <SphereGeometry
@@ -10,12 +89,16 @@
       radius="7.4"
       frustumSizeRatio="1.1"
       inside="true"/>
+  <QuadBufferMultiplexer
+      DEF="MUX"/>
 
   <SdlWindow
       fullscreen="true"
+      useQuadBuffers="true"
       GLMajor="3" GLMinor="3">
 
-    <SdlContext useVideo="true"/>
+    <SdlContext
+        useVideo="true"/>
 
     <SphereRenderer
         radius="10">
@@ -37,6 +120,7 @@
           clipAngles="d58.865 d58.865 d-7.701 d70.238"
           orientation="ypr d-45.0 d0.0 d0.0"
           linearInterpolation="on">
+        <Multiplexer USE="MUX"/>
         <Geometry USE="GEOMETRY"/>
       </GeometryCorrectedProjectorView>
     </if>
@@ -50,6 +134,7 @@
           clipAngles="d58.865 d58.865 d-7.701 d70.238"
           orientation="ypr d45.0 d0.0 d0.0"
           linearInterpolation="on">
+        <Multiplexer USE="MUX"/>
         <Geometry USE="GEOMETRY"/>
       </GeometryCorrectedProjectorView>
     </if>
@@ -63,6 +148,7 @@
           clipAngles="d58.865 d58.865 d-7.701 d70.238"
           orientation="ypr d135.0 d0.0 d0.0"
           linearInterpolation="on">
+        <Multiplexer USE="MUX"/>
         <Geometry USE="GEOMETRY"/>
       </GeometryCorrectedProjectorView>
     </if>
@@ -76,6 +162,7 @@
           clipAngles="d58.865 d58.865 d-7.701 d70.238"
           orientation="ypr d-135.0 d0.0 d0.0"
           linearInterpolation="on">
+        <Multiplexer USE="MUX"/>
         <Geometry USE="GEOMETRY"/>
       </GeometryCorrectedProjectorView>
     </if>
@@ -89,6 +176,7 @@
           clipAngles="d58.992 d58.992 d11.608 d55.336"
           orientation="ypr d57.0 d48.0 d0.0"
           linearInterpolation="on">
+        <Multiplexer USE="MUX"/>
         <Geometry USE="GEOMETRY"/>
       </GeometryCorrectedProjectorView>
     </if>
@@ -102,6 +190,7 @@
           clipAngles="d58.992 d58.992 d11.608 d55.336"
           orientation="ypr d-123.0 d48.0 d0.0"
           linearInterpolation="on">
+        <Multiplexer USE="MUX"/>
         <Geometry USE="GEOMETRY"/>
       </GeometryCorrectedProjectorView>
     </if>
