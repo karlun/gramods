@@ -22,6 +22,7 @@
 #include <iostream>
 #include <string>
 #include <algorithm>
+#include <mutex>
 
 BEGIN_NAMESPACE_GMCORE;
 
@@ -238,15 +239,18 @@ public:
     buffer(getBuffer(level, tag)) {}
 
   static void addSink(std::shared_ptr<MessageSink> ms) {
+    std::lock_guard<std::mutex> guard(lock);
     message_sinks.push_back(ms);
   }
 
   static void removeSink(std::shared_ptr<MessageSink> ms) {
+    std::lock_guard<std::mutex> guard(lock);
     message_sinks.erase(std::remove(message_sinks.begin(), message_sinks.end(), ms),
                         message_sinks.end());
   }
 
   static void removeAllSinks() {
+    std::lock_guard<std::mutex> guard(lock);
     message_sinks.clear();
   }
 
@@ -272,6 +276,7 @@ private:
   static gmCore_API std::vector<std::shared_ptr<MessageSink>> message_sinks;
 
   ConsoleBuffer buffer;
+  static std::mutex lock;
 };
 
 END_NAMESPACE_GMCORE;

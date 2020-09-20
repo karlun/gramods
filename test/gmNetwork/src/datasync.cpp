@@ -103,7 +103,7 @@ namespace {
 TEST(gmNetwork, DataSync_singles) {
 
   gmCore::Console::removeAllSinks();
-#if 0
+#if 1
   std::shared_ptr<gmCore::OStreamMessageSink> osms =
     std::make_shared<gmCore::OStreamMessageSink>();
   osms->setUseAnsiColor(true);

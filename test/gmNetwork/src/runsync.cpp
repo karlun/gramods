@@ -20,7 +20,7 @@ using namespace gramods;
 TEST(gmNetwork, SyncNode_createdestroy) {
 
   gmCore::Console::removeAllSinks();
-#if 0
+#if 1
   std::shared_ptr<gmCore::OStreamMessageSink> osms =
     std::make_shared<gmCore::OStreamMessageSink>();
   osms->setUseAnsiColor(true);
@@ -44,10 +44,12 @@ namespace {
                 std::shared_ptr<std::atomic<bool>> run,
                 std::shared_ptr<std::atomic<bool>> done) {
 
+    static std::mutex random_lock;
+    random_lock.lock();
     static std::default_random_engine generator
       (51254324234L);
     static std::uniform_real_distribution<double> distribution(0, 1);
-    static std::mutex random_lock;
+    random_lock.unlock();
 
     std::shared_ptr<gmNetwork::SyncNode> node =
       std::make_shared<gmNetwork::SyncNode>();
@@ -89,7 +91,7 @@ namespace {
 TEST(gmNetwork, RunSync_wait) {
 
   gmCore::Console::removeAllSinks();
-#if 0
+#if 1
   std::shared_ptr<gmCore::OStreamMessageSink> osms =
     std::make_shared<gmCore::OStreamMessageSink>();
   osms->setUseAnsiColor(true);
@@ -179,7 +181,7 @@ namespace {
 TEST(gmNetwork, SyncNode_pingpong) {
 
   gmCore::Console::removeAllSinks();
-#if 0
+#if 1
   std::shared_ptr<gmCore::OStreamMessageSink> osms =
     std::make_shared<gmCore::OStreamMessageSink>();
   osms->setUseAnsiColor(true);

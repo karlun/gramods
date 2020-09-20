@@ -158,21 +158,28 @@ SyncNode::Impl::~Impl() {
 
   GM_INF("SyncNode", local_peer_idx << " Closing context");
   io_context.stop();
-  try {
-    io_thread.join();
-    GM_VINF("SyncNode", local_peer_idx << " Successfully waited for io thread to stop.");
-  }
-  catch (const std::invalid_argument &e) {
-    GM_VINF("SyncNode", local_peer_idx << " Could not join io thread: " << e.what() << ".");
-  }
-  catch (const std::system_error &e) {
-    GM_WRN("SyncNode", local_peer_idx << " Caught system_error while joining IO thread. Code " << e.code() 
-           << " meaning " << e.what() << ".");
-  }
+  // The thread is not joinable if a io_context working thread happens
+  // to hold a shared_ptr to the SyncNode while the main shared_ptr
+  // goes out of scope. Then the destructor is called from io_thread.
+  if (io_thread.joinable())
+    try {
+      io_thread.join();
+      GM_VINF("SyncNode", local_peer_idx << " Successfully waited for io thread to stop.");
+    }
+    catch (const std::invalid_argument &e) {
+      GM_VINF("SyncNode", local_peer_idx << " Could not join io thread: " << e.what() << ".");
+    }
+    catch (const std::system_error &e) {
+      GM_WRN("SyncNode", local_peer_idx << " Caught system_error while joining IO thread. Code " << e.code() 
+             << " meaning " << e.what() << ".");
+    }
 
-  std::lock_guard<std::mutex> guard(impl_lock);
-
-  protocols.clear();
+  {
+    std::unique_lock<std::mutex> guard(impl_lock);
+    auto protocols_tmp = protocols;
+    protocols.clear();
+    guard.unlock();
+  }
   protocol_id_by_name.clear();
 }
 
@@ -694,11 +701,15 @@ void SyncNode::Impl::Peer::on_pingpong_timeout() {
   auto _parent = parent.lock();
   if (!_parent) return;
 
+  guard.unlock();
+  float timeout_delay = _parent->getTimeoutDelay();
+  guard.lock();
+
   GM_VINF("SyncNode", local_peer_idx << " Sending ping to " << peer_idx);
 
   pingpong_timer.expires_after
     //(std::chrono::seconds(1));
-    (std::chrono::seconds((long int)(0.5 * _parent->getTimeoutDelay())));
+    (std::chrono::seconds((long int)(0.5 * timeout_delay)));
 
   guard.unlock();
 
@@ -864,9 +875,11 @@ void SyncNode::Impl::lost_connection(Peer * peer) {
   if (idx == std::numeric_limits<size_t>::max())
     return;
 
-  std::lock_guard<std::mutex> guard(impl_lock);
+  std::unique_lock<std::mutex> guard(impl_lock);
+  auto _protocols = protocols;
+  guard.unlock();
 
-  for (auto protocol : protocols)
+  for (auto protocol : _protocols)
     protocol.second->lostPeer(idx);
 }
 
