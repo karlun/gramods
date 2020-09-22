@@ -81,7 +81,7 @@ public:
   /**
      Adds a view that should be saved to file.
 
-     \b XML-key: \c view
+     \b XML-attribute: \c view
   */
   void addView(std::shared_ptr<View> view);
 

@@ -34,7 +34,7 @@ public:
   /**
      Sets the buttons tracker to re-map.
 
-     \b XML-key: \c buttonsTracker
+     \b XML-attribute: \c buttonsTracker
   */
   void setButtonsTracker(std::shared_ptr<ButtonsTracker> bt);
 

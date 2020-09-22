@@ -37,7 +37,7 @@ public:
   /**
      Sets the controller to use for calibration.
 
-     \b XML-key: \c controller
+     \b XML-attribute: \c controller
   */
   void setController(std::shared_ptr<Controller> controller);
 

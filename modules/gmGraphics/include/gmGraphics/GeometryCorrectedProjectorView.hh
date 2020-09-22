@@ -129,7 +129,7 @@ public:
   /**
      Set the geometry to use for projection correction.
 
-     \b XML-key: \c geometry
+     \b XML-attribute: \c geometry
   */
   void setGeometry(std::shared_ptr<Geometry> g);
 

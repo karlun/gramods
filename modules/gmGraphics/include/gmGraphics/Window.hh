@@ -36,7 +36,7 @@ public:
      nothing - it is the tiles that provide the graphics. If multiple
      views are added, then these will be rendered over each other.
 
-     \b XML-key: \c view
+     \b XML-attribute: \c view
   */
   void addView(std::shared_ptr<View> view) {
     views.push_back(view);

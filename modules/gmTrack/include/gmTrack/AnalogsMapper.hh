@@ -37,7 +37,7 @@ public:
   /**
      Sets the analogs tracker to re-map.
      
-     \b XML-key: \c analogsTracker
+     \b XML-attribute: \c analogsTracker
   */
   void setAnalogsTracker(std::shared_ptr<AnalogsTracker> bt);
 

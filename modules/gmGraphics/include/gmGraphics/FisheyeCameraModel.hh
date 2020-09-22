@@ -44,7 +44,7 @@ public:
   /**
      Set the distortion parameters (k1 k2 k3 k4) for the camera model.
 
-     \b XML-key: \c distortion
+     \b XML-attribute: \c distortion
   */
   void setDistortion(gmTypes::float4 k);
 
@@ -53,7 +53,7 @@ public:
      output from OpenCV is typically expressed in pixels so divide by
      resolution before entering values here.
 
-     \b XML-key: \c focalDistance
+     \b XML-attribute: \c focalDistance
   */
   void setFocalDistance(gmTypes::float2 f);
 
@@ -62,7 +62,7 @@ public:
      output from OpenCV is typically expressed in pixels so divide by
      resolution before entering values here.
 
-     \b XML-key: \c focalOffset
+     \b XML-attribute: \c focalOffset
   */
   void setFocalOffset(gmTypes::float2 c);
 

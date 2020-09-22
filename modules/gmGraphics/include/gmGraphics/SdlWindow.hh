@@ -77,7 +77,7 @@ public:
      ensures that it is not destroyed until the SdlWindow has been
      destroyed.
 
-     \b XML-key: \c context
+     \b XML-attribute: \c context
   */
   void setContext(std::shared_ptr<gmCore::SdlContext> ctx) { context = ctx; }
 

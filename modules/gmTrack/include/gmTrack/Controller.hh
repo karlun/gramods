@@ -50,7 +50,7 @@ public:
   /**
      Sets the pose tracker associated with this controller.
 
-     \b XML-key: \c singlePoseTracker
+     \b XML-attribute: \c singlePoseTracker
   */
   void setSinglePoseTracker(std::shared_ptr<SinglePoseTracker> spt);
 
@@ -59,7 +59,7 @@ public:
      associated with the attribute buttonsTracker in configuration
      data.
 
-     \b XML-key: \c buttonsTracker
+     \b XML-attribute: \c buttonsTracker
   */
   void setButtonsTracker(std::shared_ptr<ButtonsTracker> bt);
 
@@ -68,7 +68,7 @@ public:
      associated with the attribute analogsTracker in configuration
      data.
 
-     \b XML-key: \c analogsTracker
+     \b XML-attribute: \c analogsTracker
   */
   void setAnalogsTracker(std::shared_ptr<AnalogsTracker> at);
 

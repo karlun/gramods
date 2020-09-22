@@ -55,7 +55,7 @@ public:
      Sets the radius of the stereographic sphere. In comparison, the
      2D coordinates range from -1 to 1. Default is 0.5.
 
-     \b XML-attribute: \c r
+     \b XML-attribute: \c radius
   */
   void setRadius(float R);
 
@@ -64,7 +64,7 @@ public:
      the specified angle the projection from -1 to 1 should cover on
      the sphere. Default is π.
 
-     \b XML-attribute: \c r
+     \b XML-attribute: \c coverageAngle
   */
   void setCoverageAngle(gmTypes::angle a);
 

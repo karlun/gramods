@@ -23,7 +23,7 @@ public:
      Sets the multiscopic multiplexing to use for rendering. If not
      set, monoscopic rendering will be used.
 
-     \b XML-key: \c multiscopicMultiplexer
+     \b XML-attribute: \c multiscopicMultiplexer
   */
   void setMultiscopicMultiplexer(std::shared_ptr<MultiscopicMultiplexer> sm) {
     multiscopic_multiplexer = sm;

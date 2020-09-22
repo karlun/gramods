@@ -46,14 +46,14 @@ public:
   /**
      Set the ArucoBoard to track.
 
-     \b XML-key: \c arucoBoard
+     \b XML-attribute: \c arucoBoard
   */
   void setArucoBoard(std::shared_ptr<ArucoBoard> board);
 
   /**
      Set the video source to read images from.
 
-     \b XML-key: \c videoSource
+     \b XML-attribute: \c videoSource
   */
   void setVideoSource(std::shared_ptr<OpenCvVideoSource> vs);
 

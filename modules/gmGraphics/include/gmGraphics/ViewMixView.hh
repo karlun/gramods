@@ -43,7 +43,7 @@ public:
   /**
      Add a view to mix.
 
-     \b XML-key: \c view
+     \b XML-attribute: \c view
   */
   void addView(std::shared_ptr<View>);
 

@@ -64,7 +64,7 @@ public:
   /**
      Adds a view to render to this texture.
 
-     \b XML-key: \c view
+     \b XML-attribute: \c view
   */
   void addView(std::shared_ptr<View> view);
 

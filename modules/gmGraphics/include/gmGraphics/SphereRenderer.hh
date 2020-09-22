@@ -76,7 +76,7 @@ public:
   /**
      Sets the Texture to apply on the sphere.
 
-     \b XML-key: \c texture
+     \b XML-attribute: \c texture
   */
   void setTexture(std::shared_ptr<TextureInterface> tex);
 

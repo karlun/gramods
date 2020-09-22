@@ -36,7 +36,7 @@ public:
      orientations, or an equal amount of boards and pose
      specifications must be provided.
      
-     \b XML-key: \c arucoBoard
+     \b XML-attribute: \c arucoBoard
   */
   void addArucoBoard(std::shared_ptr<ArucoBoard> b);
 
