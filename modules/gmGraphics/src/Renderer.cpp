@@ -1,6 +1,8 @@
 
 #include <gmGraphics/Renderer.hh>
 
+#include <limits>
+
 BEGIN_NAMESPACE_GMGRAPHICS;
 
 void Renderer::getNearFar(Renderer::list renderers, Camera camera,

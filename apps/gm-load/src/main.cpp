@@ -45,7 +45,7 @@ int main(int argc, char *argv[]) {
 
   try {
     cmd.parse(argc, argv);
-  } catch (TCLAP::ArgException &e) {
+  } catch (const TCLAP::ArgException &e) {
     std::cerr << "error: " << e.error() << " for arg " << e.argId() << std::endl;
     return -1;
   }
@@ -54,7 +54,7 @@ int main(int argc, char *argv[]) {
   try {
     config = std::make_unique<gmCore::Configuration>(argc, argv);
   }
-  catch(...) {
+  catch (...) {
     std::cerr << "Unknown internal error while creating Configuration instance." << std::endl;
   }
 
@@ -190,7 +190,7 @@ int main(int argc, char *argv[]) {
       }
     }
   }
-  catch (gmCore::ExitException e) {
+  catch (const gmCore::ExitException &e) {
     return e.exit_code;
   }
   catch (...) {

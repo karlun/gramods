@@ -7,6 +7,7 @@
 #include <memory>
 #include <mutex>
 #include <vector>
+#include <limits>
 
 BEGIN_NAMESPACE_GMNETWORK;
 

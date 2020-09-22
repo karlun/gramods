@@ -11,6 +11,7 @@
 #include <unordered_map>
 #include <cmath>
 #include <algorithm>
+#include <limits>
 
 BEGIN_NAMESPACE_GMGRAPHICS;
 

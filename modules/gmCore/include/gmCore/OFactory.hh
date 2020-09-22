@@ -11,6 +11,7 @@
 #include <iomanip>
 #include <typeinfo>
 #include <iostream>
+#include <sstream>
 
 #include <assert.h>
 

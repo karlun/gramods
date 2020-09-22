@@ -7,14 +7,6 @@
 #include <sstream>
 #include <cmath>
 
-BEGIN_NAMESPACE_GMTYPES;
-
-const float angle::from_degrees = (float)(GM_PI / 180.0);
-const float angle::to_degrees = (float)(180.f / GM_PI);
-
-END_NAMESPACE_GMTYPES;
-
-
 BEGIN_NAMESPACE_GRAMODS;
 
 std::istream& operator>> (std::istream &in, gmTypes::angle &v) {

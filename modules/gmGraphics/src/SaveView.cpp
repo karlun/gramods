@@ -5,6 +5,7 @@
 
 #include <gmGraphics/FreeImage.hh>
 #include <gmCore/RunOnce.hh>
+#include <gmCore/Stringify.hh>
 
 #include <gmGraphics/OffscreenRenderTargets.hh>
 #include <gmGraphics/RasterProcessor.hh>
@@ -278,8 +279,7 @@ void SaveView::setFile(std::string file) {
   GM_WRN("SaveView", "Missing suffix for a supported file format ('" << file << "') - adding '.png'");
 
   // Could not find supported suffix - add suffix and call again
-  setFile(static_cast<std::stringstream&>
-          (std::stringstream() << file << ".png").str());
+  setFile(GM_STR(file << ".png"));
 }
 
 void SaveView::setResolution(gmTypes::size2 res) {

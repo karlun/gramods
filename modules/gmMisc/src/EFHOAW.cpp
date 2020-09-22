@@ -6,6 +6,7 @@
 #include <deque>
 #include <map>
 #include <iostream>
+#include <limits>
 
 BEGIN_NAMESPACE_GMMISC;
 

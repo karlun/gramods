@@ -5,8 +5,10 @@
 #include <gmCore/InvalidArgument.hh>
 #include <gmCore/ExitException.hh>
 #include <gmCore/Console.hh>
+#include <gmCore/Stringify.hh>
 
 #include <unordered_map>
+#include <limits>
 
 BEGIN_NAMESPACE_GMNETWORK;
 
@@ -160,10 +162,10 @@ SyncNode::Impl::~Impl() {
     io_thread.join();
     GM_VINF("SyncNode", local_peer_idx << " Successfully waited for io thread to stop.");
   }
-  catch (std::invalid_argument& e) {
+  catch (const std::invalid_argument &e) {
     GM_VINF("SyncNode", local_peer_idx << " Could not join io thread: " << e.what() << ".");
   }
-  catch(const std::system_error& e) {
+  catch (const std::system_error &e) {
     GM_WRN("SyncNode", local_peer_idx << " Caught system_error while joining IO thread. Code " << e.code() 
            << " meaning " << e.what() << ".");
   }
@@ -925,7 +927,7 @@ void SyncNode::Impl::runContext() {
       io_context.run();
       break;
     }
-    catch (std::exception& e) {
+    catch (const std::exception &e) {
       GM_WRN("SyncNode", local_peer_idx << " Exception caught from ASIO io context: " << e.what());
     }
   }
@@ -961,15 +963,15 @@ void SyncNode::Impl::addProtocol(std::string name, std::shared_ptr<Protocol> pro
 
   if (protocol_id_by_name.count(name) > 0)
     throw gmCore::PreConditionViolation
-      (static_cast<std::stringstream&>(std::stringstream() << "There is already a protocol named " << name).str());
+      (GM_STR("There is already a protocol named " << name));
 
   char id = prot->getProtocolFlag();
   if (id < 10)
     throw gmCore::PreConditionViolation
-      (static_cast<std::stringstream&>(std::stringstream() << "Protocol id " << id << " is reserved for internal protocols").str());
+      (GM_STR("Protocol id " << id << " is reserved for internal protocols"));
   if (protocols.count(id) > 0)
     throw gmCore::PreConditionViolation
-      (static_cast<std::stringstream&>(std::stringstream() << "There is already a protocol with id " << id).str());
+      (GM_STR("There is already a protocol with id " << id));
 
   protocols[id] = prot;
   protocol_id_by_name[name] = id;

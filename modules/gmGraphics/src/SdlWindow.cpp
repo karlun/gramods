@@ -3,8 +3,12 @@
 
 #ifdef gramods_ENABLE_SDL2
 
+#include <gmCore/Stringify.hh>
+
 #include <GL/glew.h>
 #include <GL/gl.h>
+
+#include <limits>
 
 BEGIN_NAMESPACE_GMGRAPHICS;
 
@@ -113,7 +117,7 @@ void SdlWindow::initialize() {
 
   int display_count = SDL_GetNumVideoDisplays();
   if (display >= display_count) {
-    GM_ERR("SdlWindow", GM_STR("requested display " << display << " is not available (" << display_count << " available)."));
+    GM_ERR("SdlWindow", "requested display " << display << " is not available (" << display_count << " available).");
     throw std::invalid_argument(GM_STR("requested display " << display << " is not available (" << display_count << " available)."));
   }
 
@@ -163,9 +167,7 @@ void SdlWindow::initialize() {
 
   GLenum err = glewInit();
   if (GLEW_OK != err) {
-    std::stringstream s;
-    s << "Cannot link GL symbols: " << glewGetErrorString( err );
-    throw std::runtime_error(s.str());
+    throw std::runtime_error(GM_STR("Cannot link GL symbols: " << glewGetErrorString(err)));
   }
 
   glEnable              ( GL_DEBUG_OUTPUT );

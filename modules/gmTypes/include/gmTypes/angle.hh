@@ -48,10 +48,10 @@ public:
   float value;
 
   /// Multiplier to convert from degrees to radians.
-  static const float from_degrees;
+  static constexpr float from_degrees = (float)(GM_PI / 180.0);
 
   /// Multiplier to convert from radians to degrees.
-  static const float to_degrees;
+  static constexpr float to_degrees = (float)(180.f / GM_PI);
 
 };
 
