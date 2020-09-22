@@ -18,17 +18,19 @@ GM_OFI_PARAM(OStreamMessageSink, level, int, OStreamMessageSink::setLevel);
 
 
 OStreamMessageSink::OStreamMessageSink()
-  : raw_out(&std::cerr),
-    use_ansi_color(false),
+  : use_ansi_color(false),
     level(4) {}
 
 void OStreamMessageSink::output(Message msg) {
   if (msg.level > gramods::gmCore::ConsoleLevel(level)) return;
   std::lock_guard<std::mutex> guard(lock);
 
-  if (raw_out == nullptr && !shared_out) return;
-
-  std::ostream &out = raw_out != nullptr ? *raw_out : *shared_out.get();
+  std::ostream &out =
+    shared_out ? *shared_out.get() :
+    raw_out != nullptr ? *raw_out :
+    (msg.level == ConsoleLevel::Error ||
+     msg.level == ConsoleLevel::Warning) ?
+    std::cerr : std::cout;
 
   if (use_ansi_color)
     switch (msg.level) {
