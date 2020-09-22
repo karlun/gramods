@@ -1,0 +1,60 @@
+<config>
+
+  <OStreamMessageSink stream="err" useAnsiColor="1" level="1"/>
+  <!--LogFileMessageSink logFilePath="gramods.log" append="false"/-->
+
+  <ImportLibrary library="gmGraphics"/>
+
+  <SdlWindow
+      size="1024 1024"
+      title="Equirectangular to Angular Fisheye"
+      GLMajor="3" GLMinor="3">
+
+    <SdlContext
+        DEF="SDLContext"
+        useVideo="1"/>
+
+    <PosedPlanarView
+        fieldOfView="1 -1">
+      <Viewpoint
+          position="2.0 2.0 2.0"
+          lookAt="0.0 0.0 0.0"/>
+
+      <SphereRenderer
+          orientation="ypr d45 0 0"
+          radius="1">
+
+        <StereographicCoordinatesMapper
+            coverageAngle="d180"/>
+
+        <ViewTexture
+            resolution="4096 4096">
+
+          <SpatialSphericalView
+              cubeMapResolution="4096"
+              linearInterpolation="1"
+              makeSquare="true"
+              radius="10">
+
+            <StereographicCoordinatesMapper
+                coverageAngle="d180"
+                theta0="d45"/>
+
+            <Viewpoint
+                position="0 0 0"/>
+
+            <SphereRenderer
+                radius="10">
+              <EquirectangularCoordinatesMapper/>
+              <ImageTexture
+                  file="share/gmGraphics/resources/equirectangular-coordinates.png"/>
+            </SphereRenderer>
+
+          </SpatialSphericalView>
+        </ViewTexture>
+      </SphereRenderer>
+    </PosedPlanarView>
+
+  </SdlWindow>
+
+</config>

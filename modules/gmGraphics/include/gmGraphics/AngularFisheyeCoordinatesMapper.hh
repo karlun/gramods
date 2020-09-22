@@ -53,6 +53,8 @@ public:
      radians between 0 and 2π. The typical fulldome format uses a
      coverage angle of π, which is also the default.
 
+     \b XML-attribute: \c coverageAngle
+
      \sa operator>>(std::istream &, gmTypes::angle &)
   */
   void setCoverageAngle(gmTypes::angle a);
