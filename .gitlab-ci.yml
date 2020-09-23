@@ -26,6 +26,12 @@ BuildMaxi:
     - cmake -D gramods_TEST_gmGraphics=OFF -D CPACK_BINARY_DEB=ON -D CPACK_DEBIAN_PACKAGE_DEPENDS="libtinyxml2-6a, libsdl2-2.0-0, libsdl2-ttf-2.0-0, libglew2.1, libuvc0, libfreeimage3" ..
     - mkdir -p /builds/karlu20/gramods/build/modules/gmGraphics/resources/
     - make
+    - /builds/karlu20/gramods/build/test/gmCore/test_gmCore
+    - /builds/karlu20/gramods/build/test/gmMisc/test_gmMisc
+    - /builds/karlu20/gramods/build/test/gmNetwork/test_gmNetwork
+    - /builds/karlu20/gramods/build/test/gmTouch/test_gmTouch
+    - /builds/karlu20/gramods/build/test/gmTrack/test_gmTrack
+    - /builds/karlu20/gramods/build/test/gmTypes/test_gmTypes
     - make test
     - make package
   artifacts:

@@ -18,7 +18,7 @@ class RunSync
 
 public:
 
-  RunSync(std::shared_ptr<SyncNode> sync_node);
+  RunSync();
   ~RunSync();
 
   /**

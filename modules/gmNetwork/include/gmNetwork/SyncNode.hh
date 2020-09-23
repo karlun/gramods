@@ -134,9 +134,7 @@ public:
 
     try {
 
-      std::shared_ptr<SyncNode> typed_this =
-        std::static_pointer_cast<SyncNode>(this->shared_from_this());
-      std::shared_ptr<TYPE> typed_protocol = std::make_shared<TYPE>(typed_this);
+      std::shared_ptr<TYPE> typed_protocol = std::make_shared<TYPE>();
       addProtocol(name, typed_protocol);
 
       return static_cast<TYPE*>(getProtocol(name));
@@ -187,7 +185,7 @@ public:
 private:
 
   struct Impl;
-  std::shared_ptr<Impl> _impl;
+  std::unique_ptr<Impl> _impl;
 
 };
 

@@ -20,7 +20,7 @@ using namespace gramods;
 TEST(gmNetwork, SyncNode_createdestroy) {
 
   gmCore::Console::removeAllSinks();
-#if 1
+#if 0
   std::shared_ptr<gmCore::OStreamMessageSink> osms =
     std::make_shared<gmCore::OStreamMessageSink>();
   osms->setUseAnsiColor(true);
@@ -91,7 +91,7 @@ namespace {
 TEST(gmNetwork, RunSync_wait) {
 
   gmCore::Console::removeAllSinks();
-#if 1
+#if 0
   std::shared_ptr<gmCore::OStreamMessageSink> osms =
     std::make_shared<gmCore::OStreamMessageSink>();
   osms->setUseAnsiColor(true);
@@ -181,7 +181,7 @@ namespace {
 TEST(gmNetwork, SyncNode_pingpong) {
 
   gmCore::Console::removeAllSinks();
-#if 1
+#if 0
   std::shared_ptr<gmCore::OStreamMessageSink> osms =
     std::make_shared<gmCore::OStreamMessageSink>();
   osms->setUseAnsiColor(true);

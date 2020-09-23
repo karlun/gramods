@@ -77,7 +77,7 @@ namespace {
 
     run_sync->wait();
 
-    if (idx == 0) { // MASTER
+    if (idx == 0) {
       *data_bool = VAL_BS_BOOL;
       *data_int32 = VAL_BS_INT32;
       *data_float32 = VAL_BS_FLOAT32;
@@ -85,16 +85,16 @@ namespace {
 
     run_sync->wait();
 
-    EXPECT_EQ(*data_bool, VAL_AS_BOOL);
-    EXPECT_EQ(*data_int32, VAL_AS_INT32);
-    EXPECT_NEAR(*data_float32, VAL_AS_FLOAT32, 1e-6);
-    
+    EXPECT_EQ(*data_bool, VAL_AS_BOOL) << " @ node " << idx;
+    EXPECT_EQ(*data_int32, VAL_AS_INT32) << " @ node " << idx;
+    EXPECT_NEAR(*data_float32, VAL_AS_FLOAT32, 1e-6) << " @ node " << idx;
+
     run_sync->wait();
     data_sync->update();
- 
-    EXPECT_EQ(*data_bool, VAL_BS_BOOL);
-    EXPECT_EQ(*data_int32, VAL_BS_INT32);
-    EXPECT_NEAR(*data_float32, VAL_BS_FLOAT32, 1e-6);
+
+    EXPECT_EQ(*data_bool, VAL_BS_BOOL) << " @ node " << idx;
+    EXPECT_EQ(*data_int32, VAL_BS_INT32) << " @ node " << idx;
+    EXPECT_NEAR(*data_float32, VAL_BS_FLOAT32, 1e-6) << " @ node " << idx;
    
     *done = true;
   }
@@ -103,7 +103,7 @@ namespace {
 TEST(gmNetwork, DataSync_singles) {
 
   gmCore::Console::removeAllSinks();
-#if 1
+#if 0
   std::shared_ptr<gmCore::OStreamMessageSink> osms =
     std::make_shared<gmCore::OStreamMessageSink>();
   osms->setUseAnsiColor(true);
@@ -116,7 +116,7 @@ TEST(gmNetwork, DataSync_singles) {
   lfms->initialize();
 #endif
 
-  size_t peer_count = 2;
+  size_t peer_count = 10;
 
   std::vector<std::shared_ptr<std::atomic<bool>>> done_list;
   std::vector<std::unique_ptr<std::thread>> thread_list;
@@ -174,7 +174,7 @@ TEST(gmNetwork, DataSync_singles) {
     data_float32s_list.push_back(val_mF);
   }
 
-  for (int idx = 0; idx < 1000; ++idx) {
+  for (int idx = 0; idx < 10000; ++idx) {
 
     bool all_done = true;
 
@@ -188,7 +188,7 @@ TEST(gmNetwork, DataSync_singles) {
 
   for (size_t idx = 0; idx < peer_count; ++idx)
     EXPECT_TRUE(*done_list[idx])
-      << "Synchronized execution " << idx << " finished";
+      << " @ node " << idx;
 
   for (auto &thread : thread_list)
     thread->detach();

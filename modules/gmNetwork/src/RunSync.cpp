@@ -8,8 +8,7 @@ BEGIN_NAMESPACE_GMNETWORK;
 
 struct RunSync::Impl {
 
-  void wait(RunSync * run_sync,
-            std::weak_ptr<SyncNode> sync_node);
+  void wait(RunSync * run_sync);
   void processMessage(size_t local_peer_idx,
                       Message m);
 
@@ -23,11 +22,8 @@ struct RunSync::Impl {
 
 namespace {
   bool is_waiting_for_peers(std::set<size_t> waiting_peers,
-                            std::shared_ptr<SyncNode> sync_node) {
+                            std::set<size_t> actual_peers) {
 
-    if (!sync_node) return false;
-
-    std::set<size_t> actual_peers = sync_node->getConnectedPeers();
     if (actual_peers.empty()) return false;
 
     std::vector<size_t> peers_left;
@@ -41,10 +37,8 @@ namespace {
   }
 }
 
-RunSync::RunSync
-(std::shared_ptr<SyncNode> sync_node)
-  : Protocol(sync_node),
-    _impl(std::make_unique<Impl>()) {}
+RunSync::RunSync()
+  : _impl(std::make_unique<Impl>()) {}
 
 RunSync::~RunSync() {
   std::unique_lock<std::mutex> guard(_impl->impl_lock);
@@ -53,19 +47,14 @@ RunSync::~RunSync() {
 }
 
 void RunSync::wait() {
-  _impl->wait(this, sync_node.lock());
+  _impl->wait(this);
 }
 
-void RunSync::Impl::wait(RunSync * run_sync,
-                         std::weak_ptr<SyncNode> sync_node) {
+void RunSync::Impl::wait(RunSync * run_sync) {
+
+  size_t local_peer_idx = run_sync->getLocalPeerIdx();
 
   std::unique_lock<std::mutex> guard(impl_lock);
-
-  size_t local_peer_idx;
-  { std::shared_ptr<SyncNode> sn = sync_node.lock();
-    if (!sn) return;
-    local_peer_idx = sn->getLocalPeerIdx();
-  }
 
   if (local_peer_idx > 255)
     throw gmCore::PreConditionViolation("Support only for up to 255 peers.");
@@ -80,7 +69,8 @@ void RunSync::Impl::wait(RunSync * run_sync,
   auto & waiting_peers = waiting_frame_odd ?
     waiting_peers_odd : waiting_peers_even;
 
-  while (is_waiting_for_peers(waiting_peers, sync_node.lock()) &&
+  while (is_waiting_for_peers(waiting_peers,
+                              run_sync->getConnectedPeers()) &&
          !cancel_waiting) {
     waiting_condition.wait_for(guard,
                                // Check every 200 ms if a peer is lost
@@ -95,7 +85,7 @@ void RunSync::Impl::wait(RunSync * run_sync,
 }
 
 void RunSync::processMessage(Message m) {
-  _impl->processMessage(sync_node.lock()->getLocalPeerIdx(), m);
+  _impl->processMessage(getLocalPeerIdx(), m);
 }
 
 void RunSync::Impl::processMessage(size_t local_peer_idx,

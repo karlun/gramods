@@ -25,10 +25,8 @@ struct DataSync::Impl {
   std::mutex impl_lock;
 };
 
-DataSync::DataSync
-(std::shared_ptr<SyncNode> sync_node)
-  : Protocol(sync_node),
-    _impl(std::make_unique<Impl>()) {}
+DataSync::DataSync()
+  : _impl(std::make_unique<Impl>()) {}
 
 DataSync::~DataSync() {}
 
@@ -78,7 +76,7 @@ void DataSync::Impl::update() {
 }
 
 void DataSync::processMessage(Message m) {
-  _impl->processMessage(m, sync_node.lock()->getLocalPeerIdx());
+  _impl->processMessage(m, getLocalPeerIdx());
 }
 
 void DataSync::Impl::processMessage(Message m, int local_peer_idx) {
@@ -110,7 +108,7 @@ void DataSync::Impl::processMessage(Message m, int local_peer_idx) {
 void DataSync::send(SyncData * d) {
 
   std::vector<char> data;
-  _impl->encode(d, data, sync_node.lock()->getLocalPeerIdx());
+  _impl->encode(d, data, getLocalPeerIdx());
 
   sendMessage(data);
 }

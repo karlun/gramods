@@ -71,7 +71,7 @@ class DataSync
 
 public:
 
-  DataSync(std::shared_ptr<SyncNode> sync_node);
+  DataSync();
   virtual ~DataSync();
 
   /**

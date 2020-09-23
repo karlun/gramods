@@ -36,7 +36,7 @@ struct SyncNode::Impl : public std::enable_shared_from_this<SyncNode::Impl> {
        Create a beta node.
     */
     Peer (asio::io_context &io_context,
-          std::shared_ptr<SyncNode::Impl> parent,
+          SyncNode::Impl *parent,
           std::string address,
           asio::ip::tcp::resolver::results_type endpoints,
           std::size_t local_peer_idx,
@@ -56,7 +56,7 @@ struct SyncNode::Impl : public std::enable_shared_from_this<SyncNode::Impl> {
     }
 
     Peer (asio::io_context &io_context,
-          std::shared_ptr<SyncNode::Impl> parent,
+          SyncNode::Impl *parent,
           asio::ip::tcp::socket socket,
           std::size_t local_peer_idx)
       : io_context(io_context),
@@ -93,7 +93,7 @@ struct SyncNode::Impl : public std::enable_shared_from_this<SyncNode::Impl> {
   private:
 
     asio::io_context &io_context;
-    std::weak_ptr<SyncNode::Impl> parent;
+    SyncNode::Impl *parent;
     asio::ip::tcp::socket socket;
     bool is_connected = false;
     asio::steady_timer timeout_timer;
@@ -141,7 +141,7 @@ struct SyncNode::Impl : public std::enable_shared_from_this<SyncNode::Impl> {
   std::vector<std::string> peer_addresses;
   std::size_t local_peer_idx = std::numeric_limits<size_t>::max();
   bool exit_when_a_peer_is_disconnected = false;
-  float timeout_delay = 1.f;
+  float timeout_delay = 5.f;
   std::set<std::size_t> connected_peers;
 
   std::unique_ptr<asio::ip::tcp::acceptor> server_acceptor;
@@ -158,27 +158,28 @@ SyncNode::Impl::~Impl() {
 
   GM_INF("SyncNode", local_peer_idx << " Closing context");
   io_context.stop();
-  // The thread is not joinable if a io_context working thread happens
-  // to hold a shared_ptr to the SyncNode while the main shared_ptr
-  // goes out of scope. Then the destructor is called from io_thread.
-  if (io_thread.joinable())
-    try {
-      io_thread.join();
-      GM_VINF("SyncNode", local_peer_idx << " Successfully waited for io thread to stop.");
-    }
-    catch (const std::invalid_argument &e) {
-      GM_VINF("SyncNode", local_peer_idx << " Could not join io thread: " << e.what() << ".");
-    }
-    catch (const std::system_error &e) {
-      GM_WRN("SyncNode", local_peer_idx << " Caught system_error while joining IO thread. Code " << e.code() 
-             << " meaning " << e.what() << ".");
-    }
+
+  try {
+    io_thread.join();
+    GM_VINF("SyncNode", local_peer_idx << " Successfully waited for io thread to stop.");
+  }
+  catch (const std::invalid_argument &e) {
+    GM_VINF("SyncNode", local_peer_idx << " Could not join io thread: " << e.what() << ".");
+  }
+  catch (const std::system_error &e) {
+    GM_WRN("SyncNode", local_peer_idx << " Caught system_error while joining IO thread. Code " << e.code() 
+           << " meaning " << e.what() << ".");
+  }
 
   {
     std::unique_lock<std::mutex> guard(impl_lock);
+
     auto protocols_tmp = protocols;
     protocols.clear();
     guard.unlock();
+
+    for (auto protocol : protocols_tmp)
+      protocol.second->setSyncNode(nullptr);
   }
   protocol_id_by_name.clear();
 }
@@ -324,14 +325,12 @@ void SyncNode::Impl::split_address_service
 
 void SyncNode::Impl::Peer::connect() {
 
-  std::weak_ptr<Peer> weak_this(shared_from_this());
   std::lock_guard<std::mutex> guard(peer_lock);
 
   GM_VINF("SyncNode", local_peer_idx << " Trying to connect " << address);
   asio::async_connect(socket, endpoints,
-                      [weak_this](std::error_code ec, asio::ip::tcp::endpoint end) {
-                        auto _this = weak_this.lock();
-                        if (_this) _this->on_connect(ec, end);
+                      [this](std::error_code ec, asio::ip::tcp::endpoint end) {
+                        on_connect(ec, end);
                       });
 }
 
@@ -355,8 +354,8 @@ void SyncNode::Impl::Peer::on_connect(std::error_code ec, asio::ip::tcp::endpoin
   guard.unlock();
 
   {
-    std::unique_lock<std::mutex> guard(parent.lock()->impl_lock);
-    parent.lock()->waiting_condition.notify_all();
+    std::unique_lock<std::mutex> guard(parent->impl_lock);
+    parent->waiting_condition.notify_all();
   }
 
   setup_pingpong_timer();
@@ -365,7 +364,7 @@ void SyncNode::Impl::Peer::on_connect(std::error_code ec, asio::ip::tcp::endpoin
 
   // Handshake
   sendMessage(Protocol::Message(PROTOCOL_ID_HANDSHAKE,
-                                { (char)parent.lock()->getLocalPeerIdx(),
+                                { (char)parent->getLocalPeerIdx(),
                                   (char)GRAMODS_NETWORK_VERSION }));
 
   readData();
@@ -376,8 +375,6 @@ void SyncNode::Impl::Peer::readData() {
   std::lock_guard<std::mutex> guard(peer_lock);
   if (!socket.is_open()) return;
 
-  std::weak_ptr<Peer> weak_this(shared_from_this());
-
   std::size_t to_read = message.length ?
     message.length - message.data.size() : message.getHeader().size();
 
@@ -387,10 +384,9 @@ void SyncNode::Impl::Peer::readData() {
   asio::async_read(socket,
                    asio::buffer(read_buffer->data(),
                                 read_buffer->size()),
-                   [weak_this, read_buffer]
+                   [this, read_buffer]
                    (std::error_code ec, std::size_t length) {
-                     auto _this = weak_this.lock();
-                     if (_this) _this->on_data(ec, read_buffer, length);
+                     on_data(ec, read_buffer, length);
                    });
 }
 
@@ -410,8 +406,7 @@ void SyncNode::Impl::Peer::on_data
 
     guard.unlock();
 
-    std::shared_ptr<SyncNode::Impl> _parent = parent.lock();
-    if (_parent) _parent->lost_connection(this);
+    parent->lost_connection(this);
 
     return;
   }
@@ -461,13 +456,10 @@ void SyncNode::Impl::Peer::on_data
 
         is_connected = true;
 
-        std::shared_ptr<SyncNode::Impl> _parent = parent.lock();
-        if (!_parent) return;
-
         guard.unlock();
 
-        std::unique_lock<std::mutex> impl_guard(_parent->impl_lock);
-        _parent->waiting_condition.notify_all();
+        std::unique_lock<std::mutex> impl_guard(parent->impl_lock);
+        parent->waiting_condition.notify_all();
 
         guard.lock();
 
@@ -489,7 +481,7 @@ void SyncNode::Impl::Peer::on_data
 
         // Pong
         Protocol::Message msg(PROTOCOL_ID_PONG,
-                              { (char)parent.lock()->getLocalPeerIdx() });
+                              { (char)parent->getLocalPeerIdx() });
         msg.to_peer_idx = peer_idx;
         sendMessage(msg);
 
@@ -507,8 +499,7 @@ void SyncNode::Impl::Peer::on_data
         GM_VVINF("SyncNode", local_peer_idx << " Message from " << peer_idx << " complete (len = " << message.data.size() << ")");
         guard.unlock();
 
-        std::shared_ptr<SyncNode::Impl> _parent = parent.lock();
-        if (_parent) _parent->routeMessage(message);
+        parent->routeMessage(message);
 
         guard.lock();
       }
@@ -636,8 +627,7 @@ void SyncNode::Impl::Peer::on_write(std::error_code ec,
 
     guard.unlock();
 
-    std::shared_ptr<SyncNode::Impl> _parent = parent.lock();
-    if (_parent) _parent->lost_connection(this);
+    parent->lost_connection(this);
 
   } else {
     GM_VVINF("SyncNode", local_peer_idx << " Successfully sent " << length << " bytes");
@@ -671,10 +661,8 @@ void SyncNode::Impl::Peer::setup_timeout_timer() {
 }
 
 void SyncNode::Impl::Peer::reset_timers() {
-  auto _parent = parent.lock();
-  if (!_parent) return;
 
-  float delay = _parent->getTimeoutDelay();
+  float delay = parent->getTimeoutDelay();
 
   std::lock_guard<std::mutex> guard(peer_lock);
 
@@ -698,24 +686,23 @@ void SyncNode::Impl::Peer::on_pingpong_timeout() {
   if (pingpong_timer.expiry() > asio::steady_timer::clock_type::now())
     return;
 
-  auto _parent = parent.lock();
-  if (!_parent) return;
-
   guard.unlock();
-  float timeout_delay = _parent->getTimeoutDelay();
+  float delay = parent->getTimeoutDelay();
   guard.lock();
 
   GM_VINF("SyncNode", local_peer_idx << " Sending ping to " << peer_idx);
 
+  typedef std::chrono::duration<float, std::ratio<1>> f_seconds;
+  typedef asio::steady_timer::clock_type::duration timer_duration;
+
   pingpong_timer.expires_after
-    //(std::chrono::seconds(1));
-    (std::chrono::seconds((long int)(0.5 * timeout_delay)));
+    (std::chrono::duration_cast<timer_duration>(f_seconds(0.5f * delay)));
 
   guard.unlock();
 
   // Ping
   sendMessage(Protocol::Message(PROTOCOL_ID_PING,
-                                { (char)_parent->getLocalPeerIdx() }));
+                                { (char)parent->getLocalPeerIdx() }));
 }
 
 void SyncNode::Impl::Peer::on_timeout_timeout() {
@@ -736,8 +723,7 @@ void SyncNode::Impl::Peer::on_timeout_timeout() {
 
   guard.unlock();
 
-  std::shared_ptr<SyncNode::Impl> _parent = parent.lock();
-  if (_parent) _parent->lost_connection(this);
+  parent->lost_connection(this);
 }
 
 void SyncNode::initialize() {
@@ -779,7 +765,7 @@ bool SyncNode::Impl::initialize() {
     }
 
     beta_peers.push_back(std::make_shared<Peer>(io_context,
-                                                shared_from_this(),
+                                                this,
                                                 address,
                                                 endpoints,
                                                 local_peer_idx,
@@ -823,14 +809,10 @@ bool SyncNode::Impl::initialize() {
 
 void SyncNode::Impl::accept() {
 
-  std::weak_ptr<SyncNode::Impl>
-    weak_this(std::static_pointer_cast<SyncNode::Impl>(shared_from_this()));
-
   GM_INF("SyncNode", local_peer_idx << " Listening to incoming connections");
   server_acceptor->async_accept
-    ([weak_this] (std::error_code ec, asio::ip::tcp::socket socket) {
-      auto _this = weak_this.lock();
-      if (_this) _this->on_accept(ec, std::move(socket));
+    ([this] (std::error_code ec, asio::ip::tcp::socket socket) {
+       on_accept(ec, std::move(socket));
      });
 }
 
@@ -849,7 +831,7 @@ void SyncNode::Impl::on_accept(std::error_code ec, asio::ip::tcp::socket socket)
   socket.set_option(asio::ip::tcp::no_delay(true));
 
   std::shared_ptr<Peer> peer(std::make_shared<Peer>(io_context,
-                                                    shared_from_this(),
+                                                    this,
                                                     std::move(socket),
                                                     local_peer_idx));
   {
@@ -964,6 +946,7 @@ Protocol * SyncNode::getProtocol(char id) {
 }
 
 void SyncNode::addProtocol(std::string name, std::shared_ptr<Protocol> prot) {
+  prot->setSyncNode(this);
   return _impl->addProtocol(name, prot);
 }
 

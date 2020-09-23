@@ -8,6 +8,7 @@
 #include <mutex>
 #include <vector>
 #include <limits>
+#include <set>
 
 BEGIN_NAMESPACE_GMNETWORK;
 
@@ -23,8 +24,7 @@ public:
 
   static const size_t HEADER_LENGTH;
 
-  Protocol(std::shared_ptr<SyncNode> sync_node)
-    : sync_node(sync_node) {}
+  Protocol() {}
 
   virtual ~Protocol() {}
 
@@ -110,6 +110,11 @@ public:
   */
   virtual void lostPeer(size_t idx) {}
 
+  void setSyncNode(SyncNode *sync_node) {
+    std::lock_guard<std::mutex> guard(sync_node_lock);
+    this->sync_node = sync_node;
+  }
+
 protected:
 
   /**
@@ -119,10 +124,27 @@ protected:
   void sendMessage(std::vector<char> data);
 
   /**
-     The SyncNode instance this protocol communicates through.
+     Convenience method for quering the SyncNode for the local peer idx.
   */
-  std::weak_ptr<SyncNode> sync_node;
+  int getLocalPeerIdx();
 
+  /**
+     Convenience method for quering the SyncNode for the currently
+     connected peers.
+  */
+  std::set<size_t> getConnectedPeers();
+
+  /**
+     The SyncNode instance this protocol communicates through or
+     nullptr if it has gone out of scope. Use sync_node_lock to avoid
+     race condition on this pointer.
+  */
+  SyncNode *sync_node;
+
+  /**
+     Lock for synchronizing the sync_node pointer.
+  */
+  std::mutex sync_node_lock;
 };
 
 END_NAMESPACE_GMNETWORK;

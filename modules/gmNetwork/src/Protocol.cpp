@@ -28,12 +28,21 @@ std::vector<char> Protocol::Message::getHeader() {
 }
 
 void Protocol::sendMessage(std::vector<char> data) {
-  //std::lock_guard<std::mutex> guard(connection_lock);
-
-  std::shared_ptr<SyncNode> sync_node = this->sync_node.lock();
+  std::lock_guard<std::mutex> guard(sync_node_lock);
   if (!sync_node) return;
-
   sync_node->sendMessage(Message(getProtocolFlag(), data));
+}
+
+int Protocol::getLocalPeerIdx() {
+  std::lock_guard<std::mutex> guard(sync_node_lock);
+  if (!sync_node) return -1;
+  return sync_node->getLocalPeerIdx();
+}
+
+std::set<size_t> Protocol::getConnectedPeers() {
+  std::lock_guard<std::mutex> guard(sync_node_lock);
+  if (!sync_node) return {};
+  return sync_node->getConnectedPeers();
 }
 
 END_NAMESPACE_GMNETWORK;
