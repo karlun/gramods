@@ -15,20 +15,20 @@ GM_OFI_DEFINE(ArucoPoseTracker);
 GM_OFI_PARAM(ArucoPoseTracker, cameraConfigurationFile, std::string, ArucoPoseTracker::setCameraConfigurationFile);
 GM_OFI_PARAM(ArucoPoseTracker, inverted, bool, ArucoPoseTracker::setInverted);
 GM_OFI_PARAM(ArucoPoseTracker, refindMarkers, bool, ArucoPoseTracker::setRefindMarkers);
-GM_OFI_POINTER(ArucoPoseTracker, arucoBoard, gmTrack::ArucoBoard, ArucoPoseTracker::setArucoBoard);
+GM_OFI_POINTER(ArucoPoseTracker, arucoBoard, gmTrack::ArucoBoard, ArucoPoseTracker::addArucoBoard);
 GM_OFI_POINTER(ArucoPoseTracker, videoSource, gmTrack::OpenCvVideoSource, ArucoPoseTracker::setVideoSource);
 GM_OFI_PARAM(ArucoPoseTracker, showDebug, bool, ArucoPoseTracker::setShowDebug);
 
 struct ArucoPoseTracker::Impl {
 
   void update(gmCore::Updateable::clock::time_point t);
-  bool getPose(PoseSample &p);
+  bool getPose(std::map<int, PoseSample> &p);
 
   static bool readCameraParameters(std::string filename,
                                    cv::Mat &camMatrix, cv::Mat &distCoeffs,
                                    int &width, int &height);
 
-  std::shared_ptr<ArucoBoard> board;
+  std::vector<std::shared_ptr<ArucoBoard>> boards;
   std::shared_ptr<OpenCvVideoSource> video_source;
 
   int camera_width;
@@ -37,7 +37,7 @@ struct ArucoPoseTracker::Impl {
   cv::Mat distCoeffs;
 
   bool have_pose = false;
-  PoseSample sample;
+  std::map<int, PoseSample> samples;
 
   bool inverted = false;
   bool refind_markers = false;
@@ -52,8 +52,8 @@ void ArucoPoseTracker::update(gmCore::Updateable::clock::time_point t) {
   _impl->update(t);
 }
 
-void ArucoPoseTracker::setArucoBoard(std::shared_ptr<ArucoBoard> board) {
-  _impl->board = board;
+void ArucoPoseTracker::addArucoBoard(std::shared_ptr<ArucoBoard> board) {
+  _impl->boards.push_back(board);
 }
 
 void ArucoPoseTracker::setVideoSource(std::shared_ptr<OpenCvVideoSource> vs) {
@@ -72,13 +72,13 @@ void ArucoPoseTracker::setRefindMarkers(bool on) {
   _impl->refind_markers = on;
 }
 
-bool ArucoPoseTracker::getPose(PoseSample &p) {
+bool ArucoPoseTracker::getPose(std::map<int, PoseSample> &p) {
   return _impl->getPose(p);
 }
 
-void ArucoPoseTracker::Impl::update(gmCore::Updateable::clock::time_point) {
+void ArucoPoseTracker::Impl::update(gmCore::Updateable::clock::time_point time_now) {
 
-  if (!board) {
+  if (boards.empty()) {
     GM_RUNONCE(GM_ERR("ArucoPoseTracker", "No board to track."));
     have_pose = false;
     return;
@@ -96,20 +96,16 @@ void ArucoPoseTracker::Impl::update(gmCore::Updateable::clock::time_point) {
     return;
   }
 
-  auto board = this->board->getBoard();
-
-  if (!board) {
-    GM_RUNLIMITED(GM_WRN("ArucoPoseTracker", "Board did not return aruco board."), 1);
-    have_pose = false;
-    return;
-  }
-
   cv::Mat image;
   if (!video_source->retrieve(image)) {
     GM_RUNLIMITED(GM_WRN("ArucoPoseTracker", "Video source did not provide image."), 1);
     have_pose = false;
     return;
   }
+
+  cv::Mat debug_image;
+  if (show_debug_output)
+    image.copyTo(debug_image);
 
   if (camera_width != image.cols ||
       camera_height != image.rows) {
@@ -133,75 +129,93 @@ void ArucoPoseTracker::Impl::update(gmCore::Updateable::clock::time_point) {
     camera_height = new_height;
   }
 
-  std::vector<int> ids;
-  std::vector<std::vector<cv::Point2f>> corners, rejected;
-  cv::Vec3d rvec, tvec;
-
   cv::Ptr<cv::aruco::DetectorParameters> detectorParams =
     cv::aruco::DetectorParameters::create();
 
-  // detect markers
-  cv::aruco::detectMarkers(image, board->dictionary, corners, ids, detectorParams, rejected);
+  have_pose = false;
 
-  // refind strategy to detect more markers
-  if(refind_markers)
-    cv::aruco::refineDetectedMarkers(image, board, corners, ids, rejected,
-                                     camMatrix, distCoeffs);
+  for (int idx = 0; idx < boards.size(); ++idx) {
 
-  // estimate board pose
-  int markersOfBoardDetected = 0;
-  if(ids.size() > 0) {
-    markersOfBoardDetected =
-      cv::aruco::estimatePoseBoard(corners, ids, board, camMatrix, distCoeffs, rvec, tvec);
-  }
+    auto board = this->boards[idx]->getBoard();
 
-  if (markersOfBoardDetected) {
-
-    cv::Matx33d rotm;
-    cv::Rodrigues(rvec, rotm);
-    Eigen::Map<Eigen::Matrix3f> R(cv::Mat(rotm).ptr<float>());
-
-    sample.orientation = Eigen::Quaternionf(R);
-    sample.position = Eigen::Vector3f(tvec[0], tvec[1], tvec[2]);
-
-    have_pose = true;
-  } else {
-    have_pose = false;
-  }
-
-
-  if (show_debug_output) {
-
-    cv::Mat imageCopy;
-    image.copyTo(imageCopy);
-
-    if(ids.size() > 0)
-      cv::aruco::drawDetectedMarkers(imageCopy, corners, ids);
-
-    if(rejected.size() > 0)
-      cv::aruco::drawDetectedMarkers(imageCopy, rejected, cv::noArray(), cv::Scalar(0, 0, 100));
-
-    if(markersOfBoardDetected > 0) {
-      cv::aruco::drawAxis(imageCopy, camMatrix, distCoeffs, rvec, tvec, 0.1);
-
-      std::vector<std::vector<cv::Point2f>> imagePoints;
-      for (auto mpts : board->objPoints) {
-        std::vector<cv::Point2f> imgpts;
-        cv::projectPoints(mpts, rvec, tvec, camMatrix, distCoeffs, imgpts);
-        imagePoints.push_back(imgpts);
-      }
-      cv::aruco::drawDetectedMarkers(imageCopy, imagePoints, cv::noArray(), cv::Scalar(255, 0, 0));
+    if (!board) {
+      GM_RUNLIMITED(GM_WRN("ArucoPoseTracker", "Board " << idx << " did not return aruco board."), 1);
+      continue;
     }
 
-    cv::imshow("out", imageCopy);
+    std::vector<int> ids;
+    std::vector<std::vector<cv::Point2f>> corners, rejected;
+    cv::Vec3d rvec, tvec;
+
+    // detect markers
+    cv::aruco::detectMarkers(image, board->dictionary, corners, ids, detectorParams, rejected);
+
+    // refind strategy to detect more markers
+    if(refind_markers)
+      cv::aruco::refineDetectedMarkers(image, board, corners, ids, rejected,
+                                       camMatrix, distCoeffs);
+
+    // estimate board pose
+    int markersOfBoardDetected = 0;
+    if(ids.size() > 0) {
+      markersOfBoardDetected =
+        cv::aruco::estimatePoseBoard(corners, ids, board,
+                                     camMatrix, distCoeffs,
+                                     rvec, tvec);
+    }
+
+    if (markersOfBoardDetected) {
+
+      cv::Matx33d rotm;
+      cv::Rodrigues(rvec, rotm);
+      Eigen::Map<Eigen::Matrix3d> R(cv::Mat(rotm).ptr<double>());
+      Eigen::Quaterniond Q(R);
+
+      if (inverted) {
+        samples[idx].orientation = Eigen::Quaternionf(Q.conjugate());
+        samples[idx].position = (samples[idx].orientation *
+                                 Eigen::Vector3f(-tvec[0], -tvec[1], -tvec[2]));
+      } else {
+        samples[idx].orientation = Eigen::Quaternionf(Q);
+        samples[idx].position = Eigen::Vector3f(tvec[0], tvec[1], tvec[2]);
+      }
+      samples[idx].time = time_now;
+
+      have_pose = true;
+    }
+
+    if (show_debug_output) {
+
+      if(ids.size() > 0)
+        cv::aruco::drawDetectedMarkers(debug_image, corners, ids);
+
+      if(rejected.size() > 0)
+        cv::aruco::drawDetectedMarkers(debug_image, rejected, cv::noArray(), cv::Scalar(0, 0, 100));
+
+      if(markersOfBoardDetected > 0) {
+        cv::aruco::drawAxis(debug_image, camMatrix, distCoeffs, rvec, tvec, 0.1);
+
+        std::vector<std::vector<cv::Point2f>> imagePoints;
+        for (auto mpts : board->objPoints) {
+          std::vector<cv::Point2f> imgpts;
+          cv::projectPoints(mpts, rvec, tvec, camMatrix, distCoeffs, imgpts);
+          imagePoints.push_back(imgpts);
+        }
+        cv::aruco::drawDetectedMarkers(debug_image, imagePoints, cv::noArray(), cv::Scalar(255, 0, 0));
+      }
+    }
+  }
+
+  if (show_debug_output) {
+    cv::imshow("ArucoPoseTracker", debug_image);
     cv::waitKey(1);
   }
 }
 
-bool ArucoPoseTracker::Impl::getPose(PoseSample &p) {
+bool ArucoPoseTracker::Impl::getPose(std::map<int, PoseSample> &p) {
   if (!have_pose) return false;
 
-  p = sample;
+  p = samples;
   return true;
 }
 

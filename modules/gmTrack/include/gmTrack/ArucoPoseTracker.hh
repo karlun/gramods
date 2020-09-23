@@ -9,7 +9,7 @@
 #include <gmCore/OFactory.hh>
 #include <gmCore/Updateable.hh>
 
-#include <gmTrack/SinglePoseTracker.hh>
+#include <gmTrack/MultiPoseTracker.hh>
 
 #include <gmTrack/ArucoBoard.hh>
 #include <gmTrack/OpenCvVideoSource.hh>
@@ -24,7 +24,7 @@ BEGIN_NAMESPACE_GMTRACK;
    intervals. This is done automatically by gm-load.
 */
 class ArucoPoseTracker
-  : public SinglePoseTracker,
+  : public MultiPoseTracker,
     public gmCore::Updateable {
 
 public:
@@ -44,11 +44,11 @@ public:
   //void setCameraParametersFile(std::string file);
 
   /**
-     Set the ArucoBoard to track.
+     Add an ArucoBoard to track.
 
      \gmXmlTag{gmTrack,ArucoPoseTracker,arucoBoard}
   */
-  void setArucoBoard(std::shared_ptr<ArucoBoard> board);
+  void addArucoBoard(std::shared_ptr<ArucoBoard> board);
 
   /**
      Set the video source to read images from.
@@ -58,7 +58,9 @@ public:
   void setVideoSource(std::shared_ptr<OpenCvVideoSource> vs);
 
   /**
-     If set to true... Default is false.
+     If set to true the pose tracker will estimate the camera pose
+     relative the markers. When false the markers' poses are
+     estimated. Default is false.
 
      \gmXmlTag{gmTrack,ArucoPoseTracker,inverted}
   */
@@ -92,7 +94,7 @@ public:
   /**
      Replaces the contents of p with pose data.
   */
-  bool getPose(PoseSample &p);
+  bool getPose(std::map<int, PoseSample> &p);
 
   GM_OFI_DECLARE;
 
