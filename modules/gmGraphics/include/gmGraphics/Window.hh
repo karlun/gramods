@@ -36,7 +36,7 @@ public:
      nothing - it is the tiles that provide the graphics. If multiple
      views are added, then these will be rendered over each other.
 
-     \b XML-key: \c view
+     \gmXmlTag{gmGraphics,Window,view}
   */
   void addView(std::shared_ptr<View> view) {
     views.push_back(view);
@@ -58,14 +58,14 @@ public:
      Activates or deactivates fullscreen mode. This should be
      overloaded by sub classes to also support run-time changes.
 
-     \b XML-attribute: \c fullscreen
+     \gmXmlTag{gmGraphics,Window,fullscreen}
   */
   virtual void setFullscreen(bool on) { fullscreen = on; }
 
   /**
      Set on which display the window should be shown.
 
-     \b XML-attribute: \c display
+     \gmXmlTag{gmGraphics,Window,display}
   */
   virtual void setDisplay(size_t N) { display = N; }
 
@@ -74,14 +74,14 @@ public:
      pixels. This should be overloaded by sub classes to also support
      run-time changes.
 
-     \b XML-attribute: \c size
+     \gmXmlTag{gmGraphics,Window,size}
   */
   virtual void setSize(gmTypes::size2 s) { size = s; }
 
   /**
      Sets the position of the window.
 
-     \b XML-attribute: \c position
+     \gmXmlTag{gmGraphics,Window,position}
   */
   virtual void setPosition(gmTypes::int2 p) { position = p; }
 
@@ -96,14 +96,14 @@ public:
      Sets the title of the windows. This should be overloaded by sub
      classes to also support run-time changes.
 
-     \b XML-attribute: \c title
+     \gmXmlTag{gmGraphics,Window,title}
   */
   virtual void setTitle(std::string t) { title = t; }
 
   /**
      Set the background color of the window.
 
-     \b XML-attribute: \c backgroundColor
+     \gmXmlTag{gmGraphics,Window,backgroundColor}
   */
   virtual void setBackgroundColor(gmTypes::float4 c) {
     background_color = c;

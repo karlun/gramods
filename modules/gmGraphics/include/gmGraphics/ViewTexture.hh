@@ -34,7 +34,7 @@ public:
      Sets the resolution to render sub views at, regarless of
      resolution of the parent. Default is 1024x1024.
 
-     \b XML-attribute: \c resolution
+     \gmXmlTag{gmGraphics,ViewTexture,resolution}
   */
   void setResolution(gmTypes::size2 res);
 
@@ -64,7 +64,7 @@ public:
   /**
      Adds a view to render to this texture.
 
-     \b XML-key: \c view
+     \gmXmlTag{gmGraphics,ViewTexture,view}
   */
   void addView(std::shared_ptr<View> view);
 

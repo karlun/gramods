@@ -22,7 +22,7 @@ public:
   /**
      Set the position of the plane.
 
-     \b XML-attribute: \c position
+     \gmXmlTag{gmGraphics,PlaneGeometry,position}
 
      \sa gramods::operator>>(std::istream &, Eigen::Vector3f &)
   */
@@ -31,7 +31,7 @@ public:
   /**
      Set the orientation of the plane by defining its normal.
 
-     \b XML-attribute: \c normal
+     \gmXmlTag{gmGraphics,PlaneGeometry,normal}
 
      \sa gramods::operator>>(std::istream &, Eigen::Vector3f &)
   */
@@ -41,7 +41,7 @@ public:
      Set the orientation of the plane. The zero rotation plane is in
      the x-y plane.
 
-     \b XML-attribute: \c orientation
+     \gmXmlTag{gmGraphics,PlaneGeometry,orientation}
 
      \sa gramods::operator>>(std::istream &, Eigen::Quaternionf &)
   */

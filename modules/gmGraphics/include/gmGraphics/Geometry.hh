@@ -78,7 +78,7 @@ public:
      the geometry, and not the outside. Default is false (projection
      is estimated for the outside of the geometry).
 
-     \b XML-attribute: \c inside
+     \gmXmlTag{gmGraphics,Geometry,inside}
   */
   void setInside(bool on);
 

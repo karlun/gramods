@@ -42,7 +42,7 @@ public:
      | TIFF   |   *   |   *   |
      | PFM    |       |   *   |
 
-     \b XML-attribute: \c file
+     \gmXmlTag{gmGraphics,SaveView,file}
   */
   void setFile(std::string file);
 
@@ -51,7 +51,7 @@ public:
      resolution of the view itself. Default is to use the view
      resolution.
 
-     \b XML-attribute: \c resolution
+     \gmXmlTag{gmGraphics,SaveView,resolution}
   */
   void setResolution(gmTypes::size2 res);
 
@@ -81,7 +81,7 @@ public:
   /**
      Adds a view that should be saved to file.
 
-     \b XML-key: \c view
+     \gmXmlTag{gmGraphics,SaveView,view}
   */
   void addView(std::shared_ptr<View> view);
 

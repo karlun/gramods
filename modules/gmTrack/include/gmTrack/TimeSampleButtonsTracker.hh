@@ -25,7 +25,7 @@ public:
      program. There must be at least two time samples as well as an
      equal amount of time samples and amount of button samples.
 
-     \b XML-attribute: \c time
+     \gmXmlTag{gmTrack,TimeSampleButtonsTracker,time}
   */
   void addTime(double t);
 
@@ -33,7 +33,7 @@ public:
      Adds a button states sample as an integer where the least
      significant bit represents the main button.
 
-     \b XML-attribute: \c buttons
+     \gmXmlTag{gmTrack,TimeSampleButtonsTracker,buttons}
   */
   void addButtons(size_t b);
 

@@ -31,14 +31,14 @@ public:
   /**
      Sets the video file to read from.
 
-     \b XML-attribute: \c videoFile
+     \gmXmlTag{gmTrack,OpenCvVideoCapture,videoFile}
   */
   void setVideoFile(std::string file);
 
   /**
      Sets the camera id to capture data from.
 
-     \b XML-attribute: \c cameraId
+     \gmXmlTag{gmTrack,OpenCvVideoCapture,cameraId}
   */
   void setCameraId(int id);
 
@@ -47,7 +47,7 @@ public:
 
      If not set the driver default is used.
 
-     \b XML-attribute: \c cameraWidth
+     \gmXmlTag{gmTrack,OpenCvVideoCapture,cameraWidth}
   */
   void setCameraWidth(int W);
 
@@ -56,7 +56,7 @@ public:
 
      If not set the driver default is used.
 
-     \b XML-attribute: \c cameraHeight
+     \gmXmlTag{gmTrack,OpenCvVideoCapture,cameraHeight}
   */
   void setCameraHeight(int W);
 
@@ -65,7 +65,7 @@ public:
 
      If not set the driver default is used.
 
-     \b XML-attribute: \c cameraFramerate
+     \gmXmlTag{gmTrack,OpenCvVideoCapture,cameraFramerate}
 
      @see https://www.fourcc.org/codecs.php
   */
@@ -78,7 +78,7 @@ public:
      cameras is "MJPG". This string must be four characters long, so
      add spaces when necessary.
 
-     \b XML-attribute: \c cameraFourCC
+     \gmXmlTag{gmTrack,OpenCvVideoCapture,cameraFourCC}
   */
   void setCameraFourCC(std::string cc);
 
@@ -119,7 +119,7 @@ public:
      - INTEL_MFX
      - XINE
 
-     \b XML-attribute: \c backend
+     \gmXmlTag{gmTrack,OpenCvVideoCapture,backend}
   */
   void setBackend(std::string b);
 

@@ -38,7 +38,7 @@ public:
      The address to the pose tracker at the VRPN server, such as
      "tracker@localhost".
 
-     \b XML-attribute: \c connectionString
+     \gmXmlTag{gmTrack,VrpnPoseTracker,connectionString}
   */
   void setConnectionString(std::string id);
 

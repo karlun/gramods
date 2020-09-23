@@ -41,7 +41,7 @@ public:
   /**
      Set name or path of library file.
 
-     \b XML-attribute: \c library
+     \gmXmlTag{gmCore,ImportLibrary,library}
   */
   void setLibrary(std::string file);
 

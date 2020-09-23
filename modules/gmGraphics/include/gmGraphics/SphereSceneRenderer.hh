@@ -36,21 +36,21 @@ public:
   /**
      Sets the radius of each sphere to be drawn.
 
-     \b XML-attribute: \c sphereRadius
+     \gmXmlTag{gmGraphics,SphereSceneRenderer,sphereRadius}
   */
   void setSphereRadius(float r);
 
   /**
      Sets the radius of the set of spheres.
 
-     \b XML-attribute: \c sphereSetRadius
+     \gmXmlTag{gmGraphics,SphereSceneRenderer,sphereSetRadius}
   */
   void setSphereSetRadius(float r);
 
   /**
      Sets the position of the sphere set.
 
-     \b XML-attribute: \c position
+     \gmXmlTag{gmGraphics,SphereSceneRenderer,position}
 
      \sa gramods::operator>>(std::istream &, Eigen::Vector3f &)
   */

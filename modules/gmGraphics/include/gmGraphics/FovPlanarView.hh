@@ -23,7 +23,7 @@ public:
      Sets the clip planes, left, right, bottom, top, in x, y
      coordinates at distance 1.
 
-     \b XML-attribute: \c clipPlanes
+     \gmXmlTag{gmGraphics,FovPlanarView,clipPlanes}
   */
   void setClipPlanes(gmTypes::float4 p) {
     planes = p;
@@ -35,7 +35,7 @@ public:
      left-wise and downwards, respectively, while right and top angles
      are positive right-wise and upwards, respectively.
 
-     \b XML-attribute: \c clipAngles
+     \gmXmlTag{gmGraphics,FovPlanarView,clipAngles}
 
      \sa operator>>(std::istream &, gmTypes::angle &)
   */
@@ -49,7 +49,7 @@ public:
   /**
      Sets the orientation of the View.
 
-     \b XML-attribute: \c orientation
+     \gmXmlTag{gmGraphics,FovPlanarView,orientation}
 
      \sa gramods::operator>>(std::istream &, Eigen::Quaternionf &)
   */

@@ -23,7 +23,7 @@ public:
      Sets the color of the left eye filter, in RGB 0-1. Default is red
      (1, 0, 0).
 
-     \b XML-attribute: \c leftColor
+     \gmXmlTag{gmGraphics,LinearAnaglyphsMultiplexer,leftColor}
   */
   void setLeftColor(gmTypes::float3 c);
 
@@ -31,7 +31,7 @@ public:
      Sets the color of the right eye filter, in RGB 0-1. Default is
      cyan (0, 1, 1).
 
-     \b XML-attribute: \c rightColor
+     \gmXmlTag{gmGraphics,LinearAnaglyphsMultiplexer,rightColor}
   */
   void setRightColor(gmTypes::float3 c);
 
@@ -41,7 +41,7 @@ public:
      object with the same color as the eye filter becomes invisible
      for that eye. Default is 0.8.
 
-     \b XML-attribute: \c saturation
+     \gmXmlTag{gmGraphics,LinearAnaglyphsMultiplexer,saturation}
   */
   void setSaturation(float s);
 
@@ -51,7 +51,7 @@ public:
      object with the same color as the eye filter becomes invisible
      for that eye. Default is 0.8.
 
-     \b XML-attribute: \c leftSaturation
+     \gmXmlTag{gmGraphics,LinearAnaglyphsMultiplexer,leftSaturation}
   */
   void setLeftSaturation(float s);
 
@@ -61,7 +61,7 @@ public:
      object with the same color as the eye filter becomes invisible
      for that eye. Default is 0.8.
 
-     \b XML-attribute: \c rightSaturation
+     \gmXmlTag{gmGraphics,LinearAnaglyphsMultiplexer,rightSaturation}
   */
   void setRightSaturation(float s);
 

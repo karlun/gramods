@@ -55,7 +55,7 @@ public:
      Sets the radius of the stereographic sphere. In comparison, the
      2D coordinates range from -1 to 1. Default is 0.5.
 
-     \b XML-attribute: \c r
+     \gmXmlTag{gmGraphics,StereographicCoordinatesMapper,radius}
   */
   void setRadius(float R);
 
@@ -64,7 +64,7 @@ public:
      the specified angle the projection from -1 to 1 should cover on
      the sphere. Default is π.
 
-     \b XML-attribute: \c r
+     \gmXmlTag{gmGraphics,StereographicCoordinatesMapper,coverageAngle}
   */
   void setCoverageAngle(gmTypes::angle a);
 
@@ -72,7 +72,7 @@ public:
      Sets the yaw, the horizontal heading, a value in the range 0 to
      2π. Default is 0.
 
-     \b XML-attribute: \c theta0
+     \gmXmlTag{gmGraphics,StereographicCoordinatesMapper,theta0}
 
      \sa operator>>(std::istream &, gmTypes::angle &)
   */
@@ -82,7 +82,7 @@ public:
      Sets the pitch, the vertical heading, a value in the range -π/2
      to π/2. Default is π/2.
 
-     \b XML-attribute: \c phi0
+     \gmXmlTag{gmGraphics,StereographicCoordinatesMapper,phi0}
 
      \sa operator>>(std::istream &, gmTypes::angle &)
   */

@@ -22,7 +22,7 @@ public:
   /**
      Sets the path to the log file to write to.
 
-     \b XML-attribute: \c logFilePath
+     \gmXmlTag{gmCore,LogFileMessageSink,logFilePath}
   */
   void setLogFilePath(std::string name);
 
@@ -31,7 +31,7 @@ public:
      file, if it already exists. With false (default) the file will be
      overwritten.
 
-     \b XML-attribute: \c append
+     \gmXmlTag{gmCore,LogFileMessageSink,append}
   */
   void setAppend(bool on);
 

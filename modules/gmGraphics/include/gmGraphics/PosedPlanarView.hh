@@ -24,7 +24,7 @@ public:
      controlled to fit the ratio of the viewport. Default is 1
      horizontal.
 
-     \b XML-attribute: \c fieldOfView
+     \gmXmlTag{gmGraphics,PosedPlanarView,fieldOfView}
 
      \sa operator>>(std::istream &, gmTypes::angle &)
   */

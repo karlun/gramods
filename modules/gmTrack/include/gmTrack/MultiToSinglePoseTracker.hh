@@ -27,7 +27,7 @@ public:
   /**
      Sets the index from the MultiPoseTracker to extract as SinglePoseTracker.
 
-     \b XML-attribute: \c sensor
+     \gmXmlTag{gmTrack,MultiToSinglePoseTracker,sensor}
   */
   void setSensor(int idx) {
     sensor_idx = idx;

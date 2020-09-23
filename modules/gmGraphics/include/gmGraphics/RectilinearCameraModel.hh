@@ -43,14 +43,14 @@ public:
   /**
      Set the k distortion parameters (k1 k2 k3).
 
-     \b XML-key: \c kDistortion
+     \gmXmlTag{gmGraphics,RectilinearCameraModel,kDistortion}
   */
   void setKDistortion(gmTypes::float3 k);
 
   /**
      Set the p distortion parameters (p1 p2).
 
-     \b XML-key: \c pDistortion
+     \gmXmlTag{gmGraphics,RectilinearCameraModel,pDistortion}
   */
   void setPDistortion(gmTypes::float2 p);
 
@@ -67,7 +67,7 @@ public:
      dimension. For the other dimension you divide the previous value
      with the image ratio (e.g. 0.8 / (4/3) = 0.6).
 
-     \b XML-key: \c focalDistance
+     \gmXmlTag{gmGraphics,RectilinearCameraModel,focalDistance}
   */
   void setFocalDistance(gmTypes::float2 f);
 
@@ -78,7 +78,7 @@ public:
      typically expressed in pixels so divide by resolution before
      entering values here.
 
-     \b XML-key: \c focalOffset
+     \gmXmlTag{gmGraphics,RectilinearCameraModel,focalOffset}
   */
   void setFocalOffset(gmTypes::float2 c);
 

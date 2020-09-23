@@ -23,7 +23,7 @@ public:
   /**
      Set the position of the sphere origin, its center.
 
-     \b XML-attribute: \c position
+     \gmXmlTag{gmGraphics,SphereGeometry,position}
 
      \sa gramods::operator>>(std::istream &, Eigen::Vector3f &)
   */
@@ -32,7 +32,7 @@ public:
   /**
      Set the radius of the sphere.
 
-     \b XML-attribute: \c radius
+     \gmXmlTag{gmGraphics,SphereGeometry,radius}
   */
   void setRadius(float);
 
@@ -43,7 +43,7 @@ public:
      frustum. Use this if you see D-shaped black regions at the edge
      of the view. Default is 1.0.
 
-     \b XML-attribute: \c frustumSizeRatio
+     \gmXmlTag{gmGraphics,SphereGeometry,frustumSizeRatio}
   */
   void setFrustumSizeRatio(float);
 

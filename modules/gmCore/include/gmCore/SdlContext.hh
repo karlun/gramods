@@ -29,7 +29,7 @@ public:
      Enable or disable initialization of SDL video engine. Default is
      false.
 
-     \b XML-attribute: \c useVideo
+     \gmXmlTag{gmCore,SdlContext,useVideo}
   */
   void setUseVideo(bool on) { use_video = on; }
 
@@ -37,7 +37,7 @@ public:
      Enable or disable initialization of SDL audio engine. Default is
      false.
 
-     \b XML-attribute: \c useAudio
+     \gmXmlTag{gmCore,SdlContext,useAudio}
   */
   void setUseAudio(bool on) { use_audio = on; }
 

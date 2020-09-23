@@ -27,7 +27,7 @@ public:
      Sets the position offset, in local tracker coordinates, to add to
      the pose data.
 
-     \b XML-attribute: \c positionOffset
+     \gmXmlTag{gmTrack,OffsetSinglePoseTracker,positionOffset}
 
      \sa gramods::operator>>(std::istream &, Eigen::Vector3f &)
   */
@@ -39,7 +39,7 @@ public:
      Sets the orientation offset, in local tracker coordinates, to add
      to the pose data.
 
-     \b XML-attribute: \c orientationOffset
+     \gmXmlTag{gmTrack,OffsetSinglePoseTracker,orientationOffset}
 
      \sa gramods::operator>>(std::istream &, Eigen::Quaternionf &)
   */
@@ -51,7 +51,7 @@ public:
      Sets the orientation and position offset by extracting these data
      from an offset matrix.
 
-     \b XML-attribute: \c offsetMatrix
+     \gmXmlTag{gmTrack,OffsetSinglePoseTracker,offsetMatrix}
 
      \sa gramods::operator>>(std::istream &, Eigen::Matrix4f &)
   */

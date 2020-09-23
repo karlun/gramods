@@ -34,7 +34,7 @@ public:
   /**
      Sets the buttons tracker to re-map.
 
-     \b XML-key: \c buttonsTracker
+     \gmXmlTag{gmTrack,ButtonsMapper,buttonsTracker}
   */
   void setButtonsTracker(std::shared_ptr<ButtonsTracker> bt);
 
@@ -42,7 +42,7 @@ public:
      Adds a mapping in the form of two integer indices: from and to
      button index, respectively.
 
-     \b XML-attribute: \c mapping
+     \gmXmlTag{gmTrack,ButtonsMapper,mapping}
   */
   void addMapping(gmTypes::size2 m);
 
@@ -50,7 +50,7 @@ public:
      Sets which button to map to main button, as an index starting at
      zero.
 
-     \b XML-attribute: \c mainButton
+     \gmXmlTag{gmTrack,ButtonsMapper,mainButton}
   */
   void setMainButton(int idx);
 
@@ -58,7 +58,7 @@ public:
      Sets which button to map to secondary button, as an index
      starting at zero.
 
-     \b XML-attribute: \c secondaryButton
+     \gmXmlTag{gmTrack,ButtonsMapper,secondaryButton}
   */
   void setSecondaryButton(int idx);
 
@@ -66,7 +66,7 @@ public:
      Sets which button to map to menu button, as an index starting at
      zero.
 
-     \b XML-attribute: \c menuButton
+     \gmXmlTag{gmTrack,ButtonsMapper,menuButton}
   */
   void setMenuButton(int idx);
 

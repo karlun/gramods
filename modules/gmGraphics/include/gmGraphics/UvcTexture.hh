@@ -42,7 +42,7 @@ public:
      attribute, use the 0x prefix to enter the value in hexadecimal
      format.
 
-     \b XML-attribute: \c vendor
+     \gmXmlTag{gmGraphics,UvcTexture,vendor}
   */
   void setVendor(int v) { vendor = v; }
 
@@ -51,28 +51,28 @@ public:
      attribute, use the 0x prefix to enter the value in hexadecimal
      format.
 
-     \b XML-attribute: \c product
+     \gmXmlTag{gmGraphics,UvcTexture,product}
   */
   void setProduct(int p) { product = p; }
 
   /**
      Set the serial ID of the UVC device to stream from.
 
-     \b XML-attribute: \c serial
+     \gmXmlTag{gmGraphics,UvcTexture,serial}
   */
   void setSerial(std::string s) { serial = s; }
 
   /**
      Set the resolution to attempt to negotiate with the UVC device.
 
-     \b XML-attribute: \c resolution
+     \gmXmlTag{gmGraphics,UvcTexture,resolution}
   */
   void setResolution(gmTypes::size2 res);
 
   /**
      Set the framerate to attempt to negotiate with the UVC device.
 
-     \b XML-attribute: \c framerate
+     \gmXmlTag{gmGraphics,UvcTexture,framerate}
   */
   void setFramerate(int fps);
 
@@ -84,7 +84,7 @@ public:
      mjpeg, gray8, gray16, by8, ba81, sgrbg8, sgbrg8, srggb8,
      sbggr8. Default is any.
 
-     \b XML-attribute: \c format
+     \gmXmlTag{gmGraphics,UvcTexture,format}
   */
   void setFormat(std::string fmt);
 
@@ -99,7 +99,7 @@ public:
      using this texture to decode each four channel texel into two
      three channel RGB pixels.
 
-     \b XML-attribute: \c convertToRgb
+     \gmXmlTag{gmGraphics,UvcTexture,convertToRgb}
   */
   void setConvertToRbg(bool on);
 

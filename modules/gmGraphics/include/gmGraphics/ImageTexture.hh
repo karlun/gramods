@@ -51,7 +51,7 @@ public:
      "image_%05d.png" and range is set to 1-199, then images from
      "image_00000.png" to "image_00199.png" will be read.
 
-     \b XML-attribute: \c file
+     \gmXmlTag{gmGraphics,ImageTexture,file}
   */
   void setFile(std::string file);
 
@@ -60,14 +60,14 @@ public:
      the file name specified with setFile is a printf formatted
      template.
 
-     \b XML-attribute: \c range
+     \gmXmlTag{gmGraphics,ImageTexture,range}
   */
   void setRange(gmTypes::size2 range);
 
   /**
      Activates or deactivates looping the animation. Default is false.
 
-     \b XML-attribute: \c loop
+     \gmXmlTag{gmGraphics,ImageTexture,loop}
   */
   void setLoop(bool on);
 
@@ -76,7 +76,7 @@ public:
      has been covered. Default is false. Loop has to be false for this
      to work.
 
-     \b XML-attribute: \c exit
+     \gmXmlTag{gmGraphics,ImageTexture,exit}
   */
   void setExit(bool on);
 

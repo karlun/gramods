@@ -24,7 +24,7 @@ public:
      Sets the linear (position) velocity of the viewpoint, in meters
      per second.
 
-     \b XML-attribute: \c velocity
+     \gmXmlTag{gmGraphics,VelocityViewpoint,velocity}
 
      \sa gramods::operator>>(std::istream &, Eigen::Vector3f &)
   */
@@ -34,7 +34,7 @@ public:
      Sets the rotational velocity of the viewpoint, in rotation per
      second.
 
-     \b XML-attribute: \c rotation
+     \gmXmlTag{gmGraphics,VelocityViewpoint,rotation}
 
      \sa gramods::operator>>(std::istream &, Eigen::Quaternionf &)
   */
