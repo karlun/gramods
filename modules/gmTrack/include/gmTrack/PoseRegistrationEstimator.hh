@@ -37,14 +37,14 @@ public:
   /**
      Sets the controller to use for calibration.
 
-     \b XML-attribute: \c controller
+     \gmXmlTag{gmTrack,PoseRegistrationEstimator,controller}
   */
   void setController(std::shared_ptr<Controller> controller);
 
   /**
      Adds a known calibration point, in room coordinates.
 
-     \b XML-attribute: \c point
+     \gmXmlTag{gmTrack,PoseRegistrationEstimator,point}
   */
   void addPoint(Eigen::Vector3f p);
 
@@ -53,7 +53,7 @@ public:
      controller button is pressed. Default is 1. At most one sample
      per frame will be used regardless of this value.
 
-     \b XML-attribute: \c samplesPerSecond
+     \gmXmlTag{gmTrack,PoseRegistrationEstimator,samplesPerSecond}
   */
   void setSamplesPerSecond(float n);
 

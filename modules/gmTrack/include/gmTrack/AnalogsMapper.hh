@@ -37,7 +37,7 @@ public:
   /**
      Sets the analogs tracker to re-map.
      
-     \b XML-attribute: \c analogsTracker
+     \gmXmlTag{gmTrack,AnalogsMapper,analogsTracker}
   */
   void setAnalogsTracker(std::shared_ptr<AnalogsTracker> bt);
 
@@ -45,7 +45,7 @@ public:
      Adds a mapping in the form of two integer indices: from and to
      button index, respectively.
      
-     \b XML-attribute: \c mapping
+     \gmXmlTag{gmTrack,AnalogsMapper,mapping}
   */
   void addMapping(gmTypes::size2 m);
 
@@ -53,7 +53,7 @@ public:
      Sets which analog to map to vertical analog, as an index starting
      at zero.
      
-     \b XML-attribute: \c verticalAnalog
+     \gmXmlTag{gmTrack,AnalogsMapper,verticalAnalog}
   */
   void setVerticalAnalog(int idx);
 
@@ -61,7 +61,7 @@ public:
      Sets which analog to map to horizontal analog, as an index
      starting at zero.
      
-     \b XML-attribute: \c horizontalAnalog
+     \gmXmlTag{gmTrack,AnalogsMapper,horizontalAnalog}
   */
   void setHorizontalAnalog(int idx);
 
@@ -69,7 +69,7 @@ public:
      Sets which analog to map to trigger analog, as an index starting
      at zero.
      
-     \b XML-attribute: \c triggerAnalog
+     \gmXmlTag{gmTrack,AnalogsMapper,triggerAnalog}
   */
   void setTriggerAnalog(int idx);
 

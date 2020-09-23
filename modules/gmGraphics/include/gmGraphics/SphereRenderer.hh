@@ -51,14 +51,14 @@ public:
   /**
      Set the radius of the sphere.
 
-     \b XML-attribute: \c radius
+     \gmXmlTag{gmGraphics,SphereRenderer,radius}
   */
   void setRadius(float r);
 
   /**
      Set the position of the sphere.
 
-     \b XML-attribute: \c position
+     \gmXmlTag{gmGraphics,SphereRenderer,position}
 
      \sa gramods::operator>>(std::istream &, Eigen::Vector3f &)
   */
@@ -67,7 +67,7 @@ public:
   /**
      Set the orientation of the sphere.
 
-     \b XML-attribute: \c orientation
+     \gmXmlTag{gmGraphics,SphereRenderer,orientation}
 
      \sa gramods::operator>>(std::istream &, Eigen::Quaternionf &)
   */
@@ -76,7 +76,7 @@ public:
   /**
      Sets the Texture to apply on the sphere.
 
-     \b XML-attribute: \c texture
+     \gmXmlTag{gmGraphics,SphereRenderer,texture}
   */
   void setTexture(std::shared_ptr<TextureInterface> tex);
 

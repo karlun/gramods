@@ -36,7 +36,7 @@ public:
      Sets the Texture that should be called upon calls to the render
      method.
 
-     \b XML-attribute: \c texture
+     \gmXmlTag{gmGraphics,TextureRenderer,texture}
   */
   void setTexture(std::shared_ptr<TextureInterface> tex) {
     texture = tex;

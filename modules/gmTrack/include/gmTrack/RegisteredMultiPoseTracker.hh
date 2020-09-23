@@ -28,7 +28,7 @@ public:
      Sets the matrix that describes the transform from the tracker
      space to the registered space.
 
-     \b XML-attribute: \c registrationMatrix
+     \gmXmlTag{gmTrack,RegisteredMultiPoseTracker,registrationMatrix}
 
      \sa gramods::operator>>(std::istream &, Eigen::Matrix4f &)
   */
@@ -40,7 +40,7 @@ public:
      Sets a position bias to the registration. This is typically not
      needed.
 
-     \b XML-attribute: \c positionBias
+     \gmXmlTag{gmTrack,RegisteredMultiPoseTracker,positionBias}
 
      \sa gramods::operator>>(std::istream &, Eigen::Vector3f &)
   */
@@ -52,7 +52,7 @@ public:
      Sets an orientation bias to the registration. This is typically
      not needed.
 
-     \b XML-attribute: \c orientationBias
+     \gmXmlTag{gmTrack,RegisteredMultiPoseTracker,orientationBias}
 
      \sa gramods::operator>>(std::istream &, Eigen::Quaternionf &)
   */

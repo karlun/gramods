@@ -50,7 +50,7 @@ public:
   /**
      Sets the pose tracker associated with this controller.
 
-     \b XML-attribute: \c singlePoseTracker
+     \gmXmlTag{gmTrack,Controller,singlePoseTracker}
   */
   void setSinglePoseTracker(std::shared_ptr<SinglePoseTracker> spt);
 
@@ -59,7 +59,7 @@ public:
      associated with the attribute buttonsTracker in configuration
      data.
 
-     \b XML-attribute: \c buttonsTracker
+     \gmXmlTag{gmTrack,Controller,buttonsTracker}
   */
   void setButtonsTracker(std::shared_ptr<ButtonsTracker> bt);
 
@@ -68,7 +68,7 @@ public:
      associated with the attribute analogsTracker in configuration
      data.
 
-     \b XML-attribute: \c analogsTracker
+     \gmXmlTag{gmTrack,Controller,analogsTracker}
   */
   void setAnalogsTracker(std::shared_ptr<AnalogsTracker> at);
 

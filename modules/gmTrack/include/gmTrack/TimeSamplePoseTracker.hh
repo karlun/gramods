@@ -27,7 +27,7 @@ public:
      amount of time samples and amount of either one of both of
      position and orientation samples.
 
-     \b XML-attribute: \c time
+     \gmXmlTag{gmTrack,TimeSamplePoseTracker,time}
   */
   void addTime(double t);
 
@@ -37,7 +37,7 @@ public:
      There must be either no or one position sample, or as many as the
      number of time samples.
 
-     \b XML-attribute: \c position
+     \gmXmlTag{gmTrack,TimeSamplePoseTracker,position}
      @see gramods::operator>>(std::istream &in, Eigen::Vector3f &v)
   */
   void addPosition(Eigen::Vector3f p);
@@ -48,7 +48,7 @@ public:
      There must be either no or one orientation sample, or as many as
      the number of time samples.
 
-     \b XML-attribute: \c orientation
+     \gmXmlTag{gmTrack,TimeSamplePoseTracker,orientation}
 
      \sa gramods::operator>>(std::istream &, Eigen::Quaternionf &)
   */

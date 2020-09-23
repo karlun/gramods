@@ -33,7 +33,7 @@ public:
   /**
      Position of the top left corner of the view.
 
-     \b XML-attribute: \c topLeftCorner
+     \gmXmlTag{gmGraphics,SpatialPlanarView,topLeftCorner}
 
      \sa gramods::operator>>(std::istream &, Eigen::Vector3f &)
   */
@@ -42,7 +42,7 @@ public:
   /**
      Position of bottom right corner of the view.
 
-     \b XML-attribute: \c bottomRightCorner
+     \gmXmlTag{gmGraphics,SpatialPlanarView,bottomRightCorner}
 
      \sa gramods::operator>>(std::istream &, Eigen::Vector3f &)
   */
@@ -51,7 +51,7 @@ public:
   /**
      Set up direction of the view.
 
-     \b XML-attribute: \c upDirection
+     \gmXmlTag{gmGraphics,SpatialPlanarView,upDirection}
 
      \sa gramods::operator>>(std::istream &, Eigen::Vector3f &)
   */
@@ -62,7 +62,7 @@ public:
      origin. This will help specifying the projection plane, but will
      not control the viewpoint.
 
-     \b XML-attribute: \c position
+     \gmXmlTag{gmGraphics,SpatialPlanarView,position}
 
      \sa gramods::operator>>(std::istream &, Eigen::Vector3f &)
   */
@@ -76,7 +76,7 @@ public:
      downwards, respectively, while right and top angles increase
      right-wise and upwards, respectively.
 
-     \b XML-attribute: \c clipAngles
+     \gmXmlTag{gmGraphics,SpatialPlanarView,clipAngles}
 
      \sa operator>>(std::istream &, gmTypes::angle &)
   */
@@ -87,7 +87,7 @@ public:
      rotation. This will help specifying the projection plane, but
      will not control the viewpoint.
 
-     \b XML-attribute: \c orientation
+     \gmXmlTag{gmGraphics,SpatialPlanarView,orientation}
 
      \sa gramods::operator>>(std::istream &, Eigen::Quaternionf &)
   */
@@ -98,7 +98,7 @@ public:
      specifying the projection plane, but will not control the
      viewpoint.
 
-     \b XML-attribute: \c distance
+     \gmXmlTag{gmGraphics,SpatialPlanarView,distance}
   */
   void setDistance(float d);
 

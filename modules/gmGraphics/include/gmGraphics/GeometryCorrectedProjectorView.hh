@@ -42,7 +42,7 @@ public:
      Sets the resolution of the intermediate buffer, in
      pixels. Default is 2048.
 
-     \b XML-attribute: \c bufferWidth
+     \gmXmlTag{gmGraphics,GeometryCorrectedProjectorView,bufferWidth}
   */
   void setBufferWidth(int W);
 
@@ -50,7 +50,7 @@ public:
      Sets the resolution of the intermediate buffer, in
      pixels. Default is 2048.
 
-     \b XML-attribute: \c bufferHeight
+     \gmXmlTag{gmGraphics,GeometryCorrectedProjectorView,bufferHeight}
   */
   void setBufferHeight(int H);
 
@@ -58,14 +58,14 @@ public:
      Turn on or off linear interpolation in the projection from linear
      graphics to non-linear projection space. Default is off.
 
-     \b XML-attribute: \c linearInterpolation
+     \gmXmlTag{gmGraphics,GeometryCorrectedProjectorView,linearInterpolation}
   */
   void setLinearInterpolation(bool on);
 
   /**
      Set the top left corner of the projection.
 
-     \b XML-attribute: \c topLeftCorner
+     \gmXmlTag{gmGraphics,GeometryCorrectedProjectorView,topLeftCorner}
 
      \sa gramods::operator>>(std::istream &, Eigen::Vector3f &)
   */
@@ -74,7 +74,7 @@ public:
   /**
      Set the bottom right corner of the projection.
 
-     \b XML-attribute: \c bottomRightCorner
+     \gmXmlTag{gmGraphics,GeometryCorrectedProjectorView,bottomRightCorner}
 
      \sa gramods::operator>>(std::istream &, Eigen::Vector3f &)
   */
@@ -83,7 +83,7 @@ public:
   /**
      Set the position of the optic center of the projection.
 
-     \b XML-attribute: \c position
+     \gmXmlTag{gmGraphics,GeometryCorrectedProjectorView,position}
 
      \sa gramods::operator>>(std::istream &, Eigen::Vector3f &)
   */
@@ -93,7 +93,7 @@ public:
      Set the position and orientation of the projection as an
      extrinsics matrix (12 values, 4 column 3-vectors, row major):
 
-     \b XML-attribute: \c extrinsics
+     \gmXmlTag{gmGraphics,GeometryCorrectedProjectorView,extrinsics}
   */
   void setExtrinsics(gmTypes::float12 M);
 
@@ -101,7 +101,7 @@ public:
      Set the projection shape, as intrinsics (fx fy cx cy), in
      unitless values assuming a sensor size of 1x1.
 
-     \b XML-attribute: \c intrinsics
+     \gmXmlTag{gmGraphics,GeometryCorrectedProjectorView,intrinsics}
   */
   void setIntrinsics(gmTypes::float4 m);
 
@@ -111,7 +111,7 @@ public:
      left-wise and downwards, respectively, while right and top angles
      increase right-wise and upwards, respectively.
 
-     \b XML-attribute: \c clipAngles
+     \gmXmlTag{gmGraphics,GeometryCorrectedProjectorView,clipAngles}
 
      \sa operator>>(std::istream &, gmTypes::angle &)
   */
@@ -120,7 +120,7 @@ public:
   /**
      Set orientation of the projection, of the extrinsics.
 
-     \b XML-attribute: \c orientation
+     \gmXmlTag{gmGraphics,GeometryCorrectedProjectorView,orientation}
 
      \sa gramods::operator>>(std::istream &, Eigen::Quaternionf &)
   */
@@ -129,7 +129,7 @@ public:
   /**
      Set the geometry to use for projection correction.
 
-     \b XML-attribute: \c geometry
+     \gmXmlTag{gmGraphics,GeometryCorrectedProjectorView,geometry}
   */
   void setGeometry(std::shared_ptr<Geometry> g);
 

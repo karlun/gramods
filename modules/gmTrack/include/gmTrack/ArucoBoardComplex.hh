@@ -36,7 +36,7 @@ public:
      orientations, or an equal amount of boards and pose
      specifications must be provided.
      
-     \b XML-attribute: \c arucoBoard
+     \gmXmlTag{gmTrack,ArucoBoardComplex,arucoBoard}
   */
   void addArucoBoard(std::shared_ptr<ArucoBoard> b);
 
@@ -48,7 +48,7 @@ public:
      orientations, or an equal amount of boards and pose
      specifications must be provided.
      
-     \b XML-attribute: \c position
+     \gmXmlTag{gmTrack,ArucoBoardComplex,position}
   */
   void addPosition(Eigen::Vector3f p);
 
@@ -60,7 +60,7 @@ public:
      orientations, or an equal amount of boards and pose
      specifications must be provided.
 
-     \b XML-attribute: \c orientation
+     \gmXmlTag{gmTrack,ArucoBoardComplex,orientation}
 
      \sa gramods::operator>>(std::istream &, Eigen::Quaternionf &)
   */

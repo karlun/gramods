@@ -67,7 +67,7 @@ public:
      Activate or deactivate the output of the time of each
      message. Default is false, not showing time.
 
-     \b XML-attribute: \c showTime
+     \gmXmlTag{gmCore,MessageSink,showTime}
   */
   void setShowTime(bool on) {
     show_time = on;

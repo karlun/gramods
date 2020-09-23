@@ -51,14 +51,14 @@ public:
      -  nnnn:nnn::nnnn:nn:nnnn
      -  [nnnn:nnn:nnnn::nnn:nnn:nnnn:nnn]:port
 
-     \b XML-attribute: \c peer
+     \gmXmlTag{gmNetwork,SyncNode,peer}
   */
   void addPeer(std::string address);
 
   /**
      Sets which of the peers that represents the local address.
 
-     \b XML-attribute: \c localPeerIdx
+     \gmXmlTag{gmNetwork,SyncNode,localPeerIdx}
   */
   void setLocalPeerIdx(int idx);
 

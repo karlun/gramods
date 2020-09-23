@@ -31,7 +31,7 @@ public:
      Sets the resolution of the intermediate cube map, in
      pixels. Default is 2048.
 
-     \b XML-attribute: \c cubeMapResolution
+     \gmXmlTag{gmGraphics,PosedSphericalView,cubeMapResolution}
   */
   void setCubeMapResolution(int res);
 
@@ -39,7 +39,7 @@ public:
      Turn on or off linear interpolation in the projection from linear
      graphics to non-linear projection space. Default is off.
 
-     \b XML-attribute: \c linearInterpolation
+     \gmXmlTag{gmGraphics,PosedSphericalView,linearInterpolation}
   */
   void setLinearInterpolation(bool on);
 

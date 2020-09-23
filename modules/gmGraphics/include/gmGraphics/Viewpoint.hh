@@ -49,7 +49,7 @@ public:
      ignored or instantaneously overwritten by dynamic updates of the
      position value.
 
-     \b XML-attribute: \c position
+     \gmXmlTag{gmGraphics,Viewpoint,position}
 
      \sa gramods::operator>>(std::istream &, Eigen::Vector3f &)
   */
@@ -60,7 +60,7 @@ public:
      multiscopic) rendering, in internal units, typically
      meters. Default is 0.06 m.
 
-     \b XML-attribute: \c eyeSeparation
+     \gmXmlTag{gmGraphics,Viewpoint,eyeSeparation}
   */
   void setEyeSeparation(float e) {
     eye_separation = e;
@@ -72,7 +72,7 @@ public:
      This may be ignored or instantaneously overwritten by dynamic
      updates of the position value.
 
-     \b XML-attribute: \c orientation
+     \gmXmlTag{gmGraphics,Viewpoint,orientation}
 
      \sa gramods::operator>>(std::istream &, Eigen::Quaternionf &)
   */
@@ -82,7 +82,7 @@ public:
      Set the up direction to be used in a later call to
      setLookAt. This does nothing if setLookAt is not used.
 
-     \b XML-attribute: \c upDirection
+     \gmXmlTag{gmGraphics,Viewpoint,upDirection}
 
      \sa gramods::operator>>(std::istream &, Eigen::Vector3f &)
   */
@@ -97,7 +97,7 @@ public:
      Observe that this affects only the viewpoint orientation -
      camera orientation will not automatically toe-in to this point.
 
-     \b XML-attribute: \c lookAt
+     \gmXmlTag{gmGraphics,Viewpoint,lookAt}
 
      \sa gramods::operator>>(std::istream &, Eigen::Vector3f &)
   */

@@ -36,14 +36,14 @@ public:
      - distance, showing the per pixel color distance between the
        first and the second added view.
 
-     \b XML-attribute: \c mixType
+     \gmXmlTag{gmGraphics,ViewMixView,mixType}
   */
   void setMixType(std::string);
 
   /**
      Add a view to mix.
 
-     \b XML-attribute: \c view
+     \gmXmlTag{gmGraphics,ViewMixView,view}
   */
   void addView(std::shared_ptr<View>);
 

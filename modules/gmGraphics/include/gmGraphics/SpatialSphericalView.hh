@@ -36,7 +36,7 @@ public:
      Sets the resolution of the intermediate cube map, in
      pixels. Default is 2048.
 
-     \b XML-attribute: \c cubeMapResolution
+     \gmXmlTag{gmGraphics,SpatialSphericalView,cubeMapResolution}
   */
   void setCubeMapResolution(int res);
 
@@ -44,7 +44,7 @@ public:
      Turn on or off linear interpolation in the projection from linear
      graphics to non-linear projection space. Default is off.
 
-     \b XML-attribute: \c linearInterpolation
+     \gmXmlTag{gmGraphics,SpatialSphericalView,linearInterpolation}
   */
   void setLinearInterpolation(bool on);
 
@@ -65,7 +65,7 @@ public:
      Sets the location of the center of the spherical projection
      surface, in meters. Default is zero.
 
-     \b XML-attribute: \c position
+     \gmXmlTag{gmGraphics,SpatialSphericalView,position}
 
      \sa gramods::operator>>(std::istream &, Eigen::Vector3f &)
   */
@@ -74,7 +74,7 @@ public:
   /**
      Set the radius of the projection surface, in meters. Default is 10.
 
-     \b XML-attribute: \c radius
+     \gmXmlTag{gmGraphics,SpatialSphericalView,radius}
   */
   void setRadius(float r);
 
@@ -82,7 +82,7 @@ public:
      Set the orientation of the projection, for example to create a
      forward tilt common in dome theaters.
 
-     \b XML-attribute: \c orientation
+     \gmXmlTag{gmGraphics,SpatialSphericalView,orientation}
 
      \sa gramods::operator>>(std::istream &, Eigen::Quaternionf &)
   */

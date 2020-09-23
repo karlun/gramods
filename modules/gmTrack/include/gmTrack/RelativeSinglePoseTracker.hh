@@ -25,7 +25,7 @@ public:
      Sets the tracker to be used to read off the origin pose of the
      target tracker.
 
-     \b XML-attribute: \c originTracker
+     \gmXmlTag{gmTrack,RelativeSinglePoseTracker,originTracker}
    */
   void setOriginTracker(std::shared_ptr<SinglePoseTracker> tracker);
 
@@ -33,7 +33,7 @@ public:
      Sets the tracker to be used to read off the target pose relative
      to the pose extracted from the origin tracker.
 
-     \b XML-attribute: \c targetTracker
+     \gmXmlTag{gmTrack,RelativeSinglePoseTracker,targetTracker}
   */
   void setTargetTracker(std::shared_ptr<SinglePoseTracker> tracker);
 

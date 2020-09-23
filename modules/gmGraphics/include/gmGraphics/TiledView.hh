@@ -44,14 +44,14 @@ public:
      is [row col rowspan colspan] where row and col start at zero at
      bottom left corner.
 
-     \b XML-attribute: \c tileLocation
+     \gmXmlTag{gmGraphics,TiledView,tileLocation}
   */
   void addTileLocation(gmTypes::size4 c);
 
   /**
      Adds a view to the previously specified tile location.
 
-     \b XML-attribute: \c view
+     \gmXmlTag{gmGraphics,TiledView,view}
   */
   void addView(std::shared_ptr<View> view);
 

@@ -43,7 +43,7 @@ public:
      Sets the conversion matrix from YUV space to RGB. Default is
      BT.601.
 
-     \b XML-attribute: \c yuvToRgb
+     \gmXmlTag{gmGraphics,YuvDecodeTexture,yuvToRgb}
 
      \sa gramods::operator>>(std::istream &, Eigen::Matrix3f &)
   */
@@ -52,7 +52,7 @@ public:
   /**
      Sets the range of the UV values. Default is BT.601.
 
-     \b XML-attribute: \c uvRange
+     \gmXmlTag{gmGraphics,YuvDecodeTexture,uvRange}
   */
   void setUvRange(gmTypes::float2 v);
 

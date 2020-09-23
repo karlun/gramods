@@ -36,21 +36,21 @@ public:
   /**
      Sets the size of each cube to be drawn.
 
-     \b XML-attribute: \c cubeSize
+     \gmXmlTag{gmGraphics,CubeSceneRenderer,cubeSize}
   */
   void setCubeSize(float d);
 
   /**
      Sets the size of the set of cubes.
 
-     \b XML-attribute: \c cubeSetSize
+     \gmXmlTag{gmGraphics,CubeSceneRenderer,cubeSetSize}
   */
   void setCubeSetSize(float d);
 
   /**
      Sets the position of the cube set.
 
-     \b XML-attribute: \c position
+     \gmXmlTag{gmGraphics,CubeSceneRenderer,position}
 
      \sa gramods::operator>>(std::istream &, Eigen::Vector3f &)
   */
@@ -59,7 +59,7 @@ public:
   /**
      Set animation on or off.
 
-     \b XML-attribute: \c animate
+     \gmXmlTag{gmGraphics,CubeSceneRenderer,animate}
   */
   void setAnimate(bool on);
 

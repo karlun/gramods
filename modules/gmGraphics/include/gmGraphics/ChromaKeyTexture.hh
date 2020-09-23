@@ -42,7 +42,7 @@ public:
   /**
      Set the RGB key to mask with. Default is [0, 1, 0].
 
-     \b XML-attribute: \c key
+     \gmXmlTag{gmGraphics,ChromaKeyTexture,key}
   */
   void setKey(gmTypes::float3 key);
 
@@ -51,7 +51,7 @@ public:
      masking. This will specify a ramp in decimal CrCb (2D) color
      space. Default is [0.48, 0.50].
 
-     \b XML-attribute: \c key
+     \gmXmlTag{gmGraphics,ChromaKeyTexture,key}
   */
   void setTolerance(gmTypes::float2 tol);
 

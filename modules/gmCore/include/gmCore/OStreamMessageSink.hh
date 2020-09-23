@@ -44,7 +44,7 @@ public:
      Set the stream to use as output, as string. Valid values are
      "out" and "err".
 
-     \b XML-attribute: \c stream
+     \gmXmlTag{gmCore,OStreamMessageSink,stream}
   */
   void setStream(std::string name);
 
@@ -52,7 +52,7 @@ public:
      Activate or deactivate the use of ANSI color escape characters to
      emphasize error and warning messages.
 
-     \b XML-attribute: \c useAnsiColor
+     \gmXmlTag{gmCore,OStreamMessageSink,useAnsiColor}
   */
   void setUseAnsiColor(bool on) {
     use_ansi_color = on;
@@ -65,7 +65,7 @@ public:
      0 results in only error messages begin printed and 4 results in
      all messages.
 
-     \b XML-attribute: \c level
+     \gmXmlTag{gmCore,OStreamMessageSink,level}
   */
   void setLevel(int l) { level = l; }
 
