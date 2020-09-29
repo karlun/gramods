@@ -221,7 +221,7 @@ int main(int argc, char *argv[]) {
   TCLAP::MultiArg<std::string> arg_tpoint
     ("q", "t-point",
      "Specification of point in the tracker coordinate system.",
-     true, "x,y,z");
+     false, "x,y,z");
   cmd.add(arg_tpoint);
 
   TCLAP::ValueArg<std::string> arg_outputfile
