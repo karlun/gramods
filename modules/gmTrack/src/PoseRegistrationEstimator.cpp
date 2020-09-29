@@ -9,6 +9,7 @@
 #include <Eigen/LU>
 
 #include <limits>
+#include <type_traits>
 
 BEGIN_NAMESPACE_GMTRACK;
 
@@ -289,7 +290,7 @@ float PoseRegistrationEstimator::Impl::estimateSphericity(std::vector<Eigen::Vec
   GM_VINF("PoseRegistrationEstimator", "data matrix:\n" << data_matrix);
   GM_VINF("PoseRegistrationEstimator", "singular values: " << singular_values.transpose());
 
-  if (singular_values[1] < std::numeric_limits<typeof(singular_values[1])>::epsilon()) {
+  if (singular_values[1] <= std::numeric_limits<std::remove_reference<decltype(singular_values[1])>::type>::epsilon()) {
     GM_ERR("PoseRegistrationEstimator", "Points are too linearly dependent for any further processing");
     throw std::runtime_error("Points are too linearly dependent for any further processing");
   } else if (singular_values[1] / singular_values[0] < 0.3f) {
