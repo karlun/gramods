@@ -4,6 +4,10 @@ PROJECT(gramods)
 LIST (APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake_modules")
 INCLUDE(GNUInstallDirs)
 
+# Platform fixes
+# Definition to force MSVC into standard complient aligned storage
+ADD_DEFINITIONS(-D_ENABLE_EXTENDED_ALIGNED_STORAGE)
+
 # Find folders in a folder
 MACRO(SUBDIRLIST result curdir)
   FILE(GLOB children RELATIVE ${curdir} ${curdir}/*)
