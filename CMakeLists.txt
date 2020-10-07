@@ -1,4 +1,6 @@
-CMAKE_MINIMUM_REQUIRED(VERSION 3.10.2)
+CMAKE_MINIMUM_REQUIRED(VERSION 3.14)
+CMAKE_POLICY(VERSION 3.14)
+
 PROJECT(gramods)
 
 LIST (APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake_modules")
@@ -23,6 +25,8 @@ ENDMACRO()
 # --- GENERAL OPTIONS ---
 
 OPTION(gramods_INSTALL_RESOURCES "Include module resources in INSTALL target." ON)
+
+OPTION(gramods_INSTALL_DEPENDENCIES "Attempt to install third party libraries together with libraries and executables." OFF)
 
 OPTION(gramods_BUILD_RESOURCES "Include building resources in the ALL target." ON)
 IF (gramods_BUILD_RESOURCES)

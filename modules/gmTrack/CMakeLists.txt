@@ -1,4 +1,5 @@
-CMAKE_MINIMUM_REQUIRED(VERSION 2.8.3)
+CMAKE_MINIMUM_REQUIRED(VERSION 3.14)
+CMAKE_POLICY(VERSION 3.14)
 
 
 SET (MODULE_INCLUDE_DIRS CACHE INTERNAL "The list of include folders to search for the track module.")
@@ -80,3 +81,6 @@ INSTALL(DIRECTORY resources/
   DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/gmTrack/resources)
 INSTALL(DIRECTORY config/
   DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/gmTrack/config)
+
+INCLUDE(InstallDependencies)
+install_library_dependencies($<TARGET_FILE:gmTrack>)
