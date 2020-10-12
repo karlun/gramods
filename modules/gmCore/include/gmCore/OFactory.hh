@@ -5,6 +5,7 @@
 #include <gmCore/config.hh>
 #include <gmCore/Object.hh>
 #include <gmCore/Stringify.hh>
+#include <gmCore/InvalidArgument.hh>
 
 #include <map>
 #include <string>
@@ -363,7 +364,7 @@ void OFactory::ParamSetter<Node, T>::setValueFromString
   ss >> std::setbase(0) >> val;
 
   if (!ss)
-    throw std::invalid_argument(GM_STR("cannot parse '" << s << "' as type " << typeid(T).name()));
+    throw gmCore::InvalidArgument(GM_STR("cannot parse '" << s << "' as type " << typeid(T).name()));
 
   (node->*method)(val);
 }
@@ -402,7 +403,7 @@ void OFactory::ParamSetter<Node, bool>::setValueFromString
   } else {
     std::stringstream ss;
     ss << "Cannot convert " << s << " to boolean";
-    throw std::invalid_argument(ss.str());
+    throw gmCore::InvalidArgument(ss.str());
   }
 }
 
@@ -414,7 +415,7 @@ void OFactory::PointerSetter<Node, T>::setPointer
   std::shared_ptr<T> _ptr = std::dynamic_pointer_cast<T>(ptr);
 
   if (!_ptr)
-    throw std::invalid_argument(GM_STR("cannot cast " << typeid(ptr).name() << " to type " << typeid(T).name()));
+    throw gmCore::InvalidArgument(GM_STR("cannot cast " << typeid(ptr).name() << " to type " << typeid(T).name()));
 
   (node->*method)(_ptr);
 }

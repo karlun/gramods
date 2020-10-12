@@ -73,7 +73,7 @@ void StereographicCoordinatesMapper::setMapperUniforms(GLuint program_id) {
 
 void StereographicCoordinatesMapper::setRadius(float R) {
   if (R < std::numeric_limits<float>::epsilon())
-    throw std::invalid_argument(GM_STR("Invalid sphere radius " << R << " for stereographic projection"));
+    throw gmCore::InvalidArgument(GM_STR("Invalid sphere radius " << R << " for stereographic projection"));
   _impl->radius = R;
 }
 
@@ -81,7 +81,7 @@ void StereographicCoordinatesMapper::setCoverageAngle(gmTypes::angle a) {
   double angle = 0.5 * (double) a;
   if (angle < std::numeric_limits<double>::epsilon() ||
       angle > GM_2_PI - std::numeric_limits<double>::epsilon())
-    throw std::invalid_argument(GM_STR("Invalid coverage angle " << a << " for stereographic projection"));
+    throw gmCore::InvalidArgument(GM_STR("Invalid coverage angle " << a << " for stereographic projection"));
   _impl->radius = (float)( (1.0 + std::cos(angle)) / (2.0 * std::sin(angle)) );
 }
 

@@ -252,7 +252,7 @@ void LinearAnaglyphsMultiplexer::Impl::prepare() {
 
 void LinearAnaglyphsMultiplexer::Impl::setupRendering(size_t eye) {
 
-  if (eye >= 2) throw std::invalid_argument("cannot render eye index higher than 1");
+  if (eye >= 2) throw gmCore::InvalidArgument("cannot render eye index higher than 1");
 
   if (!is_functional)
     return;

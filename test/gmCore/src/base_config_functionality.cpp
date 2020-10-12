@@ -5,6 +5,8 @@
 
 #ifdef gramods_ENABLE_TinyXML2
 
+#include <gmCore/InvalidArgument.hh>
+
 #include <memory>
 #include <string>
 #include <vector>
@@ -128,11 +130,11 @@ TEST(gmCoreBaseFunctionality, ConfigCommandLine) {
     char *argv[] = { arg0, arg1 };
     int argc = 2;
     EXPECT_THROW(gmCore::Configuration config(argc, argv),
-                 std::invalid_argument);
+                 gmCore::InvalidArgument);
 
     std::vector<std::string> errors;
     EXPECT_THROW(gmCore::Configuration config(argc, argv, &errors),
-                 std::invalid_argument);
+                 gmCore::InvalidArgument);
     EXPECT_TRUE(errors.empty());
   }
 
@@ -140,11 +142,11 @@ TEST(gmCoreBaseFunctionality, ConfigCommandLine) {
     char *argv[] = { arg0, arg1, arg2 };
     int argc = 3;
     EXPECT_THROW(gmCore::Configuration config(argc, argv),
-                 std::invalid_argument);
+                 gmCore::InvalidArgument);
 
     std::vector<std::string> errors;
     EXPECT_THROW(gmCore::Configuration config(argc, argv, &errors),
-                 std::invalid_argument);
+                 gmCore::InvalidArgument);
     EXPECT_TRUE(errors.empty());
   }
 
@@ -305,7 +307,7 @@ TEST(gmCoreBaseFunctionality, ParameterTypes) {
   )lang=xml";
   char *argv2[] = { arg0, arg2 };
   argc = 2;
-  EXPECT_THROW(gmCore::Configuration config(argc, argv2), std::invalid_argument);
+  EXPECT_THROW(gmCore::Configuration config(argc, argv2), gmCore::InvalidArgument);
 
   char arg3[] = R"lang=xml(
   <config>
@@ -316,7 +318,7 @@ TEST(gmCoreBaseFunctionality, ParameterTypes) {
   )lang=xml";
   char *argv3[] = { arg0, arg3 };
   argc = 2;
-  EXPECT_THROW(gmCore::Configuration config(argc, argv3), std::invalid_argument);
+  EXPECT_THROW(gmCore::Configuration config(argc, argv3), gmCore::InvalidArgument);
 
 }
 

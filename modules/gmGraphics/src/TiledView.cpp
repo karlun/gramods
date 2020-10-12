@@ -102,13 +102,13 @@ void TiledView::addTileLocation(gmTypes::size4 c) {
 void TiledView::addView(std::shared_ptr<View> view) {
 
   if (_impl->tile_locations.empty())
-    throw std::invalid_argument("tile location must be specified before adding view");
+    throw gmCore::InvalidArgument("tile location must be specified before adding view");
 
   auto tile_location = _impl->tile_locations.front();
   _impl->tile_locations.pop_front();
 
   if (tile_location[2] == 0 || tile_location[3] == 0)
-    throw std::invalid_argument("tile location must specify a non-zero col and row span");
+    throw gmCore::InvalidArgument("tile location must specify a non-zero col and row span");
 
   _impl->addView(tile_location, view);
 }

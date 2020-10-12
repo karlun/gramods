@@ -4,6 +4,7 @@
 #include <gmCore/CommandLineParser.hh>
 #include <gmCore/OStreamMessageSink.hh>
 #include <gmCore/Updateable.hh>
+#include <gmCore/RuntimeException.hh>
 
 #include <gmTypes/eigen.hh>
 #include <gmTrack/Controller.hh>
@@ -263,8 +264,8 @@ int main(int argc, char *argv[]) {
     try {
       config = std::make_unique<gmCore::Configuration>(argc, argv);
     }
-    catch (const std::exception &ex) {
-      std::cerr << "Error: Configuration error: " << ex.what() << std::endl;
+    catch (const gmCore::RuntimeException &e) {
+      std::cerr << "Error: Configuration error: " << e.what << std::endl;
     }
     catch (...) {
       std::cerr << "Error: Unknown internal error while creating Configuration instance." << std::endl;

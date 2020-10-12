@@ -44,7 +44,7 @@ void SideBySideMultiplexer::setupRendering(size_t eye) {
       break;
 
     default:
-      throw std::invalid_argument("cannot render eye index higher than 1");
+      throw gmCore::InvalidArgument("cannot render eye index higher than 1");
     }
 
     break;
@@ -64,7 +64,7 @@ void SideBySideMultiplexer::setupRendering(size_t eye) {
       break;
 
     default:
-      throw std::invalid_argument("cannot render eye index higher than 1");
+      throw gmCore::InvalidArgument("cannot render eye index higher than 1");
     }
 
     break;
@@ -84,7 +84,7 @@ void SideBySideMultiplexer::setupRendering(size_t eye) {
       break;
 
     default:
-      throw std::invalid_argument("cannot render eye index higher than 1");
+      throw gmCore::InvalidArgument("cannot render eye index higher than 1");
     }
 
     break;
@@ -100,7 +100,7 @@ void SideBySideMultiplexer::finalize() {
 
 void SideBySideMultiplexer::setPattern(int p) {
   if (p < 0 || 2 < p)
-    throw std::invalid_argument("invalid pattern");
+    throw gmCore::InvalidArgument("invalid pattern");
   _impl->pattern = p;
 }
 

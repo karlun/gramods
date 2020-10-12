@@ -118,7 +118,7 @@ void SdlWindow::initialize() {
   int display_count = SDL_GetNumVideoDisplays();
   if (display >= display_count) {
     GM_ERR("SdlWindow", "requested display " << display << " is not available (" << display_count << " available).");
-    throw std::invalid_argument(GM_STR("requested display " << display << " is not available (" << display_count << " available)."));
+    throw gmCore::InvalidArgument(GM_STR("requested display " << display << " is not available (" << display_count << " available)."));
   }
 
   SDL_Rect display_bounds;
