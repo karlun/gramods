@@ -7,9 +7,13 @@
 #ifdef gramods_ENABLE_FreeImage
 
 #include <gmCore/size.hh>
+#include <gmCore/path.hh>
+
 #include <gmCore/OFactory.hh>
 #include <gmCore/Updateable.hh>
+
 #include <gmGraphics/Texture.hh>
+
 #include <memory>
 
 BEGIN_NAMESPACE_GMGRAPHICS;
@@ -53,7 +57,7 @@ public:
 
      \gmXmlTag{gmGraphics,ImageTexture,file}
   */
-  void setFile(std::string file);
+  void setFile(std::filesystem::path file);
 
   /**
      Sets the range (inclusive) of frames to read. This assumes that

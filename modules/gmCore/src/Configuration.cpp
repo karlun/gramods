@@ -6,6 +6,7 @@
 #include <gmCore/OFactory.hh>
 #include <gmCore/CommandLineParser.hh>
 #include <gmCore/InvalidArgument.hh>
+#include <gmCore/FileResolver.hh>
 
 #include <stdlib.h>
 
@@ -89,9 +90,12 @@ Configuration::Configuration(int &argc, char *argv[],
 
   for (auto config : configs) {
 
+    std::filesystem::path file =
+      FileResolver::getDefault()->resolve(config);
+
     tinyxml2::XMLDocument doc;
 
-    int xml_err = doc.LoadFile(config.c_str());
+    int xml_err = doc.LoadFile(file.c_str());
     if (xml_err != 0) {
       GM_ERR("Configuration", doc.ErrorStr());
       throw gmCore::InvalidArgument(doc.ErrorStr());

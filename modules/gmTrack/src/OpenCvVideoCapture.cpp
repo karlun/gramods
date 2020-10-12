@@ -8,7 +8,7 @@
 BEGIN_NAMESPACE_GMTRACK;
 
 GM_OFI_DEFINE(OpenCvVideoCapture);
-GM_OFI_PARAM(OpenCvVideoCapture, videoFile, std::string, OpenCvVideoCapture::setVideoFile);
+GM_OFI_PARAM(OpenCvVideoCapture, videoFile, std::filesystem::path, OpenCvVideoCapture::setVideoFile);
 GM_OFI_PARAM(OpenCvVideoCapture, cameraId, int, OpenCvVideoCapture::setCameraId);
 GM_OFI_PARAM(OpenCvVideoCapture, cameraWidth, int, OpenCvVideoCapture::setCameraWidth);
 GM_OFI_PARAM(OpenCvVideoCapture, cameraHeight, int, OpenCvVideoCapture::setCameraHeight);
@@ -22,11 +22,11 @@ struct OpenCvVideoCapture::Impl {
   bool retrieve(cv::Mat &image);
 
   void openCamera(int id);
-  void openVideo(std::string file);
+  void openVideo(std::filesystem::path file);
 
   static cv::VideoCaptureAPIs backendFromString(std::string api);
 
-  std::string video_file;
+  std::filesystem::path video_file;
   int camera_id = 0;
 
   int width = 0;
@@ -48,7 +48,7 @@ OpenCvVideoCapture::OpenCvVideoCapture()
   : Updateable(20),
     _impl(std::make_unique<Impl>()) {}
 
-void OpenCvVideoCapture::setVideoFile(std::string file) {
+void OpenCvVideoCapture::setVideoFile(std::filesystem::path file) {
   _impl->use_camera = false;
   _impl->video_file = file;
   _impl->initialized = false;
@@ -147,7 +147,7 @@ cv::VideoCaptureAPIs OpenCvVideoCapture::Impl::backendFromString(std::string api
 
 }
 
-void OpenCvVideoCapture::Impl::openVideo(std::string file) {
+void OpenCvVideoCapture::Impl::openVideo(std::filesystem::path file) {
 
   if (video_capture.open(file, backend)){
 

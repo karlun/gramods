@@ -1,6 +1,6 @@
 <config>
 
-  <OStreamMessageSink stream="err" useAnsiColor="1" level="1"/>
+  <OStreamMessageSink useAnsiColor="1" level="1"/>
   <!--LogFileMessageSink logFilePath="gramods.log" append="false"/-->
 
   <ImportLibrary library="gmGraphics"/>
@@ -22,7 +22,7 @@
       <AngularFisheyeCoordinatesMapper
           coverageAngle="3.1416"/>
       <ImageTexture
-          file="share/gmGraphics/resources/fulldome180-coordinates.png"/>
+          file="urn:gramods:gmGraphics/resources/fulldome180-coordinates.png"/>
     </SphereRenderer>
 
     <Viewpoint

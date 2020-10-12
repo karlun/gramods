@@ -94,6 +94,8 @@ INCLUDE(CPack)
 
 INSTALL(DIRECTORY config/
   DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/gramods/config)
+INSTALL(FILES cmake_modules/gramods.urn
+  DESTINATION bin)
 
 # --- TESTING ---
 

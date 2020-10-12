@@ -44,7 +44,7 @@ public:
 
      \gmXmlTag{gmGraphics,SaveView,file}
   */
-  void setFile(std::string file);
+  void setFile(std::filesystem::path file);
 
   /**
      Sets the resolution to render and save at, regarless of

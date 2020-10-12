@@ -26,7 +26,6 @@ struct ViewTexture::Impl {
 
   bool use_alpha = false;
   bool use_float = false;
-  std::string file_template = "ViewTexture.png";
 
   static const std::string fragment_code;
   gmCore::size2 resolution = { 1024, 1024 };

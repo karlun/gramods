@@ -6,15 +6,15 @@
 BEGIN_NAMESPACE_GMCORE;
 
 GM_OFI_DEFINE_SUB(LogFileMessageSink, MessageSink);
-GM_OFI_PARAM(LogFileMessageSink, logFilePath, std::string, LogFileMessageSink::setLogFilePath);
+GM_OFI_PARAM(LogFileMessageSink, logFilePath, std::filesystem::path, LogFileMessageSink::setLogFilePath);
 GM_OFI_PARAM(LogFileMessageSink, append, bool, LogFileMessageSink::setAppend);
 
 LogFileMessageSink::LogFileMessageSink()
   : append(false) {}
 
-void LogFileMessageSink::setLogFilePath(std::string name) {
+void LogFileMessageSink::setLogFilePath(std::filesystem::path path) {
   std::lock_guard<std::mutex> guard(lock);
-  logfile_path = name;
+  logfile_path = path;
   logfile.close();
 }
 
@@ -25,7 +25,7 @@ void LogFileMessageSink::setAppend(bool on) {
 
 void LogFileMessageSink::output(Message msg) {
   std::lock_guard<std::mutex> guard(lock);
-  if (logfile_path == "")
+  if (logfile_path.empty())
     return;
 
   if (!logfile) {

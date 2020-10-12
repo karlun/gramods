@@ -12,7 +12,7 @@
 BEGIN_NAMESPACE_GMTRACK;
 
 GM_OFI_DEFINE(ArucoPoseTracker);
-GM_OFI_PARAM(ArucoPoseTracker, cameraConfigurationFile, std::string, ArucoPoseTracker::setCameraConfigurationFile);
+GM_OFI_PARAM(ArucoPoseTracker, cameraConfigurationFile, std::filesystem::path, ArucoPoseTracker::setCameraConfigurationFile);
 GM_OFI_PARAM(ArucoPoseTracker, inverted, bool, ArucoPoseTracker::setInverted);
 GM_OFI_PARAM(ArucoPoseTracker, refindMarkers, bool, ArucoPoseTracker::setRefindMarkers);
 GM_OFI_POINTER(ArucoPoseTracker, arucoBoard, gmTrack::ArucoBoard, ArucoPoseTracker::addArucoBoard);
@@ -24,7 +24,7 @@ struct ArucoPoseTracker::Impl {
   void update(gmCore::Updateable::clock::time_point t);
   bool getPose(std::map<int, PoseSample> &p);
 
-  static bool readCameraParameters(std::string filename,
+  static bool readCameraParameters(std::filesystem::path filename,
                                    cv::Mat &camMatrix, cv::Mat &distCoeffs,
                                    int &width, int &height);
 
@@ -219,7 +219,7 @@ bool ArucoPoseTracker::Impl::getPose(std::map<int, PoseSample> &p) {
   return true;
 }
 
-void ArucoPoseTracker::setCameraConfigurationFile(std::string file) {
+void ArucoPoseTracker::setCameraConfigurationFile(std::filesystem::path file) {
   if (!Impl::readCameraParameters(file,
                                   _impl->camMatrix, _impl->distCoeffs,
                                   _impl->camera_width, _impl->camera_height))
@@ -227,7 +227,7 @@ void ArucoPoseTracker::setCameraConfigurationFile(std::string file) {
 }
 
 bool ArucoPoseTracker::Impl::readCameraParameters
-(std::string filename, cv::Mat &camMatrix, cv::Mat &distCoeffs, int &width, int &height) {
+(std::filesystem::path filename, cv::Mat &camMatrix, cv::Mat &distCoeffs, int &width, int &height) {
 
   cv::FileStorage fs(filename, cv::FileStorage::READ);
   if(!fs.isOpened()) return false;
