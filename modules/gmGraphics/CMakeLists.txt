@@ -103,7 +103,7 @@ IF(Inkscape_FOUND)
   ENDFOREACH()
 
   add_custom_target(svg-resources
-    ${RESOURCE_ALL}
+    ${gramods_RESOURCE_ALL}
     DEPENDS ${SVGPNG_RESOURCE_TARGETS})
   IF (gramods_INSTALL_RESOURCES)
     INSTALL(FILES ${SVGPNG_RESOURCE_TARGETS}
@@ -135,7 +135,7 @@ IF(GimpConsole_FOUND)
   ENDFOREACH()
 
   add_custom_target(python-fu-resources
-    ${RESOURCE_ALL}
+    ${gramods_RESOURCE_ALL}
     DEPENDS ${PYPNG_RESOURCE_TARGETS})
   IF (gramods_INSTALL_RESOURCES)
     INSTALL(FILES ${PYPNG_RESOURCE_TARGETS}

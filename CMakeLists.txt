@@ -26,9 +26,9 @@ OPTION(gramods_INSTALL_RESOURCES "Include module resources in INSTALL target." O
 
 OPTION(gramods_BUILD_RESOURCES "Include building resources in the ALL target." ON)
 IF (gramods_BUILD_RESOURCES)
-  SET(RESOURCE_ALL "ALL" CACHE INTERNAL "The keyword 'ALL' for all resource targets")
+  SET(gramods_RESOURCE_ALL "ALL" CACHE INTERNAL "The keyword 'ALL' for all resource targets")
 ELSE()
-  SET(RESOURCE_ALL "" CACHE INTERNAL "The keyword 'ALL' omitted for all resource targets")
+  SET(gramods_RESOURCE_ALL "" CACHE INTERNAL "The keyword 'ALL' omitted for all resource targets")
 ENDIF()
 
 # --- HANDLE MODULES ---
@@ -130,9 +130,9 @@ IF (DOXYGEN_FOUND)
 
   OPTION(gramods_BUILD_DOCUMENTATION "Include building documentation in the ALL target." ON)
   IF (gramods_BUILD_DOCUMENTATION)
-    SET(DOCUMENTATION_ALL "ALL" CACHE INTERNAL "The keyword 'ALL' for all documentation targets")
+    SET(gramods_DOCS_ALL "ALL" CACHE INTERNAL "The keyword 'ALL' for all documentation targets")
   ELSE()
-    SET(DOCUMENTATION_ALL "" CACHE INTERNAL "The keyword 'ALL' omitted for all documentation targets")
+    SET(gramods_DOCS_ALL "" CACHE INTERNAL "The keyword 'ALL' omitted for all documentation targets")
   ENDIF()
 
   CONFIGURE_FILE (
