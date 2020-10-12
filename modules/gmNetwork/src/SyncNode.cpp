@@ -299,7 +299,7 @@ void SyncNode::Impl::split_address_service
       if (comb[0] != '[')
         throw gmCore::InvalidArgument("Incorrectly formatted IPv6 address");
 
-      host = comb.substr(1, sep_pos);
+      host = comb.substr(1, sep_pos - 1);
       port = comb.substr(sep_pos + 2);
 
     } else {

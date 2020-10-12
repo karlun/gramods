@@ -108,7 +108,7 @@ IF(Inkscape_FOUND)
     DEPENDS ${SVGPNG_RESOURCE_TARGETS})
   IF (gramods_INSTALL_RESOURCES)
     INSTALL(FILES ${SVGPNG_RESOURCE_TARGETS}
-      DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/gmGraphics/resources)
+      DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/gramods/gmGraphics/resources)
   ENDIF()
 
   MESSAGE (STATUS "Added 'svg-resources' target for converting SVG resources to PNG.")
@@ -140,7 +140,7 @@ IF(GimpConsole_FOUND)
     DEPENDS ${PYPNG_RESOURCE_TARGETS})
   IF (gramods_INSTALL_RESOURCES)
     INSTALL(FILES ${PYPNG_RESOURCE_TARGETS}
-      DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/gmGraphics/resources)
+      DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/gramods/gmGraphics/resources)
   ENDIF()
 
   MESSAGE (STATUS "Added 'python-fu-resources' target for creating PNG with gimp python-fu.")
@@ -174,7 +174,7 @@ INSTALL(TARGETS gmGraphics
 INSTALL(DIRECTORY include/
   DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
 INSTALL(DIRECTORY config/
-  DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/gmGraphics/config)
+  DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/gramods/gmGraphics/config)
 
 INCLUDE(InstallDependencies)
 install_library_dependencies($<TARGET_FILE:gmGraphics>)
