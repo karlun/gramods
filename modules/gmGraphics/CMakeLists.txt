@@ -1,4 +1,5 @@
-CMAKE_MINIMUM_REQUIRED(VERSION 2.8.3)
+CMAKE_MINIMUM_REQUIRED(VERSION 3.14)
+CMAKE_POLICY(VERSION 3.14)
 
 
 SET (MODULE_INCLUDE_DIRS CACHE INTERNAL "The list of include folders to search for the graphics module.")
@@ -103,7 +104,7 @@ IF(Inkscape_FOUND)
   ENDFOREACH()
 
   add_custom_target(svg-resources
-    ${RESOURCE_ALL}
+    ${gramods_RESOURCE_ALL}
     DEPENDS ${SVGPNG_RESOURCE_TARGETS})
   IF (gramods_INSTALL_RESOURCES)
     INSTALL(FILES ${SVGPNG_RESOURCE_TARGETS}
@@ -135,7 +136,7 @@ IF(GimpConsole_FOUND)
   ENDFOREACH()
 
   add_custom_target(python-fu-resources
-    ${RESOURCE_ALL}
+    ${gramods_RESOURCE_ALL}
     DEPENDS ${PYPNG_RESOURCE_TARGETS})
   IF (gramods_INSTALL_RESOURCES)
     INSTALL(FILES ${PYPNG_RESOURCE_TARGETS}
@@ -174,3 +175,6 @@ INSTALL(DIRECTORY include/
   DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
 INSTALL(DIRECTORY config/
   DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/gmGraphics/config)
+
+INCLUDE(InstallDependencies)
+install_library_dependencies($<TARGET_FILE:gmGraphics>)

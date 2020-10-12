@@ -38,21 +38,26 @@ The top level CMakeLists.txt file will automatically make recursive inclusion of
 
 # Build and Install
 
-The Gramods modules are designed to be weakly dependent on each other and on third party dependencies, even though they makes heavy use of third party dependencies for their functionality. Therefore, some modules will not be build without their core dependencies, while others will be built with limited functionality.
+The Gramods modules are designed to be weakly dependent on each other and on third party dependencies, even though they makes heavy use of third party dependencies for their functionality. Therefore, some modules will not be built without their core dependencies, while others will be built with limited functionality.
+
+## Dependencies
 
 Use CMake to find dependencies and to set up the build environment. Every modules, app and dependency is activated when found, however dependencies can be individually deactivated through CMake by setting *gramods_ENABLE_* to false in CMake, and modules and apps by setting *gramods_INCLUDE_* to false.
 
 Observe that CMake cannot automatically deactivate dependent modules when a modules is made unavailable, either by a missing dependency or by deactivation, so this will result in a build error.
 
-Typical build and installation:
+Most dependencies can be automatically installed and handled, with *vcpkg* through `vcpkg install asio eigen3 freeimage glew sdl2 tclap tinyxml2`, or with *apt* through `apt install libasio-dev libeigen3-dev libfreeimage-dev libglew-dev libsdl2-dev libtclap-dev libtinyxml2-dev`. When using vcpkg, do not forget to set `VCPKG_DEFAULT_TRIPLET=x64-windows` or use command line argument `--triplet x64-windows` (see [vcpkg issue #12357](https://github.com/microsoft/vcpkg/issues/12357)).
+
+## Standard Procedure
+
+After installing the necessary dependencies, a typical build and install would look something like this:
 
 ~~~~~~~~~~~~~{.sh}
 cd gramods
 mkdir build
 cd build
 cmake ..
-make
-make install
+cmake --build . --target install
 ~~~~~~~~~~~~~
 
 
@@ -64,7 +69,7 @@ The Gramods package includes a number of apps, for the purpose of testing or dem
 
 The `gm-load` app loads one or more configuration files and executes them by calling `Updateable::updateAll` and by calling `Window` instances if such are defined in the configuration.
 
-This app will not be build if these required dependencies are not configured for:
+This app will not be built if these required dependencies are not configured for:
 
  - gmCore
  - gmGraphics
@@ -91,7 +96,7 @@ The estimated registration data are written to a specified output file, `output.
 
 `%M`, `%R` and `%Q` can also be replaced with `%Mi`, `%Ri` and `%Qi,` respectively, for use of the inverse transform instead of the forward registration transform. To enter a literal `%` use `%%`.
 
-This app will not be build if these required dependencies are not configured for:
+This app will not be built if these required dependencies are not configured for:
 
  - gmCore
  - gmTrack

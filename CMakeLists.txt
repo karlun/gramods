@@ -1,4 +1,6 @@
-CMAKE_MINIMUM_REQUIRED(VERSION 3.10.2)
+CMAKE_MINIMUM_REQUIRED(VERSION 3.14)
+CMAKE_POLICY(VERSION 3.14)
+
 PROJECT(gramods)
 
 LIST (APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake_modules")
@@ -24,11 +26,13 @@ ENDMACRO()
 
 OPTION(gramods_INSTALL_RESOURCES "Include module resources in INSTALL target." ON)
 
+OPTION(gramods_INSTALL_DEPENDENCIES "Attempt to install third party libraries together with libraries and executables." OFF)
+
 OPTION(gramods_BUILD_RESOURCES "Include building resources in the ALL target." ON)
 IF (gramods_BUILD_RESOURCES)
-  SET(RESOURCE_ALL "ALL" CACHE INTERNAL "The keyword 'ALL' for all resource targets")
+  SET(gramods_RESOURCE_ALL "ALL" CACHE INTERNAL "The keyword 'ALL' for all resource targets")
 ELSE()
-  SET(RESOURCE_ALL "" CACHE INTERNAL "The keyword 'ALL' omitted for all resource targets")
+  SET(gramods_RESOURCE_ALL "" CACHE INTERNAL "The keyword 'ALL' omitted for all resource targets")
 ENDIF()
 
 # --- HANDLE MODULES ---
@@ -130,9 +134,15 @@ IF (DOXYGEN_FOUND)
 
   OPTION(gramods_BUILD_DOCUMENTATION "Include building documentation in the ALL target." ON)
   IF (gramods_BUILD_DOCUMENTATION)
-    SET(DOCUMENTATION_ALL "ALL" CACHE INTERNAL "The keyword 'ALL' for all documentation targets")
+    SET(gramods_DOCS_ALL "ALL" CACHE INTERNAL "The keyword 'ALL' for all documentation targets")
   ELSE()
-    SET(DOCUMENTATION_ALL "" CACHE INTERNAL "The keyword 'ALL' omitted for all documentation targets")
+    SET(gramods_DOCS_ALL "" CACHE INTERNAL "The keyword 'ALL' omitted for all documentation targets")
+  ENDIF()
+
+  IF (PlantUML_JARFILE)
+    SET(gramods_PlantUML_JARFILE "${PlantUML_JARFILE}")
+  ELSE()
+    SET(gramods_PlantUML_JARFILE "")
   ENDIF()
 
   CONFIGURE_FILE (

@@ -1,4 +1,5 @@
-CMAKE_MINIMUM_REQUIRED(VERSION 2.8.3)
+CMAKE_MINIMUM_REQUIRED(VERSION 3.14)
+CMAKE_POLICY(VERSION 3.14)
 
 
 SET (APP_INCLUDE_DIRS CACHE INTERNAL "The list of include folders to search for the app.")
@@ -44,3 +45,6 @@ TARGET_INCLUDE_DIRECTORIES(gm-demo-end-fit PUBLIC ${APP_INCLUDE_DIRS})
 TARGET_LINK_LIBRARIES(gm-demo-end-fit ${APP_LIBS})
 
 SET_PROPERTY(TARGET gm-demo-end-fit PROPERTY CXX_STANDARD 14)
+
+INCLUDE(InstallDependencies)
+install_executable_dependencies($<TARGET_FILE:gm-demo-end-fit>)

@@ -1,4 +1,5 @@
-CMAKE_MINIMUM_REQUIRED(VERSION 2.8.3)
+CMAKE_MINIMUM_REQUIRED(VERSION 3.14)
+CMAKE_POLICY(VERSION 3.14)
 
 
 SET (APP_INCLUDE_DIRS CACHE INTERNAL "The list of include folders to search for the app.")
@@ -57,3 +58,6 @@ TARGET_INCLUDE_DIRECTORIES(gm-demo-multitouch PUBLIC ${APP_INCLUDE_DIRS})
 TARGET_LINK_LIBRARIES(gm-demo-multitouch ${APP_LIBS})
 
 SET_PROPERTY(TARGET gm-demo-multitouch PROPERTY CXX_STANDARD 14)
+
+INCLUDE(InstallDependencies)
+install_executable_dependencies($<TARGET_FILE:gm-demo-multitouch>)
