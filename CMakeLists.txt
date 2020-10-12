@@ -135,6 +135,12 @@ IF (DOXYGEN_FOUND)
     SET(gramods_DOCS_ALL "" CACHE INTERNAL "The keyword 'ALL' omitted for all documentation targets")
   ENDIF()
 
+  IF (PlantUML_JARFILE)
+    SET(gramods_PlantUML_JARFILE "${PlantUML_JARFILE}")
+  ELSE()
+    SET(gramods_PlantUML_JARFILE "")
+  ENDIF()
+
   CONFIGURE_FILE (
     ${CMAKE_CURRENT_SOURCE_DIR}/cmake_modules/Doxyfile.cmake
     ${CMAKE_CURRENT_BINARY_DIR}/Doxyfile @ONLY)
