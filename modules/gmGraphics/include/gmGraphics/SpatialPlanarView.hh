@@ -4,9 +4,9 @@
 
 #include <gmGraphics/MultiscopicView.hh>
 
-#include <gmTypes/float.hh>
-#include <gmTypes/eigen.hh>
-#include <gmTypes/angle.hh>
+#include <gmCore/float.hh>
+#include <gmCore/eigen.hh>
+#include <gmCore/angle.hh>
 
 BEGIN_NAMESPACE_GMGRAPHICS;
 
@@ -78,9 +78,9 @@ public:
 
      \gmXmlTag{gmGraphics,SpatialPlanarView,clipAngles}
 
-     \sa operator>>(std::istream &, gmTypes::angle &)
+     \sa operator>>(std::istream &, gmCore::angle &)
   */
-  void setClipAngles(gmTypes::angle4 a);
+  void setClipAngles(gmCore::angle4 a);
 
   /**
      Set the orientation of a *virtual* frustum. Default is zero

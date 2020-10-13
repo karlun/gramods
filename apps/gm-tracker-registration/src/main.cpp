@@ -6,7 +6,7 @@
 #include <gmCore/Updateable.hh>
 #include <gmCore/RuntimeException.hh>
 
-#include <gmTypes/eigen.hh>
+#include <gmCore/eigen.hh>
 #include <gmTrack/Controller.hh>
 #include <gmTrack/PoseRegistrationEstimator.hh>
 

@@ -4,9 +4,9 @@
 
 #include <gmGraphics/RendererDispatcher.hh>
 
-#include <gmTypes/float.hh>
-#include <gmTypes/int.hh>
-#include <gmTypes/size.hh>
+#include <gmCore/float.hh>
+#include <gmCore/int.hh>
+#include <gmCore/size.hh>
 
 #include <limits>
 
@@ -76,21 +76,21 @@ public:
 
      \gmXmlTag{gmGraphics,Window,size}
   */
-  virtual void setSize(gmTypes::size2 s) { size = s; }
+  virtual void setSize(gmCore::size2 s) { size = s; }
 
   /**
      Sets the position of the window.
 
      \gmXmlTag{gmGraphics,Window,position}
   */
-  virtual void setPosition(gmTypes::int2 p) { position = p; }
+  virtual void setPosition(gmCore::int2 p) { position = p; }
 
   /**
      Returns the size of the drawable canvas of this window, in
      pixels. This should be overloaded by sub classes to also support
      run-time changes.
   */
-  virtual gmTypes::size2 getSize() { return size; }
+  virtual gmCore::size2 getSize() { return size; }
 
   /**
      Sets the title of the windows. This should be overloaded by sub
@@ -105,7 +105,7 @@ public:
 
      \gmXmlTag{gmGraphics,Window,backgroundColor}
   */
-  virtual void setBackgroundColor(gmTypes::float4 c) {
+  virtual void setBackgroundColor(gmCore::float4 c) {
     background_color = c;
   }
 
@@ -153,10 +153,10 @@ protected:
   bool fullscreen = false;
   size_t display = 0;
   std::string title = "untitled gramods window";
-  gmTypes::size2 size = {640, 480};
-  gmTypes::int2 position = { (std::numeric_limits<int>::max)(),
+  gmCore::size2 size = {640, 480};
+  gmCore::int2 position = { (std::numeric_limits<int>::max)(),
                              (std::numeric_limits<int>::max)() };
-  gmTypes::float4 background_color = {0.f, 0.f, 0.f, 0.f};
+  gmCore::float4 background_color = {0.f, 0.f, 0.f, 0.f};
 };
 
 END_NAMESPACE_GMGRAPHICS;

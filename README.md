@@ -16,7 +16,6 @@
      4. gmGraphics
      5. gmTouch
      6. gmMisc
-     7. gmTypes
 
 
 # Introduction
@@ -112,27 +111,26 @@ component gmCore
 component gmNetwork
 component gmTrack
 component gmGraphics
-component gmTypes
 component gmMisc
 component gmTouch
 gmCore <-- gmNetwork
 gmCore <- gmGraphics
 gmCore <-- gmTrack
-gmTypes <- gmTrack
 gmCore <-- gmTouch
 gmMisc <-- gmTouch
 gmTrack <-- gmGraphics
-gmTypes <-- gmGraphics
-gmCore <- gmTypes
 @enduml
 
 
 ## gmCore
 
-The gmCore module specifies utilities for loading other modules and configure them based on configuration files, for handling library and application error, warning and debugging output, and possibly also for initialization of third party libraries that may be used by other modules.
+The gmCore module specifies types and utilities for loading other modules and configure them based on configuration files, for handling library and application error, warning and debugging output, and possibly also for initialization of third party libraries that may be used by other modules.
+
+The module also provides types and operators for use in the other modules. In particular, it defines stream operator for advanced parsing of types such as Eigen::Quaternionf for orientation, and float and size_t array types.
 
 Optional dependencies:
 
+ - Eigen3 (at least version 3.3), for types and operators for vectors, quaternion and matrix types
  - TinyXML2, for XML-based configuration
  - SDL2, for initialization of the SDL2 library
 
@@ -185,7 +183,6 @@ The gmTrack module provides primarily pose tracking clients, servers and filters
 Required dependencies:
 
  - gmCore
- - gmTypes
 
  - Eigen3
 
@@ -223,7 +220,6 @@ The gmGraphics module provides nodes primarily for graphics rendering pipeline d
 Required dependencies:
 
  - gmCore
- - gmTypes
  - gmTrack
 
  - Eigen3 (at least version 3.3)
@@ -310,12 +306,3 @@ The miscellaneous module (*misc*) contains functionality that cannot be categori
 Optional dependencies:
 
  - Eigen3 (at least version 3.3), for end-fitting estimators (EFFOAW and EFHOAW)
-
-
-## gmTypes
-
-The gmTypes modules provides types and operators for use in the other modules. In particular, this module defines stream operator for advanced parsing of types such as Eigen::Quaternionf for orientation, and float and size_t array types.
-
-Optional dependencies:
-
- - Eigen3 (at least version 3.3), for Eigen types stream operators

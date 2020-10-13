@@ -3,7 +3,7 @@
 #define GRAMODS_GRAPHICS_CHROMAKEYVIEW
 
 #include <gmGraphics/View.hh>
-#include <gmTypes/float.hh>
+#include <gmCore/float.hh>
 
 BEGIN_NAMESPACE_GMGRAPHICS;
 
@@ -38,7 +38,7 @@ public:
 
      \gmXmlTag{gmGraphics,ChromaKeyView,key}
   */
-  void setKey(gmTypes::float3 key);
+  void setKey(gmCore::float3 key);
 
   /**
      Set the minimum and maximum tolerances against the key when
@@ -47,7 +47,7 @@ public:
 
      \gmXmlTag{gmGraphics,ChromaKeyView,tolerance}
   */
-  void setTolerance(gmTypes::float2 tol);
+  void setTolerance(gmCore::float2 tol);
 
   /**
      Removes all renderers and, if recursive is set to true, also

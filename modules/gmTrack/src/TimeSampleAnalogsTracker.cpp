@@ -10,7 +10,7 @@ BEGIN_NAMESPACE_GMTRACK;
 
 GM_OFI_DEFINE(TimeSampleAnalogsTracker);
 GM_OFI_PARAM(TimeSampleAnalogsTracker, time, double, TimeSampleAnalogsTracker::addTime);
-GM_OFI_PARAM(TimeSampleAnalogsTracker, analogs, gmTypes::float3, TimeSampleAnalogsTracker::addAnalogs);
+GM_OFI_PARAM(TimeSampleAnalogsTracker, analogs, gmCore::float3, TimeSampleAnalogsTracker::addAnalogs);
 
 
 struct TimeSampleAnalogsTracker::Impl {
@@ -18,13 +18,13 @@ struct TimeSampleAnalogsTracker::Impl {
   Impl();
 
   void addTime(double t);
-  void addAnalogs(gmTypes::float3 a);
+  void addAnalogs(gmCore::float3 a);
 
   bool getAnalogs(AnalogsSample &a);
 
   std::vector<double> time;
   size_t sample_idx = 0;
-  std::vector<gmTypes::float3> states;
+  std::vector<gmCore::float3> states;
 
   std::chrono::steady_clock::time_point start_time;
 };
@@ -40,7 +40,7 @@ TimeSampleAnalogsTracker::Impl::Impl()
 
 void TimeSampleAnalogsTracker::Impl::addTime(double t) { time.push_back(t); }
 
-void TimeSampleAnalogsTracker::Impl::addAnalogs(gmTypes::float3 a) { states.push_back(a); }
+void TimeSampleAnalogsTracker::Impl::addAnalogs(gmCore::float3 a) { states.push_back(a); }
 
 bool TimeSampleAnalogsTracker::Impl::getAnalogs(AnalogsSample &b) {
 
@@ -99,7 +99,7 @@ void TimeSampleAnalogsTracker::addTime(double t) {
   _impl->addTime(t);
 }
 
-void TimeSampleAnalogsTracker::addAnalogs(gmTypes::float3 a) {
+void TimeSampleAnalogsTracker::addAnalogs(gmCore::float3 a) {
   _impl->addAnalogs(a);
 }
 

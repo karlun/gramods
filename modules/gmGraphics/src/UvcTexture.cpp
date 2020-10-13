@@ -21,7 +21,7 @@ GM_OFI_DEFINE(UvcTexture);
 GM_OFI_PARAM(UvcTexture, vendor, int, UvcTexture::setVendor);
 GM_OFI_PARAM(UvcTexture, product, int, UvcTexture::setProduct);
 GM_OFI_PARAM(UvcTexture, serial, std::string, UvcTexture::setSerial);
-GM_OFI_PARAM(UvcTexture, resolution, gmTypes::size2, UvcTexture::setResolution);
+GM_OFI_PARAM(UvcTexture, resolution, gmCore::size2, UvcTexture::setResolution);
 GM_OFI_PARAM(UvcTexture, framerate, int, UvcTexture::setFramerate);
 GM_OFI_PARAM(UvcTexture, format, std::string, UvcTexture::setFormat);
 GM_OFI_PARAM(UvcTexture, convertToRgb, bool, UvcTexture::setConvertToRbg);
@@ -54,7 +54,7 @@ struct UvcTexture::Impl {
   uvc_device_handle_t *device_handle = nullptr;
   uvc_stream_ctrl_t stream_control;
 
-  gmTypes::size2 resolution = { 640, 480 };
+  gmCore::size2 resolution = { 640, 480 };
   int framerate = 30;
   uvc_frame_format format = formatFromString("any");
   bool convert_to_rgb = true;
@@ -324,7 +324,7 @@ void UvcTexture::Impl::closeAll() {
   texture_id = 0;
 }
 
-void UvcTexture::setResolution(gmTypes::size2 res) {
+void UvcTexture::setResolution(gmCore::size2 res) {
   _impl->resolution = res;
 }
 

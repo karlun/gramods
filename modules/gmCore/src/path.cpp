@@ -1,5 +1,5 @@
 
-#include <gmTypes/path.hh>
+#include <gmCore/path.hh>
 
 #include <gmCore/Console.hh>
 #include <gmCore/FileResolver.hh>

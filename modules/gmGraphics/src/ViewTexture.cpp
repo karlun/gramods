@@ -17,7 +17,7 @@
 BEGIN_NAMESPACE_GMGRAPHICS;
 
 GM_OFI_DEFINE_SUB(ViewTexture, View);
-GM_OFI_PARAM(ViewTexture, resolution, gmTypes::size2, ViewTexture::setResolution);
+GM_OFI_PARAM(ViewTexture, resolution, gmCore::size2, ViewTexture::setResolution);
 GM_OFI_PARAM(ViewTexture, useAlpha, bool, ViewTexture::setUseAlpha);
 GM_OFI_PARAM(ViewTexture, useFloat, bool, ViewTexture::setUseFloat);
 GM_OFI_POINTER(ViewTexture, view, gmGraphics::View, ViewTexture::addView);
@@ -29,7 +29,7 @@ struct ViewTexture::Impl {
   std::string file_template = "ViewTexture.png";
 
   static const std::string fragment_code;
-  gmTypes::size2 resolution = { 1024, 1024 };
+  gmCore::size2 resolution = { 1024, 1024 };
 
   OffscreenRenderTargets render_target;
   RasterProcessor raster_processor;
@@ -146,7 +146,7 @@ void ViewTexture::Impl::update(ViewSettings settings) {
   render_target.pop();
 }
 
-void ViewTexture::setResolution(gmTypes::size2 res) {
+void ViewTexture::setResolution(gmCore::size2 res) {
   _impl->resolution = res;
 }
 

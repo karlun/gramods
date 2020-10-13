@@ -6,10 +6,10 @@
 BEGIN_NAMESPACE_GMGRAPHICS;
 
 GM_OFI_DEFINE(AngularFisheyeCoordinatesMapper);
-GM_OFI_PARAM(AngularFisheyeCoordinatesMapper, coverageAngle, gmTypes::angle, AngularFisheyeCoordinatesMapper::setCoverageAngle);
+GM_OFI_PARAM(AngularFisheyeCoordinatesMapper, coverageAngle, gmCore::angle, AngularFisheyeCoordinatesMapper::setCoverageAngle);
 
 struct AngularFisheyeCoordinatesMapper::Impl {
-  gmTypes::angle coverage_angle = GM_2_PI;
+  gmCore::angle coverage_angle = GM_2_PI;
 };
 
 AngularFisheyeCoordinatesMapper::AngularFisheyeCoordinatesMapper()
@@ -55,7 +55,7 @@ void AngularFisheyeCoordinatesMapper::setMapperUniforms(GLuint program_id) {
   glUniform1f(glGetUniformLocation(program_id, "coverageAngle"), _impl->coverage_angle);
 }
 
-void AngularFisheyeCoordinatesMapper::setCoverageAngle(gmTypes::angle a) {
+void AngularFisheyeCoordinatesMapper::setCoverageAngle(gmCore::angle a) {
   _impl->coverage_angle = a;
 }
 

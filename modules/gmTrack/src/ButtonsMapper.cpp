@@ -8,7 +8,7 @@
 BEGIN_NAMESPACE_GMTRACK;
 
 GM_OFI_DEFINE(ButtonsMapper);
-GM_OFI_PARAM(ButtonsMapper, mapping, gmTypes::size2, ButtonsMapper::addMapping);
+GM_OFI_PARAM(ButtonsMapper, mapping, gmCore::size2, ButtonsMapper::addMapping);
 GM_OFI_PARAM(ButtonsMapper, mainButton, int, ButtonsMapper::setMainButton);
 GM_OFI_PARAM(ButtonsMapper, secondaryButton, int, ButtonsMapper::setSecondaryButton);
 GM_OFI_PARAM(ButtonsMapper, menuButton, int, ButtonsMapper::setMenuButton);
@@ -22,7 +22,7 @@ void ButtonsMapper::setButtonsTracker(std::shared_ptr<ButtonsTracker> bt) {
   buttonsTracker = bt;
 }
 
-void ButtonsMapper::addMapping(gmTypes::size2 m) {
+void ButtonsMapper::addMapping(gmCore::size2 m) {
   mappings[m[0]] = m[1];
 }
 

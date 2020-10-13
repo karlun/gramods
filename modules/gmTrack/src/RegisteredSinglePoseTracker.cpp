@@ -5,7 +5,7 @@
 #include <gmCore/Console.hh>
 #include <gmCore/RunOnce.hh>
 
-#include <gmTypes/eigen.hh>
+#include <gmCore/eigen.hh>
 
 BEGIN_NAMESPACE_GMTRACK;
 

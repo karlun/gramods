@@ -4,7 +4,7 @@
 
 #include <gmTrack/AnalogsTracker.hh>
 
-#include <gmTypes/float.hh>
+#include <gmCore/float.hh>
 #include <gmCore/OFactory.hh>
 
 BEGIN_NAMESPACE_GMTRACK;
@@ -35,7 +35,7 @@ public:
 
      \gmXmlTag{gmTrack,TimeSampleAnalogsTracker,analogs}
   */
-  void addAnalogs(gmTypes::float3 a);
+  void addAnalogs(gmCore::float3 a);
 
   /**
      Replaces the contents of p with analog data.

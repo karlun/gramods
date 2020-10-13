@@ -7,14 +7,14 @@ BEGIN_NAMESPACE_GMGRAPHICS;
 
 GM_OFI_DEFINE(StereographicCoordinatesMapper);
 GM_OFI_PARAM(StereographicCoordinatesMapper, radius, float, StereographicCoordinatesMapper::setRadius);
-GM_OFI_PARAM(StereographicCoordinatesMapper, coverageAngle, gmTypes::angle, StereographicCoordinatesMapper::setCoverageAngle);
-GM_OFI_PARAM(StereographicCoordinatesMapper, theta0, gmTypes::angle, StereographicCoordinatesMapper::setTheta0);
-GM_OFI_PARAM(StereographicCoordinatesMapper, phi0, gmTypes::angle, StereographicCoordinatesMapper::setPhi0);
+GM_OFI_PARAM(StereographicCoordinatesMapper, coverageAngle, gmCore::angle, StereographicCoordinatesMapper::setCoverageAngle);
+GM_OFI_PARAM(StereographicCoordinatesMapper, theta0, gmCore::angle, StereographicCoordinatesMapper::setTheta0);
+GM_OFI_PARAM(StereographicCoordinatesMapper, phi0, gmCore::angle, StereographicCoordinatesMapper::setPhi0);
 
 struct StereographicCoordinatesMapper::Impl {
   float radius = 0.5;
-  gmTypes::angle phi_0 = GM_PI_2;
-  gmTypes::angle theta_0 = 0;
+  gmCore::angle phi_0 = GM_PI_2;
+  gmCore::angle theta_0 = 0;
 };
 
 StereographicCoordinatesMapper::StereographicCoordinatesMapper()
@@ -77,7 +77,7 @@ void StereographicCoordinatesMapper::setRadius(float R) {
   _impl->radius = R;
 }
 
-void StereographicCoordinatesMapper::setCoverageAngle(gmTypes::angle a) {
+void StereographicCoordinatesMapper::setCoverageAngle(gmCore::angle a) {
   double angle = 0.5 * (double) a;
   if (angle < std::numeric_limits<double>::epsilon() ||
       angle > GM_2_PI - std::numeric_limits<double>::epsilon())
@@ -85,11 +85,11 @@ void StereographicCoordinatesMapper::setCoverageAngle(gmTypes::angle a) {
   _impl->radius = (float)( (1.0 + std::cos(angle)) / (2.0 * std::sin(angle)) );
 }
 
-void StereographicCoordinatesMapper::setTheta0(gmTypes::angle a) {
+void StereographicCoordinatesMapper::setTheta0(gmCore::angle a) {
   _impl->theta_0 = a;
 }
 
-void StereographicCoordinatesMapper::setPhi0(gmTypes::angle a) {
+void StereographicCoordinatesMapper::setPhi0(gmCore::angle a) {
   _impl->phi_0 = a;
 }
 

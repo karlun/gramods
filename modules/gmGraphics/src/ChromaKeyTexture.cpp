@@ -12,8 +12,8 @@ BEGIN_NAMESPACE_GMGRAPHICS;
 
 GM_OFI_DEFINE(ChromaKeyTexture);
 GM_OFI_POINTER(ChromaKeyTexture, texture, TextureInterface, ChromaKeyTexture::setTexture);
-GM_OFI_PARAM(ChromaKeyTexture, key, gmTypes::float3, ChromaKeyTexture::setKey);
-GM_OFI_PARAM(ChromaKeyTexture, tolerance, gmTypes::float2, ChromaKeyTexture::setTolerance);
+GM_OFI_PARAM(ChromaKeyTexture, key, gmCore::float3, ChromaKeyTexture::setKey);
+GM_OFI_PARAM(ChromaKeyTexture, tolerance, gmCore::float2, ChromaKeyTexture::setTolerance);
 
 struct ChromaKeyTexture::Impl {
 
@@ -30,8 +30,8 @@ struct ChromaKeyTexture::Impl {
   bool is_functional = false;
 
   std::shared_ptr<TextureInterface> texture;
-  gmTypes::float3 key = { 0, 1, 0 };
-  gmTypes::float2 tolerance = { 0.48, 0.5 };
+  gmCore::float3 key = { 0, 1, 0 };
+  gmCore::float2 tolerance = { 0.48, 0.5 };
 };
 
 const std::string ChromaKeyTexture::Impl::fragment_code =
@@ -148,11 +148,11 @@ void ChromaKeyTexture::setTexture(std::shared_ptr<TextureInterface> texture) {
   _impl->texture = texture;
 }
 
-void ChromaKeyTexture::setKey(gmTypes::float3 key) {
+void ChromaKeyTexture::setKey(gmCore::float3 key) {
   _impl->key = key;
 }
 
-void ChromaKeyTexture::setTolerance(gmTypes::float2 tol) {
+void ChromaKeyTexture::setTolerance(gmCore::float2 tol) {
   _impl->tolerance = tol;
 }
 

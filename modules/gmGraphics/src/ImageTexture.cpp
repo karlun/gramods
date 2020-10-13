@@ -13,7 +13,7 @@ BEGIN_NAMESPACE_GMGRAPHICS;
 
 GM_OFI_DEFINE(ImageTexture);
 GM_OFI_PARAM(ImageTexture, file, std::string, ImageTexture::setFile);
-GM_OFI_PARAM(ImageTexture, range, gmTypes::size2, ImageTexture::setRange);
+GM_OFI_PARAM(ImageTexture, range, gmCore::size2, ImageTexture::setRange);
 GM_OFI_PARAM(ImageTexture, loop, bool, ImageTexture::setLoop);
 GM_OFI_PARAM(ImageTexture, exit, bool, ImageTexture::setExit);
 
@@ -30,7 +30,7 @@ struct ImageTexture::Impl {
   GLuint texture_id = 0;
   std::string file = "";
   bool fail = false;
-  gmTypes::size2 animation_range;
+  gmCore::size2 animation_range;
   long int animation_frame = -1;
   bool animate = false;
   bool do_loop = false;
@@ -50,7 +50,7 @@ void ImageTexture::setFile(std::string file) {
   _impl->file = file;
 }
 
-void ImageTexture::setRange(gmTypes::size2 range) {
+void ImageTexture::setRange(gmCore::size2 range) {
   _impl->animation_range = range;
   _impl->animation_frame = range[0] - 1;
   _impl->animate = true;

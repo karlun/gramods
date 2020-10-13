@@ -4,19 +4,19 @@
 BEGIN_NAMESPACE_GMGRAPHICS;
 
 GM_OFI_DEFINE(RectilinearCameraModel);
-GM_OFI_PARAM(RectilinearCameraModel, kDistortion, gmTypes::float3, RectilinearCameraModel::setKDistortion);
-GM_OFI_PARAM(RectilinearCameraModel, pDistortion, gmTypes::float2, RectilinearCameraModel::setPDistortion);
-GM_OFI_PARAM(RectilinearCameraModel, focalDistance, gmTypes::float2, RectilinearCameraModel::setFocalDistance);
-GM_OFI_PARAM(RectilinearCameraModel, focalOffset, gmTypes::float2, RectilinearCameraModel::setFocalOffset);
+GM_OFI_PARAM(RectilinearCameraModel, kDistortion, gmCore::float3, RectilinearCameraModel::setKDistortion);
+GM_OFI_PARAM(RectilinearCameraModel, pDistortion, gmCore::float2, RectilinearCameraModel::setPDistortion);
+GM_OFI_PARAM(RectilinearCameraModel, focalDistance, gmCore::float2, RectilinearCameraModel::setFocalDistance);
+GM_OFI_PARAM(RectilinearCameraModel, focalOffset, gmCore::float2, RectilinearCameraModel::setFocalOffset);
 
 struct RectilinearCameraModel::Impl {
 
   void setMapperUniforms(GLuint program_id);
 
-  gmTypes::float3 k_dist = { 0.f, 0.f, 0.f };
-  gmTypes::float2 p_dist = { 0.f, 0.f };
-  gmTypes::float2 focal = { 1.f, 1.f };
-  gmTypes::float2 offset = {0.5f, 0.5f };
+  gmCore::float3 k_dist = { 0.f, 0.f, 0.f };
+  gmCore::float2 p_dist = { 0.f, 0.f };
+  gmCore::float2 focal = { 1.f, 1.f };
+  gmCore::float2 offset = {0.5f, 0.5f };
 };
 
 RectilinearCameraModel::RectilinearCameraModel()
@@ -79,19 +79,19 @@ void RectilinearCameraModel::Impl::setMapperUniforms(GLuint program_id) {
   glUniform1f(glGetUniformLocation(program_id, "cy"), offset[1]);
 }
 
-void RectilinearCameraModel::setKDistortion(gmTypes::float3 k) {
+void RectilinearCameraModel::setKDistortion(gmCore::float3 k) {
   _impl->k_dist = k;
 }
 
-void RectilinearCameraModel::setPDistortion(gmTypes::float2 p) {
+void RectilinearCameraModel::setPDistortion(gmCore::float2 p) {
   _impl->p_dist = p;
 }
 
-void RectilinearCameraModel::setFocalDistance(gmTypes::float2 f) {
+void RectilinearCameraModel::setFocalDistance(gmCore::float2 f) {
   _impl->focal = f;
 }
 
-void RectilinearCameraModel::setFocalOffset(gmTypes::float2 c) {
+void RectilinearCameraModel::setFocalOffset(gmCore::float2 c) {
   _impl->offset = c;
 }
 

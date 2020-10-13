@@ -2,7 +2,7 @@
 #ifndef GRAMODS_GRAPHICS_POSEDPLANARVIEW
 #define GRAMODS_GRAPHICS_POSEDPLANARVIEW
 
-#include <gmTypes/angle.hh>
+#include <gmCore/angle.hh>
 #include <gmGraphics/View.hh>
 
 BEGIN_NAMESPACE_GMGRAPHICS;
@@ -26,9 +26,9 @@ public:
 
      \gmXmlTag{gmGraphics,PosedPlanarView,fieldOfView}
 
-     \sa operator>>(std::istream &, gmTypes::angle &)
+     \sa operator>>(std::istream &, gmCore::angle &)
   */
-  void setFieldOfView(gmTypes::angle2 fov) {
+  void setFieldOfView(gmCore::angle2 fov) {
     field_of_view = fov;
   }
 
@@ -36,7 +36,7 @@ public:
 
 private:
 
-  gmTypes::angle2 field_of_view = { 1, -1 };
+  gmCore::angle2 field_of_view = { 1, -1 };
 
 };
 

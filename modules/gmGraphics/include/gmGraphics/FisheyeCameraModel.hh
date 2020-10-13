@@ -4,7 +4,7 @@
 
 #include <gmGraphics/CoordinatesMapper.hh>
 
-#include <gmTypes/float.hh>
+#include <gmCore/float.hh>
 
 #include <GL/glew.h>
 #include <GL/gl.h>
@@ -46,7 +46,7 @@ public:
 
      \gmXmlTag{gmGraphics,FisheyeCameraModel,distortion}
   */
-  void setDistortion(gmTypes::float4 k);
+  void setDistortion(gmCore::float4 k);
 
   /**
      Set the focal distance (fx fy) for the camera model. Calibration
@@ -55,7 +55,7 @@ public:
 
      \gmXmlTag{gmGraphics,FisheyeCameraModel,focalDistance}
   */
-  void setFocalDistance(gmTypes::float2 f);
+  void setFocalDistance(gmCore::float2 f);
 
   /**
      Set the focal offset (cx cy) for the camera model. Calibration
@@ -64,7 +64,7 @@ public:
 
      \gmXmlTag{gmGraphics,FisheyeCameraModel,focalOffset}
   */
-  void setFocalOffset(gmTypes::float2 c);
+  void setFocalOffset(gmCore::float2 c);
 
   GM_OFI_DECLARE;
 

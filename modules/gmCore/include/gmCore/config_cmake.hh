@@ -2,6 +2,10 @@
 #ifndef GRAMODS_CORE_CONFIG
 #define GRAMODS_CORE_CONFIG
 
+#define BEGIN_NAMESPACE_GRAMODS namespace gramods {//
+#define END_NAMESPACE_GRAMODS }//
+#define USING_NAMESPACE_GRAMODS using namespace gramods;//
+
 #define BEGIN_NAMESPACE_GMCORE namespace gramods { namespace gmCore {//
 #define END_NAMESPACE_GMCORE }}//
 #define USING_NAMESPACE_GMCORE using namespace gramods::gmCore;//
@@ -31,6 +35,11 @@ namespace gramods {
 }
 
 #cmakedefine gramods_STRIP_PATH_FROM_FILE
+
+#cmakedefine HAVE_Eigen3
+#ifdef HAVE_Eigen3
+#cmakedefine gramods_ENABLE_Eigen3
+#endif
 
 #cmakedefine TinyXML2_FOUND
 #ifdef TinyXML2_FOUND

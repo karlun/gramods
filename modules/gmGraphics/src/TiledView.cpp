@@ -9,19 +9,19 @@
 BEGIN_NAMESPACE_GMGRAPHICS;
 
 GM_OFI_DEFINE_SUB(TiledView, View);
-GM_OFI_PARAM(TiledView, tileLocation, gmTypes::size4, TiledView::addTileLocation);
+GM_OFI_PARAM(TiledView, tileLocation, gmCore::size4, TiledView::addTileLocation);
 GM_OFI_POINTER(TiledView, view, gmGraphics::View, TiledView::addView);
 
 struct TiledView::Impl {
   struct Tile {
-    gmTypes::size4 location;
+    gmCore::size4 location;
     std::shared_ptr<View> view;
   };
 
-  void addView(gmTypes::size4 tile_location,
+  void addView(gmCore::size4 tile_location,
                std::shared_ptr<View> view);
   void renderFullPipeline(ViewSettings settings);
-  std::deque<gmTypes::size4> tile_locations;
+  std::deque<gmCore::size4> tile_locations;
   std::vector<Tile> tiles;
 };
 
@@ -95,7 +95,7 @@ void TiledView::Impl::renderFullPipeline(ViewSettings settings) {
   }
 }
 
-void TiledView::addTileLocation(gmTypes::size4 c) {
+void TiledView::addTileLocation(gmCore::size4 c) {
   _impl->tile_locations.push_back(c);
 }
 
@@ -113,7 +113,7 @@ void TiledView::addView(std::shared_ptr<View> view) {
   _impl->addView(tile_location, view);
 }
 
-void TiledView::Impl::addView(gmTypes::size4 tile_location,
+void TiledView::Impl::addView(gmCore::size4 tile_location,
                               std::shared_ptr<View> view) {
   tiles.push_back(Impl::Tile({ tile_location, view }));
 }

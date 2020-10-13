@@ -21,7 +21,7 @@ BEGIN_NAMESPACE_GMGRAPHICS;
 
 GM_OFI_DEFINE_SUB(SaveView, View);
 GM_OFI_PARAM(SaveView, file, std::string, SaveView::setFile);
-GM_OFI_PARAM(SaveView, resolution, gmTypes::size2, SaveView::setResolution);
+GM_OFI_PARAM(SaveView, resolution, gmCore::size2, SaveView::setResolution);
 GM_OFI_PARAM(SaveView, useAlpha, bool, SaveView::setUseAlpha);
 GM_OFI_PARAM(SaveView, useFloat, bool, SaveView::setUseFloat);
 GM_OFI_POINTER(SaveView, view, gmGraphics::View, SaveView::addView);
@@ -37,7 +37,7 @@ struct SaveView::Impl {
   int fi_options = PNG_Z_BEST_SPEED;
 
   static const std::string fragment_code;
-  gmTypes::size2 resolution = { 0, 0 };
+  gmCore::size2 resolution = { 0, 0 };
 
   OffscreenRenderTargets render_target;
   RasterProcessor raster_processor;
@@ -282,7 +282,7 @@ void SaveView::setFile(std::string file) {
   setFile(GM_STR(file << ".png"));
 }
 
-void SaveView::setResolution(gmTypes::size2 res) {
+void SaveView::setResolution(gmCore::size2 res) {
   _impl->resolution = res;
 }
 

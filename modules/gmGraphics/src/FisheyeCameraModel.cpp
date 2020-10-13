@@ -4,17 +4,17 @@
 BEGIN_NAMESPACE_GMGRAPHICS;
 
 GM_OFI_DEFINE(FisheyeCameraModel);
-GM_OFI_PARAM(FisheyeCameraModel, distortion, gmTypes::float4, FisheyeCameraModel::setDistortion);
-GM_OFI_PARAM(FisheyeCameraModel, focalDistance, gmTypes::float2, FisheyeCameraModel::setFocalDistance);
-GM_OFI_PARAM(FisheyeCameraModel, focalOffset, gmTypes::float2, FisheyeCameraModel::setFocalOffset);
+GM_OFI_PARAM(FisheyeCameraModel, distortion, gmCore::float4, FisheyeCameraModel::setDistortion);
+GM_OFI_PARAM(FisheyeCameraModel, focalDistance, gmCore::float2, FisheyeCameraModel::setFocalDistance);
+GM_OFI_PARAM(FisheyeCameraModel, focalOffset, gmCore::float2, FisheyeCameraModel::setFocalOffset);
 
 struct FisheyeCameraModel::Impl {
 
   void setMapperUniforms(GLuint program_id);
 
-  gmTypes::float4 k_dist = { 0.f, 0.f, 0.f, 0.f };
-  gmTypes::float2 focal = { 1.f, 1.f };
-  gmTypes::float2 offset = { 0.5f, 0.5f };
+  gmCore::float4 k_dist = { 0.f, 0.f, 0.f, 0.f };
+  gmCore::float2 focal = { 1.f, 1.f };
+  gmCore::float2 offset = { 0.5f, 0.5f };
 };
 
 FisheyeCameraModel::FisheyeCameraModel()
@@ -79,15 +79,15 @@ void FisheyeCameraModel::Impl::setMapperUniforms(GLuint program_id) {
   glUniform1f(glGetUniformLocation(program_id, "cy"), offset[1]);
 }
 
-void FisheyeCameraModel::setDistortion(gmTypes::float4 k) {
+void FisheyeCameraModel::setDistortion(gmCore::float4 k) {
   _impl->k_dist = k;
 }
 
-void FisheyeCameraModel::setFocalDistance(gmTypes::float2 f) {
+void FisheyeCameraModel::setFocalDistance(gmCore::float2 f) {
   _impl->focal = f;
 }
 
-void FisheyeCameraModel::setFocalOffset(gmTypes::float2 c) {
+void FisheyeCameraModel::setFocalOffset(gmCore::float2 c) {
   _impl->offset = c;
 }
 

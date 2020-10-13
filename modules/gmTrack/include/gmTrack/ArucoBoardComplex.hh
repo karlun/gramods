@@ -6,7 +6,7 @@
 
 #ifdef gramods_ENABLE_aruco
 
-#include <gmTypes/eigen.hh>
+#include <gmCore/eigen.hh>
 #include <gmCore/OFactory.hh>
 
 #include <Eigen/Eigen>

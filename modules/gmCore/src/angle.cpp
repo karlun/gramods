@@ -1,5 +1,5 @@
 
-#include <gmTypes/angle.hh>
+#include <gmCore/angle.hh>
 
 #include <gmCore/MathConstants.hh>
 #include <gmCore/Console.hh>
@@ -9,7 +9,7 @@
 
 BEGIN_NAMESPACE_GRAMODS;
 
-std::istream& operator>> (std::istream &in, gmTypes::angle &v) {
+std::istream& operator>> (std::istream &in, gmCore::angle &v) {
 
   std::string str_angle;
   in >> str_angle;
@@ -21,7 +21,7 @@ std::istream& operator>> (std::istream &in, gmTypes::angle &v) {
   float multiplier = 1.f;
   if (str_angle[0] == 'd') {
     idx = 1;
-    multiplier = gmTypes::angle::from_degrees;
+    multiplier = gmCore::angle::from_degrees;
   } else if (str_angle[0] == 'r') {
     idx = 1;
   }

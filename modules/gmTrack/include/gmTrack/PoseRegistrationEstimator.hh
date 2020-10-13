@@ -4,7 +4,7 @@
 
 #include <gmTrack/config.hh>
 
-#include <gmTypes/eigen.hh>
+#include <gmCore/eigen.hh>
 #include <gmCore/Object.hh>
 #include <gmTrack/Controller.hh>
 #include <gmCore/Updateable.hh>

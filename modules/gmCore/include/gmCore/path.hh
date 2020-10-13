@@ -1,8 +1,8 @@
 
-#ifndef GRAMODS_TYPES_PATH
-#define GRAMODS_TYPES_PATH
+#ifndef GRAMODS_CORE_PATH
+#define GRAMODS_CORE_PATH
 
-#include <gmTypes/config.hh>
+#include <gmCore/config.hh>
 #include <filesystem>
 #include <iostream>
 

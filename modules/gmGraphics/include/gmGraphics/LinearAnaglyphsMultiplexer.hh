@@ -4,7 +4,7 @@
 
 #include <gmGraphics/MultiscopicMultiplexer.hh>
 
-#include <gmTypes/float.hh>
+#include <gmCore/float.hh>
 
 BEGIN_NAMESPACE_GMGRAPHICS;
 
@@ -25,7 +25,7 @@ public:
 
      \gmXmlTag{gmGraphics,LinearAnaglyphsMultiplexer,leftColor}
   */
-  void setLeftColor(gmTypes::float3 c);
+  void setLeftColor(gmCore::float3 c);
 
   /**
      Sets the color of the right eye filter, in RGB 0-1. Default is
@@ -33,7 +33,7 @@ public:
 
      \gmXmlTag{gmGraphics,LinearAnaglyphsMultiplexer,rightColor}
   */
-  void setRightColor(gmTypes::float3 c);
+  void setRightColor(gmCore::float3 c);
 
   /**
      Sets the saturation of color to use in the final image, in the

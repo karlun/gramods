@@ -4,7 +4,7 @@
 
 #include <gmGraphics/CoordinatesMapper.hh>
 
-#include <gmTypes/float.hh>
+#include <gmCore/float.hh>
 
 #include <GL/glew.h>
 #include <GL/gl.h>
@@ -45,14 +45,14 @@ public:
 
      \gmXmlTag{gmGraphics,RectilinearCameraModel,kDistortion}
   */
-  void setKDistortion(gmTypes::float3 k);
+  void setKDistortion(gmCore::float3 k);
 
   /**
      Set the p distortion parameters (p1 p2).
 
      \gmXmlTag{gmGraphics,RectilinearCameraModel,pDistortion}
   */
-  void setPDistortion(gmTypes::float2 p);
+  void setPDistortion(gmCore::float2 p);
 
   /**
      Set the focal distance (fx fy) for the camera model, expressed
@@ -69,7 +69,7 @@ public:
 
      \gmXmlTag{gmGraphics,RectilinearCameraModel,focalDistance}
   */
-  void setFocalDistance(gmTypes::float2 f);
+  void setFocalDistance(gmCore::float2 f);
 
   /**
      Set the focal offset (cx cy) for the camera model, expressed
@@ -80,7 +80,7 @@ public:
 
      \gmXmlTag{gmGraphics,RectilinearCameraModel,focalOffset}
   */
-  void setFocalOffset(gmTypes::float2 c);
+  void setFocalOffset(gmCore::float2 c);
 
   GM_OFI_DECLARE;
 

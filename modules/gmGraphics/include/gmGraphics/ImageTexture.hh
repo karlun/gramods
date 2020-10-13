@@ -6,7 +6,7 @@
 
 #ifdef gramods_ENABLE_FreeImage
 
-#include <gmTypes/size.hh>
+#include <gmCore/size.hh>
 #include <gmCore/OFactory.hh>
 #include <gmCore/Updateable.hh>
 #include <gmGraphics/Texture.hh>
@@ -62,7 +62,7 @@ public:
 
      \gmXmlTag{gmGraphics,ImageTexture,range}
   */
-  void setRange(gmTypes::size2 range);
+  void setRange(gmCore::size2 range);
 
   /**
      Activates or deactivates looping the animation. Default is false.
