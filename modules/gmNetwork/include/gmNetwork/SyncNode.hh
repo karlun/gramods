@@ -110,11 +110,14 @@ public:
   /**
      Returns an instance of the templated protocol. If there is no
      instance of this protocol type already, then a new instance is
-     constructed and returned.
+     constructed and returned. Caller should not have to check for
+     nullptr since any (rare) error should cause an exception to be
+     thrown.
 
      Ownership of the protocol instance is kept by the sync node and
      all such instances will be deleted when the sync node is deleted,
-     for example when going out of scope.
+     for example when going out of scope. Until then, however, the
+     returned raw pointer is valid.
   */
   template<typename TYPE>
   TYPE * getProtocol() {
