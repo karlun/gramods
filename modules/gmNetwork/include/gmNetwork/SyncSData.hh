@@ -18,9 +18,9 @@ class SyncSData
 public:
 
   /**
-     Initializes the SyncSData to zero.
+     Initializes without specifying value.
   */
-  SyncSData() { back = front = 0; }
+  SyncSData() {}
 
   /**
      Initializes the SyncSData to the specified value.
