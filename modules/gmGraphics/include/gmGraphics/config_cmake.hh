@@ -39,5 +39,10 @@ namespace gramods {
 #cmakedefine gramods_ENABLE_FreeImage
 #endif
 
+#cmakedefine HAVE_OpenSceneGraph
+#ifdef HAVE_OpenSceneGraph
+#cmakedefine gramods_ENABLE_OpenSceneGraph
+#endif
+
 
 #endif

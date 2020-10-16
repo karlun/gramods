@@ -1,0 +1,18 @@
+#Ascii Scene 
+#Version 160 
+#Generator OpenSceneGraph 3.6.4 
+
+osg::Geode {
+  UniqueID 1 
+  Drawables 1 {
+    osg::ShapeDrawable {
+      UniqueID 2 
+      Shape TRUE {
+        osg::Sphere {
+          UniqueID 3 
+          Radius 1 
+        }
+      }
+    }
+  }
+}

@@ -122,6 +122,8 @@ struct SyncNode::Impl : public std::enable_shared_from_this<SyncNode::Impl> {
   float getTimeoutDelay();
 
   void waitForConnection();
+  bool isConnected();
+
   void sendMessage(Protocol::Message mess);
   void addProtocol(std::string name, std::shared_ptr<Protocol> prot);
 
@@ -916,6 +918,49 @@ void SyncNode::Impl::waitForConnection() {
   }
 
   GM_DBG1("SyncNode", local_peer_idx << " All peers connected");
+}
+
+bool SyncNode::isConnected() {
+  return _impl->isConnected();
+}
+
+bool SyncNode::Impl::isConnected() {
+
+  std::unique_lock<std::mutex> guard(impl_lock);
+
+  GM_DBG2("SyncNode", local_peer_idx << " Checking if all peers are connected.");
+
+  if (io_context.stopped()) {
+    GM_DBG1("SyncNode", local_peer_idx << " IO context stopped when checking if all are connected.");
+    return true;
+  }
+
+  std::size_t connect_count = 0;
+  std::stringstream ss;
+
+  for (auto peer : alpha_peers) {
+    if (peer->isConnected())
+      ++connect_count;
+    ss << (peer->isConnected() ? "1" : "0");
+  }
+  ss << "X";
+  for (auto peer : beta_peers) {
+    if (peer->isConnected())
+        ++connect_count;
+    ss << (peer->isConnected() ? "1" : "0");
+  }
+
+  guard.unlock();
+
+  assert(connect_count <= getPeersCount());
+  if (connect_count < getPeersCount()) {
+    GM_DBG2("SyncNode", local_peer_idx << " Connection wait status is " << ss.str()
+            << " of " << getPeersCount() << ".");
+    return false;
+  }
+
+  GM_DBG1("SyncNode", local_peer_idx << " All peers connected");
+  return true;
 }
 
 void SyncNode::Impl::runContext() {

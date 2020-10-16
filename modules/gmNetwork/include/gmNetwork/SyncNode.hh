@@ -98,6 +98,11 @@ public:
   void waitForConnection();
 
   /**
+     Check if all listed peers have connected.
+  */
+  bool isConnected();
+
+  /**
      Return the number of peers, not including the local peer.
   */
   std::size_t getPeersCount();
