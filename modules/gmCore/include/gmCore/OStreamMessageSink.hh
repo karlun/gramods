@@ -15,8 +15,6 @@ class OStreamMessageSink
 
 public:
 
-  OStreamMessageSink();
-
   /**
      Set the stream to use as output. Use this if you do not want
      smart memory management, for example if your output stream is
@@ -77,8 +75,8 @@ private:
   std::shared_ptr<std::ostream> shared_out;
   std::mutex lock;
 
-  bool use_ansi_color;
-  int level;
+  bool use_ansi_color = false;
+  int level = 2;
 };
 
 END_NAMESPACE_GMCORE;

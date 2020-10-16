@@ -110,7 +110,7 @@ void ViewTexture::Impl::renderFullPipeline(ViewSettings settings) {
 
   // Render offscreen buffer to active render target
 
-  GM_VINF("ViewTexture", "Render offscreen buffers to active render target");
+  GM_DBG2("ViewTexture", "Render offscreen buffers to active render target");
 
   glActiveTexture(GL_TEXTURE0);
   glBindTexture(GL_TEXTURE_2D, render_target.getTexId());

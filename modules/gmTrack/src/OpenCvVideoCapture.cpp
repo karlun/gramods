@@ -151,10 +151,10 @@ void OpenCvVideoCapture::Impl::openVideo(std::filesystem::path file) {
 
   if (video_capture.open(file, backend)){
 
-    GM_INF("OpenCvVideoCapture", "Opened video file '" << file << "'");
+    GM_DBG1("OpenCvVideoCapture", "Opened video file '" << file << "'");
 
-    GM_VINF("OpenCvVideoCapture", "Backend: " << video_capture.getBackendName() << ".");
-    GM_VINF("OpenCvVideoCapture", "Format: "
+    GM_DBG2("OpenCvVideoCapture", "Backend: " << video_capture.getBackendName() << ".");
+    GM_DBG2("OpenCvVideoCapture", "Format: "
             << video_capture.get(cv::CAP_PROP_FRAME_WIDTH) << " x "
             << video_capture.get(cv::CAP_PROP_FRAME_HEIGHT)
             << " @" << video_capture.get(cv::CAP_PROP_FPS)
@@ -168,15 +168,15 @@ void OpenCvVideoCapture::Impl::openCamera(int id) {
 
   if (video_capture.open(id, backend)) {
 
-    GM_INF("OpenCvVideoCapture", "Opened camera with id " << id << ".");
+    GM_DBG1("OpenCvVideoCapture", "Opened camera with id " << id << ".");
 
     if (width > 0) video_capture.set(cv::CAP_PROP_FRAME_WIDTH, width);
     if (height > 0) video_capture.set(cv::CAP_PROP_FRAME_HEIGHT, height);
     if (framerate > 0) video_capture.set(cv::CAP_PROP_FPS, framerate);
     if (fourcc > 0) video_capture.set(cv::CAP_PROP_FOURCC, fourcc);
 
-    GM_VINF("OpenCvVideoCapture", "Backend: " << video_capture.getBackendName() << ".");
-    GM_VINF("OpenCvVideoCapture", "Format: "
+    GM_DBG2("OpenCvVideoCapture", "Backend: " << video_capture.getBackendName() << ".");
+    GM_DBG2("OpenCvVideoCapture", "Format: "
             << video_capture.get(cv::CAP_PROP_FRAME_WIDTH) << " x "
             << video_capture.get(cv::CAP_PROP_FRAME_HEIGHT)
             << " @" << video_capture.get(cv::CAP_PROP_FPS)

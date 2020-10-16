@@ -49,7 +49,7 @@ void Viewpoint::setLookAt(Eigen::Vector3f target) {
 
   auto direction = (position - target).normalized();
 
-  GM_VINF("Viewpoint", "From " << position.transpose()
+  GM_DBG2("Viewpoint", "From " << position.transpose()
           << " look at " << target.transpose());
 
   orientation = Eigen::Quaternionf::FromTwoVectors(z, direction);

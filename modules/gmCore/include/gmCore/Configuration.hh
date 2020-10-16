@@ -360,13 +360,13 @@ inline bool Configuration::getParam(std::string name, std::string &value) const 
                            return pair.first == name;
                          });
   if (it == _this->parameters.end()) {
-    GM_INF("Configuration", "Could not find " << name);
+    GM_DBG1("Configuration", "Could not find " << name);
     return false;
   }
 
   value = it->second.value;
   it->second.checked = true;
-  GM_INF("Configuration", "Read " << name << " = " << value);
+  GM_DBG1("Configuration", "Read " << name << " = " << value);
   return true;
 }
 
@@ -403,7 +403,7 @@ inline std::size_t Configuration::getAllParams(std::string name, std::vector<std
     if (param.first == name) {
       value.push_back(param.second.value);
       param.second.checked = true;
-      GM_INF("Configuration", "Read " << name << " = " << param.second.value);
+      GM_DBG1("Configuration", "Read " << name << " = " << param.second.value);
     }
 
   return value.size() - original_size;

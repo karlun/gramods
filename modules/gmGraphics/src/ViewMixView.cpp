@@ -178,7 +178,7 @@ void ViewMixView::Impl::renderFullPipeline(ViewSettings settings) {
 
   render_target.push();
 
-  GM_VINF("ViewMixView", "Render " << views.size() << " views.");
+  GM_DBG2("ViewMixView", "Render " << views.size() << " views.");
   size_t idx = 0;
   for (auto view : views) {
     render_target.bind(0, 0, idx++);
@@ -189,7 +189,7 @@ void ViewMixView::Impl::renderFullPipeline(ViewSettings settings) {
 
   // Render offscreen buffer to active render target
 
-  GM_VINF("ViewMixView", "Render offscreen buffers to active render target");
+  GM_DBG2("ViewMixView", "Render offscreen buffers to active render target");
 
   for (size_t idx = 0; idx < views.size(); ++idx) {
     glActiveTexture(GL_TEXTURE0 + idx);

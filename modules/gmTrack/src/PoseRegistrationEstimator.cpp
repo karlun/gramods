@@ -143,7 +143,7 @@ void PoseRegistrationEstimator::Impl::update(clock::time_point now) {
     // Zero or less samples per second results in taking only one sample per click
     if (samples_per_second < std::numeric_limits<float>::epsilon()) {
       if (last_sample_time == clock::time_point::min()) {
-        GM_INF("PoseRegistrationEstimator", "collecting a single sample");
+        GM_DBG1("PoseRegistrationEstimator", "collecting a single sample");
         samples.push_back(pose.position);
       }
       last_sample_time = now;
@@ -155,7 +155,7 @@ void PoseRegistrationEstimator::Impl::update(clock::time_point now) {
         (now - last_sample_time) < std::chrono::milliseconds(int(1000.f/samples_per_second)))
       return;
 
-    GM_VINF("PoseRegistrationEstimator", "collecting sample");
+    GM_DBG1("PoseRegistrationEstimator", "collecting sample");
     samples.push_back(pose.position);
     last_sample_time = now;
 
@@ -174,7 +174,7 @@ void PoseRegistrationEstimator::Impl::update(clock::time_point now) {
   tracker_positions.push_back(pos);
 
   GM_INF("PoseRegistrationEstimator", "left collect mode (have " << tracker_positions.size() << " of " << actual_positions.size() << ")");
-  GM_VINF("PoseRegistrationEstimator", "estimated tracked position (" << pos.transpose() << ") out of " << samples.size() << " samples, for actual position (" << actual_positions[tracker_positions.size() - 1].transpose() << ")");
+  GM_DBG1("PoseRegistrationEstimator", "estimated tracked position (" << pos.transpose() << ") out of " << samples.size() << " samples, for actual position (" << actual_positions[tracker_positions.size() - 1].transpose() << ")");
 
   samples.clear();
 
@@ -194,6 +194,8 @@ void PoseRegistrationEstimator::Impl::performRegistration() {
     GM_WRN("PoseRegistrationEstimator", "sphericity inconsistency - tracker positions are in a plane but not actual positions");
   } else if ((tracker_data_sph > planar_sphericity) && (actual_data_sph <= planar_sphericity)) {
     GM_WRN("PoseRegistrationEstimator", "sphericity inconsistency - actual positions are planar but not tracker positions");
+  } else if ((tracker_data_sph <= planar_sphericity) && (actual_data_sph <= planar_sphericity)) {
+    GM_WRN("PoseRegistrationEstimator", "Poor third axis sphericity (" << tracker_data_sph << " and " << actual_data_sph << ")");
   }
 
   std::vector<Eigen::Vector3f> tracker_data = tracker_positions;
@@ -201,7 +203,7 @@ void PoseRegistrationEstimator::Impl::performRegistration() {
 
   if (std::min(tracker_data_sph, actual_data_sph) <= planar_sphericity) {
 
-    GM_INF("PoseRegistrationEstimator", "Poor third axis sphericity (" << tracker_data_sph << " and " << actual_data_sph << ") - automatically correcting by expanding samples");
+    GM_DBG1("PoseRegistrationEstimator", "Expanding samples to compensate for poor sphericity");
 
     int idx0 = -1, idx1;
     expandPlanar(actual_data, idx0, idx1);
@@ -215,13 +217,13 @@ void PoseRegistrationEstimator::Impl::performRegistration() {
   registration_raw = M_reg;
   successful_registration = true;
 
-  GM_INF("PoseRegistrationEstimator", "Raw registration matrix:\n" << M_reg);
+  GM_DBG1("PoseRegistrationEstimator", "Raw registration matrix:\n" << M_reg);
 
   Eigen::Matrix4f M_unit;
   estimateUnitRegistration(tracker_data, actual_data, M_reg, M_unit);
   registration_unit = M_unit;
 
-  GM_INF("PoseRegistrationEstimator", "Unit registration matrix:\n" << M_unit);
+  GM_DBG1("PoseRegistrationEstimator", "Unit registration matrix:\n" << M_unit);
 
   tracker_positions.clear();
 }
@@ -287,8 +289,8 @@ float PoseRegistrationEstimator::Impl::estimateSphericity(std::vector<Eigen::Vec
   auto singular_values = svd.singularValues();
   assert(singular_values.rows() == 3);
 
-  GM_VINF("PoseRegistrationEstimator", "data matrix:\n" << data_matrix);
-  GM_VINF("PoseRegistrationEstimator", "singular values: " << singular_values.transpose());
+  GM_DBG1("PoseRegistrationEstimator", "data matrix:\n" << data_matrix);
+  GM_DBG1("PoseRegistrationEstimator", "singular values: " << singular_values.transpose());
 
   if (singular_values[1] <= std::numeric_limits<std::remove_reference<decltype(singular_values[1])>::type>::epsilon()) {
     GM_ERR("PoseRegistrationEstimator", "Points are too linearly dependent for any further processing");
@@ -325,8 +327,8 @@ void PoseRegistrationEstimator::Impl::expandPlanar(std::vector<Eigen::Vector3f> 
   Eigen::Vector3f data_Y = U.col(1);
   Eigen::Vector3f data_normal = U.col(2);
   float data_scale = S[0];
-  GM_VINF("PoseRegistrationEstimator", "Estimated data normal: " << data_normal.transpose());
-  GM_VINF("PoseRegistrationEstimator", "Estimated data scale: " << data_scale);
+  GM_DBG1("PoseRegistrationEstimator", "Estimated data normal: " << data_normal.transpose());
+  GM_DBG1("PoseRegistrationEstimator", "Estimated data scale: " << data_scale);
 
   if (idx0 < 0) {
 
@@ -349,11 +351,11 @@ void PoseRegistrationEstimator::Impl::expandPlanar(std::vector<Eigen::Vector3f> 
       }
     }
 
-    GM_VINF("PoseRegistrationEstimator", "Estimated primary samples: " << idx0 << " (" << best_value0 << ") and " << idx1 << "(" << best_value1 << ")");
+    GM_DBG1("PoseRegistrationEstimator", "Estimated primary samples: " << idx0 << " (" << best_value0 << ") and " << idx1 << "(" << best_value1 << ")");
   }
 
   if ((data[idx0] - cp).cross(data[idx1] - cp).dot(data_normal) < 0) {
-    GM_VINF("PoseRegistrationEstimator", "Flipping");
+    GM_DBG1("PoseRegistrationEstimator", "Flipping");
     data_normal = -data_normal;
   }
 
@@ -366,9 +368,9 @@ void PoseRegistrationEstimator::Impl::expandPlanar(std::vector<Eigen::Vector3f> 
   for (auto pt : data)
     new_data.push_back(pt - offset);
 
-  GM_VVINF("PoseRegistrationEstimator", "New data:");
+  GM_DBG3("PoseRegistrationEstimator", "New data:");
   for (auto pt : new_data)
-    GM_VVINF("PoseRegistrationEstimator", "" << pt.transpose());
+    GM_DBG3("PoseRegistrationEstimator", "" << pt.transpose());
 
   data.swap(new_data);
 }
@@ -391,7 +393,7 @@ bool PoseRegistrationEstimator::Impl::estimateRegistration
 
   if (N == 4) {
 
-    GM_VINF("PoseRegistrationEstimator", "Solving complete system by inverse multiplication");
+    GM_DBG1("PoseRegistrationEstimator", "Solving complete system by inverse multiplication");
 
     // ACTUAL = M_REG  TRACKER
     // M_REG = ACTUAL / TRACKER
@@ -404,7 +406,7 @@ bool PoseRegistrationEstimator::Impl::estimateRegistration
 
   } else {
 
-    GM_VINF("PoseRegistrationEstimator", "Solving overdetermined system by inverse multiplication");
+    GM_DBG1("PoseRegistrationEstimator", "Solving overdetermined system by inverse multiplication");
 
     // M_REG  TRACKER = ACTUAL
     // TRACKER^t M_REG^t = ACTUAL^t
@@ -418,7 +420,7 @@ bool PoseRegistrationEstimator::Impl::estimateRegistration
     M = x.transpose();
   }
 
-  GM_VINF("PoseRegistrationEstimator", "Raw registration error: " << ((M * tracker_set) - actual_set).norm());
+  GM_DBG1("PoseRegistrationEstimator", "Raw registration error: " << ((M * tracker_set) - actual_set).norm());
 
   return true;
 }

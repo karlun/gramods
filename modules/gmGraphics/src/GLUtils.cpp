@@ -27,7 +27,7 @@ bool GLUtils::check_shader_program(GLuint program_id) {
 
   if (status) {
     if (msg_len)
-      GM_INF("OpenGL", msg_data.data());
+      GM_DBG1("OpenGL", msg_data.data());
     return true;
   }
 
@@ -44,7 +44,7 @@ bool GLUtils::check_framebuffer() {
 	status = glCheckFramebufferStatus(GL_DRAW_FRAMEBUFFER);
 	switch(status) {
 	case GL_FRAMEBUFFER_COMPLETE:
-    GM_INF("OpenGL", "Frame buffer complete");
+    GM_DBG1("OpenGL", "Frame buffer complete");
 		return true;
 
 	case GL_FRAMEBUFFER_UNSUPPORTED:

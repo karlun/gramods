@@ -177,20 +177,20 @@ void SphereRenderer::Impl::setup() {
   assert(tcoords.size() % 3 == 0);
   vertex_count = vertices.size();
 
-  GM_VINF("SphereRenderer", "Creating vertex shader");
+  GM_DBG2("SphereRenderer", "Creating vertex shader");
   vertex_shader_id = glCreateShader(GL_VERTEX_SHADER);
   const char *vert_strs[] = { vertex_shader_code.c_str() };
   glShaderSource(vertex_shader_id, 1, vert_strs, nullptr);
   glCompileShader(vertex_shader_id);
 
-  GM_VINF("SphereRenderer", "Creating fragment shader");
+  GM_DBG2("SphereRenderer", "Creating fragment shader");
   fragment_shader_id = glCreateShader(GL_FRAGMENT_SHADER);
   std::string frag_str = createFragmentCode();
   const char *frag_strs[] = { frag_str.c_str() };
   glShaderSource(fragment_shader_id, 1, frag_strs, nullptr);
   glCompileShader(fragment_shader_id);
 
-  GM_VINF("SphereRenderer", "Creating and linking program");
+  GM_DBG2("SphereRenderer", "Creating and linking program");
   program_id = glCreateProgram();
   glAttachShader(program_id, vertex_shader_id);
   glAttachShader(program_id, fragment_shader_id);
@@ -200,11 +200,11 @@ void SphereRenderer::Impl::setup() {
   if (!GLUtils::check_shader_program(program_id))
     return;
 
-  GM_VINF("SphereRenderer", "Creating vertex array");
+  GM_DBG2("SphereRenderer", "Creating vertex array");
   glGenVertexArrays(1, &vao_id);
   glBindVertexArray(vao_id);
 
-  GM_VINF("SphereRenderer", "Creating and setting up array buffer");
+  GM_DBG2("SphereRenderer", "Creating and setting up array buffer");
   glGenBuffers(2, vbo_id);
   glBindBuffer(GL_ARRAY_BUFFER, vbo_id[0]);
   glBufferData(GL_ARRAY_BUFFER,
@@ -223,7 +223,7 @@ void SphereRenderer::Impl::setup() {
   glBindBuffer(GL_ARRAY_BUFFER, 0);
   glBindVertexArray(0);
 
-  GM_INF("SphereRenderer", "initialized");
+  GM_DBG1("SphereRenderer", "initialized");
   is_functional = true;
 }
 
@@ -257,7 +257,7 @@ void SphereRenderer::Impl::render(Camera camera, float near, float far) {
     tex_id = texture->getGLTextureID();
   }
 
-  GM_VINF("SphereRenderer", "rendering");
+  GM_DBG2("SphereRenderer", "rendering");
 
   if (far < 0) {
     getNearFar(camera, near, far);
@@ -291,7 +291,7 @@ void SphereRenderer::Impl::render(Camera camera, float near, float far) {
 
   glBindTexture(GL_TEXTURE_2D, 0);
 
-  GM_VVINF("SphereRenderer", "Done rendering");
+  GM_DBG3("SphereRenderer", "Done rendering");
 }
 
 SphereRenderer::Impl::~Impl() {

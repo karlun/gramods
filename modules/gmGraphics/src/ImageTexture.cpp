@@ -73,7 +73,7 @@ void ImageTexture::Impl::update() {
   if (fail) return;
 
   if (animate) {
-    GM_VINF("ImageTexture", "Animation frame " << animation_frame);
+    GM_DBG2("ImageTexture", "Animation frame " << animation_frame);
     fail = !loadImage(file, animation_frame);
 
 
@@ -94,7 +94,7 @@ void ImageTexture::Impl::update(clock::time_point t) {
 
     if (do_loop) {
 
-      GM_VINF("ImageTexture", "Looping animation");
+      GM_DBG2("ImageTexture", "Looping animation");
       animation_frame = animation_range[0];
 
     } else if (do_exit) {
@@ -103,7 +103,7 @@ void ImageTexture::Impl::update(clock::time_point t) {
 
     } else {
 
-      GM_VINF("ImageTexture", "Animation done");
+      GM_DBG2("ImageTexture", "Animation done");
       animate = false;
 
     }
@@ -221,7 +221,7 @@ bool ImageTexture::Impl::loadImage(std::filesystem::path file_template,
 
 	FreeImage_Unload(image);
 
-  GM_VINF("ImageTexture", "Loaded"
+  GM_DBG2("ImageTexture", "Loaded"
           << " image " << filename.data()
           << " " << image_width << "x" << image_height
           );

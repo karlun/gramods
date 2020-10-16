@@ -68,7 +68,7 @@ namespace {
     data_sync->addData(data_int32);
     data_sync->addData(data_float32);
 
-    GM_INF("gTest", "Node " << idx << " waiting for connection");
+    GM_DBG1("gTest", "Node " << idx << " waiting for connection");
     node->waitForConnection();
 
     EXPECT_EQ(*data_bool, VAL_AS_BOOL);

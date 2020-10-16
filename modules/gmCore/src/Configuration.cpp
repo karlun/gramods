@@ -227,7 +227,7 @@ void Configuration::load(tinyxml2::XMLNode *node,
     for (auto param_name : param_names) {
 
       std::string param_path = node_path + "." + param_name;
-      GM_INF("Configuration", "Checking parameter override for " << param_path);
+      GM_DBG1("Configuration", "Checking parameter override for " << param_path);
 
       std::vector<std::string> values;
       node_conf.getAllParams(param_name, values);
@@ -237,7 +237,7 @@ void Configuration::load(tinyxml2::XMLNode *node,
 
         for (std::string value : values) {
 
-          GM_INF("Configuration", name << " -> " <<
+          GM_DBG1("Configuration", name << " -> " <<
                  type << "::" << param_name << " = " << value);
 
           try {
@@ -259,7 +259,7 @@ void Configuration::load(tinyxml2::XMLNode *node,
 
         std::string value = (*parameter_overrides)[param_path].value;
         (*parameter_overrides)[param_path].checked = true;
-        GM_INF("Configuration", name << " -> " <<
+        GM_DBG1("Configuration", name << " -> " <<
                type << "::" << param_name << " = " << value << " (overridden)");
 
         try {
@@ -286,7 +286,7 @@ void Configuration::load(tinyxml2::XMLNode *node,
       node_conf.getAllObjects(child_key, ptrs);
       assert(ptrs.size() > 0);
       for (auto ptr : ptrs) {
-        GM_INF("Configuration", name << " -> " << type << "::" << child_key << " = ptr");
+        GM_DBG1("Configuration", name << " -> " << type << "::" << child_key << " = ptr");
         try {
           bool good = OFactory::getOFI(type)->setPointerValue(nn.get(), child_key, ptr);
           if (!good) {
@@ -345,7 +345,7 @@ bool Configuration::hasParam(std::string name) {
 }
 
 void Configuration::addParam(std::string name, std::string value) {
-  GM_VINF("Configuration", "addParam(" << name << ", " << value << ")");
+  GM_DBG2("Configuration", "addParam(" << name << ", " << value << ")");
   parameters.push_back(std::pair<std::string, parameter_t>(name, parameter_t(value)));
 }
 
@@ -425,7 +425,7 @@ void Configuration::parse_param(tinyxml2::XMLElement *element,
   std::string name = name_attribute;
   std::string value = value_attribute;
 
-  GM_INF("Configuration", "Parsed param: " << name << " = " << value);
+  GM_DBG1("Configuration", "Parsed param: " << name << " = " << value);
 
   addParam(name, value);
 }

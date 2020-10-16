@@ -97,7 +97,7 @@ void CubeMapRasterProcessor::Impl::setup() {
     GM_WRN("CubeMapRasterProcessor", "Cube map resolution (" << resolution << ") is not an even power of two");
   }
 
-  GM_VINF("CubeMapRasterProcessor", "Creating buffers and textures");
+  GM_DBG2("CubeMapRasterProcessor", "Creating buffers and textures");
   glGenFramebuffers(SIDE_COUNT, framebuffer_id);
   glGenTextures(SIDE_COUNT, texture_id);
   glGenRenderbuffers(1, &depth_renderbuffer_id);
@@ -148,18 +148,18 @@ void main() {
 }
 )lang=glsl";
 
-  GM_VINF("CubeMapRasterProcessor", "Creating vertex shader");
+  GM_DBG2("CubeMapRasterProcessor", "Creating vertex shader");
   vertex_shader_id = glCreateShader(GL_VERTEX_SHADER);
   glShaderSource(vertex_shader_id, 1, &vertex_shader_code, nullptr);
   glCompileShader(vertex_shader_id);
 
-  GM_VINF("CubeMapRasterProcessor", "Creating fragment shader");
+  GM_DBG2("CubeMapRasterProcessor", "Creating fragment shader");
   fragment_shader_id = glCreateShader(GL_FRAGMENT_SHADER);
   const char *strs[] = { fragment_code.c_str() };
   glShaderSource(fragment_shader_id, 1, strs, nullptr);
   glCompileShader(fragment_shader_id);
 
-  GM_VINF("CubeMapRasterProcessor", "Creating and linking program");
+  GM_DBG2("CubeMapRasterProcessor", "Creating and linking program");
   program_id = glCreateProgram();
   glAttachShader(program_id, vertex_shader_id);
   glAttachShader(program_id, fragment_shader_id);
@@ -169,11 +169,11 @@ void main() {
   if (!GLUtils::check_shader_program(program_id))
     return;
 
-  GM_VINF("CubeMapRasterProcessor", "Creating vertex array");
+  GM_DBG2("CubeMapRasterProcessor", "Creating vertex array");
   glGenVertexArrays(1, &vertexarray_id);
   glBindVertexArray(vertexarray_id);
 
-  GM_VINF("CubeMapRasterProcessor", "Creating and setting up array buffer");
+  GM_DBG2("CubeMapRasterProcessor", "Creating and setting up array buffer");
   glGenBuffers(1, &vertexbuffer_id);
   glBindBuffer(GL_ARRAY_BUFFER, vertexbuffer_id);
   const GLfloat vertices[4][2] = {
@@ -245,7 +245,7 @@ void CubeMapRasterProcessor::Impl::renderFullPipeline
   for (size_t idx = 0; idx < SIDE_COUNT; ++idx)
     renderSide(renderers, pos, rot, eye, idx);
 
-  GM_VINF("CubeMapRasterProcessor", "finalizing");
+  GM_DBG2("CubeMapRasterProcessor", "finalizing");
 
   glBindFramebuffer(GL_FRAMEBUFFER, previous_framebuffer);
 

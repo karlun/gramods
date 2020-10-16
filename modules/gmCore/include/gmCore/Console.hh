@@ -109,6 +109,20 @@ namespace detail {
 */
 
 /**\def GM_INF(TAG, MSG)
+   Macro for sending an information message to the currently
+   registered MessageSink. The application specific tag may be any
+   string, or an empty string. Messages with this level should be
+   sparse, and indicate something that might be necessary for the user
+   to know, during normal operations.
+
+   @param TAG A string to associate the message with, or an empty
+   string.
+
+   @param MSG The message to send. This supports the output operator
+   for easy printing of objects supporting this operator.
+*/
+
+/**\def GM_DBG1(TAG, MSG)
    Macro for sending a debug message to the currently registered
    MessageSink. The application specific tag may be any string, or an
    empty string. Messages with this level report on high level
@@ -122,7 +136,7 @@ namespace detail {
    for easy printing of objects supporting this operator.
 */
 
-/**\def GM_VINF(TAG, MSG)
+/**\def GM_DBG2(TAG, MSG)
    Macro for sending a "verbose" debug message to the currently
    registered MessageSink. The application specific tag may be any
    string, or an empty string. Messages with this level may arrive at
@@ -136,7 +150,7 @@ namespace detail {
    for easy printing of objects supporting this operator.
 */
 
-/**\def GM_VVINF(TAG, MSG)
+/**\def GM_DBG3(TAG, MSG)
    Macro for sending a "very verbose" debug message to the currently
    registered MessageSink. The application specific tag may be any
    string, or an empty string. Messages with this level may arrive at
@@ -167,14 +181,19 @@ namespace detail {
   (gramods::gmCore::ConsoleLevel::Information,  \
    TAG) << MSG << std::endl
 
-# define GM_VINF(TAG, MSG)                            \
-  gramods::gmCore::Console                            \
-  (gramods::gmCore::ConsoleLevel::VerboseInformation, \
+# define GM_DBG1(TAG, MSG)                      \
+  gramods::gmCore::Console                      \
+  (gramods::gmCore::ConsoleLevel::Debug1,       \
    TAG) << MSG << std::endl
 
-# define GM_VVINF(TAG, MSG)                               \
-  gramods::gmCore::Console                                \
-  (gramods::gmCore::ConsoleLevel::VeryVerboseInformation, \
+# define GM_DBG2(TAG, MSG)                      \
+  gramods::gmCore::Console                      \
+  (gramods::gmCore::ConsoleLevel::Debug2,       \
+   TAG) << MSG << std::endl
+
+# define GM_DBG3(TAG, MSG)                      \
+  gramods::gmCore::Console                      \
+  (gramods::gmCore::ConsoleLevel::Debug3,       \
    TAG) << MSG << std::endl
 
 #else // if NDEBUG else
@@ -205,16 +224,22 @@ namespace detail {
    TAG, GM_FILE, __LINE__, __func__)            \
   << MSG << std::endl
 
-# define GM_VINF(TAG, MSG)                            \
-  gramods::gmCore::Console                            \
-  (gramods::gmCore::ConsoleLevel::VerboseInformation, \
-   TAG, GM_FILE, __LINE__, __func__)                  \
+# define GM_DBG1(TAG, MSG)                      \
+  gramods::gmCore::Console                      \
+  (gramods::gmCore::ConsoleLevel::Debug1,       \
+   TAG, GM_FILE, __LINE__, __func__)            \
   << MSG << std::endl
 
-# define GM_VVINF(TAG, MSG)                               \
-  gramods::gmCore::Console                                \
-  (gramods::gmCore::ConsoleLevel::VeryVerboseInformation, \
-   TAG, GM_FILE, __LINE__, __func__)                      \
+# define GM_DBG2(TAG, MSG)                      \
+  gramods::gmCore::Console                      \
+  (gramods::gmCore::ConsoleLevel::Debug2,       \
+   TAG, GM_FILE, __LINE__, __func__)            \
+  << MSG << std::endl
+
+# define GM_DBG3(TAG, MSG)                      \
+  gramods::gmCore::Console                      \
+  (gramods::gmCore::ConsoleLevel::Debug3,       \
+   TAG, GM_FILE, __LINE__, __func__)            \
   << MSG << std::endl
 
 #endif // if NDEBUG else endif
@@ -222,7 +247,7 @@ namespace detail {
 /**
    Console for easier handling of runtime and debugging
    information. For convenience, use the macros GM_ERR, GM_WRN,
-   GM_INF, GM_VINF and GM_VVINF
+   GM_INF, GM_DBG1, GM_DBG2 and GM_DBG3
 */
 struct Console
   : public std::ostream {

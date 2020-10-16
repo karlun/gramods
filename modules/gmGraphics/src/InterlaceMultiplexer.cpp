@@ -77,7 +77,7 @@ void InterlaceMultiplexer::Impl::setup() {
   is_setup = true;
   is_functional = false;
 
-  GM_VINF("InterlaceMultiplexer", "Creating buffers and textures");
+  GM_DBG2("InterlaceMultiplexer", "Creating buffers and textures");
   glGenFramebuffers((GLsizei)2, fb_id);
   glGenTextures((GLsizei)2, tex_id);
   glGenRenderbuffers(1, &rb_depth_id);
@@ -117,7 +117,7 @@ void main() {
 }
 )lang=glsl";
 
-  GM_VINF("InterlaceMultiplexer", "Creating vertex shader");
+  GM_DBG2("InterlaceMultiplexer", "Creating vertex shader");
   vertex_shader_id = glCreateShader(GL_VERTEX_SHADER);
   glShaderSource(vertex_shader_id, 1, &vertex_shader_code, nullptr);
   glCompileShader(vertex_shader_id);
@@ -163,12 +163,12 @@ void main() {
 }
 )lang=glsl";
 
-  GM_VINF("InterlaceMultiplexer", "Creating fragment shader");
+  GM_DBG2("InterlaceMultiplexer", "Creating fragment shader");
   fragment_shader_id = glCreateShader(GL_FRAGMENT_SHADER);
   glShaderSource(fragment_shader_id, 1, &fragment_shader_code, nullptr);
   glCompileShader(fragment_shader_id);
 
-  GM_VINF("InterlaceMultiplexer", "Creating and linking program");
+  GM_DBG2("InterlaceMultiplexer", "Creating and linking program");
   program_id = glCreateProgram();
   glAttachShader(program_id, vertex_shader_id);
   glAttachShader(program_id, fragment_shader_id);
@@ -178,11 +178,11 @@ void main() {
   if (!GLUtils::check_shader_program(program_id))
     return;
 
-  GM_VINF("InterlaceMultiplexer", "Creating vertex array");
+  GM_DBG2("InterlaceMultiplexer", "Creating vertex array");
   glGenVertexArrays(1, &vao_id);
   glBindVertexArray(vao_id);
 
-  GM_VINF("InterlaceMultiplexer", "Creating and setting up array buffer");
+  GM_DBG2("InterlaceMultiplexer", "Creating and setting up array buffer");
   glGenBuffers(1, &vbo_id);
   glBindBuffer(GL_ARRAY_BUFFER, vbo_id);
   const GLfloat vertices[4][2] = {
@@ -249,12 +249,12 @@ void InterlaceMultiplexer::Impl::setupRendering(size_t eye) {
   if (!is_functional)
     return;
 
-  GM_VINF("InterlaceMultiplexer", "setting up for "
+  GM_DBG2("InterlaceMultiplexer", "setting up for "
           << (eye == 0 ? "left eye" : "right eye"));
 
   glBindFramebuffer(GL_FRAMEBUFFER, fb_id[(size_t)eye]);
 
-  GM_VINF("InterlaceMultiplexer", "Allocating frame buffer texture " << tex_width << "x" << tex_height << " for port " << port_width << "x" << port_height);
+  GM_DBG2("InterlaceMultiplexer", "Allocating frame buffer texture " << tex_width << "x" << tex_height << " for port " << port_width << "x" << port_height);
   glBindTexture(GL_TEXTURE_2D, tex_id[(size_t)eye]);
   glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, tex_width, tex_height, 0, GL_RGB, GL_UNSIGNED_BYTE, 0);
   glBindTexture(GL_TEXTURE_2D, 0);
@@ -268,7 +268,7 @@ void InterlaceMultiplexer::Impl::setupRendering(size_t eye) {
 }
 
 void InterlaceMultiplexer::Impl::finalize() {
-  GM_VINF("InterlaceMultiplexer", "finalizing");
+  GM_DBG2("InterlaceMultiplexer", "finalizing");
 
   glBindFramebuffer(GL_FRAMEBUFFER, target_framebuffer);
   glViewport(viewport[0], viewport[1], viewport[2], viewport[3]);

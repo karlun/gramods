@@ -24,25 +24,33 @@ enum struct ConsoleLevel {
   Warning = 1,
 
   /**
-     Information message. Messages with this level report on high
-     level internal processes. Do not send more than a few at a time
-     and fairly seldom.
+     Information message. Messages with this level should be sparse,
+     and indicate something that might be necessary for the user to
+     know, during normal operations. Do not send more than a few at a
+     time and fairly seldom.
   */
   Information = 2,
 
   /**
-     Detailed information message. Messages with this level may arrive
-     at a higher rate, inside loops, but should not slow down the
-     application.
+     Debug information message. Messages with this level should be
+     sparse and indicate high level events, such as instantiation and
+     destruction.
   */
-  VerboseInformation = 3,
+  Debug1 = 3,
+
+  /**
+     Detailed debug information message. Messages with this level may
+     arrive at a higher rate, inside loops, but should not slow down
+     the application.
+  */
+  Debug2 = 4,
 
   /**
      Very detailed information message. Messages with this level may
      arrive at a high rate, inside loops, and may be so many that they
      can be expected to slow down the application.
   */
-  VeryVerboseInformation = 4
+  Debug3 = 5
 };
 
 END_NAMESPACE_GMCORE;
