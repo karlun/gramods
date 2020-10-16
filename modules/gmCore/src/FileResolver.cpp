@@ -32,28 +32,28 @@ inline std::string trim(const std::string &s) {
 }
 
 std::filesystem::path getExecPath() {
+
 #ifdef _WIN32
+
   constexpr int PATH_MAX = 32768;
   wchar_t result[PATH_MAX] = {0};
+
   DWORD num_chars = GetModuleFileNameW(NULL, result, PATH_MAX);
+
   if (num_chars == 0) {
     GM_WRN("FileResolver", "Failed getting Executable path: " << GetLastError());
     return {};
   }
+
+  return std::filesystem::path(exe_path).parent_path();
+
 #else
-  char result[PATH_MAX];
-  auto num_chars = readlink("/proc/self/exe", result, PATH_MAX - 1);
-  if (num_chars == -1) {
-    int errsv = errno;
-    GM_WRN("FileResolver",
-           "Linux 'readlink' failed with Errno: "
-               << errsv
-               << " see https://linux.die.net/man/2/readlink for details");
-  } else {
-    result[num_chars] = '\0';
-  }
+
+  std::filesystem::path exe_link("/proc/self/exe");
+  std::filesystem::path exe_path = std::filesystem::read_symlink(exe_link);
+  return std::filesystem::path(exe_path).parent_path();
+
 #endif
-  return std::filesystem::path(result).parent_path();
 }
 }
 
