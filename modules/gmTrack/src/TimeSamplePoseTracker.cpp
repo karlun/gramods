@@ -95,7 +95,7 @@ bool TimeSamplePoseTracker::Impl::getPose(PoseSample &p) {
   }
 
   typedef std::chrono::duration<double, std::ratio<1>> d_seconds;
-  auto duration = std::chrono::duration_cast<d_seconds>
+  double duration = std::chrono::duration_cast<d_seconds>
     (now - start_time).count();
 
   if (duration > time.back()) {
@@ -103,28 +103,27 @@ bool TimeSamplePoseTracker::Impl::getPose(PoseSample &p) {
   }
 
   if (duration <= time.front()) {
-    p.position = Eigen::Vector3f::Zero();
-    p.orientation = Eigen::Quaternionf::Identity();
+    p.position = position.empty() ? Eigen::Vector3f::Zero() : position.front();
+    p.orientation = orientation.empty() ? Eigen::Quaternionf::Identity()
+                                        : orientation.front();
     return true;
   }
 
-  size_t from_time = 0;
-  for (size_t idx = 0; idx < time.size() - 1; ++idx) {
+  size_t to_time = 0;
+  for (size_t idx = 0; idx < time.size(); ++idx) {
     if (time[idx] > duration) {
-      from_time = idx;
+      to_time = idx;
       break;
     }
   }
 
-  size_t to_time = from_time + 1;
-  assert(to_time < time.size());
-
+  size_t from_time = to_time - 1;
   float a = (duration - time[from_time]) / (time[to_time] - time[from_time]);
 
   if (position.empty()) {
     p.position = Eigen::Vector3f::Zero();
   } else if (position.size() == 1) {
-    p.position = position[0];
+    p.position = position.front();
   } else {
     p.position = (( a ) * position[to_time] +
                   (1-a) * position[from_time]);
@@ -133,7 +132,7 @@ bool TimeSamplePoseTracker::Impl::getPose(PoseSample &p) {
   if (orientation.empty()) {
     p.orientation = Eigen::Quaternionf::Identity();
   } else if (orientation.size() == 1) {
-    p.orientation = orientation[0];
+    p.orientation = orientation.front();
   } else {
     p.orientation = orientation[from_time].slerp(a, orientation[to_time]);
   }

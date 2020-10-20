@@ -43,7 +43,7 @@ void TimeSampleButtonsTracker::Impl::addTime(double t) { time.push_back(t); }
 
 void TimeSampleButtonsTracker::Impl::addButtons(size_t b) { button_states.push_back(b); }
 
-bool TimeSampleButtonsTracker::Impl::getButtons(ButtonsSample &b) {
+bool TimeSampleButtonsTracker::Impl::getButtons(ButtonsSample &sample) {
 
   if (button_states.empty()) {
     GM_RUNONCE(GM_ERR("TimeSampleButtonsTracker", "No button states available."));
@@ -59,13 +59,13 @@ bool TimeSampleButtonsTracker::Impl::getButtons(ButtonsSample &b) {
     return false;
   }
 
-  b.time = ButtonsTracker::clock::now();
+  sample.time = ButtonsTracker::clock::now();
   
   if (time.empty()) {
     // If there is no time specified, iterate per frame
 
     assert(sample_idx < button_states.size());
-    setState(b.buttons, button_states[sample_idx]);
+    setState(sample.buttons, button_states[sample_idx]);
 
     sample_idx = (sample_idx + 1) % button_states.size();
 
@@ -80,19 +80,18 @@ bool TimeSampleButtonsTracker::Impl::getButtons(ButtonsSample &b) {
     duration -= int(duration / time.back()) * time.back();
 
   if (duration <= time.front()) {
-    b.buttons.clear();
+    sample.buttons.clear();
     return true;
   }
 
   size_t last_time = 0;
-  for (size_t idx = 0; idx < time.size(); ++idx) {
-    if (time[idx] > duration) {
-      last_time = idx;
+  for (size_t idx = 1; idx < time.size(); ++idx) {
+    if (time[idx] >= duration)
       break;
-    }
+    last_time = idx;
   }
 
-  setState(b.buttons, button_states[last_time]);
+  setState(sample.buttons, button_states[last_time]);
 
   return true;
 }

@@ -42,7 +42,7 @@ void TimeSampleAnalogsTracker::Impl::addTime(double t) { time.push_back(t); }
 
 void TimeSampleAnalogsTracker::Impl::addAnalogs(gmCore::float3 a) { states.push_back(a); }
 
-bool TimeSampleAnalogsTracker::Impl::getAnalogs(AnalogsSample &b) {
+bool TimeSampleAnalogsTracker::Impl::getAnalogs(AnalogsSample &sample) {
 
   if (states.empty()) {
     GM_RUNONCE(GM_ERR("TimeSampleAnalogsTracker", "No analog samples available."));
@@ -55,15 +55,14 @@ bool TimeSampleAnalogsTracker::Impl::getAnalogs(AnalogsSample &b) {
     return false;
   }
 
-  b.time = AnalogsTracker::clock::now();
-  b.analogs.clear();
+  sample.time = AnalogsTracker::clock::now();
+  sample.analogs.clear();
 
   if (time.empty()) {
     // If there is not time specified, iterate per frame
 
-    assert(sample_idx < states.size());
     for (auto s : states[sample_idx])
-      b.analogs.push_back(s);
+      sample.analogs.push_back(s);
 
     sample_idx = (sample_idx + 1) % states.size();
 
@@ -78,18 +77,29 @@ bool TimeSampleAnalogsTracker::Impl::getAnalogs(AnalogsSample &b) {
     duration -= int(duration/time.back()) * time.back();
   }
 
-  size_t last_time = 0;
+  size_t to_time = 0;
   for (size_t idx = 0; idx < time.size(); ++idx) {
     if (time[idx] > duration) {
-      last_time = idx;
+      to_time = idx;
       break;
     }
   }
 
-  assert(last_time < states.size());
+  size_t from_time = to_time - 1;
+  float a = (duration - time[from_time]) / (time[to_time] - time[from_time]);
 
-  for (auto s : states[last_time])
-    b.analogs.push_back(s);
+  if (states.empty()) {
+    sample.analogs = {0, 0, 0};
+  } else if (states.size() == 1) {
+    sample.analogs = {states.front()[0],
+                      states.front()[1],
+                      states.front()[2]};
+  } else {
+    for (size_t idx = 0; idx < 3; ++idx) {
+      sample.analogs.push_back(   a    * states[to_time][idx] +
+                               (1 - a) * states[from_time][idx]);
+    }
+  }
 
   return true;
 }
