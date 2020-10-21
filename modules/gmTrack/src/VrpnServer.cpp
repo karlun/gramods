@@ -83,9 +83,9 @@ void VrpnServer::Impl::initialize() {
     vrpn_connections[port] = vrpn_create_server_connection(port);
 
   if (tracker_names.size() < name_map.size())
-    throw std::invalid_argument("too few tracker tracker names for the current amount of trackers");
+    throw gmCore::InvalidArgument("too few tracker tracker names for the current amount of trackers");
   if (tracker_names.size() > name_map.size())
-    GM_WRN("VrpnServer", "More tracker names provided than trackers");
+    throw gmCore::InvalidArgument("more tracker names provided than trackers");
 
   for (size_t idx = 0; idx < name_map.size(); ++idx) {
 

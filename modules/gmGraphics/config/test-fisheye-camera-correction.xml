@@ -1,6 +1,6 @@
 <config>
 
-  <OStreamMessageSink stream="err" useAnsiColor="1" level="1"/>
+  <OStreamMessageSink useAnsiColor="1" level="1"/>
   <!--LogFileMessageSink logFilePath="gramods.log" append="false"/-->
 
   <ImportLibrary library="gmGraphics"/>
@@ -26,7 +26,7 @@
             focalOffset="0.5033575445536847 0.47472503212529356667"
             distortion="3.3884550481307715e-02 0 0 0"/>
         <ImageTexture
-            file="share/gmGraphics/resources/gopro/stairs_%05d.jpg"
+            file="urn:gramods:gmGraphics/resources/gopro/stairs_%05d.jpg"
             range="56 111"
             loop="1"/>
       </SphereRenderer>

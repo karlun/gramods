@@ -6,6 +6,7 @@
 BEGIN_NAMESPACE_GMCORE;
 
 GM_OFI_DEFINE(ImportLibrary);
+GM_OFI_PARAM(ImportLibrary, libraryFile, std::filesystem::path, ImportLibrary::setLibraryFile);
 GM_OFI_PARAM(ImportLibrary, library, std::string, ImportLibrary::setLibrary);
 GM_OFI_PARAM(ImportLibrary, prefix, std::string, ImportLibrary::setPrefix);
 GM_OFI_PARAM(ImportLibrary, suffix, std::string, ImportLibrary::setSuffix);
@@ -17,6 +18,7 @@ struct ImportLibrary::Impl {
   void initialize();
 
   bool library_loaded;
+  std::filesystem::path library_file;
   std::string library;
 
 #ifdef WIN32
@@ -59,8 +61,12 @@ ImportLibrary::Impl::~Impl() {
 #endif
 }
 
+void ImportLibrary::setLibraryFile(std::filesystem::path path) {
+  _impl->library_file = path;
+}
+
 void ImportLibrary::setLibrary(std::string lib) {
-  this->_impl->library = lib;
+  _impl->library = lib;
 }
 
 bool ImportLibrary::isLoaded() {
@@ -74,7 +80,13 @@ void ImportLibrary::initialize() {
 
 void ImportLibrary::Impl::initialize() {
 
-  std::string library_file = prefix + library + suffix;
+  if (library_file.empty())
+    if (!library.empty()) {
+      library_file = prefix + library + suffix;
+    } else {
+      GM_ERR("ImportLibrary", "Cannot load library - no library specified");
+      return;
+    }
 
 #ifdef WIN32
 

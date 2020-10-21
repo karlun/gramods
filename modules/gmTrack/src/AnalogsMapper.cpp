@@ -4,7 +4,7 @@
 BEGIN_NAMESPACE_GMTRACK;
 
 GM_OFI_DEFINE(AnalogsMapper);
-GM_OFI_PARAM(AnalogsMapper, mapping, gmTypes::size2, AnalogsMapper::addMapping);
+GM_OFI_PARAM(AnalogsMapper, mapping, gmCore::size2, AnalogsMapper::addMapping);
 GM_OFI_PARAM(AnalogsMapper, verticalAnalog, int, AnalogsMapper::setVerticalAnalog);
 GM_OFI_PARAM(AnalogsMapper, horizontalAnalog, int, AnalogsMapper::setHorizontalAnalog);
 GM_OFI_PARAM(AnalogsMapper, triggerAnalog, int, AnalogsMapper::setTriggerAnalog);
@@ -14,7 +14,7 @@ void AnalogsMapper::setAnalogsTracker(std::shared_ptr<AnalogsTracker> bt) {
   analogsTracker = bt;
 }
 
-void AnalogsMapper::addMapping(gmTypes::size2 m) {
+void AnalogsMapper::addMapping(gmCore::size2 m) {
   mappings[m[0]] = m[1];
 }
 

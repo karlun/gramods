@@ -3,6 +3,8 @@
 
 #ifdef gramods_ENABLE_Eigen3
 
+#include <gmCore/InvalidArgument.hh>
+
 #include <deque>
 #include <map>
 #include <iostream>
@@ -265,7 +267,7 @@ Eigen::Vector3d EFHOAW::getPolynomialPosition(int id, double t) const {
 Eigen::Vector3d EFHOAW::Impl::getPolynomialPosition(int id, double t) const {
 
   if (coefficients.find(id) == coefficients.end())
-    throw std::invalid_argument("no coefficients calculated for specified id");
+    throw gmCore::InvalidArgument("no coefficients calculated for specified id");
 
   const time_list_t &time_list = history.at(id).first;
 
@@ -296,7 +298,7 @@ Eigen::Vector3d EFHOAW::getPolynomialVelocity(int id, double t) const {
 Eigen::Vector3d EFHOAW::Impl::getPolynomialVelocity(int id, double t) const {
 
   if (coefficients.find(id) == coefficients.end())
-    throw std::invalid_argument("no coefficients calculated for specified id");
+    throw gmCore::InvalidArgument("no coefficients calculated for specified id");
 
   const time_list_t &time_list = history.at(id).first;
 

@@ -7,6 +7,9 @@
 #ifdef gramods_ENABLE_aruco
 
 #include <gmTrack/OpenCvVideoSource.hh>
+
+#include <gmCore/path.hh>
+
 #include <gmCore/OFactory.hh>
 #include <gmCore/Updateable.hh>
 
@@ -33,7 +36,7 @@ public:
 
      \gmXmlTag{gmTrack,OpenCvVideoCapture,videoFile}
   */
-  void setVideoFile(std::string file);
+  void setVideoFile(std::filesystem::path file);
 
   /**
      Sets the camera id to capture data from.

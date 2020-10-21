@@ -4,7 +4,7 @@
 
 #include <gmTrack/AnalogsTracker.hh>
 
-#include <gmTypes/size.hh>
+#include <gmCore/size.hh>
 
 #include <gmCore/OFactory.hh>
 
@@ -47,7 +47,7 @@ public:
      
      \gmXmlTag{gmTrack,AnalogsMapper,mapping}
   */
-  void addMapping(gmTypes::size2 m);
+  void addMapping(gmCore::size2 m);
 
   /**
      Sets which analog to map to vertical analog, as an index starting

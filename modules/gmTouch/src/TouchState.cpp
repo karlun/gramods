@@ -1,5 +1,6 @@
 
 #include <gmTouch/TouchState.hh>
+#include <gmCore/InvalidArgument.hh>
 
 #include <stdexcept>
 #include <limits>
@@ -180,7 +181,7 @@ int TouchState::getTouchPoints(std::map<void*, TouchPoints> &current,
 
 bool TouchState::setAssociation(TouchPointId id, void* pt) {
   if (state != 0) throw std::logic_error(CANNOT_BE_CALLED(setAssociation));
-  if (pt == nullptr) throw std::invalid_argument("pt == nullptr");
+  if (pt == nullptr) throw gmCore::InvalidArgument("pt == nullptr");
   if (current_state.count(id) == 0) return false;
   current_association[id] = pt;
   return true;
@@ -373,8 +374,8 @@ TouchState::TouchLine TouchState::touchPointToTouchLine(TouchPoint pt, Eigen::Ma
 }
 
 void TouchState::setSmoothing(float r) {
-  if (r < 0.f) throw std::invalid_argument("r < 0");
-  if (r >= 1.f) throw std::invalid_argument("r >= 1");
+  if (r < 0.f) throw gmCore::InvalidArgument("r < 0");
+  if (r >= 1.f) throw gmCore::InvalidArgument("r >= 1");
   smoothing = r;
 }
 

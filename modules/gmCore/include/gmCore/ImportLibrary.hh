@@ -3,6 +3,7 @@
 #define GRAMODS_CORE_IMPORTLIBRARY
 
 #include <gmCore/config.hh>
+#include <gmCore/path.hh>
 #include <gmCore/OFactory.hh>
 #include <gmCore/Object.hh>
 
@@ -39,7 +40,14 @@ public:
   void initialize();
 
   /**
-     Set name or path of library file.
+     Set full path to library file.
+
+     \gmXmlTag{gmCore,ImportLibrary,libraryFile}
+  */
+  void setLibraryFile(std::filesystem::path path);
+
+  /**
+     Set name of library file.
 
      \gmXmlTag{gmCore,ImportLibrary,library}
   */

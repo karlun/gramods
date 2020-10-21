@@ -1,13 +1,13 @@
 <config>
 
-  <OStreamMessageSink stream="err" useAnsiColor="1" level="1"/>
+  <OStreamMessageSink useAnsiColor="1" level="1"/>
   <!--LogFileMessageSink logFilePath="gramods.log" append="false"/-->
 
   <ImportLibrary library="gmTrack"/>
 
   <ArucoPoseTracker
       showDebug="true"
-      cameraConfigurationFile="share/config/camera-calibration.yaml">
+      cameraConfigurationFile="urn:gramods:config/camera-calibration.yaml">
 
     <OpenCvVideoCapture
         cameraWidth="640" cameraHeight="480"/>

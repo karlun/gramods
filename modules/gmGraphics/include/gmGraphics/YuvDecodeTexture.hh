@@ -6,8 +6,8 @@
 #include <gmGraphics/Texture.hh>
 
 #include <gmCore/OFactory.hh>
-#include <gmTypes/float.hh>
-#include <gmTypes/eigen.hh>
+#include <gmCore/float.hh>
+#include <gmCore/eigen.hh>
 
 #include <memory>
 
@@ -54,7 +54,7 @@ public:
 
      \gmXmlTag{gmGraphics,YuvDecodeTexture,uvRange}
   */
-  void setUvRange(gmTypes::float2 v);
+  void setUvRange(gmCore::float2 v);
 
   GM_OFI_DECLARE;
 

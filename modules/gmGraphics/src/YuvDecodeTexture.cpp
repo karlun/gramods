@@ -13,7 +13,7 @@ BEGIN_NAMESPACE_GMGRAPHICS;
 GM_OFI_DEFINE(YuvDecodeTexture);
 GM_OFI_POINTER(YuvDecodeTexture, texture, Texture, YuvDecodeTexture::setTexture);
 GM_OFI_PARAM(YuvDecodeTexture, yuvToRgb, Eigen::Matrix3f, YuvDecodeTexture::setYuvToRgb);
-GM_OFI_PARAM(YuvDecodeTexture, uvRange, gmTypes::float2, YuvDecodeTexture::setUvRange);
+GM_OFI_PARAM(YuvDecodeTexture, uvRange, gmCore::float2, YuvDecodeTexture::setUvRange);
 
 struct YuvDecodeTexture::Impl {
 
@@ -142,7 +142,7 @@ void YuvDecodeTexture::setYuvToRgb(Eigen::Matrix3f m) {
   _impl->yuvToRgb = m;
 }
 
-void YuvDecodeTexture::setUvRange(gmTypes::float2 v) {
+void YuvDecodeTexture::setUvRange(gmCore::float2 v) {
   _impl->yuvRange = Eigen::Vector3f(1, v[0], v[1]);
 }
 

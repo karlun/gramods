@@ -1,6 +1,7 @@
 
 #include <gmCore/OStreamMessageSink.hh>
 #include <gmCore/Stringify.hh>
+#include <gmCore/InvalidArgument.hh>
 
 #include <iostream>
 #include <assert.h>
@@ -64,7 +65,7 @@ void OStreamMessageSink::setStream(std::string name) {
   } else if (name == "err") {
     setStream(&std::cerr);
   } else {
-    throw std::invalid_argument(GM_STR("invalid stream name '" << name << "'"));
+    throw gmCore::InvalidArgument(GM_STR("invalid stream name '" << name << "'"));
   }
 }
 

@@ -14,7 +14,7 @@ GM_OFI_PARAM(SpatialPlanarView, upDirection, Eigen::Vector3f, SpatialPlanarView:
 GM_OFI_PARAM(SpatialPlanarView, position, Eigen::Vector3f, SpatialPlanarView::setPosition);
 GM_OFI_PARAM(SpatialPlanarView, orientation, Eigen::Quaternionf, SpatialPlanarView::setOrientation);
 GM_OFI_PARAM(SpatialPlanarView, distance, float, SpatialPlanarView::setDistance);
-GM_OFI_PARAM(SpatialPlanarView, clipAngles, gmTypes::angle4, SpatialPlanarView::setClipAngles);
+GM_OFI_PARAM(SpatialPlanarView, clipAngles, gmCore::angle4, SpatialPlanarView::setClipAngles);
 
 struct SpatialPlanarView::Impl {
 
@@ -33,7 +33,7 @@ struct SpatialPlanarView::Impl {
   Eigen::Quaternionf orientation = Eigen::Quaternionf::Identity();
   Eigen::Vector3f position = Eigen::Vector3f::Zero();
 
-  gmTypes::angle4 shape_angles;
+  gmCore::angle4 shape_angles;
   double distance;
 
   bool have_shape_angles = false;
@@ -147,7 +147,7 @@ void SpatialPlanarView::setPosition(Eigen::Vector3f p) {
   _impl->calculateCorners();
 }
 
-void SpatialPlanarView::setClipAngles(gmTypes::angle4 a) {
+void SpatialPlanarView::setClipAngles(gmCore::angle4 a) {
   _impl->shape_angles = a;
   _impl->have_shape_angles = true;
   _impl->calculateCorners();

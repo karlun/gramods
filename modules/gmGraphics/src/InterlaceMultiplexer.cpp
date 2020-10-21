@@ -69,7 +69,7 @@ void InterlaceMultiplexer::finalize() {
 
 void InterlaceMultiplexer::setPattern(int p) {
   if (p < 0 || 2 < p)
-    throw std::invalid_argument("invalid interlace pattern");
+    throw gmCore::InvalidArgument("invalid interlace pattern");
   _impl->pattern = p;
 }
 
@@ -244,7 +244,7 @@ void InterlaceMultiplexer::Impl::prepare() {
 
 void InterlaceMultiplexer::Impl::setupRendering(size_t eye) {
 
-  if (eye >= 2) throw std::invalid_argument("cannot render eye index higher than 1");
+  if (eye >= 2) throw gmCore::InvalidArgument("cannot render eye index higher than 1");
 
   if (!is_functional)
     return;

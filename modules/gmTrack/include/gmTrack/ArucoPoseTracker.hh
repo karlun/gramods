@@ -6,6 +6,8 @@
 
 #ifdef gramods_ENABLE_aruco
 
+#include <gmCore/path.hh>
+
 #include <gmCore/OFactory.hh>
 #include <gmCore/Updateable.hh>
 
@@ -89,7 +91,7 @@ public:
 
      \gmXmlTag{gmTrack,ArucoPoseTracker,cameraConfigurationFile}
   */
-  void setCameraConfigurationFile(std::string file);
+  void setCameraConfigurationFile(std::filesystem::path file);
 
   /**
      Replaces the contents of p with pose data.

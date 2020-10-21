@@ -4,8 +4,8 @@
 
 #include <gmGraphics/View.hh>
 
-#include <gmTypes/float.hh>
-#include <gmTypes/angle.hh>
+#include <gmCore/float.hh>
+#include <gmCore/angle.hh>
 
 BEGIN_NAMESPACE_GMGRAPHICS;
 
@@ -25,7 +25,7 @@ public:
 
      \gmXmlTag{gmGraphics,FovPlanarView,clipPlanes}
   */
-  void setClipPlanes(gmTypes::float4 p) {
+  void setClipPlanes(gmCore::float4 p) {
     planes = p;
   }
 
@@ -37,9 +37,9 @@ public:
 
      \gmXmlTag{gmGraphics,FovPlanarView,clipAngles}
 
-     \sa operator>>(std::istream &, gmTypes::angle &)
+     \sa operator>>(std::istream &, gmCore::angle &)
   */
-  void setClipAngles(gmTypes::angle4 p) {
+  void setClipAngles(gmCore::angle4 p) {
     planes[0] = -tanf(p[0]);
     planes[1] =  tanf(p[1]);
     planes[2] = -tanf(p[2]);
@@ -61,7 +61,7 @@ public:
 
 private:
 
-  gmTypes::float4 planes = { -1, 1, -1, 1 };
+  gmCore::float4 planes = { -1, 1, -1, 1 };
   Eigen::Quaternionf orientation = Eigen::Quaternionf::Identity();
 
 };

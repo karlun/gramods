@@ -431,10 +431,10 @@ void PoseRegistrationEstimator::Impl::estimateUnitRegistration
  Eigen::Matrix4f &M_unit) {
 
   if (tracker_data.empty() || actual_data.empty())
-    throw std::invalid_argument("empty vector of data not supported");
+    throw gmCore::InvalidArgument("empty vector of data not supported");
 
   if (tracker_data.size() != actual_data.size())
-    throw std::invalid_argument("tracker and actual point vectors must be of equal size");
+    throw gmCore::InvalidArgument("tracker and actual point vectors must be of equal size");
 
   Eigen::JacobiSVD<Eigen::MatrixXf> svd(M_raw.block<3,3>(0,0),
                                         Eigen::ComputeFullU | Eigen::ComputeFullV);

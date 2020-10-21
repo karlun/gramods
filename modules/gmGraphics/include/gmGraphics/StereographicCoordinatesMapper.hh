@@ -4,7 +4,7 @@
 
 #include <gmGraphics/CoordinatesMapper.hh>
 
-#include <gmTypes/angle.hh>
+#include <gmCore/angle.hh>
 
 #include <GL/glew.h>
 #include <GL/gl.h>
@@ -66,7 +66,7 @@ public:
 
      \gmXmlTag{gmGraphics,StereographicCoordinatesMapper,coverageAngle}
   */
-  void setCoverageAngle(gmTypes::angle a);
+  void setCoverageAngle(gmCore::angle a);
 
   /**
      Sets the yaw, the horizontal heading, a value in the range 0 to
@@ -74,9 +74,9 @@ public:
 
      \gmXmlTag{gmGraphics,StereographicCoordinatesMapper,theta0}
 
-     \sa operator>>(std::istream &, gmTypes::angle &)
+     \sa operator>>(std::istream &, gmCore::angle &)
   */
-  void setTheta0(gmTypes::angle a);
+  void setTheta0(gmCore::angle a);
 
   /**
      Sets the pitch, the vertical heading, a value in the range -π/2
@@ -84,9 +84,9 @@ public:
 
      \gmXmlTag{gmGraphics,StereographicCoordinatesMapper,phi0}
 
-     \sa operator>>(std::istream &, gmTypes::angle &)
+     \sa operator>>(std::istream &, gmCore::angle &)
   */
-  void setPhi0(gmTypes::angle a);
+  void setPhi0(gmCore::angle a);
 
   GM_OFI_DECLARE;
 

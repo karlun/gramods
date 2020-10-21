@@ -4,7 +4,7 @@
 
 #include <gmGraphics/View.hh>
 
-#include <gmTypes/size.hh>
+#include <gmCore/size.hh>
 
 BEGIN_NAMESPACE_GMGRAPHICS;
 
@@ -44,7 +44,7 @@ public:
 
      \gmXmlTag{gmGraphics,SaveView,file}
   */
-  void setFile(std::string file);
+  void setFile(std::filesystem::path file);
 
   /**
      Sets the resolution to render and save at, regarless of
@@ -53,7 +53,7 @@ public:
 
      \gmXmlTag{gmGraphics,SaveView,resolution}
   */
-  void setResolution(gmTypes::size2 res);
+  void setResolution(gmCore::size2 res);
 
   /**
      Set to true if the pixel data should be read off and saved in

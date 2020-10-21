@@ -4,7 +4,7 @@
 
 #include <gmGraphics/Renderer.hh>
 
-#include <gmTypes/eigen.hh>
+#include <gmCore/eigen.hh>
 #include <gmCore/OFactory.hh>
 
 BEGIN_NAMESPACE_GMGRAPHICS;

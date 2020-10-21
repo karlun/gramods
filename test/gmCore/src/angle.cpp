@@ -1,7 +1,7 @@
 
-#include <gmTypes/config.hh>
+#include <gmCore/config.hh>
 
-#include <gmTypes/angle.hh>
+#include <gmCore/angle.hh>
 
 #include <gmCore/Console.hh>
 #include <gmCore/OStreamMessageSink.hh>
@@ -13,7 +13,7 @@
 
 using namespace gramods;
 
-TEST(gmTypesAngle, ReadFloat) {
+TEST(gmCoreAngle, ReadFloat) {
 
   std::stringstream out;
 
@@ -25,7 +25,7 @@ TEST(gmTypesAngle, ReadFloat) {
 
   {
     std::stringstream ss("180");
-    gmTypes::angle a;
+    gmCore::angle a;
     ss >> a;
 
     EXPECT_TRUE(ss);
@@ -38,7 +38,7 @@ TEST(gmTypesAngle, ReadFloat) {
   gmCore::Console::removeAllSinks();
 }
 
-TEST(gmTypesAngle, ReadRadians) {
+TEST(gmCoreAngle, ReadRadians) {
 
   std::stringstream out;
 
@@ -50,7 +50,7 @@ TEST(gmTypesAngle, ReadRadians) {
 
   {
     std::stringstream ss("r180");
-    gmTypes::angle a;
+    gmCore::angle a;
     ss >> a;
     EXPECT_TRUE(ss);
     EXPECT_LE(fabsf(180 - a), std::numeric_limits<float>::epsilon());
@@ -61,7 +61,7 @@ TEST(gmTypesAngle, ReadRadians) {
   gmCore::Console::removeAllSinks();
 }
 
-TEST(gmTypesAngle, ReadDegrees) {
+TEST(gmCoreAngle, ReadDegrees) {
 
   std::stringstream out;
 
@@ -73,7 +73,7 @@ TEST(gmTypesAngle, ReadDegrees) {
 
   {
     std::stringstream ss("d180");
-    gmTypes::angle a;
+    gmCore::angle a;
     ss >> a;
     EXPECT_TRUE(ss);
     EXPECT_LE(fabsf(GM_PI - a), std::numeric_limits<float>::epsilon());
@@ -84,18 +84,18 @@ TEST(gmTypesAngle, ReadDegrees) {
   gmCore::Console::removeAllSinks();
 }
 
-TEST(gmTypesAngle, ReadNegativeDegrees) {
+TEST(gmCoreAngle, ReadNegativeDegrees) {
 
   {
     std::stringstream ss("d-180");
-    gmTypes::angle a;
+    gmCore::angle a;
     ss >> a;
     EXPECT_TRUE(ss);
     EXPECT_LE(fabsf(GM_PI + a), std::numeric_limits<float>::epsilon());
   }
 }
 
-TEST(gmTypesAngle, ReadWrongKey) {
+TEST(gmCoreAngle, ReadWrongKey) {
 
   std::stringstream out;
 
@@ -107,7 +107,7 @@ TEST(gmTypesAngle, ReadWrongKey) {
 
   {
     std::stringstream ss("q180");
-    gmTypes::angle a;
+    gmCore::angle a;
     ss >> a;
     EXPECT_FALSE(ss);
 
@@ -117,7 +117,7 @@ TEST(gmTypesAngle, ReadWrongKey) {
   gmCore::Console::removeAllSinks();
 }
 
-TEST(gmTypesAngle, ReadMultiple) {
+TEST(gmCoreAngle, ReadMultiple) {
 
   std::stringstream out;
 
@@ -129,7 +129,7 @@ TEST(gmTypesAngle, ReadMultiple) {
 
   {
     std::stringstream ss("r180 d180 3");
-    gmTypes::angle a, b, c;
+    gmCore::angle a, b, c;
     ss >> a >> b >> c;
     EXPECT_TRUE(ss);
     EXPECT_LE(fabsf(180 - a), std::numeric_limits<float>::epsilon());

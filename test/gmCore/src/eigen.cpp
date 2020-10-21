@@ -1,10 +1,10 @@
 
-#include <gmTypes/config.hh>
+#include <gmCore/config.hh>
 
 #ifdef gramods_ENABLE_Eigen3
 
-#include <gmTypes/eigen.hh>
-#include <gmTypes/angle.hh>
+#include <gmCore/eigen.hh>
+#include <gmCore/angle.hh>
 
 #include <sstream>
 
@@ -19,7 +19,7 @@
 
 using namespace gramods;
 
-TEST(gmTypesEigen, XML_keyerror) {
+TEST(gmCoreEigen, XML_keyerror) {
 
   std::stringstream ss("quat 1 2 3 4");
   Eigen::Quaternionf q;
@@ -28,7 +28,7 @@ TEST(gmTypesEigen, XML_keyerror) {
   EXPECT_EQ_EIGEN_QUAT(Eigen::Quaternionf::Identity(), q);
 }
 
-TEST(gmTypesEigen, XML_quaternion) {
+TEST(gmCoreEigen, XML_quaternion) {
 
   std::stringstream ss("quaternion 1 2 3 4");
   Eigen::Quaternionf q;
@@ -38,7 +38,7 @@ TEST(gmTypesEigen, XML_quaternion) {
   EXPECT_EQ_EIGEN_QUAT(Q, q);
 }
 
-TEST(gmTypesEigen, XML_EulerYPR) {
+TEST(gmCoreEigen, XML_EulerYPR) {
 
   Eigen::Quaternionf q;
 
@@ -83,7 +83,7 @@ ypr
   }
 }
 
-TEST(gmTypesEigen, XML_axisangle_rad) {
+TEST(gmCoreEigen, XML_axisangle_rad) {
 
   Eigen::Quaternionf q;
   std::stringstream ss(R"lang=xml(
@@ -97,7 +97,7 @@ axisangle 1 2 3 0.1
   EXPECT_EQ_EIGEN_QUAT(Q, q);
 }
 
-TEST(gmTypesEigen, XML_angleaxis_rad) {
+TEST(gmCoreEigen, XML_angleaxis_rad) {
 
   Eigen::Quaternionf q;
   std::stringstream ss(R"lang=xml(
@@ -111,7 +111,7 @@ angleaxis 0.1 1 2 3
   EXPECT_EQ_EIGEN_QUAT(Q, q);
 }
 
-TEST(gmTypesEigen, XML_axisangle_deg) {
+TEST(gmCoreEigen, XML_axisangle_deg) {
 
   Eigen::Quaternionf q;
   std::stringstream ss(R"lang=xml(
@@ -120,13 +120,13 @@ axisangle 1 2 3 d10
 
   ss >> q;
 
-  Eigen::AngleAxisf A(gmTypes::angle::from_degrees * 10.f,
+  Eigen::AngleAxisf A(gmCore::angle::from_degrees * 10.f,
                       Eigen::Vector3f(1, 2, 3).normalized());
   Eigen::Quaternionf Q(A);
   EXPECT_EQ_EIGEN_QUAT(Q, q);
 }
 
-TEST(gmTypesEigen, XML_angleaxis_deg) {
+TEST(gmCoreEigen, XML_angleaxis_deg) {
 
   Eigen::Quaternionf q;
   std::stringstream ss(R"lang=xml(
@@ -135,7 +135,7 @@ angleaxis d10 1 2 3
 
   ss >> q;
 
-  Eigen::AngleAxisf A(gmTypes::angle::from_degrees * 10.f,
+  Eigen::AngleAxisf A(gmCore::angle::from_degrees * 10.f,
                       Eigen::Vector3f(1, 2, 3).normalized());
   Eigen::Quaternionf Q(A);
   EXPECT_EQ_EIGEN_QUAT(Q, q);

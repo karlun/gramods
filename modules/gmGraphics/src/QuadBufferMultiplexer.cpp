@@ -32,7 +32,7 @@ void QuadBufferMultiplexer::setupRendering(size_t eye) {
     break;
 
   default:
-    throw std::invalid_argument("cannot render eye index higher than 1");
+    throw gmCore::InvalidArgument("cannot render eye index higher than 1");
   }
 }
 

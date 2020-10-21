@@ -6,7 +6,7 @@
 
 #ifdef gramods_ENABLE_libuvc
 
-#include <gmTypes/size.hh>
+#include <gmCore/size.hh>
 #include <gmCore/OFactory.hh>
 #include <gmGraphics/Texture.hh>
 #include <memory>
@@ -67,7 +67,7 @@ public:
 
      \gmXmlTag{gmGraphics,UvcTexture,resolution}
   */
-  void setResolution(gmTypes::size2 res);
+  void setResolution(gmCore::size2 res);
 
   /**
      Set the framerate to attempt to negotiate with the UVC device.

@@ -1,8 +1,8 @@
 
-#ifndef GRAMODS_TYPES_EIGEN
-#define GRAMODS_TYPES_EIGEN
+#ifndef GRAMODS_CORE_EIGEN
+#define GRAMODS_CORE_EIGEN
 
-#include <gmTypes/config.hh>
+#include <gmCore/config.hh>
 
 #ifdef gramods_ENABLE_Eigen3
 
@@ -43,7 +43,7 @@ std::istream& operator>> (std::istream &in, Eigen::Vector3f &v);
      is expressed counter clockwise (right-handed) per default in
      radians. The axis does not have to be normalized.
 
-   \sa operator>>(std::istream &, gmTypes::angle &)
+   \sa operator>>(std::istream &, gmCore::angle &)
 */
 std::istream& operator>> (std::istream &in, Eigen::Quaternionf &q);
 

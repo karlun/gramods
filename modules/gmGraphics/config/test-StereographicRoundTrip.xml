@@ -1,6 +1,6 @@
 <config>
 
-  <OStreamMessageSink stream="err" useAnsiColor="1" level="1"/>
+  <OStreamMessageSink useAnsiColor="1" level="1"/>
   <!--LogFileMessageSink logFilePath="gramods.log" append="false"/-->
 
   <ImportLibrary library="gmGraphics"/>
@@ -47,7 +47,7 @@
                 radius="10">
               <EquirectangularCoordinatesMapper/>
               <ImageTexture
-                  file="share/gmGraphics/resources/equirectangular-coordinates.png"/>
+                  file="urn:gramods:gmGraphics/resources/equirectangular-coordinates.png"/>
             </SphereRenderer>
 
           </SpatialSphericalView>

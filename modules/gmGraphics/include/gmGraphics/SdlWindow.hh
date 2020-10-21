@@ -33,7 +33,7 @@ public:
      Returns the size of the drawable canvas of this window, in
      pixels.
   */
-  gmTypes::size2 getSize();
+  gmCore::size2 getSize();
 
   /**
      Close window.

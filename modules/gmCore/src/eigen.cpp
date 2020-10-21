@@ -1,9 +1,9 @@
 
-#include <gmTypes/eigen.hh>
+#include <gmCore/eigen.hh>
 
 #ifdef gramods_ENABLE_Eigen3
 
-#include <gmTypes/angle.hh>
+#include <gmCore/angle.hh>
 
 #include <gmCore/Console.hh>
 
@@ -44,7 +44,7 @@ std::istream& operator>> (std::istream &in, Eigen::Quaternionf &q) {
 
   } else if (key == "ypr") {
 
-    gmTypes::angle yaw, pitch, roll;
+    gmCore::angle yaw, pitch, roll;
     in >> yaw >> pitch >> roll;
 
     if (in) {
@@ -62,7 +62,7 @@ std::istream& operator>> (std::istream &in, Eigen::Quaternionf &q) {
     Eigen::Vector3f v;
     in >> v[0] >> v[1] >> v[2];
 
-    gmTypes::angle angle;
+    gmCore::angle angle;
     in >> angle;
 
     if (in) {
@@ -76,7 +76,7 @@ std::istream& operator>> (std::istream &in, Eigen::Quaternionf &q) {
 
   } else if (key == "angleaxis") {
 
-    gmTypes::angle angle;
+    gmCore::angle angle;
     in >> angle;
 
     Eigen::Vector3f v;

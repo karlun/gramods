@@ -12,8 +12,8 @@
 BEGIN_NAMESPACE_GMGRAPHICS;
 
 GM_OFI_DEFINE(ImageTexture);
-GM_OFI_PARAM(ImageTexture, file, std::string, ImageTexture::setFile);
-GM_OFI_PARAM(ImageTexture, range, gmTypes::size2, ImageTexture::setRange);
+GM_OFI_PARAM(ImageTexture, file, std::filesystem::path, ImageTexture::setFile);
+GM_OFI_PARAM(ImageTexture, range, gmCore::size2, ImageTexture::setRange);
 GM_OFI_PARAM(ImageTexture, loop, bool, ImageTexture::setLoop);
 GM_OFI_PARAM(ImageTexture, exit, bool, ImageTexture::setExit);
 
@@ -25,12 +25,12 @@ struct ImageTexture::Impl {
 
   void update();
   void update(clock::time_point t);
-  bool loadImage(std::string filename, long int frame = 0);
+  bool loadImage(std::filesystem::path filename, long int frame = 0);
 
   GLuint texture_id = 0;
-  std::string file = "";
+  std::filesystem::path file = {};
   bool fail = false;
-  gmTypes::size2 animation_range;
+  gmCore::size2 animation_range;
   long int animation_frame = -1;
   bool animate = false;
   bool do_loop = false;
@@ -46,11 +46,11 @@ void ImageTexture::initialize() {
   Texture::initialize();
 }
 
-void ImageTexture::setFile(std::string file) {
+void ImageTexture::setFile(std::filesystem::path file) {
   _impl->file = file;
 }
 
-void ImageTexture::setRange(gmTypes::size2 range) {
+void ImageTexture::setRange(gmCore::size2 range) {
   _impl->animation_range = range;
   _impl->animation_frame = range[0] - 1;
   _impl->animate = true;
@@ -110,7 +110,8 @@ void ImageTexture::Impl::update(clock::time_point t) {
   }
 }
 
-bool ImageTexture::Impl::loadImage(std::string file_template, long int frame) {
+bool ImageTexture::Impl::loadImage(std::filesystem::path file_template,
+                                   long int frame) {
 
   size_t filename_size = snprintf(nullptr, 0, file_template.c_str(), frame) + 1;
   std::vector<char> filename(filename_size + 1);

@@ -118,7 +118,7 @@ void SdlWindow::initialize() {
   int display_count = SDL_GetNumVideoDisplays();
   if (display >= display_count) {
     GM_ERR("SdlWindow", "requested display " << display << " is not available (" << display_count << " available).");
-    throw std::invalid_argument(GM_STR("requested display " << display << " is not available (" << display_count << " available)."));
+    throw gmCore::InvalidArgument(GM_STR("requested display " << display << " is not available (" << display_count << " available)."));
   }
 
   SDL_Rect display_bounds;
@@ -234,11 +234,11 @@ void SdlWindow::close() {
   }
 }
 
-gmTypes::size2 SdlWindow::getSize() {
-  if (!window) return gmTypes::size2 { 0, 0 };
+gmCore::size2 SdlWindow::getSize() {
+  if (!window) return gmCore::size2 { 0, 0 };
   int width, height;
   SDL_GetWindowSize(window, &width, &height);
-  return gmTypes::size2 { (size_t)width, (size_t)height };
+  return gmCore::size2 { (size_t)width, (size_t)height };
 }
 
 bool SdlWindow::handleEvent(SDL_Event& event) {

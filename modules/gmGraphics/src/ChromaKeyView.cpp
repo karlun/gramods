@@ -12,8 +12,8 @@
 BEGIN_NAMESPACE_GMGRAPHICS;
 
 GM_OFI_DEFINE_SUB(ChromaKeyView, View);
-GM_OFI_PARAM(ChromaKeyView, key, gmTypes::float3, ChromaKeyView::setKey);
-GM_OFI_PARAM(ChromaKeyView, tolerance, gmTypes::float2, ChromaKeyView::setTolerance);
+GM_OFI_PARAM(ChromaKeyView, key, gmCore::float3, ChromaKeyView::setKey);
+GM_OFI_PARAM(ChromaKeyView, tolerance, gmCore::float2, ChromaKeyView::setTolerance);
 GM_OFI_POINTER(ChromaKeyView, view, View, ChromaKeyView::addView);
 
 struct ChromaKeyView::Impl {
@@ -29,8 +29,8 @@ struct ChromaKeyView::Impl {
   void renderFullPipeline(ViewSettings settings);
 
   std::vector<std::shared_ptr<View>> views;
-  gmTypes::float3 key = { 0, 1, 0 };
-  gmTypes::float2 tolerance = { 0.48, 0.5 };
+  gmCore::float3 key = { 0, 1, 0 };
+  gmCore::float2 tolerance = { 0.48, 0.5 };
 };
 
 const std::string
@@ -146,11 +146,11 @@ void ChromaKeyView::Impl::renderFullPipeline(ViewSettings settings) {
   glBindTexture(GL_TEXTURE_2D, 0);
 }
 
-void ChromaKeyView::setKey(gmTypes::float3 key) {
+void ChromaKeyView::setKey(gmCore::float3 key) {
   _impl->key = key;
 }
 
-void ChromaKeyView::setTolerance(gmTypes::float2 tol) {
+void ChromaKeyView::setTolerance(gmCore::float2 tol) {
   _impl->tolerance = tol;
 }
 

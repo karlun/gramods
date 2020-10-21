@@ -1,14 +1,14 @@
 
-#ifndef GRAMODS_TYPES_ANGLE
-#define GRAMODS_TYPES_ANGLE
+#ifndef GRAMODS_CORE_ANGLE
+#define GRAMODS_CORE_ANGLE
 
-#include <gmTypes/config.hh>
+#include <gmCore/config.hh>
 #include <gmCore/MathConstants.hh>
 
 #include <array>
 #include <iostream>
 
-BEGIN_NAMESPACE_GMTYPES;
+BEGIN_NAMESPACE_GMCORE;
 
 /**
    A simple placeholder for angle values expressed in radians.
@@ -64,7 +64,7 @@ typedef std::array<angle, 3> angle3;
 /// Array of 4 angle.
 typedef std::array<angle, 4> angle4;
 
-END_NAMESPACE_GMTYPES;
+END_NAMESPACE_GMCORE;
 
 BEGIN_NAMESPACE_GRAMODS;
 
@@ -76,40 +76,40 @@ BEGIN_NAMESPACE_GRAMODS;
    by an 'r' (as in r3.14) to suppress the warnings that degrees
    probably was ment for large values.
 */
-std::istream& operator>> (std::istream &in, gmTypes::angle &v);
+std::istream& operator>> (std::istream &in, gmCore::angle &v);
 
 /// Stream operator reading two values into a angle2.
-inline std::istream& operator>> (std::istream &in, gramods::gmTypes::angle2 &s) {
+inline std::istream& operator>> (std::istream &in, gramods::gmCore::angle2 &s) {
   in >> s[0] >> s[1];
   return in;
 }
 
 /// Stream operator reading three values into a angle3.
-inline std::istream& operator>> (std::istream &in, gramods::gmTypes::angle3 &s) {
+inline std::istream& operator>> (std::istream &in, gramods::gmCore::angle3 &s) {
   in >> s[0] >> s[1] >> s[2];
   return in;
 }
 
 /// Stream operator reading four values into a angle4.
-inline std::istream& operator>> (std::istream &in, gramods::gmTypes::angle4 &s) {
+inline std::istream& operator>> (std::istream &in, gramods::gmCore::angle4 &s) {
   in >> s[0] >> s[1] >> s[2] >> s[3];
   return in;
 }
 
 /// Stream operator writing two values from a angle2.
-inline std::ostream& operator<< (std::ostream &out, gramods::gmTypes::angle2 &s) {
+inline std::ostream& operator<< (std::ostream &out, gramods::gmCore::angle2 &s) {
   out << s[0] << " " << s[1];
   return out;
 }
 
 /// Stream operator writing three values from a angle3.
-inline std::ostream& operator<< (std::ostream &out, gramods::gmTypes::angle3 &s) {
+inline std::ostream& operator<< (std::ostream &out, gramods::gmCore::angle3 &s) {
   out << s[0] << " " << s[1] << " " << s[2];
   return out;
 }
 
 /// Stream operator writing four values from a angle4.
-inline std::ostream& operator<< (std::ostream &out, gramods::gmTypes::angle4 &s) {
+inline std::ostream& operator<< (std::ostream &out, gramods::gmCore::angle4 &s) {
   out << s[0] << " " << s[1] << " " << s[2] << " " << s[3];
   return out;
 }

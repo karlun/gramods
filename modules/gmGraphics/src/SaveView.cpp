@@ -20,8 +20,8 @@
 BEGIN_NAMESPACE_GMGRAPHICS;
 
 GM_OFI_DEFINE_SUB(SaveView, View);
-GM_OFI_PARAM(SaveView, file, std::string, SaveView::setFile);
-GM_OFI_PARAM(SaveView, resolution, gmTypes::size2, SaveView::setResolution);
+GM_OFI_PARAM(SaveView, file, std::filesystem::path, SaveView::setFile);
+GM_OFI_PARAM(SaveView, resolution, gmCore::size2, SaveView::setResolution);
 GM_OFI_PARAM(SaveView, useAlpha, bool, SaveView::setUseAlpha);
 GM_OFI_PARAM(SaveView, useFloat, bool, SaveView::setUseFloat);
 GM_OFI_POINTER(SaveView, view, gmGraphics::View, SaveView::addView);
@@ -32,12 +32,12 @@ struct SaveView::Impl {
   bool float_support = false;
   bool use_alpha = false;
   bool use_float = false;
-  std::string file_template = "SaveView.png";
+  std::filesystem::path file_template = "SaveView.png";
   FREE_IMAGE_FORMAT fi_format = FIF_PNG;
   int fi_options = PNG_Z_BEST_SPEED;
 
   static const std::string fragment_code;
-  gmTypes::size2 resolution = { 0, 0 };
+  gmCore::size2 resolution = { 0, 0 };
 
   OffscreenRenderTargets render_target;
   RasterProcessor raster_processor;
@@ -89,7 +89,7 @@ void SaveView::Impl::renderFullPipeline(ViewSettings settings) {
     return;
   }
 
-  if (file_template.size() == 0) {
+  if (file_template.empty()) {
     GM_RUNONCE(GM_ERR("SaveView", "Cannot not save - empty filename"));
     return;
   }
@@ -208,12 +208,9 @@ void SaveView::Impl::renderFullPipeline(ViewSettings settings) {
   glBindTexture(GL_TEXTURE_2D, 0);
 }
 
-void SaveView::setFile(std::string file) {
+void SaveView::setFile(std::filesystem::path file) {
 
-#define ENDSWITH(STRING,SUFFIX) \
-  ((STRING).rfind(SUFFIX) == (STRING).size() - std::string(SUFFIX).size())
-
-  if (ENDSWITH(file, ".png")) {
+  if (file.extension() == "png") {
 
     _impl->alpha_support = true;
     _impl->float_support = false;
@@ -223,8 +220,8 @@ void SaveView::setFile(std::string file) {
 
     return;
 
-  } else if (ENDSWITH(file, ".jpg") ||
-             ENDSWITH(file, ".jpeg") ) {
+  } else if (file.extension() == "jpg" ||
+             file.extension() == "jpeg" ) {
 
     _impl->alpha_support = false;
     _impl->float_support = false;
@@ -234,7 +231,7 @@ void SaveView::setFile(std::string file) {
 
     return;
 
-  } else if (ENDSWITH(file, ".exr")) {
+  } else if (file.extension() == "exr") {
 
     _impl->alpha_support = false;
     _impl->float_support = true;
@@ -244,8 +241,8 @@ void SaveView::setFile(std::string file) {
 
     return;
 
-  } else if (ENDSWITH(file, ".tif") ||
-             ENDSWITH(file, ".tiff")) {
+  } else if (file.extension() == "tif" ||
+             file.extension() == "tiff") {
 
     _impl->alpha_support = true;
     _impl->float_support = true;
@@ -255,7 +252,7 @@ void SaveView::setFile(std::string file) {
 
     return;
 
-  } else if (ENDSWITH(file, ".pfm")) {
+  } else if (file.extension() == "pfm") {
 
     _impl->alpha_support = false;
     _impl->float_support = true;
@@ -265,7 +262,7 @@ void SaveView::setFile(std::string file) {
 
     return;
 
-  } else if (ENDSWITH(file, ".bmp")) {
+  } else if (file.extension() == "bmp") {
 
     _impl->alpha_support = false;
     _impl->float_support = false;
@@ -282,7 +279,7 @@ void SaveView::setFile(std::string file) {
   setFile(GM_STR(file << ".png"));
 }
 
-void SaveView::setResolution(gmTypes::size2 res) {
+void SaveView::setResolution(gmCore::size2 res) {
   _impl->resolution = res;
 }
 

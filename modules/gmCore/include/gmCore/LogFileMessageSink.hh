@@ -2,6 +2,7 @@
 #ifndef GRAMODS_CORE_LOGFILEMESSAGESINK
 #define GRAMODS_CORE_LOGFILEMESSAGESINK
 
+#include <gmCore/path.hh>
 #include <gmCore/MessageSink.hh>
 
 #include <mutex>
@@ -24,7 +25,7 @@ public:
 
      \gmXmlTag{gmCore,LogFileMessageSink,logFilePath}
   */
-  void setLogFilePath(std::string name);
+  void setLogFilePath(std::filesystem::path path);
 
   /**
      Set to true if the messages should be appended to the end of the
@@ -42,9 +43,9 @@ public:
 private:
 
   bool append;
-  std::string logfile_path;
+  std::filesystem::path logfile_path;
   std::ofstream logfile;
-  
+
   std::mutex lock;
 };
 

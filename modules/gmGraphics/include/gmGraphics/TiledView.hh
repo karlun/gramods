@@ -4,7 +4,7 @@
 
 #include <gmGraphics/View.hh>
 
-#include <gmTypes/size.hh>
+#include <gmCore/size.hh>
 
 BEGIN_NAMESPACE_GMGRAPHICS;
 
@@ -46,7 +46,7 @@ public:
 
      \gmXmlTag{gmGraphics,TiledView,tileLocation}
   */
-  void addTileLocation(gmTypes::size4 c);
+  void addTileLocation(gmCore::size4 c);
 
   /**
      Adds a view to the previously specified tile location.

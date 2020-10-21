@@ -2,7 +2,7 @@
 #ifndef GRAMODS_GRAPHICS_PLANEGEOMETRY
 #define GRAMODS_GRAPHICS_PLANEGEOMETRY
 
-#include <gmTypes/eigen.hh>
+#include <gmCore/eigen.hh>
 #include <gmGraphics/Geometry.hh>
 
 BEGIN_NAMESPACE_GMGRAPHICS;

@@ -11,9 +11,9 @@ GM_OFI_DEFINE_SUB(Window, RendererDispatcher);
 GM_OFI_PARAM(Window, fullscreen, bool, Window::setFullscreen);
 GM_OFI_PARAM(Window, display, size_t, Window::setDisplay);
 GM_OFI_PARAM(Window, title, std::string, Window::setTitle);
-GM_OFI_PARAM(Window, size, gmTypes::size2, Window::setSize);
-GM_OFI_PARAM(Window, position, gmTypes::int2, Window::setPosition);
-GM_OFI_PARAM(Window, backgroundColor, gmTypes::float4, Window::setBackgroundColor);
+GM_OFI_PARAM(Window, size, gmCore::size2, Window::setSize);
+GM_OFI_PARAM(Window, position, gmCore::int2, Window::setPosition);
+GM_OFI_PARAM(Window, backgroundColor, gmCore::float4, Window::setBackgroundColor);
 GM_OFI_POINTER(Window, view, gmGraphics::View, Window::addView);
 
 Window::Window() {}

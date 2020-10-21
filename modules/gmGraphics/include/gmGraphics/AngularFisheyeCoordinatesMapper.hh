@@ -4,7 +4,7 @@
 
 #include <gmGraphics/CoordinatesMapper.hh>
 
-#include <gmTypes/angle.hh>
+#include <gmCore/angle.hh>
 
 #include <GL/glew.h>
 #include <GL/gl.h>
@@ -55,9 +55,9 @@ public:
 
      \gmXmlTag{gmGraphics,AngularFisheyeCoordinatesMapper,coverageAngle}
 
-     \sa operator>>(std::istream &, gmTypes::angle &)
+     \sa operator>>(std::istream &, gmCore::angle &)
   */
-  void setCoverageAngle(gmTypes::angle a);
+  void setCoverageAngle(gmCore::angle a);
 
   GM_OFI_DECLARE;
 

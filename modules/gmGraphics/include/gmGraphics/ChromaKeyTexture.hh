@@ -6,8 +6,8 @@
 #include <gmGraphics/Texture.hh>
 
 #include <gmCore/OFactory.hh>
-#include <gmTypes/float.hh>
-#include <gmTypes/eigen.hh>
+#include <gmCore/float.hh>
+#include <gmCore/eigen.hh>
 
 #include <memory>
 
@@ -44,7 +44,7 @@ public:
 
      \gmXmlTag{gmGraphics,ChromaKeyTexture,key}
   */
-  void setKey(gmTypes::float3 key);
+  void setKey(gmCore::float3 key);
 
   /**
      Set the minimum and maximum tolerances against the key when
@@ -53,7 +53,7 @@ public:
 
      \gmXmlTag{gmGraphics,ChromaKeyTexture,key}
   */
-  void setTolerance(gmTypes::float2 tol);
+  void setTolerance(gmCore::float2 tol);
 
   GM_OFI_DECLARE;
 

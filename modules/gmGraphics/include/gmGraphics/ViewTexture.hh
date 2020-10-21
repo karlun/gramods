@@ -5,7 +5,7 @@
 #include <gmGraphics/View.hh>
 #include <gmGraphics/TextureInterface.hh>
 
-#include <gmTypes/size.hh>
+#include <gmCore/size.hh>
 
 BEGIN_NAMESPACE_GMGRAPHICS;
 
@@ -36,7 +36,7 @@ public:
 
      \gmXmlTag{gmGraphics,ViewTexture,resolution}
   */
-  void setResolution(gmTypes::size2 res);
+  void setResolution(gmCore::size2 res);
 
   /**
      Set to true if the texture should be floating point

@@ -6,9 +6,9 @@
 
 #include <gmGraphics/Geometry.hh>
 
-#include <gmTypes/float.hh>
-#include <gmTypes/eigen.hh>
-#include <gmTypes/angle.hh>
+#include <gmCore/float.hh>
+#include <gmCore/eigen.hh>
+#include <gmCore/angle.hh>
 
 BEGIN_NAMESPACE_GMGRAPHICS;
 
@@ -95,7 +95,7 @@ public:
 
      \gmXmlTag{gmGraphics,GeometryCorrectedProjectorView,extrinsics}
   */
-  void setExtrinsics(gmTypes::float12 M);
+  void setExtrinsics(gmCore::float12 M);
 
   /**
      Set the projection shape, as intrinsics (fx fy cx cy), in
@@ -103,7 +103,7 @@ public:
 
      \gmXmlTag{gmGraphics,GeometryCorrectedProjectorView,intrinsics}
   */
-  void setIntrinsics(gmTypes::float4 m);
+  void setIntrinsics(gmCore::float4 m);
 
   /**
      Angles between forward direction and the clip planes left, right,
@@ -113,9 +113,9 @@ public:
 
      \gmXmlTag{gmGraphics,GeometryCorrectedProjectorView,clipAngles}
 
-     \sa operator>>(std::istream &, gmTypes::angle &)
+     \sa operator>>(std::istream &, gmCore::angle &)
   */
-  void setClipAngles(gmTypes::angle4 a);
+  void setClipAngles(gmCore::angle4 a);
 
   /**
      Set orientation of the projection, of the extrinsics.

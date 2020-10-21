@@ -54,6 +54,9 @@ int main(int argc, char *argv[]) {
   try {
     config = std::make_unique<gmCore::Configuration>(argc, argv);
   }
+  catch (const gmCore::RuntimeException &e) {
+    std::cerr << "Error while creating Configuration instance: " << e.what << std::endl;
+  }
   catch (...) {
     std::cerr << "Unknown internal error while creating Configuration instance." << std::endl;
   }
@@ -192,6 +195,9 @@ int main(int argc, char *argv[]) {
   }
   catch (const gmCore::ExitException &e) {
     return e.exit_code;
+  }
+  catch (const gmCore::RuntimeException &e) {
+    GM_ERR("gm-load", "Terminated by runtime exception: " << e.what);
   }
   catch (...) {
     GM_ERR("gm-load", "Terminated by unknown exception");

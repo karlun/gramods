@@ -6,6 +6,7 @@
 #include <gmGraphics/Renderer.hh>
 #include <gmGraphics/Viewpoint.hh>
 
+#include <gmCore/path.hh>
 #include <gmCore/Object.hh>
 #include <gmCore/OFactory.hh>
 

@@ -6,8 +6,8 @@
 
 #ifdef gramods_ENABLE_aruco
 
-#include <gmTypes/eigen.hh>
-#include <gmTypes/float.hh>
+#include <gmCore/eigen.hh>
+#include <gmCore/float.hh>
 #include <gmCore/OFactory.hh>
 
 #include <Eigen/Eigen>

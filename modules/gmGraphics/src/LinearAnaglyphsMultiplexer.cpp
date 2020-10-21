@@ -10,8 +10,8 @@
 BEGIN_NAMESPACE_GMGRAPHICS;
 
 GM_OFI_DEFINE(LinearAnaglyphsMultiplexer);
-GM_OFI_PARAM(LinearAnaglyphsMultiplexer, leftColor, gmTypes::float3, LinearAnaglyphsMultiplexer::setLeftColor);
-GM_OFI_PARAM(LinearAnaglyphsMultiplexer, rightColor, gmTypes::float3, LinearAnaglyphsMultiplexer::setRightColor);
+GM_OFI_PARAM(LinearAnaglyphsMultiplexer, leftColor, gmCore::float3, LinearAnaglyphsMultiplexer::setLeftColor);
+GM_OFI_PARAM(LinearAnaglyphsMultiplexer, rightColor, gmCore::float3, LinearAnaglyphsMultiplexer::setRightColor);
 GM_OFI_PARAM(LinearAnaglyphsMultiplexer, saturation, float, LinearAnaglyphsMultiplexer::setSaturation);
 GM_OFI_PARAM(LinearAnaglyphsMultiplexer, leftSaturation, float, LinearAnaglyphsMultiplexer::setLeftSaturation);
 GM_OFI_PARAM(LinearAnaglyphsMultiplexer, rightSaturation, float, LinearAnaglyphsMultiplexer::setRightSaturation);
@@ -38,8 +38,8 @@ struct LinearAnaglyphsMultiplexer::Impl {
   GLint viewport[4] = { 0, 0, 0, 0 };
   GLint target_framebuffer;
 
-  gmTypes::float3 left_color = { 1, 0, 0 };
-  gmTypes::float3 right_color = { 0, 1, 1 };
+  gmCore::float3 left_color = { 1, 0, 0 };
+  gmCore::float3 right_color = { 0, 1, 1 };
   float left_saturation = 0.8;
   float right_saturation = 0.8;
 
@@ -70,11 +70,11 @@ void LinearAnaglyphsMultiplexer::finalize() {
   _impl->finalize();
 }
 
-void LinearAnaglyphsMultiplexer::setLeftColor(gmTypes::float3 c) {
+void LinearAnaglyphsMultiplexer::setLeftColor(gmCore::float3 c) {
   _impl->left_color = c;
 }
 
-void LinearAnaglyphsMultiplexer::setRightColor(gmTypes::float3 c) {
+void LinearAnaglyphsMultiplexer::setRightColor(gmCore::float3 c) {
   _impl->right_color = c;
 }
 
@@ -252,7 +252,7 @@ void LinearAnaglyphsMultiplexer::Impl::prepare() {
 
 void LinearAnaglyphsMultiplexer::Impl::setupRendering(size_t eye) {
 
-  if (eye >= 2) throw std::invalid_argument("cannot render eye index higher than 1");
+  if (eye >= 2) throw gmCore::InvalidArgument("cannot render eye index higher than 1");
 
   if (!is_functional)
     return;

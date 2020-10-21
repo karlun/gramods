@@ -4,7 +4,7 @@
 
 #include <gmTrack/ButtonsTracker.hh>
 
-#include <gmTypes/size.hh>
+#include <gmCore/size.hh>
 
 #include <gmCore/OFactory.hh>
 
@@ -44,7 +44,7 @@ public:
 
      \gmXmlTag{gmTrack,ButtonsMapper,mapping}
   */
-  void addMapping(gmTypes::size2 m);
+  void addMapping(gmCore::size2 m);
 
   /**
      Sets which button to map to main button, as an index starting at
