@@ -159,17 +159,20 @@ SyncNode::Impl::~Impl() {
   GM_DBG1("SyncNode", local_peer_idx << " Closing context");
   io_context.stop();
 
-  try {
-    io_thread.join();
-    GM_DBG2("SyncNode", local_peer_idx << " Successfully waited for io thread to stop.");
-  }
-  catch (const std::invalid_argument &e) {
-    GM_DBG2("SyncNode", local_peer_idx << " Could not join io thread: " << e.what() << ".");
-  }
-  catch (const std::system_error &e) {
-    GM_WRN("SyncNode", local_peer_idx << " Caught system_error while joining IO thread. Code " << e.code() 
-           << " meaning " << e.what() << ".");
-  }
+  if (io_thread.joinable())
+    try {
+      io_thread.join();
+      GM_DBG2("SyncNode", local_peer_idx << " Successfully waited for io thread to stop.");
+    } catch (const std::invalid_argument &e) {
+      GM_DBG2("SyncNode",
+              local_peer_idx << " Could not join io thread: " << e.what()
+                             << ".");
+    } catch (const std::system_error &e) {
+      GM_WRN("SyncNode",
+             local_peer_idx
+                 << " Caught system_error while joining IO thread. Code "
+                 << e.code() << " meaning " << e.what() << ".");
+    }
 
   {
     std::unique_lock<std::mutex> guard(impl_lock);
