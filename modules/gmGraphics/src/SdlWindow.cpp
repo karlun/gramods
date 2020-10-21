@@ -212,11 +212,6 @@ void SdlWindow::swap() {
   SDL_GL_SwapWindow(window);
 }
 
-void SdlWindow::sync() {
-  SDL_GL_MakeCurrent(window, gl_context);
-  glFinish();
-}
-
 void SdlWindow::close() {
   GM_INF("SdlWindow", "Closing window " << title);
 

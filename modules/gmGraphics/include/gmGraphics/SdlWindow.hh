@@ -21,13 +21,13 @@ public:
   SdlWindow();
   ~SdlWindow();
 
-  void initialize();
+  void initialize() override;
 
   /**
      Asks the Window to make its GL context current. This is called
      automatically by the renderFullPipeline method.
   */
-  void makeGLContextCurrent();
+  void makeGLContextCurrent() override;
 
   /**
      Returns the size of the drawable canvas of this window, in
@@ -38,7 +38,7 @@ public:
   /**
      Close window.
   */
-  void close();
+  void close() override;
 
   /**
      Sets if quad buffers should be requested for the GL context.
@@ -85,26 +85,19 @@ public:
      Triggers the windows to process its incoming events. This must be
      called at even intervals for the window to behave properly.
   */
-  void processEvents();
+  void processEvents() override;
 
   /**
      Returns true as long as the window is open. This does not
      necessarily mean that the window is visible.
   */
-  bool isOpen();
+  bool isOpen() override;
 
   /**
      Finalizes the rendering and swaps the render buffers to show the
      newly rendered material.
   */
-  void swap();
-
-  /**
-     Calls glFinish on the GL context. The only reason to call this
-     method is if the application needs to wait for vertical scan
-     synchronization (v-sync), for example for timing reasons.
-  */
-  void sync();
+  void swap() override;
 
   GM_OFI_DECLARE;
 

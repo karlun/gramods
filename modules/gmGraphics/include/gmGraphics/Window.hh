@@ -46,13 +46,13 @@ public:
      Asks the Window to make its GL context current. This is called
      automatically by the renderFullPipeline method.
   */
-  virtual void makeGLContextCurrent() {}
+  virtual void makeGLContextCurrent() = 0;
 
   /**
      Asks the Window to close itself. This should be overloaded by sub
      classes to support run-time changes.
   */
-  virtual void close() {}
+  virtual void close() = 0;
 
   /**
      Activates or deactivates fullscreen mode. This should be
@@ -113,7 +113,7 @@ public:
      Triggers the windows to process its incoming events. This must be
      called at even intervals for the window to behave properly.
   */
-  virtual void processEvents() {}
+  virtual void processEvents() = 0;
 
   /**
      Returns true as long as the window is open. This does not
@@ -129,14 +129,14 @@ public:
      to the same context may stall to wait for vertical scan
      synchronization (v-sync).
   */
-  virtual void swap() {}
+  virtual void swap() = 0;
 
   /**
      Calls glFinish on the GL context. The only reason to call this
      method is if the application needs to wait for vertical scan
      synchronization (v-sync), for example for timing reasons.
   */
-  virtual void sync() {}
+  virtual void sync();
 
   /**
      Removes all renderers and, if recursive is set to true, also

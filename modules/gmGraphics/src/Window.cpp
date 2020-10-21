@@ -7,7 +7,7 @@
 
 BEGIN_NAMESPACE_GMGRAPHICS;
 
-GM_OFI_DEFINE_SUB(Window, RendererDispatcher);
+GM_OFI_DEFINE_ABSTRACT_SUB(Window, RendererDispatcher);
 GM_OFI_PARAM(Window, fullscreen, bool, Window::setFullscreen);
 GM_OFI_PARAM(Window, display, size_t, Window::setDisplay);
 GM_OFI_PARAM(Window, title, std::string, Window::setTitle);
@@ -51,6 +51,11 @@ void Window::clearRenderers(bool recursive) {
     for (auto view : views)
       view->clearRenderers(recursive);
   RendererDispatcher::clearRenderers(recursive);
+}
+
+void Window::sync() {
+  makeGLContextCurrent();
+  glFinish();
 }
 
 END_NAMESPACE_GMGRAPHICS;
