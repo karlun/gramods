@@ -6,6 +6,13 @@
 #include <iostream>
 #include <assert.h>
 
+#ifdef _WIN32
+// To enable setting output mode to handle virtual terminal sequences
+#  define WIN32_LEAN_AND_MEAN
+#  include <ProcessEnv.h>
+#  undef WIN32_LEAN_AND_MEAN
+#endif
+
 BEGIN_NAMESPACE_GMCORE;
 
 GM_OFI_DEFINE_SUB(OStreamMessageSink, MessageSink);
@@ -55,6 +62,40 @@ void OStreamMessageSink::output(Message msg) {
   out << msg.message;
 
   if (use_ansi_color) out << ANSI_NORMAL;
+}
+
+void OStreamMessageSink::setUseAnsiColor(bool on) {
+#ifdef _WIN32
+
+  if (!on) {
+    use_ansi_color = false;
+    return;
+  }
+
+  // Set output mode to handle virtual terminal sequences
+  HANDLE hOut = GetStdHandle(STD_OUTPUT_HANDLE);
+  DWORD dwMode = 0;
+  if (hOut != INVALID_HANDLE_VALUE)
+    if (GetConsoleMode(hOut, &dwMode)) {
+      dwMode |= ENABLE_VIRTUAL_TERMINAL_PROCESSING;
+      SetConsoleMode(hOut, dwMode);
+    }
+
+  hOut = GetStdHandle(STD_ERROR_HANDLE);
+  dwMode = 0;
+  if (hOut != INVALID_HANDLE_VALUE)
+    if (GetConsoleMode(hOut, &dwMode)) {
+      dwMode |= ENABLE_VIRTUAL_TERMINAL_PROCESSING;
+      SetConsoleMode(hOut, dwMode);
+    }
+
+  use_ansi_color = true;
+
+#else
+
+  use_ansi_color = on;
+
+#endif
 }
 
 void OStreamMessageSink::setStream(std::string name) {

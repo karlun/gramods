@@ -52,9 +52,7 @@ public:
 
      \gmXmlTag{gmCore,OStreamMessageSink,useAnsiColor}
   */
-  void setUseAnsiColor(bool on) {
-    use_ansi_color = on;
-  }
+  void setUseAnsiColor(bool on);
 
   void output(Message msg);
 
