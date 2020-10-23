@@ -279,6 +279,8 @@ public:
     message_sinks.clear();
   }
 
+  static MessageSink *getDefaultSink();
+
 private:
 
   class ConsoleBuffer
