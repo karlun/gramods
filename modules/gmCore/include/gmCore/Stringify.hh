@@ -4,6 +4,6 @@
 
 #include <sstream>
 
-#define GM_STR(X) (static_cast<std::stringstream&>(std::stringstream() << X).str())
+#define GM_STR(X) (static_cast<std::stringstream&>(std::stringstream().flush() << X).str())
 
 #endif
