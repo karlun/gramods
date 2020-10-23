@@ -95,7 +95,7 @@ Configuration::Configuration(int &argc, char *argv[],
 
     tinyxml2::XMLDocument doc;
 
-    int xml_err = doc.LoadFile(file.c_str());
+    int xml_err = doc.LoadFile(file.u8string().c_str());
     if (xml_err != 0) {
       GM_ERR("Configuration", doc.ErrorStr());
       throw gmCore::InvalidArgument(doc.ErrorStr());

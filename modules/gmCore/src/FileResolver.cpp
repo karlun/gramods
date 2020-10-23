@@ -219,7 +219,7 @@ std::filesystem::path FileResolver::Impl::resolve(std::string str_path, size_t r
           GM_STR("path urn without name: '" << str_path << "'"));
 
     std::string key = str_path.substr(4, end_pos - 4);
-    str_path = map[key] / str_path.substr(end_pos + 1);
+    str_path = (map[key] / str_path.substr(end_pos + 1)).u8string();
     return resolve(str_path, recursion + 1);
   }
 
