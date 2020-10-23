@@ -14,7 +14,7 @@
 #ifdef _WIN32
 #define WIN32_LEAN_AND_MEAN
 #define NOMINMAX
-#include <libloaderapi.h>
+#include <windows.h>
 #else
 #include <errno.h>
 #include <linux/limits.h>
@@ -36,9 +36,9 @@ std::filesystem::path getExecPath() {
 #ifdef _WIN32
 
   constexpr int PATH_MAX = 32768;
-  wchar_t result[PATH_MAX] = {0};
+  wchar_t exe_path[PATH_MAX] = {0};
 
-  DWORD num_chars = GetModuleFileNameW(NULL, result, PATH_MAX);
+  DWORD num_chars = GetModuleFileNameW(NULL, exe_path, PATH_MAX);
 
   if (num_chars == 0) {
     GM_WRN("FileResolver", "Failed getting Executable path: " << GetLastError());
