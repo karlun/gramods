@@ -9,7 +9,8 @@
 #ifdef _WIN32
 // To enable setting output mode to handle virtual terminal sequences
 #  define WIN32_LEAN_AND_MEAN
-#  include <ProcessEnv.h>
+#  define NOMINMAX
+#  include <windows.h>
 #  undef WIN32_LEAN_AND_MEAN
 #endif
 

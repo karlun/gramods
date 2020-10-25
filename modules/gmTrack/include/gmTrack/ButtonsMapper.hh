@@ -3,6 +3,7 @@
 #define GRAMODS_TRACK_BUTTONSMAPPER
 
 #include <gmTrack/ButtonsTracker.hh>
+#include <gmTrack/export.hh>
 
 #include <gmCore/size.hh>
 
@@ -26,9 +27,9 @@ public:
      compatibility.
   */
   struct ButtonIdx {
-    static const size_t MAIN;      //< 0
-    static const size_t SECONDARY; //< 1
-    static const size_t MENU;      //< 2
+    static gmTrack_API const size_t MAIN; //< 0
+    static gmTrack_API const size_t SECONDARY; //< 1
+    static gmTrack_API const size_t MENU;       //< 2
   };
 
   /**
