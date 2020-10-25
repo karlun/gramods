@@ -113,9 +113,10 @@ void ImageTexture::Impl::update(clock::time_point t) {
 bool ImageTexture::Impl::loadImage(std::filesystem::path file_template,
                                    long int frame) {
 
-  size_t filename_size = snprintf(nullptr, 0, file_template.c_str(), frame) + 1;
+  size_t filename_size = snprintf(nullptr, 0, file_template.u8string().c_str(), frame) + 1;
   std::vector<char> filename(filename_size + 1);
-  snprintf(filename.data(), filename_size, file_template.c_str(), frame);
+  snprintf(
+      filename.data(), filename_size, file_template.u8string().c_str(), frame);
 
 	FREE_IMAGE_FORMAT image_format = FreeImage_GetFileType(filename.data(), 0);
 	if(image_format == FIF_UNKNOWN)
