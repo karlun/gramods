@@ -21,11 +21,15 @@ function(install_executable_dependencies EXEC_FILE)
       EXECUTABLES ${EXEC_FILE}
       RESOLVED_DEPENDENCIES_VAR _r_deps
       UNRESOLVED_DEPENDENCIES_VAR _u_deps
+      CONFLICTING_DEPENDENCIES_PREFIX _c_deps
       DIRECTORIES ${DEP_FOLDERS}
       )
 
     IF (_u_deps)
       MESSAGE(WARNING "There were unresolved dependencies for executable ${EXEC_FILE}: \"${_u_deps}\"!")
+    ENDIF()
+    IF (_c_deps_FILENAMES)
+      MESSAGE(WARNING "There were conflicting dependencies for executable ${EXEC_FILE}: \"${_c_deps}\"!")
     ENDIF()
 
     FOREACH(_file ${_r_deps})
@@ -62,11 +66,15 @@ function(install_library_dependencies LIB_FILE)
       LIBRARIES ${LIB_FILE}
       RESOLVED_DEPENDENCIES_VAR _r_deps
       UNRESOLVED_DEPENDENCIES_VAR _u_deps
+      CONFLICTING_DEPENDENCIES_PREFIX _c_deps
       DIRECTORIES ${DEP_FOLDERS}
       )
 
     IF (_u_deps)
       MESSAGE(WARNING "There were unresolved dependencies for library ${LIB_FILE}: \"${_u_deps}\"!")
+    ENDIF()
+    IF (_c_deps_FILENAMES)
+      MESSAGE(WARNING "There were conflicting dependencies for library ${LIB_FILE}: \"${_c_deps}\"!")
     ENDIF()
 
     IF (WIN32)
