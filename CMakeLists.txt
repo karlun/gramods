@@ -80,6 +80,20 @@ ENDFOREACH ()
 # --- PACKING ---
 
 INCLUDE(InstallRequiredSystemLibraries)
+SET(CMAKE_DEBUG_POSTFIX "-d" CACHE STRING "Set debug library postfix")
+
+# https://cmake.org/cmake/help/git-stage/guide/importing-exporting/index.html
+INCLUDE(CMakePackageConfigHelpers)
+CONFIGURE_PACKAGE_CONFIG_FILE(cmake_modules/GramodsConfig.cmake.in
+  ${CMAKE_CURRENT_BINARY_DIR}/GramodsConfig.cmake
+  INSTALL_DESTINATION ${CMAKE_INSTALL_LIBDIR}/gramods/cmake)
+WRITE_BASIC_PACKAGE_VERSION_FILE(
+  ${CMAKE_CURRENT_BINARY_DIR}/GramodsConfigVersion.cmake
+  VERSION 0.1.1
+  COMPATIBILITY SameMajorVersion)
+INSTALL(FILES ${CMAKE_CURRENT_BINARY_DIR}/GramodsConfig.cmake
+  ${CMAKE_CURRENT_BINARY_DIR}/GramodsConfigVersion.cmake
+  DESTINATION ${CMAKE_INSTALL_LIBDIR}/gramods/cmake )
 
 SET(CPACK_PACKAGE_DESCRIPTION_SUMMARY "The gramods package is a collection of modules for graphics rendering.")
 SET(CPACK_PACKAGE_NAME "libgramods")
@@ -103,6 +117,8 @@ INSTALL(DIRECTORY config/
   DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/gramods/config)
 INSTALL(FILES cmake_modules/gramods.urn
   DESTINATION bin)
+
+
 
 # --- TESTING ---
 
