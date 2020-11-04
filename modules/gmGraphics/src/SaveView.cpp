@@ -212,7 +212,7 @@ void SaveView::Impl::renderFullPipeline(ViewSettings settings) {
 
 void SaveView::setFile(std::filesystem::path file) {
 
-  if (file.extension() == "png") {
+  if (file.extension() == ".png") {
 
     _impl->alpha_support = true;
     _impl->float_support = false;
@@ -222,8 +222,8 @@ void SaveView::setFile(std::filesystem::path file) {
 
     return;
 
-  } else if (file.extension() == "jpg" ||
-             file.extension() == "jpeg" ) {
+  } else if (file.extension() == ".jpg" ||
+             file.extension() == ".jpeg" ) {
 
     _impl->alpha_support = false;
     _impl->float_support = false;
@@ -233,7 +233,7 @@ void SaveView::setFile(std::filesystem::path file) {
 
     return;
 
-  } else if (file.extension() == "exr") {
+  } else if (file.extension() == ".exr") {
 
     _impl->alpha_support = false;
     _impl->float_support = true;
@@ -243,8 +243,8 @@ void SaveView::setFile(std::filesystem::path file) {
 
     return;
 
-  } else if (file.extension() == "tif" ||
-             file.extension() == "tiff") {
+  } else if (file.extension() == ".tif" ||
+             file.extension() == ".tiff") {
 
     _impl->alpha_support = true;
     _impl->float_support = true;
@@ -254,7 +254,7 @@ void SaveView::setFile(std::filesystem::path file) {
 
     return;
 
-  } else if (file.extension() == "pfm") {
+  } else if (file.extension() == ".pfm") {
 
     _impl->alpha_support = false;
     _impl->float_support = true;
@@ -264,7 +264,7 @@ void SaveView::setFile(std::filesystem::path file) {
 
     return;
 
-  } else if (file.extension() == "bmp") {
+  } else if (file.extension() == ".bmp") {
 
     _impl->alpha_support = false;
     _impl->float_support = false;
