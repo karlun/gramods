@@ -23,6 +23,8 @@ function(install_executable_dependencies EXEC_FILE)
       UNRESOLVED_DEPENDENCIES_VAR _u_deps
       CONFLICTING_DEPENDENCIES_PREFIX _c_deps
       DIRECTORIES ${DEP_FOLDERS}
+      PRE_EXCLUDE_REGEXES "api-ms-*"
+      POST_EXCLUDE_REGEXES ".*system32/.*\\.dll" ".*SysWOW64/.*\\.dll"
       )
 
     IF (_u_deps)
@@ -68,6 +70,8 @@ function(install_library_dependencies LIB_FILE)
       UNRESOLVED_DEPENDENCIES_VAR _u_deps
       CONFLICTING_DEPENDENCIES_PREFIX _c_deps
       DIRECTORIES ${DEP_FOLDERS}
+      PRE_EXCLUDE_REGEXES "api-ms-*"
+      POST_EXCLUDE_REGEXES ".*system32/.*\\.dll"
       )
 
     IF (_u_deps)
