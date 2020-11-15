@@ -66,14 +66,14 @@ namespace {
       node->getProtocol<gmNetwork::RunSync>();
     ASSERT_TRUE(run_sync);
 
-    GM_INF("gTest", "Node " << idx << " waiting for connection");
+    GM_DBG1("gTest", "Node " << idx << " waiting for connection");
     node->waitForConnection();
 
     double sleep_ratio;
 
     while (*run) {
 
-      GM_VINF("gTest", "Node " << idx << " calling wait");
+      GM_DBG2("gTest", "Node " << idx << " calling wait");
       run_sync->wait();
 
       {
@@ -83,7 +83,7 @@ namespace {
       std::this_thread::sleep_for(std::chrono::microseconds(int(1000 * sleep_ratio)));
       ++*count;
     }
-    GM_VINF("gTest", "Node " << idx << " done");
+    GM_DBG2("gTest", "Node " << idx << " done");
     *done = true;
   }
 }
@@ -133,7 +133,7 @@ TEST(gmNetwork, RunSync_wait) {
   while (++loops < 100 && *count_list.back() < 500)
     std::this_thread::sleep_for(std::chrono::milliseconds(100));
 
-  GM_VINF("gTest", "Stopping threads after " << (100*loops) << " ms, " << (*count_list[0]) << " iterations");
+  GM_DBG2("gTest", "Stopping threads after " << (100*loops) << " ms, " << (*count_list[0]) << " iterations");
   *run = false;
 
   std::this_thread::sleep_for(std::chrono::milliseconds(2000));
@@ -194,6 +194,7 @@ TEST(gmNetwork, SyncNode_pingpong) {
   std::shared_ptr<gmCore::OStreamMessageSink> ssms =
     std::make_shared<gmCore::OStreamMessageSink>();
   ssms->setStream(&ss);
+  ssms->setLevel(4);
   ssms->initialize();
 
   size_t peer_count = 2;

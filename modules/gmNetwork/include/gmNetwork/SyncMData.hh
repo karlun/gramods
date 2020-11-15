@@ -8,9 +8,11 @@
 BEGIN_NAMESPACE_GMNETWORK;
 
 /**
-   Simple, multi value (vector) synchronizeable data container. It
-   does not support pointers or types containing pointers. It is also
-   not optimized for synchronization of large amounts of data.
+   Simple, multi value (vector) synchronizeable data container,
+   without support for pointers or types containing pointers.
+
+   Observe that this container is not optimized for synchronization of
+   large amounts of data.
 */
 template<class TYPE>
 class SyncMData
@@ -46,8 +48,8 @@ public:
   }
 
   /**
-     Sets the back value of the container and immediately sends it to
-     the connected peers.
+     Sets the back value of the container and immediately sends it to the
+     back value of connected peers.
   */
   SyncMData<TYPE>& operator= (std::vector<TYPE> val) {
     {
@@ -62,7 +64,7 @@ protected:
 
   /**
      Encodes the back data of the container into the specified vector,
-     into vector indices 1-N and leaves the zeroth cell empty.
+     using vector indices 1-N and leaving the zeroth cell empty.
   */
   void encode(std::vector<char> &d) override {
     std::lock_guard<std::mutex> guard(lock);
@@ -95,7 +97,7 @@ protected:
     for (size_t idx = 0; idx < vector_size * sizeof(TYPE); ++idx)
       m[idx] = d[idx + 1];
 
-    back = value;
+    back = std::move(value);
   }
 
   /**
@@ -114,8 +116,7 @@ private:
   std::vector<TYPE> front;
 
   /**
-     Background data vector, set and sent and
-     retrieved over network.
+     Background data vector, set, sent and retrieved over network.
   */
   std::vector<TYPE> back;
 

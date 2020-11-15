@@ -231,17 +231,17 @@ void SphereSceneRenderer::Impl::setup() {
     refine_polyhedron(vertices, indices);
 
 
-  GM_VINF("SphereSceneRenderer", "Creating vertex shader");
+  GM_DBG2("SphereSceneRenderer", "Creating vertex shader");
   vertex_shader_id = glCreateShader(GL_VERTEX_SHADER);
   glShaderSource(vertex_shader_id, 1, &vertex_shader_code, nullptr);
   glCompileShader(vertex_shader_id);
 
-  GM_VINF("SphereSceneRenderer", "Creating fragment shader");
+  GM_DBG2("SphereSceneRenderer", "Creating fragment shader");
   fragment_shader_id = glCreateShader(GL_FRAGMENT_SHADER);
   glShaderSource(fragment_shader_id, 1, &fragment_shader_code, nullptr);
   glCompileShader(fragment_shader_id);
 
-  GM_VINF("SphereSceneRenderer", "Creating and linking program");
+  GM_DBG2("SphereSceneRenderer", "Creating and linking program");
   program_id = glCreateProgram();
   glAttachShader(program_id, vertex_shader_id);
   glAttachShader(program_id, fragment_shader_id);
@@ -251,11 +251,11 @@ void SphereSceneRenderer::Impl::setup() {
   if (!GLUtils::check_shader_program(program_id))
     return;
 
-  GM_VINF("SphereSceneRenderer", "Creating vertex array");
+  GM_DBG2("SphereSceneRenderer", "Creating vertex array");
   glGenVertexArrays(1, &vao_id);
   glBindVertexArray(vao_id);
 
-  GM_VINF("SphereSceneRenderer", "Creating and setting up array buffer");
+  GM_DBG2("SphereSceneRenderer", "Creating and setting up array buffer");
   glGenBuffers(1, &vbo_id);
   glBindBuffer(GL_ARRAY_BUFFER, vbo_id);
   glBufferData(GL_ARRAY_BUFFER,
@@ -268,7 +268,7 @@ void SphereSceneRenderer::Impl::setup() {
   glBindBuffer(GL_ARRAY_BUFFER, 0);
   glBindVertexArray(0);
 
-  GM_INF("SphereSceneRenderer", "initialized");
+  GM_DBG1("SphereSceneRenderer", "initialized");
   is_functional = true;
 }
 
@@ -298,7 +298,7 @@ void SphereSceneRenderer::Impl::render(Camera camera, float near, float far) {
   if (!is_functional)
     return;
 
-  GM_VINF("SphereSceneRenderer", "rendering");
+  GM_DBG2("SphereSceneRenderer", "rendering");
 
   if (far < 0) {
     getNearFar(camera, near, far);
@@ -336,7 +336,7 @@ void SphereSceneRenderer::Impl::render(Camera camera, float near, float far) {
   glBindVertexArray(0);
   glUseProgram(0);
 
-  GM_VVINF("SphereSceneRenderer", "Done rendering");
+  GM_DBG3("SphereSceneRenderer", "Done rendering");
 }
 
 SphereSceneRenderer::Impl::~Impl() {

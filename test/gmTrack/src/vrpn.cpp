@@ -66,7 +66,7 @@ TEST(gmTrackVrpn, VrpnTracker) {
         gmCore::Updateable::updateAll();
 
         tracker.getPose(samples);
-        GM_INF("Test", samples[0].position);
+        GM_DBG1("Test", samples[0].position);
       }
     }
 

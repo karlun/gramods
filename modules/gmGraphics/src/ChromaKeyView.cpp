@@ -114,7 +114,7 @@ void ChromaKeyView::Impl::renderFullPipeline(ViewSettings settings) {
     return;
   }
 
-  GM_VINF("ChromaKeyView", "Rendering view");
+  GM_DBG2("ChromaKeyView", "Rendering view");
 
   render_target.push();
   render_target.bind();
@@ -124,7 +124,7 @@ void ChromaKeyView::Impl::renderFullPipeline(ViewSettings settings) {
 
   // Render offscreen buffer to active render target
 
-  GM_VINF("ChromaKeyView", "Render offscreen buffer to active render target");
+  GM_DBG2("ChromaKeyView", "Render offscreen buffer to active render target");
 
   glDisable(GL_DEPTH_TEST);
   glEnable(GL_BLEND);

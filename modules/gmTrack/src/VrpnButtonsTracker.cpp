@@ -71,7 +71,7 @@ void VRPN_CALLBACK VrpnButtonsTracker::handler(void *data, const vrpn_BUTTONCB i
 
   _this->got_data = true;
   _this->have_data = true;
-  GM_VVINF("VrpnButtonsTracker", "Got vrpn button data for button " << info.button << " (" << info.state << ")");
+  GM_DBG3("VrpnButtonsTracker", "Got vrpn button data for button " << info.button << " (" << info.state << ")");
 }
 
 END_NAMESPACE_GMTRACK;

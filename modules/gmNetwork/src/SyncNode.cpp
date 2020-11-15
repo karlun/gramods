@@ -122,6 +122,8 @@ struct SyncNode::Impl : public std::enable_shared_from_this<SyncNode::Impl> {
   float getTimeoutDelay();
 
   void waitForConnection();
+  bool isConnected();
+
   void sendMessage(Protocol::Message mess);
   void addProtocol(std::string name, std::shared_ptr<Protocol> prot);
 
@@ -156,20 +158,23 @@ struct SyncNode::Impl : public std::enable_shared_from_this<SyncNode::Impl> {
 
 SyncNode::Impl::~Impl() {
 
-  GM_INF("SyncNode", local_peer_idx << " Closing context");
+  GM_DBG1("SyncNode", local_peer_idx << " Closing context");
   io_context.stop();
 
-  try {
-    io_thread.join();
-    GM_VINF("SyncNode", local_peer_idx << " Successfully waited for io thread to stop.");
-  }
-  catch (const std::invalid_argument &e) {
-    GM_VINF("SyncNode", local_peer_idx << " Could not join io thread: " << e.what() << ".");
-  }
-  catch (const std::system_error &e) {
-    GM_WRN("SyncNode", local_peer_idx << " Caught system_error while joining IO thread. Code " << e.code() 
-           << " meaning " << e.what() << ".");
-  }
+  if (io_thread.joinable())
+    try {
+      io_thread.join();
+      GM_DBG2("SyncNode", local_peer_idx << " Successfully waited for io thread to stop.");
+    } catch (const std::invalid_argument &e) {
+      GM_DBG2("SyncNode",
+              local_peer_idx << " Could not join io thread: " << e.what()
+                             << ".");
+    } catch (const std::system_error &e) {
+      GM_WRN("SyncNode",
+             local_peer_idx
+                 << " Caught system_error while joining IO thread. Code "
+                 << e.code() << " meaning " << e.what() << ".");
+    }
 
   {
     std::unique_lock<std::mutex> guard(impl_lock);
@@ -327,7 +332,7 @@ void SyncNode::Impl::Peer::connect() {
 
   std::lock_guard<std::mutex> guard(peer_lock);
 
-  GM_VINF("SyncNode", local_peer_idx << " Trying to connect " << address);
+  GM_DBG2("SyncNode", local_peer_idx << " Trying to connect " << address);
   asio::async_connect(socket, endpoints,
                       [this](std::error_code ec, asio::ip::tcp::endpoint end) {
                         on_connect(ec, end);
@@ -339,7 +344,7 @@ void SyncNode::Impl::Peer::on_connect(std::error_code ec, asio::ip::tcp::endpoin
   std::unique_lock<std::mutex> guard(peer_lock);
 
   if (ec) {
-    GM_VINF("SyncNode", local_peer_idx << " Failed to connect to " << peer_idx << ": " << ec.message());
+    GM_DBG2("SyncNode", local_peer_idx << " Failed to connect to " << peer_idx << ": " << ec.message());
 
     timeout_timer.async_wait(std::bind(&Peer::connect, this));
     timeout_timer.expires_from_now(RECONNECT_DELAY);
@@ -347,7 +352,7 @@ void SyncNode::Impl::Peer::on_connect(std::error_code ec, asio::ip::tcp::endpoin
     return;
   }
 
-  GM_INF("SyncNode", local_peer_idx << " Connected to " << peer_idx << " - sending handshake");
+  GM_DBG1("SyncNode", local_peer_idx << " Connected to " << peer_idx << " - sending handshake");
 
   is_connected = true;
 
@@ -415,7 +420,7 @@ void SyncNode::Impl::Peer::on_data
 
   std::unique_lock<std::mutex> guard(peer_lock);
 
-  GM_VVINF("SyncNode", local_peer_idx << " Got data from " << peer_idx << " (len = " << length << ")");
+  GM_DBG3("SyncNode", local_peer_idx << " Got data from " << peer_idx << " (len = " << length << ")");
 
   if (message.length) {
     // In process of reading message data
@@ -463,7 +468,7 @@ void SyncNode::Impl::Peer::on_data
 
         guard.lock();
 
-        GM_INF("SyncNode", local_peer_idx << " Connection with " << peer_idx << " established with handshake.");
+        GM_DBG1("SyncNode", local_peer_idx << " Connection with " << peer_idx << " established with handshake.");
 
       }
         break;
@@ -477,7 +482,7 @@ void SyncNode::Impl::Peer::on_data
         else if (peer_idx != message.data[0])
           GM_WRN("SyncNode", "Received PING message with confusing payload");
 
-        GM_VINF("SyncNode", local_peer_idx << " Sending pong to " << peer_idx);
+        GM_DBG2("SyncNode", local_peer_idx << " Sending pong to " << peer_idx);
 
         // Pong
         Protocol::Message msg(PROTOCOL_ID_PONG,
@@ -496,7 +501,7 @@ void SyncNode::Impl::Peer::on_data
 
       default: {
 
-        GM_VVINF("SyncNode", local_peer_idx << " Message from " << peer_idx << " complete (len = " << message.data.size() << ")");
+        GM_DBG3("SyncNode", local_peer_idx << " Message from " << peer_idx << " complete (len = " << message.data.size() << ")");
         guard.unlock();
 
         parent->routeMessage(message);
@@ -515,7 +520,7 @@ void SyncNode::Impl::Peer::on_data
     // In process of reading message header
     message = Protocol::Message(*read_buffer);
     message.from_peer_idx = peer_idx;
-    GM_VVINF("SyncNode", local_peer_idx << " RECV"
+    GM_DBG3("SyncNode", local_peer_idx << " RECV"
              << " peer=" << message.from_peer_idx
              << " protocol=" << (int)message.protocol
              << " length=" << message.length) << " bytes"
@@ -533,7 +538,7 @@ void SyncNode::sendMessage(Protocol::Message mess) {
 
 void SyncNode::Impl::sendMessage(Protocol::Message mess) {
 
-  GM_VVINF("SyncNode", local_peer_idx << " Sending message "
+  GM_DBG3("SyncNode", local_peer_idx << " Sending message "
            "(from = " << local_peer_idx <<
            ", type = " << (int)mess.protocol <<
            ", len = " << (int)mess.data.size() << ")");
@@ -630,7 +635,7 @@ void SyncNode::Impl::Peer::on_write(std::error_code ec,
     parent->lost_connection(this);
 
   } else {
-    GM_VVINF("SyncNode", local_peer_idx << " Successfully sent " << length << " bytes");
+    GM_DBG3("SyncNode", local_peer_idx << " Successfully sent " << length << " bytes");
   }
 }
 
@@ -690,7 +695,7 @@ void SyncNode::Impl::Peer::on_pingpong_timeout() {
   float delay = parent->getTimeoutDelay();
   guard.lock();
 
-  GM_VINF("SyncNode", local_peer_idx << " Sending ping to " << peer_idx);
+  GM_DBG2("SyncNode", local_peer_idx << " Sending ping to " << peer_idx);
 
   typedef std::chrono::duration<float, std::ratio<1>> f_seconds;
   typedef asio::steady_timer::clock_type::duration timer_duration;
@@ -752,7 +757,7 @@ bool SyncNode::Impl::initialize() {
 
   for (size_t idx = local_peer_idx + 1; idx < peer_addresses.size(); ++idx) {
     std::string address = peer_addresses[idx];
-    GM_VINF("SyncNode", local_peer_idx << " Adding Beta Peer " << idx << " (" << address << ")");
+    GM_DBG2("SyncNode", local_peer_idx << " Adding Beta Peer " << idx << " (" << address << ")");
 
     std::string host;
     std::string port;
@@ -775,7 +780,7 @@ bool SyncNode::Impl::initialize() {
   asio::ip::tcp::resolver::results_type bind_endpoints;
   {
     std::string address = peer_addresses[local_peer_idx];
-    GM_INF("SyncNode", local_peer_idx << " Bind address " << address);
+    GM_DBG1("SyncNode", local_peer_idx << " Bind address " << address);
 
     std::string host;
     std::string port;
@@ -784,7 +789,7 @@ bool SyncNode::Impl::initialize() {
     bind_endpoints = resolver.resolve(host, port);
 
     for (auto end : bind_endpoints)
-      GM_VINF("SyncNode", local_peer_idx << " Resolved "
+      GM_DBG2("SyncNode", local_peer_idx << " Resolved "
              << end.host_name()
              << " : "
              << end.service_name()
@@ -809,7 +814,7 @@ bool SyncNode::Impl::initialize() {
 
 void SyncNode::Impl::accept() {
 
-  GM_INF("SyncNode", local_peer_idx << " Listening to incoming connections");
+  GM_DBG1("SyncNode", local_peer_idx << " Listening to incoming connections");
   server_acceptor->async_accept
     ([this] (std::error_code ec, asio::ip::tcp::socket socket) {
        on_accept(ec, std::move(socket));
@@ -826,7 +831,7 @@ void SyncNode::Impl::on_accept(std::error_code ec, asio::ip::tcp::socket socket)
 
   auto endpoint = socket.remote_endpoint();
 
-  GM_INF("SyncNode", local_peer_idx << " Received incoming connection (" << endpoint.address() << ":" << endpoint.port() << ")");
+  GM_DBG1("SyncNode", local_peer_idx << " Received incoming connection (" << endpoint.address() << ":" << endpoint.port() << ")");
 
   socket.set_option(asio::ip::tcp::no_delay(true));
 
@@ -873,12 +878,12 @@ void SyncNode::Impl::waitForConnection() {
 
   std::unique_lock<std::mutex> guard(impl_lock);
 
-  GM_INF("SyncNode", local_peer_idx << " Waiting for all peers to connect.");
+  GM_DBG1("SyncNode", local_peer_idx << " Waiting for all peers to connect.");
 
   while (true) {
 
     if (io_context.stopped()) {
-      GM_INF("SyncNode", local_peer_idx << " IO context stopped while waiting for connection.");
+      GM_DBG1("SyncNode", local_peer_idx << " IO context stopped while waiting for connection.");
       return;
     }
 
@@ -900,7 +905,7 @@ void SyncNode::Impl::waitForConnection() {
 
     guard.unlock();
 
-    GM_INF("SyncNode", local_peer_idx << " Connection wait status is " << ss.str()
+    GM_DBG1("SyncNode", local_peer_idx << " Connection wait status is " << ss.str()
            << " of " << getPeersCount() << ".");
 
     assert(connect_count <= getPeersCount());
@@ -912,13 +917,56 @@ void SyncNode::Impl::waitForConnection() {
     waiting_condition.wait_for(guard, std::chrono::seconds(1));
   }
 
-  GM_INF("SyncNode", local_peer_idx << " All peers connected");
+  GM_DBG1("SyncNode", local_peer_idx << " All peers connected");
+}
+
+bool SyncNode::isConnected() {
+  return _impl->isConnected();
+}
+
+bool SyncNode::Impl::isConnected() {
+
+  std::unique_lock<std::mutex> guard(impl_lock);
+
+  GM_DBG2("SyncNode", local_peer_idx << " Checking if all peers are connected.");
+
+  if (io_context.stopped()) {
+    GM_DBG1("SyncNode", local_peer_idx << " IO context stopped when checking if all are connected.");
+    return true;
+  }
+
+  std::size_t connect_count = 0;
+  std::stringstream ss;
+
+  for (auto peer : alpha_peers) {
+    if (peer->isConnected())
+      ++connect_count;
+    ss << (peer->isConnected() ? "1" : "0");
+  }
+  ss << "X";
+  for (auto peer : beta_peers) {
+    if (peer->isConnected())
+        ++connect_count;
+    ss << (peer->isConnected() ? "1" : "0");
+  }
+
+  guard.unlock();
+
+  assert(connect_count <= getPeersCount());
+  if (connect_count < getPeersCount()) {
+    GM_DBG2("SyncNode", local_peer_idx << " Connection wait status is " << ss.str()
+            << " of " << getPeersCount() << ".");
+    return false;
+  }
+
+  GM_DBG1("SyncNode", local_peer_idx << " All peers connected");
+  return true;
 }
 
 void SyncNode::Impl::runContext() {
   while (true) {
     try {
-      GM_INF("SyncNode", local_peer_idx << " Running ASIO io context");
+      GM_DBG1("SyncNode", local_peer_idx << " Running ASIO io context");
       io_context.run();
       break;
     }
@@ -926,7 +974,7 @@ void SyncNode::Impl::runContext() {
       GM_WRN("SyncNode", local_peer_idx << " Exception caught from ASIO io context: " << e.what());
     }
   }
-  GM_INF("SyncNode", local_peer_idx << " Done running ASIO io context");
+  GM_DBG1("SyncNode", local_peer_idx << " Done running ASIO io context");
 }
 
 Protocol * SyncNode::getProtocol(std::string name) {

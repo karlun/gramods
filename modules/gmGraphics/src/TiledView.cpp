@@ -53,12 +53,12 @@ void TiledView::Impl::renderFullPipeline(ViewSettings settings) {
     return;
   }
 
-  GM_VINF("TiledView",
+  GM_DBG2("TiledView",
           "Tiling "
           << "[" << total_rows
           << " " << total_cols
           << "] in ");
-  GM_VINF("TiledView",
+  GM_DBG2("TiledView",
           "Tiling "
           << "(" << cvp[0]
           << " " << cvp[1]
@@ -78,7 +78,7 @@ void TiledView::Impl::renderFullPipeline(ViewSettings settings) {
       ? tile.location[2] * row_height
       : cvp[3] - tile_location_0 * row_height;
 
-    GM_VVINF("TiledView",
+    GM_DBG3("TiledView",
              "Tile @ "
              << "[" << tile.location[0]
              << " " << tile.location[1]

@@ -1,0 +1,105 @@
+<config>
+
+  <OStreamMessageSink useAnsiColor="true"/>
+  <!--LogFileMessageSink logFilePath="gramods.log" append="false"/-->
+
+  <ImportLibrary library="gmGraphics"/>
+  <ImportLibrary library="gmTrack"/>
+
+  <SdlWindow
+      size="640 640"
+      title="OSG Test"
+      GLMajor="2">
+
+    <SdlContext
+        useVideo="1"/>
+
+    <TiledView>
+
+      <param name="tileLocation" value="0 0 1 1"/>
+      <SpatialPlanarView
+          topLeftCorner="-2.0 2.0 0.0"
+          bottomRightCorner="2.0 -2.0 0.0"
+          upDirection="0.0 1.0 0.0">
+        <Viewpoint
+            position="0.0 0.0 3.0"/>
+      </SpatialPlanarView>
+
+      <param name="tileLocation" value="0 1 1 1"/>
+      <SpatialPlanarView
+          topLeftCorner="0.0 2.0 -2.0"
+          bottomRightCorner="0.0 -2.0 2.0"
+          upDirection="0.0 1.0 0.0">
+        <Viewpoint
+            position="-3.0 0.0 0.0"/>
+      </SpatialPlanarView>
+
+      <param name="tileLocation" value="1 0 1 1"/>
+      <SpatialPlanarView
+          topLeftCorner="-2.0 0.0 -2.0"
+          bottomRightCorner="2.0 0.0 2.0"
+          upDirection="0.0 0.0 -1.0">
+        <Viewpoint
+            position="0.0 3.0 0.0"/>
+      </SpatialPlanarView>
+
+      <param name="tileLocation" value="1 1 1 1"/>
+      <PosedPlanarView
+          fieldOfView="1 -1">
+        <Viewpoint
+            position="2.0 2.0 2.0"
+            lookAt="0.0 0.0 0.0"/>
+      </PosedPlanarView>
+    </TiledView>
+
+  </SdlWindow>
+
+
+  <Controller>
+
+    <TimeSamplePoseTracker>
+      <param name="time" value="0"/>
+      <param name="position" value="0 0 1"/>
+      <param name="orientation" value="ypr 0 0 0"/>
+      <param name="time" value="3"/>
+      <param name="position" value="-1 0 1"/>
+      <param name="orientation" value="ypr d-10 0 0"/>
+      <param name="time" value="6"/>
+      <param name="position" value="1 0 1"/>
+      <param name="orientation" value="ypr d10 0 0"/>
+      <param name="time" value="10"/>
+      <param name="position" value="0 0 1"/>
+      <param name="orientation" value="ypr d0 0 0"/>
+    </TimeSamplePoseTracker>
+
+    <TimeSampleButtonsTracker>
+      <param name="time" value="0"/>
+      <param name="buttons" value="0"/>
+      <param name="time" value="5"/>
+      <param name="buttons" value="1"/>
+      <param name="time" value="10"/>
+      <param name="buttons" value="0"/>
+      <param name="time" value="15"/>
+      <param name="buttons" value="2"/>
+      <param name="time" value="18"/>
+      <param name="buttons" value="0"/>
+    </TimeSampleButtonsTracker>
+
+    <TimeSampleAnalogsTracker>
+      <param name="time" value="0"/>
+      <param name="analogs" value="0 0 0"/>
+      <param name="time" value="12"/>
+      <param name="analogs" value="1 0 0"/>
+      <param name="time" value="15"/>
+      <param name="analogs" value="0 0 0"/>
+    </TimeSampleAnalogsTracker>
+  </Controller>
+
+  <SyncNode
+      localPeerIdx="-1"
+      exitWhenAPeerIsDisconnected="true">
+    <param name="peer" value="0.0.0.0:25040"/>
+    <param name="peer" value="0.0.0.0:25041"/>
+  </SyncNode>
+
+</config>

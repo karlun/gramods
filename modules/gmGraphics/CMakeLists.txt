@@ -85,6 +85,20 @@ ELSE()
   MESSAGE (WARNING "Not including image loading support in gmGraphics - requires FreeImage")
 ENDIF(FreeImage_FOUND)
 
+FIND_PACKAGE(OpenSceneGraph COMPONENTS osgViewer)
+IF (OPENSCENEGRAPH_FOUND)
+  SET(HAVE_OpenSceneGraph 1)
+  OPTION(gramods_ENABLE_OpenSceneGraph "Enable functionality that requires OpenSceneGraph" ON)
+  IF (gramods_ENABLE_OpenSceneGraph)
+    LIST (APPEND MODULE_INCLUDE_DIRS ${OPENSCENEGRAPH_INCLUDE_DIRS})
+    LIST (APPEND MODULE_LIBS ${OPENSCENEGRAPH_LIBRARIES})
+  ELSE()
+    MESSAGE (STATUS "Not including OpenSceneGraph support in gmGraphics - requires OpenSceneGraph (disabled)")
+  ENDIF()
+ELSE()
+  MESSAGE (STATUS "Not including OpenSceneGraph support in gmGraphics - requires OpenSceneGraph")
+ENDIF()
+
 FIND_PACKAGE(Inkscape)
 IF(Inkscape_FOUND)
 
@@ -171,6 +185,9 @@ INSTALL(TARGETS gmGraphics
   LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
   RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR})
 INSTALL(DIRECTORY include/
+  DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
+  PATTERN "config_cmake.hh" EXCLUDE)
+INSTALL(DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/include/
   DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
 INSTALL(DIRECTORY config/
   DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/gramods/gmGraphics/config)

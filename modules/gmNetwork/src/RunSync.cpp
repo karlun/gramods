@@ -59,7 +59,7 @@ void RunSync::Impl::wait(RunSync * run_sync) {
   if (local_peer_idx > 255)
     throw gmCore::PreConditionViolation("Support only for up to 255 peers.");
 
-  GM_VINF("RunSync", local_peer_idx << " Initializing waiting; notifying all peers about waiting in frame " << waiting_frame_odd << ".");
+  GM_DBG2("RunSync", local_peer_idx << " Initializing waiting; notifying all peers about waiting in frame " << waiting_frame_odd << ".");
 
   guard.unlock();
   run_sync->sendMessage({ (char)local_peer_idx,
@@ -81,7 +81,7 @@ void RunSync::Impl::wait(RunSync * run_sync) {
   waiting_frame_odd = ! waiting_frame_odd;
   waiting_peers.clear();
 
-  GM_VINF("RunSync", local_peer_idx << " Done waiting (" << (waiting_frame_odd ? 1 : 0) << ").");
+  GM_DBG2("RunSync", local_peer_idx << " Done waiting (" << (waiting_frame_odd ? 1 : 0) << ").");
 }
 
 void RunSync::processMessage(Message m) {
@@ -100,7 +100,7 @@ void RunSync::Impl::processMessage(size_t local_peer_idx,
   char peer_idx = m.data[0];
   char frame_odd = m.data[1];
 
-  GM_VINF("RunSync", local_peer_idx << " Got message of size " << m.data.size()
+  GM_DBG2("RunSync", local_peer_idx << " Got message of size " << m.data.size()
           << " (" << (int)peer_idx << ", " << (int)frame_odd << ")");
 
   std::unique_lock<std::mutex> guard(impl_lock);
@@ -113,7 +113,7 @@ void RunSync::Impl::processMessage(size_t local_peer_idx,
   }
 
   waiting_peers.insert(peer_idx);
-  GM_VINF("RunSync", local_peer_idx << " Waiting notification from " << (int)peer_idx << " (got " << waiting_peers.size() << ")");
+  GM_DBG2("RunSync", local_peer_idx << " Waiting notification from " << (int)peer_idx << " (got " << waiting_peers.size() << ")");
 
   if (waiting_frame_odd == frame_odd)
     waiting_condition.notify_all();

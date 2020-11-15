@@ -74,7 +74,7 @@ void VRPN_CALLBACK VrpnAnalogsTracker::handler(void *data, const vrpn_ANALOGCB i
 
   _this->got_data = true;
   _this->have_data = true;
-  GM_VVINF("VrpnAnalogsTracker", "Got vrpn analog data: " << analogs_log.str());
+  GM_DBG3("VrpnAnalogsTracker", "Got vrpn analog data: " << analogs_log.str());
 }
 
 END_NAMESPACE_GMTRACK;

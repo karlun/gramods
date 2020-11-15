@@ -188,13 +188,13 @@ void SaveView::Impl::renderFullPipeline(ViewSettings settings) {
   auto dt1 = std::chrono::duration_cast<d_seconds>(t1 - t0);
   auto dt2 = std::chrono::duration_cast<d_seconds>(t2 - t1);
 
-  GM_VINF("SaveView", "Captured and saved image " << &filename[0] << " in " << int(1e3 * dt1.count() + 0.8) << " + " << int(1e3 * dt2.count() + 0.8) << " ms");
+  GM_DBG2("SaveView", "Captured and saved image " << &filename[0] << " in " << int(1e3 * dt1.count() + 0.8) << " + " << int(1e3 * dt2.count() + 0.8) << " ms");
 
   render_target.pop();
 
   // Render offscreen buffer to active render target
 
-  GM_VINF("SaveView", "Render offscreen buffers to active render target");
+  GM_DBG2("SaveView", "Render offscreen buffers to active render target");
 
   glActiveTexture(GL_TEXTURE0);
   glBindTexture(GL_TEXTURE_2D, render_target.getTexId());

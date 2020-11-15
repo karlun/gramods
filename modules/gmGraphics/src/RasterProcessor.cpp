@@ -81,19 +81,19 @@ bool RasterProcessor::Impl::init() {
     return false;
   }
 
-  GM_VINF("RasterProcessor", "Creating vertex shader");
+  GM_DBG2("RasterProcessor", "Creating vertex shader");
   vertex_shader_id = glCreateShader(GL_VERTEX_SHADER);
   {const char *p = vertex_shader_code.c_str();
     glShaderSource(vertex_shader_id, 1, &p, nullptr);}
   glCompileShader(vertex_shader_id);
 
-  GM_VINF("RasterProcessor", "Creating fragment shader");
+  GM_DBG2("RasterProcessor", "Creating fragment shader");
   fragment_shader_id = glCreateShader(GL_FRAGMENT_SHADER);
   {const char *p = fragment_shader_code.c_str();
     glShaderSource(fragment_shader_id, 1, &p, nullptr);}
   glCompileShader(fragment_shader_id);
 
-  GM_VINF("RasterProcessor", "Creating and linking program");
+  GM_DBG2("RasterProcessor", "Creating and linking program");
   program_id = glCreateProgram();
   glAttachShader(program_id, vertex_shader_id);
   glAttachShader(program_id, fragment_shader_id);
@@ -103,11 +103,11 @@ bool RasterProcessor::Impl::init() {
   if (!GLUtils::check_shader_program(program_id))
     return false;
 
-  GM_VINF("RasterProcessor", "Creating vertex array");
+  GM_DBG2("RasterProcessor", "Creating vertex array");
   glGenVertexArrays(1, &vao_id);
   glBindVertexArray(vao_id);
 
-  GM_VINF("RasterProcessor", "Creating and setting up array buffer");
+  GM_DBG2("RasterProcessor", "Creating and setting up array buffer");
   glGenBuffers(1, &vbo_id);
   glBindBuffer(GL_ARRAY_BUFFER, vbo_id);
   const GLfloat vertices[4][2] = {
@@ -145,7 +145,7 @@ void RasterProcessor::Impl::teardown() {
 
 void RasterProcessor::Impl::run() {
 
-  GM_VINF("RasterProcessor", "run");
+  GM_DBG2("RasterProcessor", "run");
 
   glUseProgram(program_id);
 

@@ -22,10 +22,12 @@ void MessageSink::outputMetadata(std::ostream &out, Message msg) {
     out << "WW"; break;
   case ConsoleLevel::Information:
     out << "II"; break;
-  case ConsoleLevel::VerboseInformation:
-    out << "I2"; break;
-  case ConsoleLevel::VeryVerboseInformation:
-    out << "I3"; break;
+  case ConsoleLevel::Debug1:
+    out << "D1"; break;
+  case ConsoleLevel::Debug2:
+    out << "D2"; break;
+  case ConsoleLevel::Debug3:
+    out << "D3"; break;
   default:
     assert(0);
   }

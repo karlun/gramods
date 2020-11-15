@@ -1,5 +1,6 @@
 
 #include <gmCore/Console.hh>
+#include <gmCore/OStreamMessageSink.hh>
 
 BEGIN_NAMESPACE_GMCORE;
 
@@ -11,8 +12,11 @@ int Console::ConsoleBuffer::sync() {
   MessageSink::Message m = message_template;
   m.message = str();
 
-  for (auto sink : sinks)
-    sink->output(m);
+  if (sinks.empty())
+    getDefaultSink()->output(m);
+  else
+    for (auto sink : sinks)
+      sink->output(m);
 
   str("");
 
@@ -32,6 +36,12 @@ Console::ConsoleBuffer Console::getBuffer
   std::lock_guard<std::mutex> guard(lock);
   return ConsoleBuffer(message_sinks,
                        MessageSink::Message(level, tag, "", file, line, function));
+}
+
+MessageSink *Console::getDefaultSink() {
+  static std::shared_ptr<OStreamMessageSink> sink =
+      std::make_shared<OStreamMessageSink>();
+  return sink.get();
 }
 
 END_NAMESPACE_GMCORE;

@@ -124,7 +124,7 @@ void UvcTexture::Impl::update() {
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
     glBindTexture(GL_TEXTURE_2D, 0);
-    GM_INF("UvcTexture", "Created texture with default data");
+    GM_DBG1("UvcTexture", "Created texture with default data");
   }
 
   std::lock_guard<std::mutex> guard(data_lock);
@@ -134,7 +134,7 @@ void UvcTexture::Impl::update() {
 
   if (convert_to_rgb) {
 
-    GM_VINF("UvcTexture", "Converting frame cache to RGB.");
+    GM_DBG2("UvcTexture", "Converting frame cache to RGB.");
 
     uvc_frame_t *rgb;
 
@@ -212,7 +212,7 @@ bool UvcTexture::Impl::initialize_context() {
     GM_ERR("UvcTexture", "Cannot initialize UVC context: " << uvc_strerror(res));
     return false;
   }
-  GM_INF("UvcTexture", "UVC context successfully initialized");
+  GM_DBG1("UvcTexture", "UVC context successfully initialized");
   return true;
 }
 
@@ -225,7 +225,7 @@ bool UvcTexture::Impl::locate_device(int vendor, int product, std::string serial
     GM_ERR("UvcTexture", "Cannot find UVC device (vendor=" << vendor << ", product=" << product << ", serial=" << serial << "): " << uvc_strerror(res));
     return false;
   }
-  GM_INF("UvcTexture", "Found UVC device (vendor=" << vendor << ", product=" << product << ", serial=" << serial << ")");
+  GM_DBG1("UvcTexture", "Found UVC device (vendor=" << vendor << ", product=" << product << ", serial=" << serial << ")");
   return true;
 }
 
@@ -238,7 +238,7 @@ bool UvcTexture::Impl::open_device() {
     GM_ERR("UvcTexture", "Unable to open UVC device: " << uvc_strerror(res));
     return false;
   }
-  GM_INF("UvcTexture", "Opened UVC device");
+  GM_DBG1("UvcTexture", "Opened UVC device");
   return true;
 }
 
@@ -260,7 +260,7 @@ bool UvcTexture::Impl::negotiate_format() {
     GM_ERR("UvcTexture", "Unable to negotiate UVC format: " << uvc_strerror(res));
     return false;
   }
-  GM_INF("UvcTexture", "Successful UVC format negotiation");
+  GM_DBG1("UvcTexture", "Successful UVC format negotiation");
   return true;
 }
 
@@ -273,7 +273,7 @@ bool UvcTexture::Impl::start_streaming() {
     throw std::runtime_error(GM_STR("Unable to start stream: "
                                     << uvc_strerror(res)));
   }
-  GM_INF("UvcTexture", "Started UVC streaming");
+  GM_DBG1("UvcTexture", "Started UVC streaming");
   return true;
 }
 
@@ -282,7 +282,7 @@ bool UvcTexture::Impl::start_streaming() {
  * input queue. If this function takes too long, you'll start losing frames. */
 void UvcTexture::Impl::uvc_frame_cb(uvc_frame_t *frame, void *ptr) {
 
-  GM_VVINF("UvcTexture",
+  GM_DBG3("UvcTexture",
            "Incoming UVC frame: " <<
            frame->width << "x" << frame->height
            << " in " << formatToString(frame->frame_format));

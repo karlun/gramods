@@ -195,7 +195,7 @@ bool FileResolver::readUrnFile(std::filesystem::path urn_file) {
     if (path.is_relative())
       path = root / path;
 
-    GM_VINF("FileResolver", "Adding URN '" << key << "' -> '" << path << "'");
+    GM_DBG2("FileResolver", "Adding URN '" << key << "' -> '" << path << "'");
     _impl->map[key] = path;
   }
 

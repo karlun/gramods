@@ -71,7 +71,7 @@ void VRPN_CALLBACK VrpnPoseTracker::handler(void *data, const vrpn_TRACKERCB inf
 
   _this->got_data = true;
   _this->have_data = true;
-  GM_VINF("VrpnPoseTracker", "Got vrpn tracker data for sensor " << info.sensor);
+  GM_DBG2("VrpnPoseTracker", "Got vrpn tracker data for sensor " << info.sensor);
 }
 
 END_NAMESPACE_GMTRACK;

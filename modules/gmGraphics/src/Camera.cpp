@@ -7,7 +7,7 @@ BEGIN_NAMESPACE_GMGRAPHICS;
 
 Eigen::Matrix4f Camera::getProjectionMatrix(float near, float far) {
 
-  GM_VINF("Camera", "Creating projection matrix from ("
+  GM_DBG2("Camera", "Creating projection matrix from ("
           << left << ", " << right << ", "
           << bottom << ", " << top << ", "
           << near << ", " << far << ")");
@@ -29,7 +29,7 @@ Eigen::Affine3f Camera::getViewMatrix() {
 
   {
     Eigen::AngleAxis<float> aa(orientation);
-    GM_VINF("Camera", "Creating view matrix from ("
+    GM_DBG2("Camera", "Creating view matrix from ("
             << position.transpose() << ", "
             << aa.axis().transpose() << " " << aa.angle() << ")");
   }

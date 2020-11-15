@@ -6,6 +6,14 @@
 #include <iostream>
 #include <assert.h>
 
+#ifdef _WIN32
+// To enable setting output mode to handle virtual terminal sequences
+#  define WIN32_LEAN_AND_MEAN
+#  define NOMINMAX
+#  include <windows.h>
+#  undef WIN32_LEAN_AND_MEAN
+#endif
+
 BEGIN_NAMESPACE_GMCORE;
 
 GM_OFI_DEFINE_SUB(OStreamMessageSink, MessageSink);
@@ -13,14 +21,11 @@ GM_OFI_PARAM(OStreamMessageSink, stream, std::string, OStreamMessageSink::setStr
 GM_OFI_PARAM(OStreamMessageSink, useAnsiColor, bool, OStreamMessageSink::setUseAnsiColor);
 GM_OFI_PARAM(OStreamMessageSink, level, int, OStreamMessageSink::setLevel);
 
+#define ANSI_DEBUG   "\033[90m"
 #define ANSI_NORMAL  "\033[37m"
 #define ANSI_ERROR   "\033[91m"
 #define ANSI_WARNING "\033[93m"
 
-
-OStreamMessageSink::OStreamMessageSink()
-  : use_ansi_color(false),
-    level(4) {}
 
 void OStreamMessageSink::output(Message msg) {
   if (msg.level > gramods::gmCore::ConsoleLevel(level)) return;
@@ -40,9 +45,11 @@ void OStreamMessageSink::output(Message msg) {
     case ConsoleLevel::Warning:
       out << ANSI_WARNING; break;
     case ConsoleLevel::Information:
-    case ConsoleLevel::VerboseInformation:
-    case ConsoleLevel::VeryVerboseInformation:
       out << ANSI_NORMAL; break;
+    case ConsoleLevel::Debug1:
+    case ConsoleLevel::Debug2:
+    case ConsoleLevel::Debug3:
+      out << ANSI_DEBUG; break;
     }
 
 #ifndef NDEBUG
@@ -56,6 +63,40 @@ void OStreamMessageSink::output(Message msg) {
   out << msg.message;
 
   if (use_ansi_color) out << ANSI_NORMAL;
+}
+
+void OStreamMessageSink::setUseAnsiColor(bool on) {
+#ifdef _WIN32
+
+  if (!on) {
+    use_ansi_color = false;
+    return;
+  }
+
+  // Set output mode to handle virtual terminal sequences
+  HANDLE hOut = GetStdHandle(STD_OUTPUT_HANDLE);
+  DWORD dwMode = 0;
+  if (hOut != INVALID_HANDLE_VALUE)
+    if (GetConsoleMode(hOut, &dwMode)) {
+      dwMode |= ENABLE_VIRTUAL_TERMINAL_PROCESSING;
+      SetConsoleMode(hOut, dwMode);
+    }
+
+  hOut = GetStdHandle(STD_ERROR_HANDLE);
+  dwMode = 0;
+  if (hOut != INVALID_HANDLE_VALUE)
+    if (GetConsoleMode(hOut, &dwMode)) {
+      dwMode |= ENABLE_VIRTUAL_TERMINAL_PROCESSING;
+      SetConsoleMode(hOut, dwMode);
+    }
+
+  use_ansi_color = true;
+
+#else
+
+  use_ansi_color = on;
+
+#endif
 }
 
 void OStreamMessageSink::setStream(std::string name) {

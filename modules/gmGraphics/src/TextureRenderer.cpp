@@ -73,7 +73,7 @@ void TextureRenderer::Impl::render(TextureInterface *texture, Camera &camera) {
   }
 
   if (!has_been_setup) setup();
-  GM_VINF("TextureRenderer", "rendering");
+  GM_DBG2("TextureRenderer", "rendering");
 
   texture->update();
 
@@ -96,33 +96,33 @@ void TextureRenderer::Impl::render(TextureInterface *texture, Camera &camera) {
   glUseProgram(0);
   glDisableVertexAttribArray(0);
   glBindTexture( GL_TEXTURE_2D, 0);
-  GM_VVINF("TextureRenderer", "Done rendering");
+  GM_DBG3("TextureRenderer", "Done rendering");
 }
 
 void TextureRenderer::Impl::setup() {
 
-  GM_VINF("TextureRenderer", "Creating vertex shader");
+  GM_DBG2("TextureRenderer", "Creating vertex shader");
   vertex_shader_id = glCreateShader(GL_VERTEX_SHADER);
   glShaderSource(vertex_shader_id, 1, &vertex_shader_code, nullptr);
   glCompileShader(vertex_shader_id);
 
-  GM_VINF("TextureRenderer", "Creating fragment shader");
+  GM_DBG2("TextureRenderer", "Creating fragment shader");
   fragment_shader_id = glCreateShader(GL_FRAGMENT_SHADER);
   glShaderSource(fragment_shader_id, 1, &fragment_shader_code, nullptr);
   glCompileShader(fragment_shader_id);
 
-  GM_VINF("TextureRenderer", "Creating and linking program");
+  GM_DBG2("TextureRenderer", "Creating and linking program");
   program_id = glCreateProgram();
   glAttachShader(program_id, vertex_shader_id);
   glAttachShader(program_id, fragment_shader_id);
   glLinkProgram(program_id);
   glBindAttribLocation(program_id, 0, "in_Position");
     
-  GM_VINF("TextureRenderer", "Creating vertex array");
+  GM_DBG2("TextureRenderer", "Creating vertex array");
   glGenVertexArrays(1, &vao_id);
   glBindVertexArray(vao_id);
 
-  GM_VINF("TextureRenderer", "Creating and setting up array buffer");
+  GM_DBG2("TextureRenderer", "Creating and setting up array buffer");
   glGenBuffers(1, &vbo_id);
   glBindBuffer(GL_ARRAY_BUFFER, vbo_id);
   const GLfloat vertices[4][2] = {
@@ -136,7 +136,7 @@ void TextureRenderer::Impl::setup() {
   glBindBuffer(GL_ARRAY_BUFFER, 0);
   glBindVertexArray(0);
 
-  GM_INF("TextureRenderer", "initialized");
+  GM_DBG1("TextureRenderer", "initialized");
   has_been_setup = true;
 }
 

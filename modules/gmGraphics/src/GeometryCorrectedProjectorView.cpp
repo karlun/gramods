@@ -301,7 +301,7 @@ void GeometryCorrectedProjectorView::Impl::renderFullPipeline(ViewSettings setti
   }    
 
   // Render all renderers to the offscreen buffer
-  GM_VINF("GeometryCorrectedProjectorView", "Render all renderers to the offscreen buffer.");
+  GM_DBG2("GeometryCorrectedProjectorView", "Render all renderers to the offscreen buffer.");
 
   render_target.push();
   render_target.bind(buffer_width, buffer_height);
@@ -315,7 +315,7 @@ void GeometryCorrectedProjectorView::Impl::renderFullPipeline(ViewSettings setti
   render_target.pop();
 
   // Render offscreen buffer to active render target
-  GM_VINF("GeometryCorrectedProjectorView", "Render offscreen buffer to active render target");
+  GM_DBG2("GeometryCorrectedProjectorView", "Render offscreen buffer to active render target");
 
   glActiveTexture(GL_TEXTURE0);
   glBindTexture(GL_TEXTURE_2D, render_target.getTexId());

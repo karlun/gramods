@@ -56,7 +56,7 @@ bool OffscreenRenderTargets::Impl::init(size_t count) {
   if (count < 1 || count > 10)
     return false;
 
-  GM_VINF("OffscreenRenderTargets", "Creating buffers and textures");
+  GM_DBG2("OffscreenRenderTargets", "Creating buffers and textures");
   fb_id.resize(count, 0);
   tex_id.resize(count, 0);
   tex_size.resize(count, { 0, 0 });
@@ -133,7 +133,7 @@ void OffscreenRenderTargets::Impl::bind(size_t vwidth, size_t vheight, size_t id
     height = vheight;
   }
   tex_size[idx] = { width, height };
-  GM_VINF("OffscreenRenderTargets", "Bind " << idx << " with size " << width << "x" << height);
+  GM_DBG2("OffscreenRenderTargets", "Bind " << idx << " with size " << width << "x" << height);
 
   glBindFramebuffer(GL_FRAMEBUFFER, fb_id[idx]);
 
@@ -170,7 +170,7 @@ void OffscreenRenderTargets::pop() {
 }
 
 void OffscreenRenderTargets::Impl::pop() {
-  GM_VINF("OffscreenRenderTargets", "finalizing");
+  GM_DBG2("OffscreenRenderTargets", "finalizing");
 
   auto target_framebuffer = target_framebuffer_stack.top();
   glBindFramebuffer(GL_FRAMEBUFFER, target_framebuffer);

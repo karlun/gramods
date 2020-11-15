@@ -81,7 +81,7 @@ void GLAPIENTRY MessageCallback
     break;
   case GL_DEBUG_SEVERITY_LOW:
   case GL_DEBUG_SEVERITY_NOTIFICATION:
-    GM_INF("OpenGL", "OpenGL " << type_str
+    GM_DBG1("OpenGL", "OpenGL " << type_str
            << ", severity = " << severity_str
            << ", message = " << message );
   }
@@ -132,7 +132,7 @@ void SdlWindow::initialize() {
   int win_pos_y = position[1] == std::numeric_limits<size_t>::max() ?
     SDL_WINDOWPOS_UNDEFINED_DISPLAY(display) : display_bounds.y + position[1];
 
-  GM_INF("SdlWindow",
+  GM_DBG1("SdlWindow",
          "Requesting window (" << title << ") "
          << size[0] << "x" << size[1]
          << " @" << win_pos_x << "," << win_pos_y
@@ -147,7 +147,7 @@ void SdlWindow::initialize() {
 
   sdl_windows[SDL_GetWindowID(window)] = std::static_pointer_cast<SdlWindow>(shared_from_this());
 
-  GM_INF("SdlWindow", "Requesting GL context " << gl_major << "." << gl_minor << " " << gl_profile);
+  GM_DBG1("SdlWindow", "Requesting GL context " << gl_major << "." << gl_minor << " " << gl_profile);
   gl_context = SDL_GL_CreateContext(window);
   if (!gl_context) {
     GM_ERR("SdlWindow", SDL_GetError());
@@ -163,7 +163,7 @@ void SdlWindow::initialize() {
     real_profile == SDL_GL_CONTEXT_PROFILE_ES ? "ES" :
     real_profile == SDL_GL_CONTEXT_PROFILE_COMPATIBILITY ? "compatibility" :
     "unknown";
-  GM_INF("SdlWindow", "Got GL context " << real_major << "." << real_minor << " " << str_profile);
+  GM_DBG1("SdlWindow", "Got GL context " << real_major << "." << real_minor << " " << str_profile);
 
   GLenum err = glewInit();
   if (GLEW_OK != err) {
@@ -213,7 +213,7 @@ void SdlWindow::swap() {
 }
 
 void SdlWindow::close() {
-  GM_INF("SdlWindow", "Closing window " << title);
+  GM_DBG1("SdlWindow", "Closing window " << title);
 
   alive = false;
 

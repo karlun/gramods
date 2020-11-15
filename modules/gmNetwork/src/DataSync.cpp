@@ -91,13 +91,13 @@ void DataSync::Impl::processMessage(Message m, int local_peer_idx) {
   }
 
   if (idx < ptr_data.size()) {
-    GM_VVINF("DataSync",
+    GM_DBG3("DataSync",
              "Incoming data (" << m.from_peer_idx
              << " -> " << local_peer_idx
              << ") for ptr cell " << int(idx));
     ptr_data[idx]->decode(m.data);
   } else {
-    GM_VVINF("DataSync",
+    GM_DBG3("DataSync",
              "Incoming data (" << m.from_peer_idx
              << " -> " << local_peer_idx
              << ") for raw cell " << int(idx - ptr_data.size()));
@@ -125,7 +125,7 @@ void DataSync::Impl::encode(SyncData * d,
       assert(idx < 256);
       data[0] = (char)idx;
 
-      GM_VVINF("DataSync",
+      GM_DBG3("DataSync",
                "Sending data (" << local_peer_idx
                << " -> all) for ptr cell " << int(idx));
       return;
@@ -136,7 +136,7 @@ void DataSync::Impl::encode(SyncData * d,
       assert(idx + ptr_data.size() < 256);
       data[0] = (char)(idx + ptr_data.size());
 
-      GM_VVINF("DataSync",
+      GM_DBG3("DataSync",
                "Sending data (" << local_peer_idx
                << " -> all) for raw cell " << int(idx));
       return;
