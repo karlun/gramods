@@ -46,6 +46,23 @@ void Window::renderFullPipeline(ViewSettings settings) {
   glFlush();
 }
 
+bool Window::handleEvent(event *evt) {
+  for (auto fun : event_handlers)
+    if (fun.second(evt)) return true;
+  return false;
+}
+
+void Window::addEventHandler(std::function<bool(const event*)> fun, void *tag) {
+  if (event_handlers.count(tag) > 0)
+    throw gmCore::InvalidArgument("cannot associate tag with more than one event handler.");
+  event_handlers[tag] = fun;
+}
+
+void Window::removeEventHandler(void *tag) {
+  if (event_handlers.count(tag) <= 0) return;
+  event_handlers.erase(tag);
+}
+
 void Window::clearRenderers(bool recursive) {
   if (recursive)
     for (auto view : views)

@@ -184,12 +184,13 @@ void SdlWindow::processEvents() {
     switch (event.type) {
     case SDL_WINDOWEVENT: {
       auto _that = sdl_windows[event.window.windowID].lock();
-      if (_that) _that->handleEvent(event);
+      if (_that) _that->processEvent(event);
     }
       break;
-    case SDL_KEYUP: {
+    case SDL_KEYUP:
+    case SDL_KEYDOWN: {
       auto _that = sdl_windows[event.key.windowID].lock();
-      if (_that) _that->handleEvent(event);
+      if (_that) _that->processEvent(event);
     }
       break;
     case SDL_QUIT: {
@@ -236,7 +237,7 @@ gmCore::size2 SdlWindow::getSize() {
   return gmCore::size2 { (size_t)width, (size_t)height };
 }
 
-bool SdlWindow::handleEvent(SDL_Event& event) {
+bool SdlWindow::processEvent(SDL_Event& event) {
   switch (event.type) {
 
   case SDL_WINDOWEVENT:
@@ -268,7 +269,17 @@ bool SdlWindow::handleEvent(SDL_Event& event) {
 
     }
 
-    return false;
+    {
+      key_event evt(true, (int)event.key.keysym.sym);
+      return handleEvent(&evt);
+    }
+
+  case SDL_KEYDOWN:
+
+    {
+      key_event evt(false, (int)event.key.keysym.sym);
+      return handleEvent(&evt);
+    }
 
   default:
     return false;

@@ -22,6 +22,17 @@ class Window
 
 public:
 
+  struct event {
+    virtual ~event() {}
+  };
+
+  struct key_event : event {
+    bool up;
+    int key;
+    key_event(bool up, int key) : up(up), key(key) {}
+    virtual ~key_event() {}
+  };
+
   Window();
   virtual ~Window() {}
 
@@ -116,6 +127,22 @@ public:
   virtual void processEvents() = 0;
 
   /**
+     Internal events handler, called from processEvents(). This will
+     in turn call any registered event handler.
+  */
+  virtual bool handleEvent(event *);
+
+  /**
+     Registers an event handler associated with the specified tag.
+  */
+  void addEventHandler(std::function<bool(const event*)> fun, void *tag);
+
+  /**
+     Removes the event handler associnated with the specified tag.
+  */
+  void removeEventHandler(void *tag);
+
+  /**
      Returns true as long as the window is open. This does not
      necessarily mean that the window is visible and it may even be
      minimized.
@@ -157,6 +184,8 @@ protected:
   gmCore::int2 position = { (std::numeric_limits<int>::max)(),
                              (std::numeric_limits<int>::max)() };
   gmCore::float4 background_color = {0.f, 0.f, 0.f, 0.f};
+
+  std::unordered_map<void*, std::function<bool(const event*)>> event_handlers;
 };
 
 END_NAMESPACE_GMGRAPHICS;
