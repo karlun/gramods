@@ -10,7 +10,9 @@
 #include <gmCore/OFactory.hh>
 #include <gmCore/PreConditionViolation.hh>
 
+#define ASIO_STANDALONE
 #include <asio.hpp>
+#undef ASIO_STANDALONE
 
 #include <memory>
 #include <set>

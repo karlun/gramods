@@ -1,0 +1,52 @@
+diff --git a/apps/gm-demo-osg/CMakeLists.txt b/apps/gm-demo-osg/CMakeLists.txt
+index 7a88298..7d48429 100644
+--- a/apps/gm-demo-osg/CMakeLists.txt
++++ b/apps/gm-demo-osg/CMakeLists.txt
+@@ -59,6 +59,8 @@ IF (NOT Threads_FOUND)
+ ENDIF ()
+ LIST (APPEND APP_LIBS Threads::Threads)
+ 
++LIST (APPEND APP_LIBS stdc++fs)
++
+ 
+ ADD_EXECUTABLE(gm-demo-osg src/main.cpp src/MyApp.cpp src/MyApp.hh)
+ 
+diff --git a/modules/gmCore/CMakeLists.txt b/modules/gmCore/CMakeLists.txt
+index ff8dcdb..0aba4d0 100644
+--- a/modules/gmCore/CMakeLists.txt
++++ b/modules/gmCore/CMakeLists.txt
+@@ -47,6 +47,7 @@ ELSE()
+ ENDIF()
+ 
+ LIST (APPEND MODULE_LIBS ${CMAKE_DL_LIBS})
++LIST (APPEND MODULE_LIBS stdc++fs)
+ 
+ 
+ OPTION(gramods_STRIP_PATH_FROM_FILE
+diff --git a/modules/gmGraphics/CMakeLists.txt b/modules/gmGraphics/CMakeLists.txt
+index 71f9365..1330425 100644
+--- a/modules/gmGraphics/CMakeLists.txt
++++ b/modules/gmGraphics/CMakeLists.txt
+@@ -161,6 +161,8 @@ ELSE()
+   MESSAGE (STATUS "Not including 'python-fu-resources' target - requires gimp-console")
+ ENDIF()
+ 
++LIST (APPEND MODULE_LIBS stdc++fs)
++
+ 
+ CONFIGURE_FILE(
+   ${CMAKE_CURRENT_SOURCE_DIR}/include/gmGraphics/config_cmake.hh
+diff --git a/modules/gmTrack/CMakeLists.txt b/modules/gmTrack/CMakeLists.txt
+index ce3853d..9387570 100644
+--- a/modules/gmTrack/CMakeLists.txt
++++ b/modules/gmTrack/CMakeLists.txt
+@@ -52,6 +52,9 @@ IF(OPENCV_ARUCO_FOUND)
+   ENDIF()
+ ENDIF()
+ 
++LIST (APPEND MODULE_LIBS stdc++fs)
++
++
+ CONFIGURE_FILE(
+   ${CMAKE_CURRENT_SOURCE_DIR}/include/gmTrack/config_cmake.hh
+   ${CMAKE_CURRENT_BINARY_DIR}/include/gmTrack/config.hh)

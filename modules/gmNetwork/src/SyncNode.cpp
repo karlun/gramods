@@ -9,6 +9,7 @@
 
 #include <unordered_map>
 #include <limits>
+#include <functional>
 
 BEGIN_NAMESPACE_GMNETWORK;
 
