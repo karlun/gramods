@@ -1,8 +1,6 @@
 <config>
 
-  <if variable="GM_DEBUG" value="true">
-    <OStreamMessageSink stream="out" useAnsiColor="1" level="2"/>
-  </if>
+  <!--OStreamMessageSink useAnsiColor="true" level="3"-->
 
   <Controller>
     <RelativeSinglePoseTracker>
