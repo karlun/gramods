@@ -17,7 +17,17 @@ RUN \
     -G Ninja \
     -D CMAKE_BUILD_TYPE=Release \
     -D CMAKE_INSTALL_PREFIX=/osg-install \
-    ..; \
+    .. ; \
+  ninja install
+RUN \
+  git clone https://github.com/vrpn/vrpn.git; \
+  mkdir vrpn/build; \
+  cd vrpn/build; \
+  cmake \
+    -G Ninja \
+    -D CMAKE_BUILD_TYPE=Release \
+    -D CMAKE_INSTALL_PREFIX=/vrpn-install \
+    .. ; \
   ninja install
 
 ARG GM_GIT_BRANCH=master
@@ -45,6 +55,11 @@ RUN \
     -D OSGDB_INCLUDE_DIR:PATH=/osg-install/include \
     -D OPENTHREADS_LIBRARY:FILEPATH=/osg-install/lib/libOpenThreads.so \
     -D OPENTHREADS_INCLUDE_DIR:PATH=/osg-install/include \
+    -D VRPN_INCLUDE_DIR:PATH=/vrpn-install/include \
+    -D VRPN_LIBRARY:FILEPATH=/vrpn-install/lib/libvrpn.a \
+    -D VRPN_SERVER_LIBRARY:FILEPATH=/vrpn-install/lib/libvrpnserver.a \
+    -D QUAT_INCLUDE_DIR:PATH=/vrpn-install/include \
+    -D QUAT_LIBRARY:FILEPATH=/vrpn-install/lib/libquat.a \
     -D gramods_BUILD_DOCUMENTATION:BOOL=ON \
     -D gramods_BUILD_RESOURCES:BOOL=ON \
     -D gramods_INSTALL_DOCUMENTATION:BOOL=ON \
