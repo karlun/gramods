@@ -1,11 +1,11 @@
-FROM ubuntu:18.04
+FROM ubuntu:20.04
 
 RUN \
   apt-get update; \
   DEBIAN_FRONTEND="noninteractive" \
   apt-get -y install cmake git build-essential ninja-build doxygen graphviz; \
   DEBIAN_FRONTEND="noninteractive" \
-  apt-get -y install libgtest-dev libtclap-dev libtinyxml2-dev libsdl2-dev libeigen3-dev libglew-dev libuvc-dev libfreeimage-dev inkscape gimp
+  apt-get -y install libgtest-dev libasio-dev libtclap-dev libtinyxml2-dev libsdl2-dev libeigen3-dev libglew-dev libuvc-dev libfreeimage-dev libopenscenegraph-dev inkscape
 
 RUN \
   git clone https://github.com/vrpn/vrpn.git; \
@@ -38,5 +38,5 @@ RUN \
     .. ; \
   mkdir -p /gramods/build/modules/gmGraphics/resources
 RUN \
-  make -C gramods/build; \
-  make -C gramods/build install
+  ninja -C gramods/build; \
+  ninja -C gramods/build install
