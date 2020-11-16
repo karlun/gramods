@@ -1,6 +1,6 @@
 <config>
 
-  <OStreamMessageSink useAnsiColor="1" level="1"/>
+  <!--OStreamMessageSink useAnsiColor="true" level="3"-->
   <!--LogFileMessageSink logFilePath="gramods.log" append="false"/-->
 
   <ImportLibrary library="gmTrack"/>
