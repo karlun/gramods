@@ -20,7 +20,8 @@ public:
    * Called from main() to create the app.
    */
   MyApp(std::vector<std::shared_ptr<gmNetwork::SyncNode>> sync_nodes,
-        std::vector<std::shared_ptr<gmTrack::Controller>> controllers);
+        std::vector<std::shared_ptr<gmTrack::Controller>> controllers,
+        std::shared_ptr<gmTrack::SinglePoseTracker> head);
 
   /**
    * For pimpl to work with std::unique_ptr the destructor must be
