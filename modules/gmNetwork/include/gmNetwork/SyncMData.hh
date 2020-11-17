@@ -48,6 +48,18 @@ public:
   }
 
   /**
+     Retrieves the indexed values from the front vector of the container.
+  */
+  TYPE operator[] (size_t idx) const {
+    TYPE retval;
+    {
+      std::lock_guard<std::mutex> guard(const_cast<SyncMData<TYPE>*>(this)->lock);
+      retval = front[idx];
+    }
+    return retval;
+  }
+
+  /**
      Sets the back value of the container and immediately sends it to the
      back value of connected peers.
   */

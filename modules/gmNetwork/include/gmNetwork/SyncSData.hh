@@ -45,6 +45,18 @@ public:
   }
 
   /**
+     Retrieves the front value of the container.
+  */
+  TYPE operator*() const {
+    TYPE retval;
+    {
+      std::lock_guard<std::mutex> guard(const_cast<SyncSData<TYPE>*>(this)->lock);
+      retval = front;
+    }
+    return retval;
+  }
+
+  /**
      Sets the back value of the container and immediately sends it to
      the back value of connected peers.
   */
