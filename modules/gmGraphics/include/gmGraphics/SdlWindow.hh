@@ -103,7 +103,7 @@ public:
 
 private:
 
-  bool handleEvent(SDL_Event& event);
+  bool processEvent(SDL_Event& event);
 
   bool alive;
   SDL_Window* window;

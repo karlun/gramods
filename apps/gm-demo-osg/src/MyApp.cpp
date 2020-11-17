@@ -31,7 +31,8 @@ typedef gmNetwork::SyncSData<Eigen::Quaternionf> SyncSQuat;
  */
 struct MyApp::Impl {
   Impl(std::vector<std::shared_ptr<gmNetwork::SyncNode>> sync_nodes,
-       std::vector<std::shared_ptr<gmTrack::Controller>> controllers);
+       std::vector<std::shared_ptr<gmTrack::Controller>> controllers,
+       std::shared_ptr<gmTrack::SinglePoseTracker> head);
 
   void setup_sync(std::vector<std::shared_ptr<gmNetwork::SyncNode>> sync_nodes);
 
@@ -51,6 +52,9 @@ struct MyApp::Impl {
 
   // Wand (if this exists in the configuration)
   std::shared_ptr<gmTrack::Controller> wand;
+
+  // Head (if this exists in the configuration)
+  std::shared_ptr<gmTrack::SinglePoseTracker> head;
 
   // The renderer calls OpenSceneGraph for us
   std::shared_ptr<gmGraphics::OsgRenderer> osg_renderer =
@@ -82,6 +86,10 @@ struct MyApp::Impl {
   std::shared_ptr<SyncSVec> sync_wand_position = std::make_shared<SyncSVec>();
   std::shared_ptr<SyncSQuat> sync_wand_orientation = std::make_shared<SyncSQuat>();
 
+  // head pose (position + orientation)
+  std::shared_ptr<SyncSVec> sync_head_position = std::make_shared<SyncSVec>();
+  std::shared_ptr<SyncSQuat> sync_head_orientation = std::make_shared<SyncSQuat>();
+
   /// ----- OSG Stuff -----
 
   void initOSG();
@@ -99,8 +107,9 @@ struct MyApp::Impl {
 /// ----- External interface implementation -----
 
 MyApp::MyApp(std::vector<std::shared_ptr<gmNetwork::SyncNode>> sync_nodes,
-             std::vector<std::shared_ptr<gmTrack::Controller>> controllers)
-  : _impl(std::make_unique<Impl>(sync_nodes, controllers)) {}
+             std::vector<std::shared_ptr<gmTrack::Controller>> controllers,
+             std::shared_ptr<gmTrack::SinglePoseTracker> head)
+  : _impl(std::make_unique<Impl>(sync_nodes, controllers, head)) {}
 
 MyApp::~MyApp() {}
 
@@ -116,7 +125,9 @@ std::shared_ptr<gmGraphics::OsgRenderer> MyApp::getRenderer() {
 
 MyApp::Impl::Impl(
     std::vector<std::shared_ptr<gmNetwork::SyncNode>> sync_nodes,
-    std::vector<std::shared_ptr<gmTrack::Controller>> controllers) {
+    std::vector<std::shared_ptr<gmTrack::Controller>> controllers,
+    std::shared_ptr<gmTrack::SinglePoseTracker> head)
+  : head(head) {
 
   setup_sync(sync_nodes);
   setup_wand(controllers);
@@ -156,6 +167,8 @@ void MyApp::Impl::setup_sync(
   data_sync->addData(sync_main_button);
   data_sync->addData(sync_second_button);
   data_sync->addData(sync_menu_button);
+  data_sync->addData(sync_head_position);
+  data_sync->addData(sync_head_orientation);
   data_sync->addData(sync_wand_position);
   data_sync->addData(sync_wand_orientation);
 }
@@ -167,10 +180,10 @@ void MyApp::Impl::setup_wand(
     // With no wand we are done setting up wands
     return;
 
-  if (!is_primary)
-    // Only the primary node should handle wand; the rest get the data
-    // via network synchronization
-    return;
+  // Only the primary node should handle wand (the replica get the
+  // data via network synchronization) but we keep a reference anyways
+  // just so that we know to expect wand data.
+  // if (!is_primary) return;
 
   // We could save away more than one wand, but one is enough for now
   wand = controllers[0];
@@ -208,6 +221,14 @@ void MyApp::Impl::update_data(gmCore::Updateable::clock::time_point time) {
   // end up in the corresponding instance's back buffer.
 
   *sync_time = gmCore::TimeTools::timePointToSeconds(time);
+
+  if (head) {
+    gmTrack::PoseTracker::PoseSample pose;
+    if (head->getPose(pose)) {
+      *sync_head_position = pose.position;
+      *sync_head_orientation = pose.orientation;
+    }
+  }
 
   if (!wand)
     // Only wand stuff below this point, so terminate early if we do
@@ -279,8 +300,12 @@ void MyApp::Impl::initOSG() {
   osg_renderer->setSceneData(scenegraph_root);
   scenegraph_root->addChild(scene_transform);
 
-  if (wand || sync_node) {
-    // We either have a wand or may get wand data over a SyncNode
+  if (wand) {
+    // We just have to assume that if a replica should render a wand,
+    // because wand data come from the primary, then also the replica
+    // will have a wand defined in their config, even if its data are
+    // not used. How can we otherwise know if we should render a wand
+    // or not?
     osg::ref_ptr<osg::Node> wand_node = createWand();
     wand_transform->addChild(wand_node);
     scene_transform->addChild(wand_transform);

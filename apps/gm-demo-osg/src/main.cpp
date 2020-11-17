@@ -45,11 +45,15 @@ int main(int argc, char *argv[]) {
   std::vector<std::shared_ptr<gmTrack::Controller>> controllers;
   config->getAllObjects(controllers);
 
+  // Extract head tracker to hand over to MyApp
+  std::shared_ptr<gmTrack::SinglePoseTracker> head;
+  config->getObject("head", head);
+
   // Instantiate MyApp and hand over SyncNode and Controller. We do
   // not care if the lists are empty or not, that is for MyApp to take
   // into consideration.
   std::shared_ptr<MyApp> myapp =
-      std::make_shared<MyApp>(sync_nodes, controllers);
+    std::make_shared<MyApp>(sync_nodes, controllers, head);
 
   // Extract Window, because we need to call them to process events,
   // render and swap buffers.
