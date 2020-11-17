@@ -31,7 +31,7 @@ function(install_executable_dependencies EXEC_FILE)
       MESSAGE(WARNING "There were unresolved dependencies for executable ${EXEC_FILE}: \"${_u_deps}\"!")
     ENDIF()
     IF (_c_deps_FILENAMES)
-      MESSAGE(WARNING "There were conflicting dependencies for executable ${EXEC_FILE}: \"${_c_deps}\"!")
+      MESSAGE(WARNING "There were conflicting dependencies for executable ${EXEC_FILE}: \"${_c_deps_FILENAMES}\"!")
     ENDIF()
 
     FOREACH(_file ${_r_deps})
