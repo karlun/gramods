@@ -9,8 +9,6 @@
 
 #include <gmNetwork/SyncNode.hh>
 
-#include <tclap/CmdLine.h>
-
 #include <chrono>
 
 #include "MyApp.hh"
