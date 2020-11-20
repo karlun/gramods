@@ -8,6 +8,9 @@ function(install_executable_dependencies EXEC_FILE)
     RETURN()
   ENDIF()
 
+  CMAKE_MINIMUM_REQUIRED(VERSION 3.14)
+  CMAKE_POLICY(VERSION 3.14)
+
   # Path to search for third-party dependencies. This should include
   # vcpkg if correctly configured
   INSTALL(CODE "LIST(APPEND DEP_FOLDERS \"${CMAKE_PREFIX_PATH}\")")
@@ -54,6 +57,9 @@ function(install_library_dependencies LIB_FILE)
     MESSAGE(WARNING "install_library_dependencies called without path to library")
     RETURN()
   ENDIF()
+
+  CMAKE_MINIMUM_REQUIRED(VERSION 3.14)
+  CMAKE_POLICY(VERSION 3.14)
 
   # Path to search for third-party dependencies. This should include
   # vcpkg if correctly configured
