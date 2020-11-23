@@ -99,7 +99,6 @@ struct MyApp::Impl {
   osg::ref_ptr<osg::Material> wand_material = new osg::Material;
 
   osg::ref_ptr<osg::Group> scenegraph_root = new osg::Group;
-  osg::ref_ptr<osg::MatrixTransform> scene_transform = new osg::MatrixTransform;
   osg::ref_ptr<osg::MatrixTransform> wand_transform = new osg::MatrixTransform;
 };
 
@@ -298,7 +297,6 @@ void MyApp::Impl::update_states(gmCore::Updateable::clock::time_point time) {
 void MyApp::Impl::initOSG() {
 
   osg_renderer->setSceneData(scenegraph_root);
-  scenegraph_root->addChild(scene_transform);
 
   if (wand) {
     // We just have to assume that if a replica should render a wand,
@@ -308,7 +306,7 @@ void MyApp::Impl::initOSG() {
     // or not?
     osg::ref_ptr<osg::Node> wand_node = createWand();
     wand_transform->addChild(wand_node);
-    scene_transform->addChild(wand_transform);
+    scenegraph_root->addChild(wand_transform);
   }
 
   std::string url = "urn:gramods:resources/sphere.osgt";
@@ -327,7 +325,7 @@ void MyApp::Impl::initOSG() {
 
   osg::ref_ptr<osg::MatrixTransform> model_transform =
       new osg::MatrixTransform();
-  scene_transform->addChild(model_transform);
+  scenegraph_root->addChild(model_transform);
   model_transform->addChild(model);
 
   //get the bounding box
