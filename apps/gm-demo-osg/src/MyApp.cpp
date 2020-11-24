@@ -63,8 +63,8 @@ struct MyApp::Impl {
   /// ----- Containers for synchronized data -----
 
   // steady time
-  std::shared_ptr<gmNetwork::SyncSFloat32> sync_time =
-      std::make_shared<gmNetwork::SyncSFloat32>();
+  std::shared_ptr<gmNetwork::SyncSFloat64> sync_time =
+      std::make_shared<gmNetwork::SyncSFloat64>();
 
   // wand analogs
   std::shared_ptr<gmNetwork::SyncMFloat32> sync_analogs =
