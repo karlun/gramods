@@ -37,7 +37,7 @@ if (${err})
 endif()
 
 execute_process(
-  COMMAND ${GIT_EXECUTABLE} log -1 --format=%ci
+  COMMAND ${GIT_EXECUTABLE} log -1 --format=%cs
   WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
   RESULT_VARIABLE err
   OUTPUT_VARIABLE GIT_COMMIT_DATE
