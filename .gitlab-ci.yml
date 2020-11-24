@@ -34,13 +34,13 @@ BuildMaxi:
     - make test
     - make package
   artifacts:
-    paths: ['build/libgramods*.deb']
+    paths: ['build/*gramods*.deb']
 
 TestInstall:
   image: $CI_REGISTRY/karlu20/gramods:20.04-mini
   stage: test
   script:
     - apt update
-    - apt install -y ./build/libgramods*.deb
+    - apt install -y ./build/*gramods*.deb
   dependencies:
     - BuildMaxi
