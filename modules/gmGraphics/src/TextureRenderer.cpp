@@ -9,7 +9,7 @@
 BEGIN_NAMESPACE_GMGRAPHICS;
 
 GM_OFI_DEFINE(TextureRenderer);
-GM_OFI_POINTER(TextureRenderer, texture, gmGraphics::TextureInterface, TextureRenderer::setTexture);
+GM_OFI_POINTER2(TextureRenderer, texture, gmGraphics::TextureInterface, setTexture);
 
 namespace {
   const char * vertex_shader_code = R"lang=glsl(

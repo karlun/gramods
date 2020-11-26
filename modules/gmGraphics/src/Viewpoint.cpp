@@ -8,11 +8,11 @@
 BEGIN_NAMESPACE_GMGRAPHICS;
 
 GM_OFI_DEFINE(Viewpoint);
-GM_OFI_PARAM(Viewpoint, position, Eigen::Vector3f, Viewpoint::setPosition);
-GM_OFI_PARAM(Viewpoint, orientation, Eigen::Quaternionf, Viewpoint::setOrientation);
-GM_OFI_PARAM(Viewpoint, upDirection, Eigen::Vector3f, Viewpoint::setUpDirection);
-GM_OFI_PARAM(Viewpoint, lookAt, Eigen::Vector3f, Viewpoint::setLookAt);
-GM_OFI_PARAM(Viewpoint, eyeSeparation, float, Viewpoint::setEyeSeparation);
+GM_OFI_PARAM2(Viewpoint, position, Eigen::Vector3f, setPosition);
+GM_OFI_PARAM2(Viewpoint, orientation, Eigen::Quaternionf, setOrientation);
+GM_OFI_PARAM2(Viewpoint, upDirection, Eigen::Vector3f, setUpDirection);
+GM_OFI_PARAM2(Viewpoint, lookAt, Eigen::Vector3f, setLookAt);
+GM_OFI_PARAM2(Viewpoint, eyeSeparation, float, setEyeSeparation);
 
 Eigen::Vector3f Viewpoint::getPosition(Eye eye) {
 

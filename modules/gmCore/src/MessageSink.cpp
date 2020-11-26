@@ -6,7 +6,7 @@
 BEGIN_NAMESPACE_GMCORE;
 
 GM_OFI_DEFINE_ABSTRACT(MessageSink);
-GM_OFI_PARAM(MessageSink, showTime, bool, MessageSink::setShowTime);
+GM_OFI_PARAM2(MessageSink, showTime, bool, setShowTime);
 
 void MessageSink::initialize() {
   Console::addSink(std::static_pointer_cast<MessageSink>(this->shared_from_this()));

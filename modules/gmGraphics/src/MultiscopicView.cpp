@@ -4,7 +4,7 @@
 BEGIN_NAMESPACE_GMGRAPHICS;
 
 GM_OFI_DEFINE_ABSTRACT_SUB(MultiscopicView, View);
-GM_OFI_POINTER(MultiscopicView, multiscopicMultiplexer, MultiscopicMultiplexer, MultiscopicView::setMultiscopicMultiplexer);
+GM_OFI_POINTER2(MultiscopicView, multiscopicMultiplexer, MultiscopicMultiplexer, setMultiscopicMultiplexer);
 
 void MultiscopicView::renderFullPipeline(ViewSettings settings) {
   populateViewSettings(settings);

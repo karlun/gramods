@@ -11,9 +11,9 @@
 BEGIN_NAMESPACE_GMGRAPHICS;
 
 GM_OFI_DEFINE(ChromaKeyTexture);
-GM_OFI_POINTER(ChromaKeyTexture, texture, TextureInterface, ChromaKeyTexture::setTexture);
-GM_OFI_PARAM(ChromaKeyTexture, key, gmCore::float3, ChromaKeyTexture::setKey);
-GM_OFI_PARAM(ChromaKeyTexture, tolerance, gmCore::float2, ChromaKeyTexture::setTolerance);
+GM_OFI_POINTER2(ChromaKeyTexture, texture, TextureInterface, setTexture);
+GM_OFI_PARAM2(ChromaKeyTexture, key, gmCore::float3, setKey);
+GM_OFI_PARAM2(ChromaKeyTexture, tolerance, gmCore::float2, setTolerance);
 
 struct ChromaKeyTexture::Impl {
 

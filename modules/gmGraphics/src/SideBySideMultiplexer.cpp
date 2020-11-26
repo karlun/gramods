@@ -11,7 +11,7 @@
 BEGIN_NAMESPACE_GMGRAPHICS;
 
 GM_OFI_DEFINE(SideBySideMultiplexer);
-GM_OFI_PARAM(SideBySideMultiplexer, pattern, int, SideBySideMultiplexer::setPattern);
+GM_OFI_PARAM2(SideBySideMultiplexer, pattern, int, setPattern);
 
 struct SideBySideMultiplexer::Impl {
   GLint viewport[4] = { 0, 0, 0, 0 };

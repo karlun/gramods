@@ -10,11 +10,11 @@
 BEGIN_NAMESPACE_GMGRAPHICS;
 
 GM_OFI_DEFINE(LinearAnaglyphsMultiplexer);
-GM_OFI_PARAM(LinearAnaglyphsMultiplexer, leftColor, gmCore::float3, LinearAnaglyphsMultiplexer::setLeftColor);
-GM_OFI_PARAM(LinearAnaglyphsMultiplexer, rightColor, gmCore::float3, LinearAnaglyphsMultiplexer::setRightColor);
-GM_OFI_PARAM(LinearAnaglyphsMultiplexer, saturation, float, LinearAnaglyphsMultiplexer::setSaturation);
-GM_OFI_PARAM(LinearAnaglyphsMultiplexer, leftSaturation, float, LinearAnaglyphsMultiplexer::setLeftSaturation);
-GM_OFI_PARAM(LinearAnaglyphsMultiplexer, rightSaturation, float, LinearAnaglyphsMultiplexer::setRightSaturation);
+GM_OFI_PARAM2(LinearAnaglyphsMultiplexer, leftColor, gmCore::float3, setLeftColor);
+GM_OFI_PARAM2(LinearAnaglyphsMultiplexer, rightColor, gmCore::float3, setRightColor);
+GM_OFI_PARAM2(LinearAnaglyphsMultiplexer, saturation, float, setSaturation);
+GM_OFI_PARAM2(LinearAnaglyphsMultiplexer, leftSaturation, float, setLeftSaturation);
+GM_OFI_PARAM2(LinearAnaglyphsMultiplexer, rightSaturation, float, setRightSaturation);
 
 struct LinearAnaglyphsMultiplexer::Impl {
 

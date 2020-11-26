@@ -10,9 +10,9 @@
 BEGIN_NAMESPACE_GMGRAPHICS;
 
 GM_OFI_DEFINE_SUB(SphereGeometry, Geometry);
-GM_OFI_PARAM(SphereGeometry, position, Eigen::Vector3f, SphereGeometry::setPosition);
-GM_OFI_PARAM(SphereGeometry, radius, float, SphereGeometry::setRadius);
-GM_OFI_PARAM(SphereGeometry, frustumSizeRatio, float, SphereGeometry::setFrustumSizeRatio);
+GM_OFI_PARAM2(SphereGeometry, position, Eigen::Vector3f, setPosition);
+GM_OFI_PARAM2(SphereGeometry, radius, float, setRadius);
+GM_OFI_PARAM2(SphereGeometry, frustumSizeRatio, float, setFrustumSizeRatio);
 
 struct SphereGeometry::Impl
   : Geometry::Impl {

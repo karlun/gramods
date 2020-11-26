@@ -12,8 +12,8 @@
 BEGIN_NAMESPACE_GMGRAPHICS;
 
 GM_OFI_DEFINE_SUB(ViewMixView, View);
-GM_OFI_PARAM(ViewMixView, mixType, std::string, ViewMixView::setMixType);
-GM_OFI_POINTER(ViewMixView, view, View, ViewMixView::addView);
+GM_OFI_PARAM2(ViewMixView, mixType, std::string, setMixType);
+GM_OFI_POINTER2(ViewMixView, view, View, addView);
 
 struct ViewMixView::Impl {
 

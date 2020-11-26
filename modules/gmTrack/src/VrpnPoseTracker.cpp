@@ -10,7 +10,7 @@
 BEGIN_NAMESPACE_GMTRACK;
 
 GM_OFI_DEFINE(VrpnPoseTracker);
-GM_OFI_PARAM(VrpnPoseTracker, connectionString, std::string, VrpnPoseTracker::setConnectionString);
+GM_OFI_PARAM2(VrpnPoseTracker, connectionString, std::string, setConnectionString);
 
 struct VrpnPoseTracker::Impl {
 

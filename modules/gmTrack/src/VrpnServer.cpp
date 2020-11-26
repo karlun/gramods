@@ -17,12 +17,12 @@
 BEGIN_NAMESPACE_GMTRACK;
 
 GM_OFI_DEFINE(VrpnServer);
-GM_OFI_PARAM(VrpnServer, port, int, VrpnServer::setPort);
-GM_OFI_PARAM(VrpnServer, trackerName, std::string, VrpnServer::addTrackerName);
-GM_OFI_POINTER(VrpnServer, analogsTracker, AnalogsTracker, VrpnServer::addAnalogsTracker);
-GM_OFI_POINTER(VrpnServer, buttonsTracker, ButtonsTracker, VrpnServer::addButtonsTracker);
-GM_OFI_POINTER(VrpnServer, multiPoseTracker, MultiPoseTracker, VrpnServer::addMultiPoseTracker);
-GM_OFI_POINTER(VrpnServer, singlePoseTracker, SinglePoseTracker, VrpnServer::addSinglePoseTracker);
+GM_OFI_PARAM2(VrpnServer, port, int, setPort);
+GM_OFI_PARAM2(VrpnServer, trackerName, std::string, addTrackerName);
+GM_OFI_POINTER2(VrpnServer, analogsTracker, AnalogsTracker, addAnalogsTracker);
+GM_OFI_POINTER2(VrpnServer, buttonsTracker, ButtonsTracker, addButtonsTracker);
+GM_OFI_POINTER2(VrpnServer, multiPoseTracker, MultiPoseTracker, addMultiPoseTracker);
+GM_OFI_POINTER2(VrpnServer, singlePoseTracker, SinglePoseTracker, addSinglePoseTracker);
 
 #define ANALOG_IDX      0
 #define BUTTON_IDX      1

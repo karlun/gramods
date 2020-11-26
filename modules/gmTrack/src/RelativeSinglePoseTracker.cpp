@@ -7,11 +7,8 @@
 BEGIN_NAMESPACE_GMTRACK;
 
 GM_OFI_DEFINE(RelativeSinglePoseTracker);
-GM_OFI_POINTER(RelativeSinglePoseTracker, originTracker,
-               SinglePoseTracker, RelativeSinglePoseTracker::setOriginTracker);
-GM_OFI_POINTER(RelativeSinglePoseTracker, targetTracker,
-               SinglePoseTracker, RelativeSinglePoseTracker::setTargetTracker);
-
+GM_OFI_POINTER2(RelativeSinglePoseTracker, originTracker, SinglePoseTracker, setOriginTracker);
+GM_OFI_POINTER2(RelativeSinglePoseTracker, targetTracker, SinglePoseTracker, setTargetTracker);
 
 bool RelativeSinglePoseTracker::getPose(PoseSample &p) {
 

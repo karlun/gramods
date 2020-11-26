@@ -10,10 +10,10 @@
 BEGIN_NAMESPACE_GMTRACK;
 
 GM_OFI_DEFINE(RegisteredSinglePoseTracker);
-GM_OFI_POINTER(RegisteredSinglePoseTracker, singlePoseTracker, SinglePoseTracker, RegisteredSinglePoseTracker::setSinglePoseTracker);
-GM_OFI_PARAM(RegisteredSinglePoseTracker, registrationMatrix, Eigen::Matrix4f, RegisteredSinglePoseTracker::setRegistrationMatrix);
-GM_OFI_PARAM(RegisteredSinglePoseTracker, positionBias, Eigen::Vector3f, RegisteredSinglePoseTracker::setPositionBias);
-GM_OFI_PARAM(RegisteredSinglePoseTracker, orientationBias, Eigen::Quaternionf, RegisteredSinglePoseTracker::setOrientationBias);
+GM_OFI_POINTER2(RegisteredSinglePoseTracker, singlePoseTracker, SinglePoseTracker, setSinglePoseTracker);
+GM_OFI_PARAM2(RegisteredSinglePoseTracker, registrationMatrix, Eigen::Matrix4f, setRegistrationMatrix);
+GM_OFI_PARAM2(RegisteredSinglePoseTracker, positionBias, Eigen::Vector3f, setPositionBias);
+GM_OFI_PARAM2(RegisteredSinglePoseTracker, orientationBias, Eigen::Quaternionf, setOrientationBias);
 
 
 bool RegisteredSinglePoseTracker::getPose(PoseSample &p) {

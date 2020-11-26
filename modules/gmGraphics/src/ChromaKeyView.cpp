@@ -12,9 +12,9 @@
 BEGIN_NAMESPACE_GMGRAPHICS;
 
 GM_OFI_DEFINE_SUB(ChromaKeyView, View);
-GM_OFI_PARAM(ChromaKeyView, key, gmCore::float3, ChromaKeyView::setKey);
-GM_OFI_PARAM(ChromaKeyView, tolerance, gmCore::float2, ChromaKeyView::setTolerance);
-GM_OFI_POINTER(ChromaKeyView, view, View, ChromaKeyView::addView);
+GM_OFI_PARAM2(ChromaKeyView, key, gmCore::float3, setKey);
+GM_OFI_PARAM2(ChromaKeyView, tolerance, gmCore::float2, setTolerance);
+GM_OFI_POINTER2(ChromaKeyView, view, View, addView);
 
 struct ChromaKeyView::Impl {
 

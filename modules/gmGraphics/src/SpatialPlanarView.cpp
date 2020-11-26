@@ -8,13 +8,13 @@
 BEGIN_NAMESPACE_GMGRAPHICS;
 
 GM_OFI_DEFINE_SUB(SpatialPlanarView, MultiscopicView);
-GM_OFI_PARAM(SpatialPlanarView, topLeftCorner, Eigen::Vector3f, SpatialPlanarView::setTopLeftCorner);
-GM_OFI_PARAM(SpatialPlanarView, bottomRightCorner, Eigen::Vector3f, SpatialPlanarView::setBottomRightCorner);
-GM_OFI_PARAM(SpatialPlanarView, upDirection, Eigen::Vector3f, SpatialPlanarView::setUpDirection);
-GM_OFI_PARAM(SpatialPlanarView, position, Eigen::Vector3f, SpatialPlanarView::setPosition);
-GM_OFI_PARAM(SpatialPlanarView, orientation, Eigen::Quaternionf, SpatialPlanarView::setOrientation);
-GM_OFI_PARAM(SpatialPlanarView, distance, float, SpatialPlanarView::setDistance);
-GM_OFI_PARAM(SpatialPlanarView, clipAngles, gmCore::angle4, SpatialPlanarView::setClipAngles);
+GM_OFI_PARAM2(SpatialPlanarView, topLeftCorner, Eigen::Vector3f, setTopLeftCorner);
+GM_OFI_PARAM2(SpatialPlanarView, bottomRightCorner, Eigen::Vector3f, setBottomRightCorner);
+GM_OFI_PARAM2(SpatialPlanarView, upDirection, Eigen::Vector3f, setUpDirection);
+GM_OFI_PARAM2(SpatialPlanarView, position, Eigen::Vector3f, setPosition);
+GM_OFI_PARAM2(SpatialPlanarView, orientation, Eigen::Quaternionf, setOrientation);
+GM_OFI_PARAM2(SpatialPlanarView, distance, float, setDistance);
+GM_OFI_PARAM2(SpatialPlanarView, clipAngles, gmCore::angle4, setClipAngles);
 
 struct SpatialPlanarView::Impl {
 

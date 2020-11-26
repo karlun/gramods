@@ -9,8 +9,8 @@
 BEGIN_NAMESPACE_GMTRACK;
 
 GM_OFI_DEFINE(TimeSampleButtonsTracker);
-GM_OFI_PARAM(TimeSampleButtonsTracker, time, double, TimeSampleButtonsTracker::addTime);
-GM_OFI_PARAM(TimeSampleButtonsTracker, buttons, size_t, TimeSampleButtonsTracker::addButtons);
+GM_OFI_PARAM2(TimeSampleButtonsTracker, time, double, addTime);
+GM_OFI_PARAM2(TimeSampleButtonsTracker, buttons, size_t, addButtons);
 
 
 struct TimeSampleButtonsTracker::Impl {

@@ -9,8 +9,8 @@
 BEGIN_NAMESPACE_GMTRACK;
 
 GM_OFI_DEFINE(TimeSampleAnalogsTracker);
-GM_OFI_PARAM(TimeSampleAnalogsTracker, time, double, TimeSampleAnalogsTracker::addTime);
-GM_OFI_PARAM(TimeSampleAnalogsTracker, analogs, gmCore::float3, TimeSampleAnalogsTracker::addAnalogs);
+GM_OFI_PARAM2(TimeSampleAnalogsTracker, time, double, addTime);
+GM_OFI_PARAM2(TimeSampleAnalogsTracker, analogs, gmCore::float3, addAnalogs);
 
 
 struct TimeSampleAnalogsTracker::Impl {

@@ -9,9 +9,9 @@
 BEGIN_NAMESPACE_GMTRACK;
 
 GM_OFI_DEFINE(ArucoBoardComplex);
-GM_OFI_POINTER(ArucoBoardComplex, arucoBoard, gmTrack::ArucoBoard, ArucoBoardComplex::addArucoBoard);
-GM_OFI_PARAM(ArucoBoardComplex, position, Eigen::Vector3f, ArucoBoardComplex::addPosition);
-GM_OFI_PARAM(ArucoBoardComplex, orientation, Eigen::Quaternionf, ArucoBoardComplex::addOrientation);
+GM_OFI_POINTER2(ArucoBoardComplex, arucoBoard, gmTrack::ArucoBoard, addArucoBoard);
+GM_OFI_PARAM2(ArucoBoardComplex, position, Eigen::Vector3f, addPosition);
+GM_OFI_PARAM2(ArucoBoardComplex, orientation, Eigen::Quaternionf, addOrientation);
 
 
 struct ArucoBoardComplex::Impl {

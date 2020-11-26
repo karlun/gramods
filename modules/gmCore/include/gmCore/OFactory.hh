@@ -97,10 +97,35 @@ class Configuration;
 
    @param FUNC The setter method.
 */
-#define GM_OFI_PARAM(CLASS, NAME, TYPE, FUNC)                           \
-  gramods::gmCore::OFactory::ParamSetterInsert gm_ofi_##CLASS##_param_##NAME \
-  (&CLASS::_gm_ofi, #NAME,                                              \
-   new gramods::gmCore::OFactory::ParamSetter<CLASS, TYPE>(&FUNC));
+#define GM_OFI_PARAM(CLASS, NAME, TYPE, FUNC)                                  \
+  gramods::gmCore::OFactory::ParamSetterInsert gm_ofi_##CLASS##_param_##NAME(  \
+      &CLASS::_gm_ofi,                                                         \
+      #NAME,                                                                   \
+      new gramods::gmCore::OFactory::ParamSetter<CLASS, TYPE>(&FUNC));
+
+/**\def GM_OFI_PARAM2(CLASS, NAME, TYPE, FUNC)
+   Macro for registering a parameter setter to a OFactoryInformation
+   node.
+
+   namespace MyClassInternals {
+     GM_OFI_DEFINE(MyClass);
+     GM_OFI_PARAM2(MyClass, file, std::string, setFile);
+   }
+
+   @param CLASS The type of the class in which this setter resides.
+
+   @param NAME The name to associate to the setter method, without
+   quotes.
+
+   @param TYPE The type of the variable set by this setter.
+
+   @param FUNC The setter method in the class CLASS.
+*/
+#define GM_OFI_PARAM2(CLASS, NAME, TYPE, FUNC)                                 \
+  gramods::gmCore::OFactory::ParamSetterInsert gm_ofi_##CLASS##_param_##NAME(  \
+      &CLASS::_gm_ofi,                                                         \
+      #NAME,                                                                   \
+      new gramods::gmCore::OFactory::ParamSetter<CLASS, TYPE>(&CLASS::FUNC));
 
 /**\def GM_OFI_POINTER(OFI, CLASS, NAME, TYPE, FUNC)
    Macro for registering a shared object setter to a
@@ -124,6 +149,29 @@ class Configuration;
   gramods::gmCore::OFactory::PointerSetterInsert gm_ofi_##CLASS##_pointer_##NAME \
   (&CLASS::_gm_ofi, #NAME,                                              \
    new gramods::gmCore::OFactory::PointerSetter<CLASS, TYPE>(&FUNC));
+
+/**\def GM_OFI_POINTER2(OFI, CLASS, NAME, TYPE, FUNC)
+   Macro for registering a shared object setter to a
+   OFactoryInformation node.
+
+   GM_OFI_DEFINE(MyClass);
+   GM_OFI_POINTER2(MyClass, child, Node, setChild);
+
+   @param CLASS The type of the class in which this setter resides.
+
+   @param NAME The name to associate to the setter method, without
+   quotes.
+
+   @param TYPE The class of the shared object. The type of the setter
+   method is std::shared_ptr<TYPE>.
+
+   @param FUNC The setter method in the class CLASS, with signature
+   void FUNC(std::shared_ptr<TYPE>)
+*/
+#define GM_OFI_POINTER2(CLASS, NAME, TYPE, FUNC)                         \
+  gramods::gmCore::OFactory::PointerSetterInsert gm_ofi_##CLASS##_pointer_##NAME \
+  (&CLASS::_gm_ofi, #NAME,                                              \
+   new gramods::gmCore::OFactory::PointerSetter<CLASS, TYPE>(&CLASS::FUNC));
 
 /**
    This is an object factory for classes with Object as base type,

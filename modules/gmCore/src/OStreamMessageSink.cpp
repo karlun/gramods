@@ -17,9 +17,9 @@
 BEGIN_NAMESPACE_GMCORE;
 
 GM_OFI_DEFINE_SUB(OStreamMessageSink, MessageSink);
-GM_OFI_PARAM(OStreamMessageSink, stream, std::string, OStreamMessageSink::setStream);
-GM_OFI_PARAM(OStreamMessageSink, useAnsiColor, bool, OStreamMessageSink::setUseAnsiColor);
-GM_OFI_PARAM(OStreamMessageSink, level, int, OStreamMessageSink::setLevel);
+GM_OFI_PARAM2(OStreamMessageSink, stream, std::string, setStream);
+GM_OFI_PARAM2(OStreamMessageSink, useAnsiColor, bool, setUseAnsiColor);
+GM_OFI_PARAM2(OStreamMessageSink, level, int, setLevel);
 
 #define ANSI_DEBUG   "\033[90m"
 #define ANSI_NORMAL  "\033[37m"

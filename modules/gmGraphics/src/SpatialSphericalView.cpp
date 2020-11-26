@@ -14,13 +14,13 @@
 BEGIN_NAMESPACE_GMGRAPHICS;
 
 GM_OFI_DEFINE_SUB(SpatialSphericalView, MultiscopicView);
-GM_OFI_PARAM(SpatialSphericalView, cubeMapResolution, int, SpatialSphericalView::setCubeMapResolution);
-GM_OFI_PARAM(SpatialSphericalView, linearInterpolation, bool, SpatialSphericalView::setLinearInterpolation);
-GM_OFI_PARAM(SpatialSphericalView, makeSquare, bool, SpatialSphericalView::setMakeSquare);
-GM_OFI_POINTER(SpatialSphericalView, coordinatesMapper, gmGraphics::CoordinatesMapper, SpatialSphericalView::setCoordinatesMapper);
-GM_OFI_PARAM(SpatialSphericalView, position, Eigen::Vector3f, SpatialSphericalView::setPosition);
-GM_OFI_PARAM(SpatialSphericalView, radius, float, SpatialSphericalView::setRadius);
-GM_OFI_PARAM(SpatialSphericalView, orientation, Eigen::Quaternionf, SpatialSphericalView::setOrientation);
+GM_OFI_PARAM2(SpatialSphericalView, cubeMapResolution, int, setCubeMapResolution);
+GM_OFI_PARAM2(SpatialSphericalView, linearInterpolation, bool, setLinearInterpolation);
+GM_OFI_PARAM2(SpatialSphericalView, makeSquare, bool, setMakeSquare);
+GM_OFI_POINTER2(SpatialSphericalView, coordinatesMapper, gmGraphics::CoordinatesMapper, setCoordinatesMapper);
+GM_OFI_PARAM2(SpatialSphericalView, position, Eigen::Vector3f, setPosition);
+GM_OFI_PARAM2(SpatialSphericalView, radius, float, setRadius);
+GM_OFI_PARAM2(SpatialSphericalView, orientation, Eigen::Quaternionf, setOrientation);
 
 struct SpatialSphericalView::Impl {
 

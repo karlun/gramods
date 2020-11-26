@@ -6,8 +6,8 @@
 BEGIN_NAMESPACE_GMGRAPHICS;
 
 GM_OFI_DEFINE_SUB(VelocityViewpoint, Viewpoint);
-GM_OFI_PARAM(VelocityViewpoint, velocity, Eigen::Vector3f, VelocityViewpoint::setVelocity);
-GM_OFI_PARAM(VelocityViewpoint, rotation, Eigen::Quaternionf, VelocityViewpoint::setRotation);
+GM_OFI_PARAM2(VelocityViewpoint, velocity, Eigen::Vector3f, setVelocity);
+GM_OFI_PARAM2(VelocityViewpoint, rotation, Eigen::Quaternionf, setRotation);
 
 struct VelocityViewpoint::Impl {
 

@@ -4,10 +4,10 @@
 BEGIN_NAMESPACE_GMGRAPHICS;
 
 GM_OFI_DEFINE(RectilinearCameraModel);
-GM_OFI_PARAM(RectilinearCameraModel, kDistortion, gmCore::float3, RectilinearCameraModel::setKDistortion);
-GM_OFI_PARAM(RectilinearCameraModel, pDistortion, gmCore::float2, RectilinearCameraModel::setPDistortion);
-GM_OFI_PARAM(RectilinearCameraModel, focalDistance, gmCore::float2, RectilinearCameraModel::setFocalDistance);
-GM_OFI_PARAM(RectilinearCameraModel, focalOffset, gmCore::float2, RectilinearCameraModel::setFocalOffset);
+GM_OFI_PARAM2(RectilinearCameraModel, kDistortion, gmCore::float3, setKDistortion);
+GM_OFI_PARAM2(RectilinearCameraModel, pDistortion, gmCore::float2, setPDistortion);
+GM_OFI_PARAM2(RectilinearCameraModel, focalDistance, gmCore::float2, setFocalDistance);
+GM_OFI_PARAM2(RectilinearCameraModel, focalOffset, gmCore::float2, setFocalOffset);
 
 struct RectilinearCameraModel::Impl {
 

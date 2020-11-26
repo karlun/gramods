@@ -9,9 +9,9 @@
 BEGIN_NAMESPACE_GMTRACK;
 
 GM_OFI_DEFINE(TimeSamplePoseTracker);
-GM_OFI_PARAM(TimeSamplePoseTracker, time, double, TimeSamplePoseTracker::addTime);
-GM_OFI_PARAM(TimeSamplePoseTracker, position, Eigen::Vector3f, TimeSamplePoseTracker::addPosition);
-GM_OFI_PARAM(TimeSamplePoseTracker, orientation, Eigen::Quaternionf, TimeSamplePoseTracker::addOrientation);
+GM_OFI_PARAM2(TimeSamplePoseTracker, time, double, addTime);
+GM_OFI_PARAM2(TimeSamplePoseTracker, position, Eigen::Vector3f, addPosition);
+GM_OFI_PARAM2(TimeSamplePoseTracker, orientation, Eigen::Quaternionf, addOrientation);
 
 
 struct TimeSamplePoseTracker::Impl {

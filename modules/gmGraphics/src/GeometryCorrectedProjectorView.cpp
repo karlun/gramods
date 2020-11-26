@@ -12,17 +12,17 @@
 BEGIN_NAMESPACE_GMGRAPHICS;
 
 GM_OFI_DEFINE_SUB(GeometryCorrectedProjectorView, MultiscopicView);
-GM_OFI_PARAM(GeometryCorrectedProjectorView, bufferWidth, int, GeometryCorrectedProjectorView::setBufferWidth);
-GM_OFI_PARAM(GeometryCorrectedProjectorView, bufferHeight, int, GeometryCorrectedProjectorView::setBufferHeight);
-GM_OFI_PARAM(GeometryCorrectedProjectorView, linearInterpolation, bool, GeometryCorrectedProjectorView::setLinearInterpolation);
-GM_OFI_PARAM(GeometryCorrectedProjectorView, topLeftCorner, Eigen::Vector3f, GeometryCorrectedProjectorView::setTopLeftCorner);
-GM_OFI_PARAM(GeometryCorrectedProjectorView, bottomRightCorner, Eigen::Vector3f, GeometryCorrectedProjectorView::setBottomRightCorner);
-GM_OFI_PARAM(GeometryCorrectedProjectorView, position, Eigen::Vector3f, GeometryCorrectedProjectorView::setPosition);
-GM_OFI_PARAM(GeometryCorrectedProjectorView, extrinsics, gmCore::float12, GeometryCorrectedProjectorView::setExtrinsics);
-GM_OFI_PARAM(GeometryCorrectedProjectorView, intrinsics, gmCore::float4, GeometryCorrectedProjectorView::setIntrinsics);
-GM_OFI_PARAM(GeometryCorrectedProjectorView, clipAngles, gmCore::angle4, GeometryCorrectedProjectorView::setClipAngles);
-GM_OFI_PARAM(GeometryCorrectedProjectorView, orientation, Eigen::Quaternionf, GeometryCorrectedProjectorView::setOrientation);
-GM_OFI_POINTER(GeometryCorrectedProjectorView, geometry, Geometry, GeometryCorrectedProjectorView::setGeometry);
+GM_OFI_PARAM2(GeometryCorrectedProjectorView, bufferWidth, int, setBufferWidth);
+GM_OFI_PARAM2(GeometryCorrectedProjectorView, bufferHeight, int, setBufferHeight);
+GM_OFI_PARAM2(GeometryCorrectedProjectorView, linearInterpolation, bool, setLinearInterpolation);
+GM_OFI_PARAM2(GeometryCorrectedProjectorView, topLeftCorner, Eigen::Vector3f, setTopLeftCorner);
+GM_OFI_PARAM2(GeometryCorrectedProjectorView, bottomRightCorner, Eigen::Vector3f, setBottomRightCorner);
+GM_OFI_PARAM2(GeometryCorrectedProjectorView, position, Eigen::Vector3f, setPosition);
+GM_OFI_PARAM2(GeometryCorrectedProjectorView, extrinsics, gmCore::float12, setExtrinsics);
+GM_OFI_PARAM2(GeometryCorrectedProjectorView, intrinsics, gmCore::float4, setIntrinsics);
+GM_OFI_PARAM2(GeometryCorrectedProjectorView, clipAngles, gmCore::angle4, setClipAngles);
+GM_OFI_PARAM2(GeometryCorrectedProjectorView, orientation, Eigen::Quaternionf, setOrientation);
+GM_OFI_POINTER2(GeometryCorrectedProjectorView, geometry, Geometry, setGeometry);
 
 struct GeometryCorrectedProjectorView::Impl {
 

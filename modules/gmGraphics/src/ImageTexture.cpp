@@ -12,10 +12,10 @@
 BEGIN_NAMESPACE_GMGRAPHICS;
 
 GM_OFI_DEFINE(ImageTexture);
-GM_OFI_PARAM(ImageTexture, file, std::filesystem::path, ImageTexture::setFile);
-GM_OFI_PARAM(ImageTexture, range, gmCore::size2, ImageTexture::setRange);
-GM_OFI_PARAM(ImageTexture, loop, bool, ImageTexture::setLoop);
-GM_OFI_PARAM(ImageTexture, exit, bool, ImageTexture::setExit);
+GM_OFI_PARAM2(ImageTexture, file, std::filesystem::path, setFile);
+GM_OFI_PARAM2(ImageTexture, range, gmCore::size2, setRange);
+GM_OFI_PARAM2(ImageTexture, loop, bool, setLoop);
+GM_OFI_PARAM2(ImageTexture, exit, bool, setExit);
 
 struct ImageTexture::Impl {
 

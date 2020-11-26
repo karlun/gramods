@@ -12,12 +12,12 @@
 BEGIN_NAMESPACE_GMTRACK;
 
 GM_OFI_DEFINE(ArucoPoseTracker);
-GM_OFI_PARAM(ArucoPoseTracker, cameraConfigurationFile, std::filesystem::path, ArucoPoseTracker::setCameraConfigurationFile);
-GM_OFI_PARAM(ArucoPoseTracker, inverted, bool, ArucoPoseTracker::setInverted);
-GM_OFI_PARAM(ArucoPoseTracker, refindMarkers, bool, ArucoPoseTracker::setRefindMarkers);
-GM_OFI_POINTER(ArucoPoseTracker, arucoBoard, gmTrack::ArucoBoard, ArucoPoseTracker::addArucoBoard);
-GM_OFI_POINTER(ArucoPoseTracker, videoSource, gmTrack::OpenCvVideoSource, ArucoPoseTracker::setVideoSource);
-GM_OFI_PARAM(ArucoPoseTracker, showDebug, bool, ArucoPoseTracker::setShowDebug);
+GM_OFI_PARAM2(ArucoPoseTracker, cameraConfigurationFile, std::filesystem::path, setCameraConfigurationFile);
+GM_OFI_PARAM2(ArucoPoseTracker, inverted, bool, setInverted);
+GM_OFI_PARAM2(ArucoPoseTracker, refindMarkers, bool, setRefindMarkers);
+GM_OFI_POINTER2(ArucoPoseTracker, arucoBoard, gmTrack::ArucoBoard, addArucoBoard);
+GM_OFI_POINTER2(ArucoPoseTracker, videoSource, gmTrack::OpenCvVideoSource, setVideoSource);
+GM_OFI_PARAM2(ArucoPoseTracker, showDebug, bool, setShowDebug);
 
 struct ArucoPoseTracker::Impl {
 

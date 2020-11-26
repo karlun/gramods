@@ -4,8 +4,8 @@
 BEGIN_NAMESPACE_GMGRAPHICS;
 
 GM_OFI_DEFINE(RendererDispatcher);
-GM_OFI_POINTER(RendererDispatcher, renderer, gmGraphics::Renderer, RendererDispatcher::addRenderer);
-GM_OFI_POINTER(RendererDispatcher, viewpoint, gmGraphics::Viewpoint, RendererDispatcher::setViewpoint);
+GM_OFI_POINTER2(RendererDispatcher, renderer, gmGraphics::Renderer, addRenderer);
+GM_OFI_POINTER2(RendererDispatcher, viewpoint, gmGraphics::Viewpoint, setViewpoint);
 
 void RendererDispatcher::renderFullPipeline(ViewSettings settings) {
 

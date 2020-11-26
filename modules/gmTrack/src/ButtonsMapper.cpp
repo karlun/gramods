@@ -8,11 +8,11 @@
 BEGIN_NAMESPACE_GMTRACK;
 
 GM_OFI_DEFINE(ButtonsMapper);
-GM_OFI_PARAM(ButtonsMapper, mapping, gmCore::size2, ButtonsMapper::addMapping);
-GM_OFI_PARAM(ButtonsMapper, mainButton, int, ButtonsMapper::setMainButton);
-GM_OFI_PARAM(ButtonsMapper, secondaryButton, int, ButtonsMapper::setSecondaryButton);
-GM_OFI_PARAM(ButtonsMapper, menuButton, int, ButtonsMapper::setMenuButton);
-GM_OFI_POINTER(ButtonsMapper, buttonsTracker, ButtonsTracker, ButtonsMapper::setButtonsTracker);
+GM_OFI_PARAM2(ButtonsMapper, mapping, gmCore::size2, addMapping);
+GM_OFI_PARAM2(ButtonsMapper, mainButton, int, setMainButton);
+GM_OFI_PARAM2(ButtonsMapper, secondaryButton, int, setSecondaryButton);
+GM_OFI_PARAM2(ButtonsMapper, menuButton, int, setMenuButton);
+GM_OFI_POINTER2(ButtonsMapper, buttonsTracker, ButtonsTracker, setButtonsTracker);
 
 const size_t ButtonsMapper::ButtonIdx::MAIN      = 0;
 const size_t ButtonsMapper::ButtonIdx::SECONDARY = 1;

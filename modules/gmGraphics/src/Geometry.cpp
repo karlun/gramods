@@ -4,7 +4,7 @@
 BEGIN_NAMESPACE_GMGRAPHICS;
 
 GM_OFI_DEFINE(Geometry);
-GM_OFI_PARAM(Geometry, inside, bool, Geometry::setInside);
+GM_OFI_PARAM2(Geometry, inside, bool, setInside);
 
 Geometry::Geometry(Impl * impl)
   : _impl(impl ? impl : new Impl) {}

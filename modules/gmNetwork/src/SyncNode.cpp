@@ -14,10 +14,10 @@
 BEGIN_NAMESPACE_GMNETWORK;
 
 GM_OFI_DEFINE(SyncNode);
-GM_OFI_PARAM(SyncNode, peer, std::string, SyncNode::addPeer);
-GM_OFI_PARAM(SyncNode, localPeerIdx, int, SyncNode::setLocalPeerIdx);
-GM_OFI_PARAM(SyncNode, exitWhenAPeerIsDisconnected, bool, SyncNode::setExitWhenAPeerIsDisconnected);
-GM_OFI_PARAM(SyncNode, timeoutDelay, float, SyncNode::setTimeoutDelay);
+GM_OFI_PARAM2(SyncNode, peer, std::string, addPeer);
+GM_OFI_PARAM2(SyncNode, localPeerIdx, int, setLocalPeerIdx);
+GM_OFI_PARAM2(SyncNode, exitWhenAPeerIsDisconnected, bool, setExitWhenAPeerIsDisconnected);
+GM_OFI_PARAM2(SyncNode, timeoutDelay, float, setTimeoutDelay);
 
 #define DEFAULT_SERVICE "20401"
 #define RECONNECT_DELAY std::chrono::seconds(1)

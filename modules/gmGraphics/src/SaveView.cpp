@@ -20,11 +20,11 @@
 BEGIN_NAMESPACE_GMGRAPHICS;
 
 GM_OFI_DEFINE_SUB(SaveView, View);
-GM_OFI_PARAM(SaveView, file, std::filesystem::path, SaveView::setFile);
-GM_OFI_PARAM(SaveView, resolution, gmCore::size2, SaveView::setResolution);
-GM_OFI_PARAM(SaveView, useAlpha, bool, SaveView::setUseAlpha);
-GM_OFI_PARAM(SaveView, useFloat, bool, SaveView::setUseFloat);
-GM_OFI_POINTER(SaveView, view, gmGraphics::View, SaveView::addView);
+GM_OFI_PARAM2(SaveView, file, std::filesystem::path, setFile);
+GM_OFI_PARAM2(SaveView, resolution, gmCore::size2, setResolution);
+GM_OFI_PARAM2(SaveView, useAlpha, bool, setUseAlpha);
+GM_OFI_PARAM2(SaveView, useFloat, bool, setUseFloat);
+GM_OFI_POINTER2(SaveView, view, gmGraphics::View, addView);
 
 struct SaveView::Impl {
 

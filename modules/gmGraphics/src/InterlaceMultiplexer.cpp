@@ -14,7 +14,7 @@
 BEGIN_NAMESPACE_GMGRAPHICS;
 
 GM_OFI_DEFINE(InterlaceMultiplexer);
-GM_OFI_PARAM(InterlaceMultiplexer, pattern, int, InterlaceMultiplexer::setPattern);
+GM_OFI_PARAM2(InterlaceMultiplexer, pattern, int, setPattern);
 
 struct InterlaceMultiplexer::Impl {
 

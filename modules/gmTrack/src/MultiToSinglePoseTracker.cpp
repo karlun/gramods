@@ -8,8 +8,8 @@
 BEGIN_NAMESPACE_GMTRACK;
 
 GM_OFI_DEFINE(MultiToSinglePoseTracker);
-GM_OFI_POINTER(MultiToSinglePoseTracker, multiPoseTracker, MultiPoseTracker, MultiToSinglePoseTracker::setMultiPoseTracker);
-GM_OFI_PARAM(MultiToSinglePoseTracker, sensor, int, MultiToSinglePoseTracker::setSensor);
+GM_OFI_POINTER2(MultiToSinglePoseTracker, multiPoseTracker, MultiPoseTracker, setMultiPoseTracker);
+GM_OFI_PARAM2(MultiToSinglePoseTracker, sensor, int, setSensor);
 
 
 bool MultiToSinglePoseTracker::getPose(PoseSample &p) {

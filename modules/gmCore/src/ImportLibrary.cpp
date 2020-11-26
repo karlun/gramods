@@ -6,10 +6,10 @@
 BEGIN_NAMESPACE_GMCORE;
 
 GM_OFI_DEFINE(ImportLibrary);
-GM_OFI_PARAM(ImportLibrary, libraryFile, std::filesystem::path, ImportLibrary::setLibraryFile);
-GM_OFI_PARAM(ImportLibrary, library, std::string, ImportLibrary::setLibrary);
-GM_OFI_PARAM(ImportLibrary, prefix, std::string, ImportLibrary::setPrefix);
-GM_OFI_PARAM(ImportLibrary, suffix, std::string, ImportLibrary::setSuffix);
+GM_OFI_PARAM2(ImportLibrary, libraryFile, std::filesystem::path, setLibraryFile);
+GM_OFI_PARAM2(ImportLibrary, library, std::string, setLibrary);
+GM_OFI_PARAM2(ImportLibrary, prefix, std::string, setPrefix);
+GM_OFI_PARAM2(ImportLibrary, suffix, std::string, setSuffix);
 
 struct ImportLibrary::Impl {
 

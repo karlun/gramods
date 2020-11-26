@@ -9,8 +9,8 @@
 BEGIN_NAMESPACE_GMGRAPHICS;
 
 GM_OFI_DEFINE_SUB(TiledView, View);
-GM_OFI_PARAM(TiledView, tileLocation, gmCore::size4, TiledView::addTileLocation);
-GM_OFI_POINTER(TiledView, view, gmGraphics::View, TiledView::addView);
+GM_OFI_PARAM2(TiledView, tileLocation, gmCore::size4, addTileLocation);
+GM_OFI_POINTER2(TiledView, view, gmGraphics::View, addView);
 
 struct TiledView::Impl {
   struct Tile {

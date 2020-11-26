@@ -4,9 +4,9 @@
 BEGIN_NAMESPACE_GMGRAPHICS;
 
 GM_OFI_DEFINE(FisheyeCameraModel);
-GM_OFI_PARAM(FisheyeCameraModel, distortion, gmCore::float4, FisheyeCameraModel::setDistortion);
-GM_OFI_PARAM(FisheyeCameraModel, focalDistance, gmCore::float2, FisheyeCameraModel::setFocalDistance);
-GM_OFI_PARAM(FisheyeCameraModel, focalOffset, gmCore::float2, FisheyeCameraModel::setFocalOffset);
+GM_OFI_PARAM2(FisheyeCameraModel, distortion, gmCore::float4, setDistortion);
+GM_OFI_PARAM2(FisheyeCameraModel, focalDistance, gmCore::float2, setFocalDistance);
+GM_OFI_PARAM2(FisheyeCameraModel, focalOffset, gmCore::float2, setFocalOffset);
 
 struct FisheyeCameraModel::Impl {
 

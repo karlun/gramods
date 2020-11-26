@@ -8,13 +8,13 @@
 BEGIN_NAMESPACE_GMTRACK;
 
 GM_OFI_DEFINE(OpenCvVideoCapture);
-GM_OFI_PARAM(OpenCvVideoCapture, videoFile, std::filesystem::path, OpenCvVideoCapture::setVideoFile);
-GM_OFI_PARAM(OpenCvVideoCapture, cameraId, int, OpenCvVideoCapture::setCameraId);
-GM_OFI_PARAM(OpenCvVideoCapture, cameraWidth, int, OpenCvVideoCapture::setCameraWidth);
-GM_OFI_PARAM(OpenCvVideoCapture, cameraHeight, int, OpenCvVideoCapture::setCameraHeight);
-GM_OFI_PARAM(OpenCvVideoCapture, cameraFramerate, int, OpenCvVideoCapture::setCameraFramerate);
-GM_OFI_PARAM(OpenCvVideoCapture, cameraFourCC, std::string, OpenCvVideoCapture::setCameraFourCC);
-GM_OFI_PARAM(OpenCvVideoCapture, backend, std::string, OpenCvVideoCapture::setBackend);
+GM_OFI_PARAM2(OpenCvVideoCapture, videoFile, std::filesystem::path, setVideoFile);
+GM_OFI_PARAM2(OpenCvVideoCapture, cameraId, int, setCameraId);
+GM_OFI_PARAM2(OpenCvVideoCapture, cameraWidth, int, setCameraWidth);
+GM_OFI_PARAM2(OpenCvVideoCapture, cameraHeight, int, setCameraHeight);
+GM_OFI_PARAM2(OpenCvVideoCapture, cameraFramerate, int, setCameraFramerate);
+GM_OFI_PARAM2(OpenCvVideoCapture, cameraFourCC, std::string, setCameraFourCC);
+GM_OFI_PARAM2(OpenCvVideoCapture, backend, std::string, setBackend);
 
 struct OpenCvVideoCapture::Impl {
 

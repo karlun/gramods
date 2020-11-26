@@ -6,7 +6,7 @@
 BEGIN_NAMESPACE_GMGRAPHICS;
 
 GM_OFI_DEFINE(AngularFisheyeCoordinatesMapper);
-GM_OFI_PARAM(AngularFisheyeCoordinatesMapper, coverageAngle, gmCore::angle, AngularFisheyeCoordinatesMapper::setCoverageAngle);
+GM_OFI_PARAM2(AngularFisheyeCoordinatesMapper, coverageAngle, gmCore::angle, setCoverageAngle);
 
 struct AngularFisheyeCoordinatesMapper::Impl {
   gmCore::angle coverage_angle = GM_2_PI;

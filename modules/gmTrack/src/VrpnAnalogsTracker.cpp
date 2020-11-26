@@ -10,7 +10,7 @@
 BEGIN_NAMESPACE_GMTRACK;
 
 GM_OFI_DEFINE(VrpnAnalogsTracker);
-GM_OFI_PARAM(VrpnAnalogsTracker, connectionString, std::string, VrpnAnalogsTracker::setConnectionString);
+GM_OFI_PARAM2(VrpnAnalogsTracker, connectionString, std::string, setConnectionString);
 
 struct VrpnAnalogsTracker::Impl {
 

@@ -7,7 +7,7 @@
 BEGIN_NAMESPACE_GMGRAPHICS;
 
 GM_OFI_DEFINE_SUB(TrackedViewpoint, Viewpoint);
-GM_OFI_POINTER(TrackedViewpoint, singlePoseTracker, gmTrack::SinglePoseTracker, TrackedViewpoint::setSinglePoseTracker);
+GM_OFI_POINTER2(TrackedViewpoint, singlePoseTracker, gmTrack::SinglePoseTracker, setSinglePoseTracker);
 
 struct TrackedViewpoint::Impl {
 

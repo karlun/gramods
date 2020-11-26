@@ -4,9 +4,9 @@
 BEGIN_NAMESPACE_GMGRAPHICS;
 
 GM_OFI_DEFINE_SUB(FovPlanarView, View);
-GM_OFI_PARAM(FovPlanarView, clipPlanes, gmCore::float4, FovPlanarView::setClipPlanes);
-GM_OFI_PARAM(FovPlanarView, clipAngles, gmCore::angle4, FovPlanarView::setClipAngles);
-GM_OFI_PARAM(FovPlanarView, orientation, Eigen::Quaternionf, FovPlanarView::setOrientation);
+GM_OFI_PARAM2(FovPlanarView, clipPlanes, gmCore::float4, setClipPlanes);
+GM_OFI_PARAM2(FovPlanarView, clipAngles, gmCore::angle4, setClipAngles);
+GM_OFI_PARAM2(FovPlanarView, orientation, Eigen::Quaternionf, setOrientation);
 
 
 void FovPlanarView::renderFullPipeline(ViewSettings settings) {

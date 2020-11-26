@@ -10,7 +10,7 @@
 BEGIN_NAMESPACE_GMTRACK;
 
 GM_OFI_DEFINE(VrpnButtonsTracker);
-GM_OFI_PARAM(VrpnButtonsTracker, connectionString, std::string, VrpnButtonsTracker::setConnectionString);
+GM_OFI_PARAM2(VrpnButtonsTracker, connectionString, std::string, setConnectionString);
 
 struct VrpnButtonsTracker::Impl {
 

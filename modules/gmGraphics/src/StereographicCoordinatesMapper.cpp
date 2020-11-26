@@ -6,10 +6,10 @@
 BEGIN_NAMESPACE_GMGRAPHICS;
 
 GM_OFI_DEFINE(StereographicCoordinatesMapper);
-GM_OFI_PARAM(StereographicCoordinatesMapper, radius, float, StereographicCoordinatesMapper::setRadius);
-GM_OFI_PARAM(StereographicCoordinatesMapper, coverageAngle, gmCore::angle, StereographicCoordinatesMapper::setCoverageAngle);
-GM_OFI_PARAM(StereographicCoordinatesMapper, theta0, gmCore::angle, StereographicCoordinatesMapper::setTheta0);
-GM_OFI_PARAM(StereographicCoordinatesMapper, phi0, gmCore::angle, StereographicCoordinatesMapper::setPhi0);
+GM_OFI_PARAM2(StereographicCoordinatesMapper, radius, float, setRadius);
+GM_OFI_PARAM2(StereographicCoordinatesMapper, coverageAngle, gmCore::angle, setCoverageAngle);
+GM_OFI_PARAM2(StereographicCoordinatesMapper, theta0, gmCore::angle, setTheta0);
+GM_OFI_PARAM2(StereographicCoordinatesMapper, phi0, gmCore::angle, setPhi0);
 
 struct StereographicCoordinatesMapper::Impl {
   float radius = 0.5;

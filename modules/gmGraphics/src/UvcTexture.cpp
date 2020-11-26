@@ -18,13 +18,13 @@
 BEGIN_NAMESPACE_GMGRAPHICS;
 
 GM_OFI_DEFINE(UvcTexture);
-GM_OFI_PARAM(UvcTexture, vendor, int, UvcTexture::setVendor);
-GM_OFI_PARAM(UvcTexture, product, int, UvcTexture::setProduct);
-GM_OFI_PARAM(UvcTexture, serial, std::string, UvcTexture::setSerial);
-GM_OFI_PARAM(UvcTexture, resolution, gmCore::size2, UvcTexture::setResolution);
-GM_OFI_PARAM(UvcTexture, framerate, int, UvcTexture::setFramerate);
-GM_OFI_PARAM(UvcTexture, format, std::string, UvcTexture::setFormat);
-GM_OFI_PARAM(UvcTexture, convertToRgb, bool, UvcTexture::setConvertToRbg);
+GM_OFI_PARAM2(UvcTexture, vendor, int, setVendor);
+GM_OFI_PARAM2(UvcTexture, product, int, setProduct);
+GM_OFI_PARAM2(UvcTexture, serial, std::string, setSerial);
+GM_OFI_PARAM2(UvcTexture, resolution, gmCore::size2, setResolution);
+GM_OFI_PARAM2(UvcTexture, framerate, int, setFramerate);
+GM_OFI_PARAM2(UvcTexture, format, std::string, setFormat);
+GM_OFI_PARAM2(UvcTexture, convertToRgb, bool, setConvertToRbg);
 
 
 struct UvcTexture::Impl {

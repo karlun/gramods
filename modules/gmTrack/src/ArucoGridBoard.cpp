@@ -9,14 +9,14 @@
 BEGIN_NAMESPACE_GMTRACK;
 
 GM_OFI_DEFINE(ArucoGridBoard);
-GM_OFI_PARAM(ArucoGridBoard, columns, size_t, ArucoGridBoard::setColumns);
-GM_OFI_PARAM(ArucoGridBoard, rows, size_t, ArucoGridBoard::setRows);
-GM_OFI_PARAM(ArucoGridBoard, markerSize, float, ArucoGridBoard::setMarkerSize);
-GM_OFI_PARAM(ArucoGridBoard, markerSeparation, float, ArucoGridBoard::setMarkerSeparation);
-GM_OFI_PARAM(ArucoGridBoard, firstId, size_t, ArucoGridBoard::setFirstId);
-GM_OFI_PARAM(ArucoGridBoard, dictionary, std::string, ArucoGridBoard::setDictionary);
-GM_OFI_PARAM(ArucoGridBoard, position, Eigen::Vector3f, ArucoGridBoard::setPosition);
-GM_OFI_PARAM(ArucoGridBoard, orientation, Eigen::Quaternionf, ArucoGridBoard::setOrientation);
+GM_OFI_PARAM2(ArucoGridBoard, columns, size_t, setColumns);
+GM_OFI_PARAM2(ArucoGridBoard, rows, size_t, setRows);
+GM_OFI_PARAM2(ArucoGridBoard, markerSize, float, setMarkerSize);
+GM_OFI_PARAM2(ArucoGridBoard, markerSeparation, float, setMarkerSeparation);
+GM_OFI_PARAM2(ArucoGridBoard, firstId, size_t, setFirstId);
+GM_OFI_PARAM2(ArucoGridBoard, dictionary, std::string, setDictionary);
+GM_OFI_PARAM2(ArucoGridBoard, position, Eigen::Vector3f, setPosition);
+GM_OFI_PARAM2(ArucoGridBoard, orientation, Eigen::Quaternionf, setOrientation);
 
 
 struct ArucoGridBoard::Impl {

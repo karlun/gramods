@@ -15,10 +15,10 @@
 BEGIN_NAMESPACE_GMGRAPHICS;
 
 GM_OFI_DEFINE_SUB(PosedSphericalView, View);
-GM_OFI_PARAM(PosedSphericalView, cubeMapResolution, int, PosedSphericalView::setCubeMapResolution);
-GM_OFI_PARAM(PosedSphericalView, linearInterpolation, bool, PosedSphericalView::setLinearInterpolation);
-GM_OFI_PARAM(PosedSphericalView, makeSquare, bool, PosedSphericalView::setMakeSquare);
-GM_OFI_POINTER(PosedSphericalView, coordinatesMapper, gmGraphics::CoordinatesMapper, PosedSphericalView::setCoordinatesMapper);
+GM_OFI_PARAM2(PosedSphericalView, cubeMapResolution, int, setCubeMapResolution);
+GM_OFI_PARAM2(PosedSphericalView, linearInterpolation, bool, setLinearInterpolation);
+GM_OFI_PARAM2(PosedSphericalView, makeSquare, bool, setMakeSquare);
+GM_OFI_POINTER2(PosedSphericalView, coordinatesMapper, gmGraphics::CoordinatesMapper, setCoordinatesMapper);
 
 struct PosedSphericalView::Impl {
 

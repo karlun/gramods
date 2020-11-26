@@ -14,10 +14,10 @@
 BEGIN_NAMESPACE_GMTRACK;
 
 GM_OFI_DEFINE(PoseRegistrationEstimator);
-GM_OFI_PARAM(PoseRegistrationEstimator, samplesPerSecond, float, PoseRegistrationEstimator::setSamplesPerSecond);
-GM_OFI_PARAM(PoseRegistrationEstimator, point, Eigen::Vector3f, PoseRegistrationEstimator::addPoint);
-GM_OFI_PARAM(PoseRegistrationEstimator, trackerPoint, Eigen::Vector3f, PoseRegistrationEstimator::addTrackerPoint);
-GM_OFI_POINTER(PoseRegistrationEstimator, controller, Controller, PoseRegistrationEstimator::setController);
+GM_OFI_PARAM2(PoseRegistrationEstimator, samplesPerSecond, float, setSamplesPerSecond);
+GM_OFI_PARAM2(PoseRegistrationEstimator, point, Eigen::Vector3f, addPoint);
+GM_OFI_PARAM2(PoseRegistrationEstimator, trackerPoint, Eigen::Vector3f, addTrackerPoint);
+GM_OFI_POINTER2(PoseRegistrationEstimator, controller, Controller, setController);
 
 struct PoseRegistrationEstimator::Impl {
 

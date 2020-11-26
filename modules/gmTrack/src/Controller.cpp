@@ -9,9 +9,9 @@ BEGIN_NAMESPACE_GMTRACK;
 
 
 GM_OFI_DEFINE(Controller);
-GM_OFI_POINTER(Controller, singlePoseTracker, SinglePoseTracker, Controller::setSinglePoseTracker);
-GM_OFI_POINTER(Controller, buttonsTracker, ButtonsTracker, Controller::setButtonsTracker);
-GM_OFI_POINTER(Controller, analogsTracker, AnalogsTracker, Controller::setAnalogsTracker);
+GM_OFI_POINTER2(Controller, singlePoseTracker, SinglePoseTracker, setSinglePoseTracker);
+GM_OFI_POINTER2(Controller, buttonsTracker, ButtonsTracker, setButtonsTracker);
+GM_OFI_POINTER2(Controller, analogsTracker, AnalogsTracker, setAnalogsTracker);
 
 
 bool Controller::getPose(SinglePoseTracker::PoseSample &p) {

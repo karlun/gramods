@@ -15,11 +15,11 @@
 BEGIN_NAMESPACE_GMGRAPHICS;
 
 GM_OFI_DEFINE(SphereRenderer);
-GM_OFI_PARAM(SphereRenderer, radius, float, SphereRenderer::setRadius);
-GM_OFI_PARAM(SphereRenderer, position, Eigen::Vector3f, SphereRenderer::setPosition);
-GM_OFI_PARAM(SphereRenderer, orientation, Eigen::Quaternionf, SphereRenderer::setOrientation);
-GM_OFI_POINTER(SphereRenderer, texture, gmGraphics::TextureInterface, SphereRenderer::setTexture);
-GM_OFI_POINTER(SphereRenderer, coordinatesMapper, gmGraphics::CoordinatesMapper, SphereRenderer::setCoordinatesMapper);
+GM_OFI_PARAM2(SphereRenderer, radius, float, setRadius);
+GM_OFI_PARAM2(SphereRenderer, position, Eigen::Vector3f, setPosition);
+GM_OFI_PARAM2(SphereRenderer, orientation, Eigen::Quaternionf, setOrientation);
+GM_OFI_POINTER2(SphereRenderer, texture, gmGraphics::TextureInterface, setTexture);
+GM_OFI_POINTER2(SphereRenderer, coordinatesMapper, gmGraphics::CoordinatesMapper, setCoordinatesMapper);
 
 struct SphereRenderer::Impl {
 

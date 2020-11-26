@@ -6,8 +6,8 @@
 BEGIN_NAMESPACE_GMCORE;
 
 GM_OFI_DEFINE(SdlContext);
-GM_OFI_PARAM(SdlContext, useVideo, bool, SdlContext::setUseVideo);
-GM_OFI_PARAM(SdlContext, useAudio, bool, SdlContext::setUseAudio);
+GM_OFI_PARAM2(SdlContext, useVideo, bool, setUseVideo);
+GM_OFI_PARAM2(SdlContext, useAudio, bool, setUseAudio);
 
 bool SdlContext::has_audio = false;
 bool SdlContext::has_video = false;

@@ -10,10 +10,10 @@
 BEGIN_NAMESPACE_GMTRACK;
 
 GM_OFI_DEFINE(RegisteredMultiPoseTracker);
-GM_OFI_POINTER(RegisteredMultiPoseTracker, multiPoseTracker, MultiPoseTracker, RegisteredMultiPoseTracker::setMultiPoseTracker);
-GM_OFI_PARAM(RegisteredMultiPoseTracker, registrationMatrix, Eigen::Matrix4f, RegisteredMultiPoseTracker::setRegistrationMatrix);
-GM_OFI_PARAM(RegisteredMultiPoseTracker, positionBias, Eigen::Vector3f, RegisteredMultiPoseTracker::setPositionBias);
-GM_OFI_PARAM(RegisteredMultiPoseTracker, orientationBias, Eigen::Quaternionf, RegisteredMultiPoseTracker::setOrientationBias);
+GM_OFI_POINTER2(RegisteredMultiPoseTracker, multiPoseTracker, MultiPoseTracker, setMultiPoseTracker);
+GM_OFI_PARAM2(RegisteredMultiPoseTracker, registrationMatrix, Eigen::Matrix4f, setRegistrationMatrix);
+GM_OFI_PARAM2(RegisteredMultiPoseTracker, positionBias, Eigen::Vector3f, setPositionBias);
+GM_OFI_PARAM2(RegisteredMultiPoseTracker, orientationBias, Eigen::Quaternionf, setOrientationBias);
 
 
 bool RegisteredMultiPoseTracker::getPose(std::map<int, PoseSample> &p) {

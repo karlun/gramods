@@ -7,9 +7,9 @@
 BEGIN_NAMESPACE_GMGRAPHICS;
 
 GM_OFI_DEFINE_SUB(PlaneGeometry, Geometry);
-GM_OFI_PARAM(PlaneGeometry, position, Eigen::Vector3f, PlaneGeometry::setPosition);
-GM_OFI_PARAM(PlaneGeometry, normal, Eigen::Vector3f, PlaneGeometry::setNormal);
-GM_OFI_PARAM(PlaneGeometry, orientation, Eigen::Quaternionf, PlaneGeometry::setOrientation);
+GM_OFI_PARAM2(PlaneGeometry, position, Eigen::Vector3f, setPosition);
+GM_OFI_PARAM2(PlaneGeometry, normal, Eigen::Vector3f, setNormal);
+GM_OFI_PARAM2(PlaneGeometry, orientation, Eigen::Quaternionf, setOrientation);
 
 struct PlaneGeometry::Impl
   : Geometry::Impl {

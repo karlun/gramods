@@ -13,10 +13,10 @@
 BEGIN_NAMESPACE_GMGRAPHICS;
 
 GM_OFI_DEFINE(CubeSceneRenderer);
-GM_OFI_PARAM(CubeSceneRenderer, cubeSize, float, CubeSceneRenderer::setCubeSize);
-GM_OFI_PARAM(CubeSceneRenderer, cubeSetSize, float, CubeSceneRenderer::setCubeSetSize);
-GM_OFI_PARAM(CubeSceneRenderer, position, Eigen::Vector3f, CubeSceneRenderer::setPosition);
-GM_OFI_PARAM(CubeSceneRenderer, animate, bool, CubeSceneRenderer::setAnimate);
+GM_OFI_PARAM2(CubeSceneRenderer, cubeSize, float, setCubeSize);
+GM_OFI_PARAM2(CubeSceneRenderer, cubeSetSize, float, setCubeSetSize);
+GM_OFI_PARAM2(CubeSceneRenderer, position, Eigen::Vector3f, setPosition);
+GM_OFI_PARAM2(CubeSceneRenderer, animate, bool, setAnimate);
 
 #define N_VERTICES 108
 

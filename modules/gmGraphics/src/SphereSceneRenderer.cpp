@@ -16,10 +16,10 @@
 BEGIN_NAMESPACE_GMGRAPHICS;
 
 GM_OFI_DEFINE(SphereSceneRenderer);
-GM_OFI_PARAM(SphereSceneRenderer, sphereRadius, float, SphereSceneRenderer::setSphereRadius);
-GM_OFI_PARAM(SphereSceneRenderer, sphereSetRadius, float, SphereSceneRenderer::setSphereSetRadius);
-GM_OFI_PARAM(SphereSceneRenderer, position, Eigen::Vector3f, SphereSceneRenderer::setPosition);
-GM_OFI_PARAM(SphereSceneRenderer, color, Eigen::Vector3f, SphereSceneRenderer::setColor);
+GM_OFI_PARAM2(SphereSceneRenderer, sphereRadius, float, setSphereRadius);
+GM_OFI_PARAM2(SphereSceneRenderer, sphereSetRadius, float, setSphereSetRadius);
+GM_OFI_PARAM2(SphereSceneRenderer, position, Eigen::Vector3f, setPosition);
+GM_OFI_PARAM2(SphereSceneRenderer, color, Eigen::Vector3f, setColor);
 
 #define N_VERTICES 108
 

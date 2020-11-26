@@ -17,10 +17,10 @@
 BEGIN_NAMESPACE_GMGRAPHICS;
 
 GM_OFI_DEFINE_SUB(ViewTexture, View);
-GM_OFI_PARAM(ViewTexture, resolution, gmCore::size2, ViewTexture::setResolution);
-GM_OFI_PARAM(ViewTexture, useAlpha, bool, ViewTexture::setUseAlpha);
-GM_OFI_PARAM(ViewTexture, useFloat, bool, ViewTexture::setUseFloat);
-GM_OFI_POINTER(ViewTexture, view, gmGraphics::View, ViewTexture::addView);
+GM_OFI_PARAM2(ViewTexture, resolution, gmCore::size2, setResolution);
+GM_OFI_PARAM2(ViewTexture, useAlpha, bool, setUseAlpha);
+GM_OFI_PARAM2(ViewTexture, useFloat, bool, setUseFloat);
+GM_OFI_POINTER2(ViewTexture, view, gmGraphics::View, addView);
 
 struct ViewTexture::Impl {
 
