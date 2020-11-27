@@ -173,4 +173,14 @@ void SampleCollector::Impl::getAverage(std::vector<Eigen::Quaternionf> samples,
   x = Eigen::Quaternionf(V[0], V[1], V[2], V[3]);
 }
 
+const std::vector<Eigen::Vector3f> &
+SampleCollector::getTrackerPositions() const {
+  return _impl->tracker_positions;
+}
+
+const std::vector<Eigen::Quaternionf> &
+SampleCollector::getTrackerOrientations() const {
+  return _impl->tracker_orientations;
+}
+
 END_NAMESPACE_GMTRACK;

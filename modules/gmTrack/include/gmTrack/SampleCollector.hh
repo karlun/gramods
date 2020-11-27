@@ -62,6 +62,16 @@ public:
   */
   void setSamplesPerSecond(float n);
 
+  /**
+     Returns the current list of tracker positions.
+  */
+  const std::vector<Eigen::Vector3f> &getTrackerPositions() const;
+
+  /**
+     Returns the current list of tracker orientations.
+  */
+  const std::vector<Eigen::Quaternionf> &getTrackerOrientations() const;
+
   GM_OFI_DECLARE;
 
 };
