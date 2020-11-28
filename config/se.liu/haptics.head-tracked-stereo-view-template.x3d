@@ -20,9 +20,9 @@
       --output-file output.xml
       --output-template urn:gramods:config/se.liu.haptics.head-tracked-stereo-view-template.x3d
       --config urn:gramods:config/se.liu.mit.vive.calibration-tracker-relative.xml
-      --point -0.05,0,0
-      --point +0.05,0,0
-      --point 0,-0.12,0
+      --a-point -0.05,0,0
+      --a-point +0.05,0,0
+      --a-point 0,-0.12,0
 
 
     2. Calibration of tracker relative monitor:
@@ -31,10 +31,10 @@
       --output-file se.liu.haptics.head-tracked-stereo-view.x3d
       --output-template output.xml
       --config urn:gramods:config/se.liu.mit.vive.calibration-tracker.xml
-      --point -0.267,0.277,0.125
-      --point -0.267,0.277,0.429
-      --point +0.267,0.277,0.429
-      --point +0.267,0.277,0.125
+      --a-point -0.267,0.277,0.125
+      --a-point -0.267,0.277,0.429
+      --a-point +0.267,0.277,0.429
+      --a-point +0.267,0.277,0.125
   ]]>
 
   <PythonScript url="urn:candy:python/AutoLoadSO.py"/>

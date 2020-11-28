@@ -70,9 +70,9 @@ TEST(gmTrackBaseEstimation, FullSamplesByInverse) {
     Eigen::Matrix4f samples = RegA.inverse() * points;
 
     for (int idx = 0; idx < 4; ++idx)
-      registrator->addPoint({points(0, idx),
-                             points(1, idx),
-                             points(2, idx)});
+      registrator->addActualPosition({points(0, idx),
+                                      points(1, idx),
+                                      points(2, idx)});
     for (int idx = 0; idx < 4; ++idx)
       ts_pose_tracker->addPosition({samples(0, idx),
                                     samples(1, idx),
@@ -151,9 +151,9 @@ TEST(gmTrackBaseEstimation, OverDeterminedSamplesByQR) {
     Eigen::Matrix4f samples = RegA.inverse() * points;
 
     for (int idx = 0; idx < 4; ++idx)
-      registrator->addPoint({points(0, idx),
-                             points(1, idx),
-                             points(2, idx)});
+      registrator->addActualPosition({points(0, idx),
+                                      points(1, idx),
+                                      points(2, idx)});
     for (int idx = 0; idx < 4; ++idx)
       ts_pose_tracker->addPosition({samples(0, idx),
                                     samples(1, idx),

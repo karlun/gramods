@@ -2,12 +2,7 @@
 #ifndef GM_TRACK_POSEREGISTRATIONESTIMATOR
 #define GM_TRACK_POSEREGISTRATIONESTIMATOR
 
-#include <gmTrack/config.hh>
-
-#include <gmCore/eigen.hh>
-#include <gmCore/Object.hh>
-#include <gmTrack/Controller.hh>
-#include <gmCore/Updateable.hh>
+#include <gmTrack/SampleCollector.hh>
 
 BEGIN_NAMESPACE_GMTRACK;
 
@@ -21,8 +16,7 @@ BEGIN_NAMESPACE_GMTRACK;
    system.
 */
 class PoseRegistrationEstimator
-  : public gmCore::Object,
-    public gmCore::Updateable {
+  : public SampleCollector {
 
 public:
 
@@ -30,39 +24,11 @@ public:
   ~PoseRegistrationEstimator();
 
   /**
-     Updates the animation.
-  */
-  void update(clock::time_point t) override;
-
-  /**
-     Sets the controller to use for calibration.
-
-     \gmXmlTag{gmTrack,PoseRegistrationEstimator,controller}
-  */
-  void setController(std::shared_ptr<Controller> controller);
-
-  /**
      Adds a known calibration point, in room coordinates.
 
-     \gmXmlTag{gmTrack,PoseRegistrationEstimator,point}
+     \gmXmlTag{gmTrack,PoseRegistrationEstimator,actualPosition}
   */
-  void addPoint(Eigen::Vector3f p);
-
-  /**
-     Adds the tracker coordinates position of a calibration point.
-
-     \b XML-attribute: \c trackerPoint
-  */
-  void addTrackerPoint(Eigen::Vector3f p);
-
-  /**
-     Sets the frequency at which samples are collected when the
-     controller button is pressed. Default is 1. At most one sample
-     per frame will be used regardless of this value.
-
-     \gmXmlTag{gmTrack,PoseRegistrationEstimator,samplesPerSecond}
-  */
-  void setSamplesPerSecond(float n);
+  void addActualPosition(Eigen::Vector3f p);
 
   /**
      Extract registration matrix, either raw or without
@@ -74,10 +40,7 @@ public:
   GM_OFI_DECLARE;
 
 private:
-
   struct Impl;
-  std::unique_ptr<Impl> _impl;
-
 };
 
 END_NAMESPACE_GMTRACK;

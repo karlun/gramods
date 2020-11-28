@@ -1,5 +1,6 @@
 
 #include <gmTrack/PoseRegistrationEstimator.hh>
+#include <gmTrack/SampleCollector.impl.hh>
 
 #include <gmTrack/ButtonsMapper.hh>
 
@@ -13,26 +14,17 @@
 
 BEGIN_NAMESPACE_GMTRACK;
 
-GM_OFI_DEFINE(PoseRegistrationEstimator);
-GM_OFI_PARAM2(PoseRegistrationEstimator, samplesPerSecond, float, setSamplesPerSecond);
-GM_OFI_PARAM2(PoseRegistrationEstimator, point, Eigen::Vector3f, addPoint);
-GM_OFI_PARAM2(PoseRegistrationEstimator, trackerPoint, Eigen::Vector3f, addTrackerPoint);
-GM_OFI_POINTER2(PoseRegistrationEstimator, controller, Controller, setController);
+GM_OFI_DEFINE_SUB(PoseRegistrationEstimator, SampleCollector);
+GM_OFI_PARAM2(PoseRegistrationEstimator, actualPosition, Eigen::Vector3f, addActualPosition);
 
-struct PoseRegistrationEstimator::Impl {
+struct PoseRegistrationEstimator::Impl : SampleCollector::Impl {
 
   typedef gmCore::Updateable::clock clock;
 
   std::vector<Eigen::Vector3f> actual_positions;
-  std::vector<Eigen::Vector3f> tracker_positions;
-  std::vector<Eigen::Vector3f> samples;
-  clock::time_point last_sample_time = clock::time_point::min();
-  float samples_per_second = 1;
-  bool collecting = false;
 
-  void update(clock::time_point t);
+  void update(clock::time_point t) override;
 
-  void getIQM3D(std::vector<Eigen::Vector3f> samples, Eigen::Vector3f &x);
   float estimateSphericity(std::vector<Eigen::Vector3f> samples);
 
   void performRegistration();
@@ -61,8 +53,6 @@ struct PoseRegistrationEstimator::Impl {
                                 Eigen::Matrix4f &M_unit);
 
   float planar_sphericity = 0.3f;
-  std::shared_ptr<gramods::gmTrack::Controller> controller;
-  gramods::gmTrack::ButtonsTracker::ButtonsSample buttons;
 
   Eigen::Matrix4f registration_raw;
   Eigen::Matrix4f registration_unit;
@@ -70,35 +60,20 @@ struct PoseRegistrationEstimator::Impl {
 };
 
 PoseRegistrationEstimator::PoseRegistrationEstimator()
-  : Updateable(-1000),
-    _impl(std::make_unique<Impl>()) {}
+  : SampleCollector(new Impl) {}
 
 PoseRegistrationEstimator::~PoseRegistrationEstimator() {}
 
-void PoseRegistrationEstimator::update(clock::time_point t) {
-  _impl->update(t);
-}
-
-void PoseRegistrationEstimator::setController(std::shared_ptr<gramods::gmTrack::Controller> controller) {
-  _impl->controller = controller;
-}
-
-void PoseRegistrationEstimator::addPoint(Eigen::Vector3f p) {
+void PoseRegistrationEstimator::addActualPosition(Eigen::Vector3f p) {
+  auto _impl = static_cast<PoseRegistrationEstimator::Impl *>(this->_impl.get());
   if (_impl->actual_positions.empty())
     GM_INF("PoseRegistrationEstimator",
            "First point to collect: " << p.transpose());
   _impl->actual_positions.push_back(p);
 }
 
-void PoseRegistrationEstimator::addTrackerPoint(Eigen::Vector3f p) {
-  _impl->tracker_positions.push_back(p);
-}
-
-void PoseRegistrationEstimator::setSamplesPerSecond(float n) {
-  _impl->samples_per_second = n;
-}
-
 bool PoseRegistrationEstimator::getRegistration(Eigen::Matrix4f * RAW, Eigen::Matrix4f * UNIT) {
+  auto _impl = static_cast<PoseRegistrationEstimator::Impl *>(this->_impl.get());
 
   if (!_impl->successful_registration)
     return false;
@@ -114,77 +89,8 @@ bool PoseRegistrationEstimator::getRegistration(Eigen::Matrix4f * RAW, Eigen::Ma
 
 void PoseRegistrationEstimator::Impl::update(clock::time_point now) {
 
-  if (!tracker_positions.empty() &&
-      tracker_positions.size() == actual_positions.size()) {
-    performRegistration();
-    return;
-  }
-
-  if (!controller) {
-    GM_RUNONCE(GM_ERR("PoseRegistrationEstimator", "No controller to calibrate"));
-    return;
-  }
-
-  controller->getButtons(buttons);
-
-  if (!collecting) {
-    if (buttons.buttons[ButtonsMapper::ButtonIdx::MAIN]) {
-      collecting = true;
-      GM_INF("PoseRegistrationEstimator", "going into collect mode");
-    } else {
-      return;
-    }
-  }
-
-  if (buttons.buttons[ButtonsMapper::ButtonIdx::MAIN]){
-    gramods::gmTrack::PoseTracker::PoseSample pose;
-    if (! controller->getPose(pose)) {
-      GM_RUNONCE(GM_ERR("PoseRegistrationEstimator", "Cannot read controller pose"));
-      return;
-    }
-
-    // Zero or less samples per second results in taking only one sample per click
-    if (samples_per_second < std::numeric_limits<float>::epsilon()) {
-      if (last_sample_time == clock::time_point::min()) {
-        GM_DBG1("PoseRegistrationEstimator", "collecting a single sample");
-        samples.push_back(pose.position);
-      }
-      last_sample_time = now;
-      return;
-    }
-
-    // Do not take samples faster than samples_per_second
-    if (last_sample_time != clock::time_point::min() &&
-        (now - last_sample_time) < std::chrono::milliseconds(int(1000.f/samples_per_second)))
-      return;
-
-    GM_DBG1("PoseRegistrationEstimator", "collecting sample");
-    samples.push_back(pose.position);
-    last_sample_time = now;
-
-    return;
-  }
-
-  // Button released - finished collecting samples
-
-  collecting = false;
-  last_sample_time = clock::time_point::min();
-
-  assert(!samples.empty());
-
-  Eigen::Vector3f pos;
-  getIQM3D(samples, pos);
-  tracker_positions.push_back(pos);
-
-  GM_INF("PoseRegistrationEstimator", "left collect mode (have " << tracker_positions.size() << " of " << actual_positions.size() << ")");
-  GM_DBG1("PoseRegistrationEstimator", "estimated tracked position (" << pos.transpose() << ") out of " << samples.size() << " samples, for actual position (" << actual_positions[tracker_positions.size() - 1].transpose() << ")");
-
-  samples.clear();
-
-  if (tracker_positions.size() < actual_positions.size()) {
-    GM_INF("PoseRegistrationEstimator", "Next point to collect: " << actual_positions[tracker_positions.size()].transpose());
-    return;
-  }
+  SampleCollector::Impl::update(now);
+  if (tracker_positions.size() < actual_positions.size()) return;
 
   GM_INF("PoseRegistrationEstimator", "have all " << actual_positions.size() << " samples");
   performRegistration();
@@ -230,50 +136,6 @@ void PoseRegistrationEstimator::Impl::performRegistration() {
 
   tracker_positions.clear();
 }
-
-void PoseRegistrationEstimator::Impl::getIQM3D(std::vector<Eigen::Vector3f> samples, Eigen::Vector3f &x) {
-
-  assert(!samples.empty());
-
-  if (samples.size() == 1) {
-    x = samples.front();
-    return;
-  }
-
-  if (samples.size() < 4) {
-    Eigen::Vector3f sum;
-    for (auto p : samples) sum += p;
-    x = (1.0 / samples.size()) * sum;
-    return;
-  }
-
-  Eigen::Vector3f sum = Eigen::Vector3f::Zero();
-
-  std::sort(samples.begin(), samples.end(),
-            [](Eigen::Vector3f a, Eigen::Vector3f b){
-              return a[0] < b[0];
-            });
-  for (size_t idx = samples.size()/4; idx < (3*samples.size())/4; ++idx)
-    sum[0] += samples[idx][0];
-
-  std::sort(samples.begin(), samples.end(),
-            [](Eigen::Vector3f a, Eigen::Vector3f b){
-              return a[1] < b[1];
-            });
-  for (size_t idx = samples.size()/4; idx < (3*samples.size())/4; ++idx)
-    sum[1] += samples[idx][1];
-
-  std::sort(samples.begin(), samples.end(),
-            [](Eigen::Vector3f a, Eigen::Vector3f b){
-              return a[2] < b[2];
-            });
-  for (size_t idx = samples.size()/4; idx < (3*samples.size())/4; ++idx)
-    sum[2] += samples[idx][2];
-
-  x = (1.0 / ((3*samples.size())/4 - samples.size()/4)) * sum;
-
-}
-
 
 float PoseRegistrationEstimator::Impl::estimateSphericity(std::vector<Eigen::Vector3f> data) {
 

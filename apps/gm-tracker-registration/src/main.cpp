@@ -214,15 +214,15 @@ int main(int argc, char *argv[]) {
      false, "identifier=value");
   cmd.add(arg_param_dummy);
 
-  TCLAP::MultiArg<std::string> arg_point
-    ("p", "point",
-     "Specification of point in the registered coordinate system.",
+  TCLAP::MultiArg<std::string> arg_apoint
+    ("p", "a-point",
+     "Specification of a point in the registered coordinate system.",
      true, "x,y,z");
-  cmd.add(arg_point);
+  cmd.add(arg_apoint);
 
   TCLAP::MultiArg<std::string> arg_tpoint
     ("q", "t-point",
-     "Specification of point in the tracker coordinate system.",
+     "Specification of a point in the tracker coordinate system.",
      false, "x,y,z");
   cmd.add(arg_tpoint);
 
@@ -286,16 +286,16 @@ int main(int argc, char *argv[]) {
   if (config && config->getObject(controller))
     registrator->setController(controller);
 
-  if (! arg_point.getValue().empty()) {
+  if (! arg_apoint.getValue().empty()) {
 
-    auto str_points = arg_point.getValue();
+    auto str_points = arg_apoint.getValue();
 
     for (auto str_point : str_points) {
       std::replace(str_point.begin(), str_point.end(), ',', ' ');
       std::stringstream ss(str_point);
       Eigen::Vector3f p;
       if (ss >> p)
-        registrator->addPoint(p);
+        registrator->addActualPosition(p);
       else
         std::cerr << "Warning: could not parse '" << str_point << "' as a 3D point." << std::endl;
     }
@@ -309,7 +309,7 @@ int main(int argc, char *argv[]) {
       std::stringstream ss(str_point);
       Eigen::Vector3f p;
       if (ss >> p)
-        registrator->addPoint(p);
+        registrator->addActualPosition(p);
       else
         std::cerr << "Warning: could not parse '" << str_point << "' as a 3D point." << std::endl;
     }
@@ -330,7 +330,7 @@ int main(int argc, char *argv[]) {
       std::stringstream ss(str_point);
       Eigen::Vector3f p;
       if (ss >> p)
-        registrator->addTrackerPoint(p);
+        registrator->addTrackerPosition(p);
       else
         std::cerr << "Warning: could not parse '" << str_point << "' as a 3D point." << std::endl;
     }
@@ -344,7 +344,7 @@ int main(int argc, char *argv[]) {
       std::stringstream ss(str_point);
       Eigen::Vector3f p;
       if (ss >> p)
-        registrator->addTrackerPoint(p);
+        registrator->addTrackerPosition(p);
       else
         std::cerr << "Warning: could not parse '" << str_point << "' as a 3D point." << std::endl;
     }
