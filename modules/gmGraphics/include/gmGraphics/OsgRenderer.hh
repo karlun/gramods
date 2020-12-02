@@ -6,6 +6,8 @@
 
 #ifdef gramods_ENABLE_OpenSceneGraph
 
+#include <gmCore/Updateable.hh>
+
 namespace osg {
   class Node;
 }
@@ -16,7 +18,8 @@ BEGIN_NAMESPACE_GMGRAPHICS;
    A renderer that renders an OpenSceneGraph scenegraph.
 */
 class OsgRenderer
-  : public Renderer {
+  : public Renderer,
+    public gmCore::Updateable {
 
 public:
 
@@ -37,6 +40,11 @@ public:
      Sets the scenegraph.
   */
   void setSceneData(osg::Node *node);
+
+  /**
+     Called to make the object up-to-date.
+  */
+  void update(clock::time_point t) override;
 
 private:
   struct Impl;

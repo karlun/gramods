@@ -17,12 +17,14 @@ struct OsgRenderer::Impl {
 
   void setSceneData(osg::Node *node);
 
+  void update(Updateable::clock::time_point t);
+
   bool is_initialized = false;
   osg::ref_ptr<osgViewer::Viewer> viewer;
   osg::ref_ptr<osg::Node> tmp_scene_data;
 };
 
-OsgRenderer::OsgRenderer() : _impl(std::make_unique<Impl>()) {}
+OsgRenderer::OsgRenderer() : Updateable(0), _impl(std::make_unique<Impl>()) {}
 
 OsgRenderer::~OsgRenderer() {}
 
@@ -38,6 +40,9 @@ void OsgRenderer::setSceneData(osg::Node *node) {
   _impl->setSceneData(node);
 }
 
+void OsgRenderer::update(clock::time_point t) {
+  _impl->update(t);
+}
 
 /// ----- Impl -----
 
@@ -94,6 +99,12 @@ void OsgRenderer::Impl::setSceneData(osg::Node *node) {
     viewer->setSceneData(node);
   else
     tmp_scene_data = node;
+}
+
+void OsgRenderer::Impl::update(clock::time_point t) {
+  if (!viewer) return;
+  viewer->eventTraversal();
+  viewer->updateTraversal();
 }
 
 END_NAMESPACE_GMGRAPHICS;
