@@ -214,10 +214,10 @@ bool GeometryCorrectedProjectorView::Impl::setCamera(Camera &c) {
 }
 
 bool GeometryCorrectedProjectorView::Impl::setCameraShapeFromIntrinsics(Camera &c) {
-  c.setClipPlanes((1.f - shape_intrinsics[2]) / shape_intrinsics[0],
-                  (      shape_intrinsics[2]) / shape_intrinsics[0],
-                  (1.f - shape_intrinsics[3]) / shape_intrinsics[1],
-                  (      shape_intrinsics[3]) / shape_intrinsics[1]);
+  c.setClipPlanes((    - shape_intrinsics[2]) / shape_intrinsics[0],
+                  (1.f - shape_intrinsics[2]) / shape_intrinsics[0],
+                  (    - shape_intrinsics[3]) / shape_intrinsics[1],
+                  (1.f - shape_intrinsics[3]) / shape_intrinsics[1]);
   return true;
 }
 

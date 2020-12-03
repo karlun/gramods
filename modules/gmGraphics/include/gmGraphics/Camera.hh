@@ -67,7 +67,7 @@ public:
      Sets the frustum planes of an asymmetric frustum for the camera
      based on left, right, bottom and top field-of-view, expressed in
      radians. The left field-of-view increase left-wise while the
-     right field-of-view increate right-wise.
+     right field-of-view increase right-wise.
   */
   void setClipAngles(float l, float r, float b, float t);
 
