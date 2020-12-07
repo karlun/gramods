@@ -194,8 +194,6 @@ void PoseRegistrationEstimator::Impl::performRegistration() {
     GM_WRN("PoseRegistrationEstimator", "sphericity inconsistency - tracker positions are in a plane but not actual positions");
   } else if ((tracker_data_sph > planar_sphericity) && (actual_data_sph <= planar_sphericity)) {
     GM_WRN("PoseRegistrationEstimator", "sphericity inconsistency - actual positions are planar but not tracker positions");
-  } else if ((tracker_data_sph <= planar_sphericity) && (actual_data_sph <= planar_sphericity)) {
-    GM_WRN("PoseRegistrationEstimator", "Poor third axis sphericity (" << tracker_data_sph << " and " << actual_data_sph << ")");
   }
 
   std::vector<Eigen::Vector3f> tracker_data = tracker_positions;
@@ -203,7 +201,7 @@ void PoseRegistrationEstimator::Impl::performRegistration() {
 
   if (std::min(tracker_data_sph, actual_data_sph) <= planar_sphericity) {
 
-    GM_DBG1("PoseRegistrationEstimator", "Expanding samples to compensate for poor sphericity");
+    GM_WRN("PoseRegistrationEstimator", "Samples will be manipulated to compensate for poor sphericity(" << tracker_data_sph << " and " << actual_data_sph << " for tracker data and actual data, respectively)");
 
     int idx0 = -1, idx1;
     expandPlanar(actual_data, idx0, idx1);
