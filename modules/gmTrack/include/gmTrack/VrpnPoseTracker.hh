@@ -6,8 +6,6 @@
 
 #ifdef gramods_ENABLE_VRPN
 
-#include <vrpn_Tracker.h>
-
 #include <gmCore/OFactory.hh>
 #include <gmCore/Updateable.hh>
 
@@ -50,13 +48,8 @@ public:
   GM_OFI_DECLARE;
 
 private:
-
-  std::unique_ptr<vrpn_Tracker_Remote> tracker;
-	static void VRPN_CALLBACK handler(void *userdata, const vrpn_TRACKERCB info);
-
-  std::map<int, PoseSample> latest_samples;
-  bool got_data;
-  bool have_data = false;
+  struct Impl;
+  std::unique_ptr<Impl> _impl;
 };
 
 END_NAMESPACE_GMTRACK;

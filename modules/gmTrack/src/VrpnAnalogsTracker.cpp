@@ -5,19 +5,41 @@
 
 #include <gmCore/Console.hh>
 
+#include <vrpn_Analog.h>
+
 BEGIN_NAMESPACE_GMTRACK;
 
 GM_OFI_DEFINE(VrpnAnalogsTracker);
 GM_OFI_PARAM(VrpnAnalogsTracker, connectionString, std::string, VrpnAnalogsTracker::setConnectionString);
 
+struct VrpnAnalogsTracker::Impl {
+
+  void update();
+  void setConnectionString(std::string id);
+  bool getAnalogs(AnalogsSample &b);
+
+	static void VRPN_CALLBACK handler(void *userdata, const vrpn_ANALOGCB info);
+  void handler(const vrpn_ANALOGCB info);
+
+  std::unique_ptr<vrpn_Analog_Remote> tracker;
+
+  AnalogsSample latest_sample;
+  bool got_data;
+  bool have_data = false;
+};
+
 VrpnAnalogsTracker::VrpnAnalogsTracker()
-  : Updateable(10) {}
+  : Updateable(10), _impl(std::make_unique<Impl>()) {}
 
 VrpnAnalogsTracker::~VrpnAnalogsTracker() {
-  tracker = nullptr;
+  _impl->tracker = nullptr;
 }
 
 void VrpnAnalogsTracker::update(gmCore::Updateable::clock::time_point) {
+  _impl->update();
+}
+
+void VrpnAnalogsTracker::Impl::update() {
 
   if (!tracker) {
     GM_WRN("VrpnAnalogsTracker", "Cannot get buttons - no vrpn connection");
@@ -38,11 +60,19 @@ void VrpnAnalogsTracker::update(gmCore::Updateable::clock::time_point) {
 }
 
 void VrpnAnalogsTracker::setConnectionString(std::string id) {
+  _impl->setConnectionString(id);
+}
+
+void VrpnAnalogsTracker::Impl::setConnectionString(std::string id) {
   tracker = std::make_unique<vrpn_Analog_Remote>(id.c_str());
-  tracker->register_change_handler(this, VrpnAnalogsTracker::handler);
+  tracker->register_change_handler(this, VrpnAnalogsTracker::Impl::handler);
 }
 
 bool VrpnAnalogsTracker::getAnalogs(AnalogsSample &b) {
+  return _impl->getAnalogs(b);
+}
+
+bool VrpnAnalogsTracker::Impl::getAnalogs(AnalogsSample &b) {
 
   if (!have_data)
     return false;
@@ -52,8 +82,12 @@ bool VrpnAnalogsTracker::getAnalogs(AnalogsSample &b) {
   return true;
 }
 
-void VRPN_CALLBACK VrpnAnalogsTracker::handler(void *data, const vrpn_ANALOGCB info) {
-  VrpnAnalogsTracker *_this = static_cast<VrpnAnalogsTracker*>(data);
+void VRPN_CALLBACK VrpnAnalogsTracker::Impl::handler(void *data,
+                                                     const vrpn_ANALOGCB info) {
+  static_cast<VrpnAnalogsTracker::Impl*>(data)->handler(info);
+}
+
+void VRPN_CALLBACK VrpnAnalogsTracker::Impl::handler(const vrpn_ANALOGCB info) {
 
   typedef std::chrono::steady_clock clock;
 
@@ -63,17 +97,17 @@ void VRPN_CALLBACK VrpnAnalogsTracker::handler(void *data, const vrpn_ANALOGCB i
     (std::chrono::microseconds(info.msg_time.tv_usec));
   auto time = clock::time_point(secs + usecs);
 
-  _this->latest_sample.time = time;
-  _this->latest_sample.analogs.resize(info.num_channel, 0);
+  latest_sample.time = time;
+  latest_sample.analogs.resize(info.num_channel, 0);
 
   std::stringstream analogs_log;
   for (size_t idx = 0; idx < (size_t)info.num_channel; ++idx) {
-    _this->latest_sample.analogs[idx] = info.channel[idx];
+    latest_sample.analogs[idx] = info.channel[idx];
     analogs_log << info.channel[idx] << " ";
   }
 
-  _this->got_data = true;
-  _this->have_data = true;
+  got_data = true;
+  have_data = true;
   GM_DBG3("VrpnAnalogsTracker", "Got vrpn analog data: " << analogs_log.str());
 }
 

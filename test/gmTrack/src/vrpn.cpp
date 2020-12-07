@@ -15,6 +15,7 @@
 #include <chrono>
 #include <thread>
 
+#include <vrpn_Tracker.h>
 #include <vrpn_ConnectionPtr.h>
 
 using namespace gramods;

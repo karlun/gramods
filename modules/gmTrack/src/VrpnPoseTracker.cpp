@@ -5,19 +5,41 @@
 
 #include <gmCore/Console.hh>
 
+#include <vrpn_Tracker.h>
+
 BEGIN_NAMESPACE_GMTRACK;
 
 GM_OFI_DEFINE(VrpnPoseTracker);
 GM_OFI_PARAM(VrpnPoseTracker, connectionString, std::string, VrpnPoseTracker::setConnectionString);
 
+struct VrpnPoseTracker::Impl {
+
+  bool getPose(std::map<int, PoseSample> &p);
+  void setConnectionString(std::string id);
+  void update();
+
+	static void VRPN_CALLBACK handler(void *userdata, const vrpn_TRACKERCB info);
+  void handler(const vrpn_TRACKERCB info);
+
+  std::unique_ptr<vrpn_Tracker_Remote> tracker;
+
+  std::map<int, PoseSample> latest_samples;
+  bool got_data;
+  bool have_data = false;
+};
+
 VrpnPoseTracker::VrpnPoseTracker()
-  : Updateable(10) {}
+  : Updateable(10), _impl(std::make_unique<Impl>()) {}
 
 VrpnPoseTracker::~VrpnPoseTracker() {
-  tracker = nullptr;
+  _impl->tracker = nullptr;
 }
 
 void VrpnPoseTracker::update(gmCore::Updateable::clock::time_point) {
+  _impl->update();
+}
+
+void VrpnPoseTracker::Impl::update() {
 
   if (!tracker) {
     GM_WRN("VrpnPoseTracker", "Cannot get pose - no vrpn connection");
@@ -38,11 +60,19 @@ void VrpnPoseTracker::update(gmCore::Updateable::clock::time_point) {
 }
 
 void VrpnPoseTracker::setConnectionString(std::string id) {
+  _impl->setConnectionString(id);
+}
+
+void VrpnPoseTracker::Impl::setConnectionString(std::string id) {
   tracker = std::make_unique<vrpn_Tracker_Remote>(id.c_str());
-  tracker->register_change_handler(this, VrpnPoseTracker::handler);
+  tracker->register_change_handler(this, VrpnPoseTracker::Impl::handler);
 }
 
 bool VrpnPoseTracker::getPose(std::map<int, PoseSample> &p) {
+  return _impl->getPose(p);
+}
+
+bool VrpnPoseTracker::Impl::getPose(std::map<int, PoseSample> &p) {
 
   if (!have_data)
     return false;
@@ -52,8 +82,11 @@ bool VrpnPoseTracker::getPose(std::map<int, PoseSample> &p) {
   return true;
 }
 
-void VRPN_CALLBACK VrpnPoseTracker::handler(void *data, const vrpn_TRACKERCB info) {
-  VrpnPoseTracker *_this = static_cast<VrpnPoseTracker*>(data);
+void VRPN_CALLBACK VrpnPoseTracker::Impl::handler(void *data, const vrpn_TRACKERCB info) {
+  static_cast<VrpnPoseTracker::Impl*>(data)->handler(info);
+}
+
+void VrpnPoseTracker::Impl::handler(const vrpn_TRACKERCB info) {
 
   typedef std::chrono::steady_clock clock;
 
@@ -63,14 +96,14 @@ void VRPN_CALLBACK VrpnPoseTracker::handler(void *data, const vrpn_TRACKERCB inf
     (std::chrono::microseconds(info.msg_time.tv_usec));
   auto time = clock::time_point(secs + usecs);
 
-  _this->latest_samples[info.sensor].time = time;
-  _this->latest_samples[info.sensor].position =
+  latest_samples[info.sensor].time = time;
+  latest_samples[info.sensor].position =
     Eigen::Vector3f(info.pos[0], info.pos[1], info.pos[2]);
-  _this->latest_samples[info.sensor].orientation =
+  latest_samples[info.sensor].orientation =
     Eigen::Quaternionf(info.quat[3], info.quat[0], info.quat[1], info.quat[2]);
 
-  _this->got_data = true;
-  _this->have_data = true;
+  got_data = true;
+  have_data = true;
   GM_DBG2("VrpnPoseTracker", "Got vrpn tracker data for sensor " << info.sensor);
 }
 

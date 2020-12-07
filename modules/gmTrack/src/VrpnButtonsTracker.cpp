@@ -5,19 +5,41 @@
 
 #include <gmCore/Console.hh>
 
+#include <vrpn_Button.h>
+
 BEGIN_NAMESPACE_GMTRACK;
 
 GM_OFI_DEFINE(VrpnButtonsTracker);
 GM_OFI_PARAM(VrpnButtonsTracker, connectionString, std::string, VrpnButtonsTracker::setConnectionString);
 
+struct VrpnButtonsTracker::Impl {
+
+  void update();
+  void setConnectionString(std::string id);
+  bool getButtons(ButtonsSample &p);
+
+  static void VRPN_CALLBACK handler(void *data, const vrpn_BUTTONCB info);
+  void handler(const vrpn_BUTTONCB info);
+
+  std::unique_ptr<vrpn_Button_Remote> tracker;
+
+  ButtonsSample latest_sample;
+  bool got_data;
+  bool have_data = false;
+};
+
 VrpnButtonsTracker::VrpnButtonsTracker()
-  : Updateable(10) {}
+  : Updateable(10), _impl(std::make_unique<Impl>()) {}
 
 VrpnButtonsTracker::~VrpnButtonsTracker() {
-  tracker = nullptr;
+  _impl->tracker = nullptr;
 }
 
 void VrpnButtonsTracker::update(gmCore::Updateable::clock::time_point) {
+  _impl->update();
+}
+
+void VrpnButtonsTracker::Impl::update() {
 
   if (!tracker) {
     GM_WRN("VrpnButtonsTracker", "Cannot get buttons - no vrpn connection");
@@ -38,11 +60,19 @@ void VrpnButtonsTracker::update(gmCore::Updateable::clock::time_point) {
 }
 
 void VrpnButtonsTracker::setConnectionString(std::string id) {
+  _impl->setConnectionString(id);
+}
+
+void VrpnButtonsTracker::Impl::setConnectionString(std::string id) {
   tracker = std::make_unique<vrpn_Button_Remote>(id.c_str());
-  tracker->register_change_handler(this, VrpnButtonsTracker::handler);
+  tracker->register_change_handler(this, handler);
 }
 
 bool VrpnButtonsTracker::getButtons(ButtonsSample &p) {
+  return _impl->getButtons(p);
+}
+
+bool VrpnButtonsTracker::Impl::getButtons(ButtonsSample &p) {
 
   if (!have_data)
     return false;
@@ -52,8 +82,12 @@ bool VrpnButtonsTracker::getButtons(ButtonsSample &p) {
   return true;
 }
 
-void VRPN_CALLBACK VrpnButtonsTracker::handler(void *data, const vrpn_BUTTONCB info) {
-  VrpnButtonsTracker *_this = static_cast<VrpnButtonsTracker*>(data);
+void VRPN_CALLBACK VrpnButtonsTracker::Impl::handler(void *data,
+                                                     const vrpn_BUTTONCB info) {
+  static_cast<VrpnButtonsTracker::Impl*>(data)->handler(info);
+}
+
+void VrpnButtonsTracker::Impl::handler(const vrpn_BUTTONCB info) {
 
   typedef std::chrono::steady_clock clock;
 
@@ -63,14 +97,15 @@ void VRPN_CALLBACK VrpnButtonsTracker::handler(void *data, const vrpn_BUTTONCB i
     (std::chrono::microseconds(info.msg_time.tv_usec));
   auto time = clock::time_point(secs + usecs);
 
-  _this->latest_sample.time = time;
+  latest_sample.time = time;
   if (info.state)
-    _this->latest_sample.buttons[info.button] = true;
+    latest_sample.buttons[info.button] = true;
   else
-    _this->latest_sample.buttons[info.button] = false;
+    latest_sample.buttons[info.button] = false;
 
-  _this->got_data = true;
-  _this->have_data = true;
+  got_data = true;
+  have_data = true;
+
   GM_DBG3("VrpnButtonsTracker", "Got vrpn button data for button " << info.button << " (" << info.state << ")");
 }
 
