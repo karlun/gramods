@@ -116,7 +116,7 @@ void SdlWindow::initialize() {
   video_flags |= SDL_WINDOW_RESIZABLE;
 
   int display_count = SDL_GetNumVideoDisplays();
-  if (display >= display_count) {
+  if (int(display) >= display_count) {
     GM_ERR("SdlWindow", "requested display " << display << " is not available (" << display_count << " available).");
     throw gmCore::InvalidArgument(GM_STR("requested display " << display << " is not available (" << display_count << " available)."));
   }
@@ -127,9 +127,9 @@ void SdlWindow::initialize() {
     throw std::runtime_error("Could not get display bounds");
   }
 
-  int win_pos_x = position[0] == std::numeric_limits<size_t>::max() ?
+  int win_pos_x = position[0] == std::numeric_limits<int>::max() ?
     SDL_WINDOWPOS_UNDEFINED_DISPLAY(display) : display_bounds.x + position[0];
-  int win_pos_y = position[1] == std::numeric_limits<size_t>::max() ?
+  int win_pos_y = position[1] == std::numeric_limits<int>::max() ?
     SDL_WINDOWPOS_UNDEFINED_DISPLAY(display) : display_bounds.y + position[1];
 
   GM_DBG1("SdlWindow",

@@ -184,7 +184,7 @@ void SDLWindow::drawPoint(const gmTouch::TouchState::TouchPoint &pt,
                           int radius, std::string text, int pos) {
   
   SDL_SetRenderDrawColor(sdl_renderer, 255, 0, 0, 255);
-  SDL_Color color = {64, 64, 255};
+  SDL_Color color = {64, 64, 255, 255};
   
   int dx = 0;
   int dy = 0;
@@ -195,28 +195,28 @@ void SDLWindow::drawPoint(const gmTouch::TouchState::TouchPoint &pt,
     dx = 2 * radius;
     dy = 2 * radius;
     SDL_SetRenderDrawColor(sdl_renderer, 64, 64, 255, 255);
-    color = {64, 64, 255};
+    color = {64, 64, 255, 255};
     break;
     
   case 1:
     dx = 2 * radius;
     dy = -2 * radius;
     SDL_SetRenderDrawColor(sdl_renderer, 64, 255, 64, 255);
-    color = {64, 255, 64};
+    color = {64, 255, 64, 255};
     break;
     
   case 2:
     dx = 2 * radius;
     dy = 0;
     SDL_SetRenderDrawColor(sdl_renderer, 128, 128, 128, 255);
-    color = {128, 128, 128};
+    color = {128, 128, 128, 255};
     break;
     
   case 3:
     dx = 2 * radius;
     dy = 2 * radius;
     SDL_SetRenderDrawColor(sdl_renderer, 255, 64, 64, 255);
-    color = {255, 64, 64};
+    color = {255, 64, 64, 255};
     break;
     
   }

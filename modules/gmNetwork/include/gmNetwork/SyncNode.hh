@@ -149,7 +149,7 @@ public:
 
       return static_cast<TYPE*>(getProtocol(name));
 
-    } catch (std::bad_weak_ptr) {
+    } catch (std::bad_weak_ptr &) {
       throw gmCore::PreConditionViolation
         ("SyncNode instance must be held by a std::shared_ptr");
     }

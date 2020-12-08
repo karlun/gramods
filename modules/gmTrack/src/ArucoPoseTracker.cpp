@@ -134,7 +134,7 @@ void ArucoPoseTracker::Impl::update(gmCore::Updateable::clock::time_point time_n
 
   have_pose = false;
 
-  for (int idx = 0; idx < boards.size(); ++idx) {
+  for (size_t idx = 0; idx < boards.size(); ++idx) {
 
     auto board = this->boards[idx]->getBoard();
 

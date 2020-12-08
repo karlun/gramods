@@ -278,8 +278,6 @@ std::size_t Configuration::getAllObjects(std::string name,
 template<class T>
 bool Configuration::getObject(std::string name, std::shared_ptr<T> &ptr) const {
 
-  Configuration *_this = const_cast<Configuration*>(this);
-
   auto it = std::find_if(child_objects.begin(),
                          child_objects.end(),
                          [name](const std::pair<std::string, std::shared_ptr<Object>> &pair) {
@@ -429,8 +427,7 @@ inline std::size_t Configuration::getAllParams(std::string name, std::vector<boo
       if (string_value == "0") { value.push_back(false); continue; }
 
       GM_WRN("Configuration", "Could not parse '" << string_value << "' as bool!");
-    }
-    catch (std::exception){
+    } catch (std::exception &) {
       GM_WRN("Configuration", "Could not parse '" << string_value << "' as bool!");
     }
   return value.size() - original_size;

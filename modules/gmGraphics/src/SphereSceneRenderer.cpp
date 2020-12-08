@@ -38,8 +38,8 @@ struct SphereSceneRenderer::Impl {
   GLuint vao_id = 0;
   GLuint vbo_id = 0;
 
-  float sphere_radius = 0.1;
-  float sphere_set_radius = 1.0;
+  float sphere_radius = 0.1f;
+  float sphere_set_radius = 1.0f;
   Eigen::Vector3f position = Eigen::Vector3f::Zero();
   Eigen::Vector3f color = Eigen::Vector3f::Ones();
   std::vector<Eigen::Vector3f> set_positions;
@@ -213,7 +213,7 @@ void SphereSceneRenderer::Impl::setup() {
   size_t refs = (size_t)((::log(proj_area_per_set_area) - ::log(8))/::log(3) -1);
   refs = std::min((size_t)5, refs);
 
-  for (int idx = 0; idx < refs; ++idx)
+  for (size_t idx = 0; idx < refs; ++idx)
     refine_polyhedron(vertices, indices);
 
   for (size_t idx = 0; idx < vertices.size(); idx += 3)

@@ -80,13 +80,14 @@ void ImportLibrary::initialize() {
 
 void ImportLibrary::Impl::initialize() {
 
-  if (library_file.empty())
+  if (library_file.empty()) {
     if (!library.empty()) {
       library_file = prefix + library + suffix;
     } else {
       GM_ERR("ImportLibrary", "Cannot load library - no library specified");
       return;
     }
+  }
 
 #ifdef WIN32
 

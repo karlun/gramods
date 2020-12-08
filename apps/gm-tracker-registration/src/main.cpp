@@ -302,7 +302,7 @@ int main(int argc, char *argv[]) {
   } else if (config && config->hasParam("point")) {
 
     std::vector<std::string> str_points;
-    std::size_t count = config->getAllParams("point", str_points);
+    config->getAllParams("point", str_points);
 
     for (auto str_point : str_points) {
       std::stringstream ss(str_point);
@@ -337,7 +337,7 @@ int main(int argc, char *argv[]) {
   } else if (config && config->hasParam("trackerPoint")) {
 
     std::vector<std::string> str_points;
-    std::size_t count = config->getAllParams("trackerPoint", str_points);
+    config->getAllParams("trackerPoint", str_points);
 
     for (auto str_point : str_points) {
       std::stringstream ss(str_point);

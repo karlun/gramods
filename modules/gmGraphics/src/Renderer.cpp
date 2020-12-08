@@ -18,7 +18,7 @@ void Renderer::getNearFar(Renderer::list renderers, Camera camera,
     if (far > 0) total_far = std::max(total_far, far);
   }
 
-  if (total_near = std::numeric_limits<float>::max() ||
+  if (total_near == std::numeric_limits<float>::max() ||
       total_near <= std::numeric_limits<float>::epsilon())
     // 1 cm near plane if nothing better
     total_near = 0.01f;

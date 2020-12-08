@@ -18,7 +18,7 @@ class NullMessageSink
 
 public:
 
-  void output(Message msg) {}
+  void output(Message) {}
 
   GM_OFI_DECLARE;
 };

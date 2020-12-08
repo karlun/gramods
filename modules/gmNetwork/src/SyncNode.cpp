@@ -480,7 +480,7 @@ void SyncNode::Impl::Peer::on_data
 
         if (message.data.size() != 1)
           GM_WRN("SyncNode", "Received corrupt PING message");
-        else if (peer_idx != message.data[0])
+        else if (peer_idx != size_t(message.data[0]))
           GM_WRN("SyncNode", "Received PING message with confusing payload");
 
         GM_DBG2("SyncNode", local_peer_idx << " Sending pong to " << peer_idx);
