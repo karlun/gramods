@@ -170,6 +170,10 @@ void MyApp::Impl::setup_sync(
   data_sync->addData(sync_head_orientation);
   data_sync->addData(sync_wand_position);
   data_sync->addData(sync_wand_orientation);
+
+  *sync_main_button = false;
+  *sync_second_button = false;
+  *sync_menu_button = false;
 }
 
 void MyApp::Impl::setup_wand(
