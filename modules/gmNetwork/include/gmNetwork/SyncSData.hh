@@ -132,7 +132,9 @@ private:
 
 typedef SyncSData<bool> SyncSBool;
 typedef SyncSData<int32_t> SyncSInt32;
+typedef SyncSData<uint32_t> SyncSUInt32;
 typedef SyncSData<int64_t> SyncSInt64;
+typedef SyncSData<uint64_t> SyncSUInt64;
 typedef SyncSData<float> SyncSFloat32;
 typedef SyncSData<double> SyncSFloat64;
 
