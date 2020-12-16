@@ -59,7 +59,7 @@ bool TimeSampleAnalogsTracker::Impl::getAnalogs(AnalogsSample &sample) {
   sample.analogs.clear();
 
   if (time.empty()) {
-    // If there is not time specified, iterate per frame
+    // If there is no time specified, iterate per frame
 
     for (auto s : states[sample_idx])
       sample.analogs.push_back(s);
@@ -70,7 +70,7 @@ bool TimeSampleAnalogsTracker::Impl::getAnalogs(AnalogsSample &sample) {
   }
 
   typedef std::chrono::duration<double, std::ratio<1>> d_seconds;
-  auto duration = std::chrono::duration_cast<d_seconds>
+  double duration = std::chrono::duration_cast<d_seconds>
     (std::chrono::steady_clock::now() - start_time).count();
 
   if (duration > time.back()) {
@@ -86,20 +86,12 @@ bool TimeSampleAnalogsTracker::Impl::getAnalogs(AnalogsSample &sample) {
   }
 
   size_t from_time = to_time - 1;
-  float a = (duration - time[from_time]) / (time[to_time] - time[from_time]);
+  float a =
+      float((duration - time[from_time]) / (time[to_time] - time[from_time]));
 
-  if (states.empty()) {
-    sample.analogs = {0, 0, 0};
-  } else if (states.size() == 1) {
-    sample.analogs = {states.front()[0],
-                      states.front()[1],
-                      states.front()[2]};
-  } else {
-    for (size_t idx = 0; idx < 3; ++idx) {
-      sample.analogs.push_back(   a    * states[to_time][idx] +
-                               (1 - a) * states[from_time][idx]);
-    }
-  }
+  for (size_t idx = 0; idx < 3; ++idx)
+    sample.analogs.push_back(   a    * states[to_time][idx] +
+                             (1 - a) * states[from_time][idx]);
 
   return true;
 }

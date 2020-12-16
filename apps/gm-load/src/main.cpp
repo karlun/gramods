@@ -164,7 +164,7 @@ int main(int argc, char *argv[]) {
 
       if (dt.count() > 2) {
 
-        float to_us = 1e6 / (float)frame_count;
+        float to_us = 1e6f / (float)frame_count;
 
         if (sync_swap.getValue()) {
           GM_INF("gm-load", "Running at rate " << (frame_count / dt.count()) << " fps" << std::endl

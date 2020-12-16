@@ -173,11 +173,13 @@ void ArucoPoseTracker::Impl::update(gmCore::Updateable::clock::time_point time_n
 
       if (inverted) {
         samples[idx].orientation = Eigen::Quaternionf(Q.conjugate());
-        samples[idx].position = (samples[idx].orientation *
-                                 Eigen::Vector3f(-tvec[0], -tvec[1], -tvec[2]));
+        samples[idx].position =
+            (samples[idx].orientation *
+             Eigen::Vector3d(-tvec[0], -tvec[1], -tvec[2]).cast<float>());
       } else {
         samples[idx].orientation = Eigen::Quaternionf(Q);
-        samples[idx].position = Eigen::Vector3f(tvec[0], tvec[1], tvec[2]);
+        samples[idx].position =
+            Eigen::Vector3d(tvec[0], tvec[1], tvec[2]).cast<float>();
       }
       samples[idx].time = time_now;
 
@@ -193,7 +195,7 @@ void ArucoPoseTracker::Impl::update(gmCore::Updateable::clock::time_point time_n
         cv::aruco::drawDetectedMarkers(debug_image, rejected, cv::noArray(), cv::Scalar(0, 0, 100));
 
       if(markersOfBoardDetected > 0) {
-        cv::aruco::drawAxis(debug_image, camMatrix, distCoeffs, rvec, tvec, 0.1);
+        cv::aruco::drawAxis(debug_image, camMatrix, distCoeffs, rvec, tvec, 0.1f);
 
         std::vector<std::vector<cv::Point2f>> imagePoints;
         for (auto mpts : board->objPoints) {

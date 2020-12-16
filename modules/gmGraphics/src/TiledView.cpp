@@ -45,8 +45,8 @@ void TiledView::Impl::renderFullPipeline(ViewSettings settings) {
 
   GLint cvp[4] = { 0, 0, 0, 0 };
   glGetIntegerv(GL_VIEWPORT, cvp);
-  float col_width = cvp[2] / (float)total_cols;
-  float row_height = cvp[3] / (float)total_rows;
+  float col_width = float(cvp[2]) / float(total_cols);
+  float row_height = float(cvp[3]) / float(total_rows);
 
   if (cvp[2] == 0 || cvp[3] == 0) {
     GM_ERR("TiledView", "Cannot render to degenerate viewport");
@@ -69,14 +69,12 @@ void TiledView::Impl::renderFullPipeline(ViewSettings settings) {
     GLint tile_location_0 = total_rows - 1 - tile.location[0];
     GLint x = (GLint)(cvp[0] + tile.location[1] * col_width);
     GLint y = (GLint)(cvp[1] + tile_location_0  * row_height);
-    GLsizei width =
-      (tile.location[1] + tile.location[3] < total_cols)
-      ? tile.location[3] * col_width
-      : cvp[2] - tile.location[1] * col_width;
-    GLsizei height =
-      (tile_location_0 + tile.location[2] < total_rows)
-      ? tile.location[2] * row_height
-      : cvp[3] - tile_location_0 * row_height;
+    GLsizei width = (tile.location[1] + tile.location[3] < total_cols)
+                        ? GLsizei(tile.location[3] * col_width)
+                        : GLsizei(cvp[2] - tile.location[1] * col_width);
+    GLsizei height = (tile_location_0 + tile.location[2] < total_rows)
+                         ? GLsizei(tile.location[2] * row_height)
+                         : GLsizei(cvp[3] - tile_location_0 * row_height);
 
     GM_DBG3("TiledView",
              "Tile @ "

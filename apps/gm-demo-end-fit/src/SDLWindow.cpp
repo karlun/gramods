@@ -115,7 +115,7 @@ void SDLWindow::update() {
   SDL_RenderPresent(sdl_renderer);
 }
 
-bool SDLWindow::handleEvent(SDL_Event& event, int width, int height) {
+bool SDLWindow::handleEvent(SDL_Event &event, int, int) {
   static bool down = false;
 
   switch (event.type) {

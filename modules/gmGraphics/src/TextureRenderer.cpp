@@ -58,15 +58,13 @@ struct TextureRenderer::Impl {
 TextureRenderer::TextureRenderer()
   : _impl(new Impl) {}
 
-void TextureRenderer::render(Camera camera, float near, float far) {
+void TextureRenderer::render(Camera camera, float, float) {
   _impl->render(texture.get(), camera);
 }
 
-void TextureRenderer::getNearFar(Camera camera, float &near, float &far) {
-  near = far = -1;
-}
+void TextureRenderer::getNearFar(Camera, float &, float &) {}
 
-void TextureRenderer::Impl::render(TextureInterface *texture, Camera &camera) {
+void TextureRenderer::Impl::render(TextureInterface *texture, Camera &) {
   if (!texture) {
     GM_RUNONCE(GM_WRN("TextureRenderer", "No texture to render"));
     return;

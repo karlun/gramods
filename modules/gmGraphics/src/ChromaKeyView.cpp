@@ -29,8 +29,8 @@ struct ChromaKeyView::Impl {
   void renderFullPipeline(ViewSettings settings);
 
   std::vector<std::shared_ptr<View>> views;
-  gmCore::float3 key = { 0, 1, 0 };
-  gmCore::float2 tolerance = { 0.48, 0.5 };
+  gmCore::float3 key = { 0.f, 1.f, 0.f };
+  gmCore::float2 tolerance = { 0.48f, 0.5f };
 };
 
 const std::string

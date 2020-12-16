@@ -35,8 +35,8 @@ struct CubeSceneRenderer::Impl {
   GLuint vao_id = 0;
   GLuint vbo_id[2] = { 0, 0 };
 
-  float cube_size = 0.1;
-  float cube_set_size = 1.0;
+  float cube_size = 0.1f;
+  float cube_set_size = 1.f;
   Eigen::Vector3f position = Eigen::Vector3f::Zero();
   bool animate = true;
 

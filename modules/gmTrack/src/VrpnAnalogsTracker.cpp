@@ -102,7 +102,7 @@ void VRPN_CALLBACK VrpnAnalogsTracker::Impl::handler(const vrpn_ANALOGCB info) {
 
   std::stringstream analogs_log;
   for (size_t idx = 0; idx < (size_t)info.num_channel; ++idx) {
-    latest_sample.analogs[idx] = info.channel[idx];
+    latest_sample.analogs[idx] = float(info.channel[idx]);
     analogs_log << info.channel[idx] << " ";
   }
 

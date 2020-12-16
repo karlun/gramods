@@ -344,7 +344,8 @@ void SyncNode::Impl::Peer::connect() {
                       });
 }
 
-void SyncNode::Impl::Peer::on_connect(std::error_code ec, asio::ip::tcp::endpoint end) {
+void SyncNode::Impl::Peer::on_connect(std::error_code ec,
+                                      asio::ip::tcp::endpoint) {
 
   std::unique_lock<std::mutex> guard(peer_lock);
 
@@ -650,11 +651,10 @@ void SyncNode::Impl::Peer::setup_pingpong_timer() {
 
   std::lock_guard<std::mutex> guard(peer_lock);
 
-  pingpong_timer.async_wait(
-      [weak_this](const std::error_code & ec) {
-        auto _this = weak_this.lock();
-        if (_this) _this->on_pingpong_timeout();
-      });
+  pingpong_timer.async_wait([weak_this](const std::error_code &) {
+    auto _this = weak_this.lock();
+    if (_this) _this->on_pingpong_timeout();
+  });
 }
 
 void SyncNode::Impl::Peer::setup_timeout_timer() {
@@ -663,11 +663,10 @@ void SyncNode::Impl::Peer::setup_timeout_timer() {
 
   std::lock_guard<std::mutex> guard(peer_lock);
 
-  timeout_timer.async_wait(
-      [weak_this](const std::error_code & ec) {
-        auto _this = weak_this.lock();
-        if (_this) _this->on_timeout_timeout();
-      });
+  timeout_timer.async_wait([weak_this](const std::error_code &) {
+    auto _this = weak_this.lock();
+    if (_this) _this->on_timeout_timeout();
+  });
 }
 
 void SyncNode::Impl::Peer::reset_timers() {

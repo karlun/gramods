@@ -154,11 +154,13 @@ void OpenCvVideoCapture::Impl::openVideo(std::filesystem::path file) {
     GM_DBG1("OpenCvVideoCapture", "Opened video file '" << file << "'");
 
     GM_DBG2("OpenCvVideoCapture", "Backend: " << video_capture.getBackendName() << ".");
-    GM_DBG2("OpenCvVideoCapture", "Format: "
-            << video_capture.get(cv::CAP_PROP_FRAME_WIDTH) << " x "
-            << video_capture.get(cv::CAP_PROP_FRAME_HEIGHT)
-            << " @" << video_capture.get(cv::CAP_PROP_FPS)
-            << " (" << fourccIntToString(video_capture.get(cv::CAP_PROP_FOURCC)) << ").");
+    GM_DBG2("OpenCvVideoCapture",
+            "Format: " << video_capture.get(cv::CAP_PROP_FRAME_WIDTH) << " x "
+                       << video_capture.get(cv::CAP_PROP_FRAME_HEIGHT) << " @"
+                       << video_capture.get(cv::CAP_PROP_FPS) << " ("
+                       << fourccIntToString(
+                              int(video_capture.get(cv::CAP_PROP_FOURCC)))
+                       << ").");
   } else {
     GM_ERR("OpenCvVideoCapture", "Could not open video file '" << file << "'");
   }
@@ -176,11 +178,13 @@ void OpenCvVideoCapture::Impl::openCamera(int id) {
     if (fourcc > 0) video_capture.set(cv::CAP_PROP_FOURCC, fourcc);
 
     GM_DBG2("OpenCvVideoCapture", "Backend: " << video_capture.getBackendName() << ".");
-    GM_DBG2("OpenCvVideoCapture", "Format: "
-            << video_capture.get(cv::CAP_PROP_FRAME_WIDTH) << " x "
-            << video_capture.get(cv::CAP_PROP_FRAME_HEIGHT)
-            << " @" << video_capture.get(cv::CAP_PROP_FPS)
-            << " (" << fourccIntToString(video_capture.get(cv::CAP_PROP_FOURCC)) << ").");
+    GM_DBG2("OpenCvVideoCapture",
+            "Format: " << video_capture.get(cv::CAP_PROP_FRAME_WIDTH) << " x "
+                       << video_capture.get(cv::CAP_PROP_FRAME_HEIGHT) << " @"
+                       << video_capture.get(cv::CAP_PROP_FPS) << " ("
+                       << fourccIntToString(
+                              int(video_capture.get(cv::CAP_PROP_FOURCC)))
+                       << ").");
   } else {
     GM_ERR("OpenCvVideoCapture", "Could not open camera with id " << id << ".");
   }

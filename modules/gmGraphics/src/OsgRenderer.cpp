@@ -90,7 +90,7 @@ void OsgRenderer::Impl::render(Camera camera, float near, float far) {
   viewer->renderingTraversals();
 }
 
-void OsgRenderer::Impl::getNearFar(Camera camera, float &near, float &far) {
+void OsgRenderer::Impl::getNearFar(Camera, float &, float &) {
   // We currently ignore near and far distances
 }
 

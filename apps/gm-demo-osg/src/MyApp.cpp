@@ -274,7 +274,7 @@ std::shared_ptr<gmGraphics::OsgRenderer> MyApp::Impl::getRenderer() {
   return osg_renderer;
 }
 
-void MyApp::Impl::update_states(gmCore::Updateable::clock::time_point time) {
+void MyApp::Impl::update_states(gmCore::Updateable::clock::time_point) {
 
   if (!wand_transform)
     // Cannot update wand transform since we have no wand transform
@@ -295,7 +295,6 @@ void MyApp::Impl::update_states(gmCore::Updateable::clock::time_point time) {
   if (*sync_second_button) G = 0.8;
   if (*sync_menu_button) B = 0.8;
   wand_material->setEmission(osg::Material::FRONT_AND_BACK, osg::Vec4(R, G, B, 1.0));
-
 }
 
 void MyApp::Impl::initOSG() {

@@ -9,7 +9,7 @@ GM_OFI_DEFINE(AngularFisheyeCoordinatesMapper);
 GM_OFI_PARAM2(AngularFisheyeCoordinatesMapper, coverageAngle, gmCore::angle, setCoverageAngle);
 
 struct AngularFisheyeCoordinatesMapper::Impl {
-  gmCore::angle coverage_angle = GM_2_PI;
+  gmCore::angle coverage_angle = float(GM_2_PI);
 };
 
 AngularFisheyeCoordinatesMapper::AngularFisheyeCoordinatesMapper()

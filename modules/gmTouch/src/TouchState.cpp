@@ -355,7 +355,8 @@ bool TouchState::getMouseLine(Eigen::Vector3f &x,
   return true;
 }
 
-TouchState::TouchLine TouchState::touchPointToTouchLine(TouchPoint pt, Eigen::Matrix4f WPV_inv) const {
+TouchState::TouchLine TouchState::touchPointToTouchLine(TouchPoint pt,
+                                                        Eigen::Matrix4f) const {
 
   Eigen::Vector4f nearPoint =
     current_WPV_inv * Eigen::Vector3f(pt.sx, current_height - pt.sy, 0.f).homogeneous();
@@ -423,6 +424,10 @@ TouchState::clock::duration TouchState::getMultiClickTime() {
   return multi_time;
 }
 
+void TouchState::EventAdaptor::init(int, int) {}
+
+void TouchState::EventAdaptor::done() {}
+
 void TouchState::EventAdaptor::addTouchState(TouchPointId id, float x, float y) {
   assert(owner);
   owner->addTouchState(id, x, y);
@@ -442,6 +447,10 @@ void TouchState::EventAdaptor::addMouseWheel(float s) {
   assert(owner);
   owner->addMouseWheel(s);
 }
+
+void TouchState::CameraAdaptor::init(int, int) {}
+
+void TouchState::CameraAdaptor::done() {}
 
 void TouchState::CameraAdaptor::setCurrentProjection(Eigen::Matrix4f WPV_inv) {
   assert(owner);
@@ -507,7 +516,7 @@ void TouchState::addState(TouchPointId id, float x, float y) {
   velocityEstimator.addSample(id, {x, y, 0}, epoch);
 }
 
-void TouchState::removeTouchState(TouchPointId id, float x, float y) {
+void TouchState::removeTouchState(TouchPointId id, float, float) {
   if (state != 1) throw std::logic_error(MUST_BE_CALLED(removeTouchState));
 
   if (current_state.find(id) == current_state.end()) return;
@@ -520,8 +529,8 @@ void TouchState::addMouseState(float x, float y, bool down) {
   
   mouse_down = down;
 
-  mouse_point_x = x;
-  mouse_point_y = y;
+  mouse_point_x = int(x);
+  mouse_point_y = int(y);
 
   if (down) {
     if (!use_mouse) return;

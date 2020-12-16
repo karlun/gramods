@@ -92,7 +92,7 @@ axisangle 1 2 3 0.1
 
   ss >> q;
 
-  Eigen::AngleAxisf A(0.1, Eigen::Vector3f(1, 2, 3).normalized());
+  Eigen::AngleAxisf A(0.1f, Eigen::Vector3f(1, 2, 3).normalized());
   Eigen::Quaternionf Q(A);
   EXPECT_EQ_EIGEN_QUAT(Q, q);
 }

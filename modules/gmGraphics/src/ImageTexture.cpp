@@ -86,7 +86,7 @@ void ImageTexture::update(clock::time_point t) {
   _impl->update(t);
 }
 
-void ImageTexture::Impl::update(clock::time_point t) {
+void ImageTexture::Impl::update(clock::time_point) {
 
   ++animation_frame;
 

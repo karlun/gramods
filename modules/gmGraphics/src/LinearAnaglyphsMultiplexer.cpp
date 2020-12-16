@@ -38,10 +38,10 @@ struct LinearAnaglyphsMultiplexer::Impl {
   GLint viewport[4] = { 0, 0, 0, 0 };
   GLint target_framebuffer;
 
-  gmCore::float3 left_color = { 1, 0, 0 };
-  gmCore::float3 right_color = { 0, 1, 1 };
-  float left_saturation = 0.8;
-  float right_saturation = 0.8;
+  gmCore::float3 left_color = { 1.f, 0.f, 0.f };
+  gmCore::float3 right_color = { 0.f, 1.f, 1.f };
+  float left_saturation = 0.8f;
+  float right_saturation = 0.8f;
 
   void setup();
   void teardown();

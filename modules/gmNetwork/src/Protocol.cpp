@@ -27,6 +27,15 @@ std::vector<char> Protocol::Message::getHeader() {
            (char)((length      ) & 0xff) };
 }
 
+void Protocol::processMessage(Message) {}
+
+void Protocol::lostPeer(size_t) {}
+
+void Protocol::setSyncNode(SyncNode *sync_node) {
+  std::lock_guard<std::mutex> guard(sync_node_lock);
+  this->sync_node = sync_node;
+}
+
 void Protocol::sendMessage(std::vector<char> data) {
   std::lock_guard<std::mutex> guard(sync_node_lock);
   if (!sync_node) return;

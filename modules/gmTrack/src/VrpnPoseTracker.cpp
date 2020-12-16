@@ -98,9 +98,10 @@ void VrpnPoseTracker::Impl::handler(const vrpn_TRACKERCB info) {
 
   latest_samples[info.sensor].time = time;
   latest_samples[info.sensor].position =
-    Eigen::Vector3f(info.pos[0], info.pos[1], info.pos[2]);
+      Eigen::Vector3d(info.pos[0], info.pos[1], info.pos[2]).cast<float>();
   latest_samples[info.sensor].orientation =
-    Eigen::Quaternionf(info.quat[3], info.quat[0], info.quat[1], info.quat[2]);
+      Eigen::Quaterniond(info.quat[3], info.quat[0], info.quat[1], info.quat[2])
+          .cast<float>();
 
   got_data = true;
   have_data = true;

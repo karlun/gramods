@@ -37,10 +37,10 @@ void VelocityViewpoint::Impl::update(Eigen::Vector3f &position,
                                      Eigen::Quaternionf &orientation,
                                      clock::time_point t) {
 
-  auto dt = std::chrono::duration_cast<d_seconds>(t - last_time);
+  float dt = float(std::chrono::duration_cast<d_seconds>(t - last_time).count());
 
-  position += dt.count() * linear_velocity;
-  orientation *= Eigen::Quaternionf::Identity().slerp(dt.count(), angular_velocity);
+  position += dt * linear_velocity;
+  orientation *= Eigen::Quaternionf::Identity().slerp(dt, angular_velocity);
 
   last_time = t;
 }

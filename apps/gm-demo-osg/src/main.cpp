@@ -124,7 +124,7 @@ int main(int argc, char *argv[]) {
       auto dt =
           std::chrono::duration_cast<d_seconds>(current_time - last_print_time);
       if (dt.count() > 2) {
-        float to_us = 1e6 / (float)frame_count;
+        float to_us = 1e6f / (float)frame_count;
         GM_INF("gm-demo-osg",
                "Running at rate "
                    << (frame_count / dt.count()) << " fps" << std::endl

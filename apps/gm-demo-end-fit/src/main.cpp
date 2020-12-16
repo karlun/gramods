@@ -6,7 +6,7 @@
 #undef main
 #endif
 
-int main(int argc,char **argv) {
+int main(int, char **) {
 
   SDLWindow window;
 
@@ -16,4 +16,3 @@ int main(int argc,char **argv) {
 
   return 0;
 }
-

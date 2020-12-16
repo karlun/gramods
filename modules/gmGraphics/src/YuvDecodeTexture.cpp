@@ -31,10 +31,10 @@ struct YuvDecodeTexture::Impl {
 
   std::shared_ptr<Texture> texture;
   Eigen::Matrix3f yuvToRgb = (Eigen::Matrix3f() <<
-                              1,  0.00000,  1.13983,
-                              1, -0.39465, -0.58060,
-                              1,  2.03211,  0.00000).finished();
-  Eigen::Vector3f yuvRange = Eigen::Vector3f(1, 0.436, 0.615);
+                              1.f,  0.00000f,  1.13983f,
+                              1.f, -0.39465f, -0.58060f,
+                              1.f,  2.03211f,  0.00000f).finished();
+  Eigen::Vector3f yuvRange = Eigen::Vector3f(1.f, 0.436f, 0.615f);
 };
 
 const std::string YuvDecodeTexture::Impl::fragment_code =

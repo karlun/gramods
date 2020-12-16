@@ -13,7 +13,7 @@ GM_OFI_PARAM2(StereographicCoordinatesMapper, phi0, gmCore::angle, setPhi0);
 
 struct StereographicCoordinatesMapper::Impl {
   float radius = 0.5;
-  gmCore::angle phi_0 = GM_PI_2;
+  gmCore::angle phi_0 = float(GM_PI_2);
   gmCore::angle theta_0 = 0;
 };
 

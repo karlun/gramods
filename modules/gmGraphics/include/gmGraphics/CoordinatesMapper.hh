@@ -48,7 +48,7 @@ public:
      Called by the code that is using this CoordinatesMapper object,
      to let it set the uniforms used by the mapper code.
   */
-  virtual void setMapperUniforms(GLuint program) {}
+  virtual void setMapperUniforms(GLuint program);
 
   /**
      Returns the default key, in Configuration, for the

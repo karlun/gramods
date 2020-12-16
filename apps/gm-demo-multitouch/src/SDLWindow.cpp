@@ -150,7 +150,7 @@ std::string SDLWindow::pointToString(gmTouch::TouchState::TouchPoint pt) {
   return str.str();
 }
 
-bool SDLWindow::handleEvent(SDL_Event& event, int width, int height) {
+bool SDLWindow::handleEvent(SDL_Event &event, int, int) {
 
   switch (event.type) {
     

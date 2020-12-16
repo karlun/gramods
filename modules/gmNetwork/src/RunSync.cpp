@@ -119,7 +119,7 @@ void RunSync::Impl::processMessage(size_t local_peer_idx,
     waiting_condition.notify_all();
 }
 
-void RunSync::lostPeer(size_t idx) {
+void RunSync::lostPeer(size_t) {
   std::lock_guard<std::mutex> guard(_impl->impl_lock);
   _impl->waiting_condition.notify_all();
 }

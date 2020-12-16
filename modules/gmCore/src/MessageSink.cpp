@@ -3,6 +3,8 @@
 
 #include <gmCore/Console.hh>
 
+#include <iomanip>
+
 BEGIN_NAMESPACE_GMCORE;
 
 GM_OFI_DEFINE_ABSTRACT(MessageSink);
@@ -35,7 +37,8 @@ void MessageSink::outputMetadata(std::ostream &out, Message msg) {
   if (show_time) {
     typedef std::chrono::duration<double, std::ratio<1>> d_seconds;
     auto since_epoch = std::chrono::duration_cast<d_seconds>(msg.getDuration());
-    out << " " << 0.001 * (size_t)(1000 * since_epoch.count()) << " ";
+    (std::ostream(out.rdbuf()) << std::setprecision(3) << std::fixed)
+        << " " << since_epoch.count() << " ";
   }
 
   if (msg.tag.length() == 0) out << ": "; 

@@ -131,22 +131,22 @@ void SphereRenderer::Impl::setup() {
   for (size_t row = 0; row < ROW_COUNT; ++row) {
 
     double phi0 = GM_PI * (double(row    ) / double(ROW_COUNT) - 0.5);
-    double ry0 = sin(phi0);
-    double rxz0 = cos(phi0);
+    float ry0 = float(sin(phi0));
+    float rxz0 = float(cos(phi0));
 
     double phi1 = GM_PI * (double(row + 1) / double(ROW_COUNT) - 0.5);
-    double ry1 = sin(phi1);
-    double rxz1 = cos(phi1);
+    float ry1 = float(sin(phi1));
+    float rxz1 = float(cos(phi1));
 
     for (size_t column = 0; column < COLUMN_COUNT; ++column) {
 
       double theta0 = GM_2_PI * double(column    ) / double(COLUMN_COUNT);
-      double rx0 = sin(theta0);
-      double rz0 = cos(theta0);
+      float rx0 = float(sin(theta0));
+      float rz0 = float(cos(theta0));
 
       double theta1 = GM_2_PI * double(column + 1) / double(COLUMN_COUNT);
-      double rx1 = sin(theta1);
-      double rz1 = cos(theta1);
+      float rx1 = float(sin(theta1));
+      float rz1 = float(cos(theta1));
 
       if (row + 1 != ROW_COUNT) {
         tcoords.push_back(rx0 * rxz0); vertices.push_back(radius * tcoords.back());

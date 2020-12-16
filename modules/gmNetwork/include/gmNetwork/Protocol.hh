@@ -102,18 +102,15 @@ public:
      thread. Also, the method should return promptly and leave heavy
      processing to either another worker thread or to the main thread.
   */
-  virtual void processMessage(Message) {}
+  virtual void processMessage(Message m);
 
   /**
      Called by the sync node when connection to one of the peers has
      been broken.
   */
-  virtual void lostPeer(size_t idx) {}
+  virtual void lostPeer(size_t idx);
 
-  void setSyncNode(SyncNode *sync_node) {
-    std::lock_guard<std::mutex> guard(sync_node_lock);
-    this->sync_node = sync_node;
-  }
+  void setSyncNode(SyncNode *sync_node);
 
 protected:
 

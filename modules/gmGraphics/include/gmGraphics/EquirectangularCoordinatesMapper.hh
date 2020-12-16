@@ -42,7 +42,7 @@ public:
      Called by the code that is using this CoordinatesMapper object,
      to let it set the uniforms used by the mapper code.
   */
-  void setMapperUniforms(GLuint program) {}
+  void setMapperUniforms(GLuint) {}
 
   GM_OFI_DECLARE;
 };

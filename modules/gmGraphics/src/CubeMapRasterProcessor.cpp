@@ -21,18 +21,17 @@ struct CubeMapRasterProcessor::Impl {
   static const size_t SIDE_COUNT = 6;
 
   Eigen::Quaternionf side_orientation[SIDE_COUNT] = {
-    Eigen::Quaternionf(Eigen::Quaternionf::AngleAxisType
-                       ( GM_PI_2, Eigen::Vector3f::UnitY())),
-    Eigen::Quaternionf(Eigen::Quaternionf::AngleAxisType
-                       (-GM_PI_2, Eigen::Vector3f::UnitY())),
-    Eigen::Quaternionf(Eigen::Quaternionf::AngleAxisType
-                       (-GM_PI_2, Eigen::Vector3f::UnitX())),
-    Eigen::Quaternionf(Eigen::Quaternionf::AngleAxisType
-                       ( GM_PI_2, Eigen::Vector3f::UnitX())),
-    Eigen::Quaternionf(Eigen::Quaternionf::AngleAxisType
-                       ( GM_PI  , Eigen::Vector3f::UnitY())),
-    Eigen::Quaternionf::Identity()
-  };
+      Eigen::Quaternionf(Eigen::Quaternionf::AngleAxisType(
+          float(GM_PI_2), Eigen::Vector3f::UnitY())),
+      Eigen::Quaternionf(Eigen::Quaternionf::AngleAxisType(
+          float(-GM_PI_2), Eigen::Vector3f::UnitY())),
+      Eigen::Quaternionf(Eigen::Quaternionf::AngleAxisType(
+          float(-GM_PI_2), Eigen::Vector3f::UnitX())),
+      Eigen::Quaternionf(Eigen::Quaternionf::AngleAxisType(
+          float(GM_PI_2), Eigen::Vector3f::UnitX())),
+      Eigen::Quaternionf(Eigen::Quaternionf::AngleAxisType(
+          float(GM_PI), Eigen::Vector3f::UnitY())),
+      Eigen::Quaternionf::Identity()};
 
   bool is_setup = false;
   bool is_functional = false;
@@ -269,7 +268,7 @@ void CubeMapRasterProcessor::Impl::renderFullPipeline
   }
 
   for (size_t idx = 0; idx < SIDE_COUNT; ++idx) {
-    glActiveTexture(GL_TEXTURE0 + idx);
+    glActiveTexture(GLenum(GL_TEXTURE0 + idx));
     glBindTexture( GL_TEXTURE_2D, texture_id[idx]);
   }
 
@@ -292,7 +291,7 @@ void CubeMapRasterProcessor::Impl::renderFullPipeline
   glDisableVertexAttribArray(0);
 
   for (size_t idx = 0; idx < SIDE_COUNT; ++idx) {
-    glActiveTexture(GL_TEXTURE0 + idx);
+    glActiveTexture(GLenum(GL_TEXTURE0 + idx));
     glBindTexture( GL_TEXTURE_2D, 0);
   }
 

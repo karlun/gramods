@@ -87,9 +87,7 @@ public:
      to, when requested, call the clearRenderers method of those sub
      dispatchers.
   */
-  virtual void clearRenderers(bool recursive = false) {
-    renderers.clear();
-  }
+  virtual void clearRenderers(bool recursive = false);
 
   /**
      Sets the viewpoint to use in the views rendered by this

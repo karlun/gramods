@@ -362,12 +362,12 @@ public:
     /**
      * Called by the owner (TouchState) when eventsInit is called.
      */
-    virtual void init(int width, int height) {}
+    virtual void init(int width, int height);
 
     /**
      * Called by the owner (TouchState) when eventsDone is called.
      */
-    virtual void done() {}
+    virtual void done();
 
   protected:
 
@@ -610,12 +610,12 @@ public:
     /**
      * Called by the owner (TouchState) when eventsInit is called.
      */
-    virtual void init(int width, int height) {}
+    virtual void init(int, int);
 
     /**
      * Called by the owner (TouchState) when eventsDone is called.
      */
-    virtual void done() {}
+    virtual void done();
 
   protected:
 

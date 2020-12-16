@@ -25,4 +25,8 @@ void RendererDispatcher::populateViewSettings(ViewSettings &settings) {
     settings.viewpoint = viewpoint;
 }
 
+void RendererDispatcher::clearRenderers(bool) {
+  renderers.clear();
+}
+
 END_NAMESPACE_GMGRAPHICS;

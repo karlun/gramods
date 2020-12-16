@@ -21,17 +21,17 @@ using namespace gramods;
 
 #define VAL_AS_BOOL false
 #define VAL_AS_INT32 28733
-#define VAL_AS_FLOAT32 3.14159
+#define VAL_AS_FLOAT32 3.14159f
 #define VAL_AM_BOOL { false, true }
 #define VAL_AM_INT32 { 11234, 64243 }
-#define VAL_AM_FLOAT32 { 1.2, 2.3 }
+#define VAL_AM_FLOAT32 { 1.2f, 2.3f }
 
 #define VAL_BS_BOOL true
 #define VAL_BS_INT32 9922123
-#define VAL_BS_FLOAT32 0.707
+#define VAL_BS_FLOAT32 0.707f
 #define VAL_BM_BOOL { true, false }
 #define VAL_BM_INT32 { 2234, 921 }
-#define VAL_BM_FLOAT32 { 1e6, 4.4 }
+#define VAL_BM_FLOAT32 { 1e6f, 4.4f }
 
 
 namespace {
