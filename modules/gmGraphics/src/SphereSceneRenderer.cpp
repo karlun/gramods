@@ -43,7 +43,7 @@ struct SphereSceneRenderer::Impl {
   Eigen::Vector3f position = Eigen::Vector3f::Zero();
   Eigen::Vector3f color = Eigen::Vector3f::Ones();
   std::vector<Eigen::Vector3f> set_positions;
-  std::vector<unsigned short> indices;
+  std::vector<uint32_t> indices;
 
   bool is_setup = false;
   bool is_functional = false;
@@ -105,14 +105,14 @@ void main() {
 }
 )lang=glsl";
 
-unsigned short getPtIdx(std::vector<GLfloat> &vertices,
-                        std::unordered_map<size_t, unsigned short> &new_pt_idx,
-                        unsigned short i0,
-                        unsigned short i1) {
+uint32_t getPtIdx(std::vector<GLfloat> &vertices,
+                      std::unordered_map<uint64_t, uint32_t> &new_pt_idx,
+                      uint32_t i0,
+                      uint32_t i1) {
 
   size_t iH01 = i0 < i1
-    ? std::numeric_limits<unsigned short>::max() * i0 + i1
-    : std::numeric_limits<unsigned short>::max() * i1 + i0;
+    ? std::numeric_limits<uint32_t>::max() * i0 + i1
+    : std::numeric_limits<uint32_t>::max() * i1 + i0;
   if (new_pt_idx.count(iH01) > 0) {
     return new_pt_idx[iH01];
   }
@@ -129,7 +129,7 @@ unsigned short getPtIdx(std::vector<GLfloat> &vertices,
   vertices.push_back(p2[1]);
   vertices.push_back(p2[2]);
 
-  if (vertices.size() / 3 > std::numeric_limits<unsigned short>::max())
+  if (vertices.size() / 3 > std::numeric_limits<uint32_t>::max())
     throw std::runtime_error("cannot refine polyhedron to more than 255 vertices");
 
   new_pt_idx[iH01] = vertices.size() / 3 - 1;
@@ -137,23 +137,23 @@ unsigned short getPtIdx(std::vector<GLfloat> &vertices,
 }
 
 void refine_polyhedron(std::vector<GLfloat> &vertices,
-                       std::vector<unsigned short> &indices) {
+                       std::vector<uint32_t> &indices) {
   assert(vertices.size()%3 == 0);
   assert(indices.size()%3 == 0);
 
-  std::vector<unsigned short> new_indices;
-  new_indices.reserve(3 * indices.size());
+  std::vector<uint32_t> new_indices;
+  new_indices.reserve(4 * indices.size());
 
-  std::unordered_map<size_t, unsigned short> new_pt_idx;
+  std::unordered_map<uint64_t, uint32_t> new_pt_idx;
 
   for (size_t idx = 0; idx < indices.size(); idx += 3) {
-    unsigned short i0 = indices[idx + 0];
-    unsigned short i1 = indices[idx + 1];
-    unsigned short i2 = indices[idx + 2];
+    uint32_t i0 = indices[idx + 0];
+    uint32_t i1 = indices[idx + 1];
+    uint32_t i2 = indices[idx + 2];
 
-    unsigned short i01 = getPtIdx(vertices, new_pt_idx, i0, i1);
-    unsigned short i02 = getPtIdx(vertices, new_pt_idx, i0, i2);
-    unsigned short i12 = getPtIdx(vertices, new_pt_idx, i1, i2);
+    uint32_t i01 = getPtIdx(vertices, new_pt_idx, i0, i1);
+    uint32_t i02 = getPtIdx(vertices, new_pt_idx, i0, i2);
+    uint32_t i12 = getPtIdx(vertices, new_pt_idx, i1, i2);
 
     new_indices.push_back(i0);
     new_indices.push_back(i01);
@@ -177,9 +177,9 @@ void refine_polyhedron(std::vector<GLfloat> &vertices,
 }
 
 Eigen::Vector3f getMidPt(const std::vector<GLfloat> vertices,
-                         unsigned short i0,
-                         unsigned short i1,
-                         unsigned short i2) {
+                         uint32_t i0,
+                         uint32_t i1,
+                         uint32_t i2) {
   Eigen::Vector3f p0(vertices[3 * i0 + 0],
                      vertices[3 * i0 + 1],
                      vertices[3 * i0 + 2]);
@@ -207,11 +207,10 @@ void SphereSceneRenderer::Impl::setup() {
   indices = { 2, 5, 0, 2, 1, 5, 2, 4, 1, 2, 0, 4,
               3, 0, 5, 3, 5, 1, 3, 1, 4, 3, 4, 0 };
 
-  float proj_area_per_set_area =
-    4 * sphere_set_radius * sphere_set_radius
-    / (sphere_radius * sphere_radius);
-  size_t refs = (size_t)((::log(proj_area_per_set_area) - ::log(8))/::log(3) -1);
-  refs = std::min((size_t)5, refs);
+  float necessary_spheres = 0.1f * sphere_set_radius * sphere_set_radius /
+                            (sphere_radius * sphere_radius);
+  size_t refs = (size_t)((::log(necessary_spheres) - ::log(8)) / ::log(4) - 1);
+  refs = std::min(size_t(14), refs);
 
   for (size_t idx = 0; idx < refs; ++idx)
     refine_polyhedron(vertices, indices);
@@ -330,7 +329,7 @@ void SphereSceneRenderer::Impl::render(Camera camera, float near, float far) {
                                position[1] + pos[1],
                                position[2] + pos[2]);
     glUniformMatrix4fv(Mm_id, 1, false, Mm.data());
-    glDrawElements(GL_TRIANGLES, indices.size(),  GL_UNSIGNED_SHORT, indices.data());
+    glDrawElements(GL_TRIANGLES, indices.size(),  GL_UNSIGNED_INT, indices.data());
   }
 
   glBindVertexArray(0);
