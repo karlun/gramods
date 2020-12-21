@@ -35,14 +35,9 @@
       <SaveView
           file="split1_%09d.png"
           resolution="1920 1080">
-        <GeometryCorrectedProjectorView
-            bufferWidth="2048"
-            bufferHeight="2048"
+        <SpatialPlanarView
             clipAngles="d58.865 d58.865 d-7.701 d70.238"
-            orientation="ypr d-45.0 d0.0 d0.0"
-            linearInterpolation="on">
-          <Geometry USE="GEOMETRY"/>
-        </GeometryCorrectedProjectorView>
+            orientation="ypr d-45.0 d0.0 d0.0"/>
       </SaveView>
 
       <!--FOV left="58.865" right="58.865" up="70.238" down="-7.701" -->
@@ -51,14 +46,9 @@
       <SaveView
           file="split2_%09d.png"
           resolution="1920 1080">
-        <GeometryCorrectedProjectorView
-            bufferWidth="2048"
-            bufferHeight="2048"
+        <SpatialPlanarView
             clipAngles="d58.865 d58.865 d-7.701 d70.238"
-            orientation="ypr d45.0 d0.0 d0.0"
-            linearInterpolation="on">
-          <Geometry USE="GEOMETRY"/>
-        </GeometryCorrectedProjectorView>
+            orientation="ypr d45.0 d0.0 d0.0"/>
       </SaveView>
 
       <!--FOV left="58.865" right="58.865" up="70.238" down="-7.701" -->
@@ -67,14 +57,9 @@
       <SaveView
           file="split3_%09d.png"
           resolution="1920 1080">
-        <GeometryCorrectedProjectorView
-            bufferWidth="2048"
-            bufferHeight="2048"
+        <SpatialPlanarView
             clipAngles="d58.865 d58.865 d-7.701 d70.238"
-            orientation="ypr d135.0 d0.0 d0.0"
-            linearInterpolation="on">
-          <Geometry USE="GEOMETRY"/>
-        </GeometryCorrectedProjectorView>
+            orientation="ypr d135.0 d0.0 d0.0"/>
       </SaveView>
 
       <!--FOV left="58.865" right="58.865" up="70.238" down="-7.701" -->
@@ -83,14 +68,9 @@
       <SaveView
           file="split4_%09d.png"
           resolution="1920 1080">
-        <GeometryCorrectedProjectorView
-            bufferWidth="2048"
-            bufferHeight="2048"
+        <SpatialPlanarView
             clipAngles="d58.865 d58.865 d-7.701 d70.238"
-            orientation="ypr d-135.0 d0.0 d0.0"
-            linearInterpolation="on">
-          <Geometry USE="GEOMETRY"/>
-        </GeometryCorrectedProjectorView>
+            orientation="ypr d-135.0 d0.0 d0.0"/>
       </SaveView>
 
       <!--FOV left="58.992" right="58.992" up="55.336" down="11.608" -->
@@ -99,14 +79,9 @@
       <SaveView
           file="split5_%09d.png"
           resolution="1920 1080">
-        <GeometryCorrectedProjectorView
-            bufferWidth="2048"
-            bufferHeight="2048"
+        <SpatialPlanarView
             clipAngles="d58.992 d58.992 d11.608 d55.336"
-            orientation="ypr d57.0 d48.0 d0.0"
-            linearInterpolation="on">
-          <Geometry USE="GEOMETRY"/>
-        </GeometryCorrectedProjectorView>
+            orientation="ypr d57.0 d48.0 d0.0"/>
       </SaveView>
 
       <!--FOV left="58.992" right="58.992" up="55.336" down="11.608" -->
@@ -115,14 +90,9 @@
       <SaveView
           file="split6_%09d.png"
           resolution="1920 1080">
-        <GeometryCorrectedProjectorView
-            bufferWidth="2048"
-            bufferHeight="2048"
+        <SpatialPlanarView
             clipAngles="d58.992 d58.992 d11.608 d55.336"
-            orientation="ypr d-123.0 d48.0 d0.0"
-            linearInterpolation="on">
-          <Geometry USE="GEOMETRY"/>
-        </GeometryCorrectedProjectorView>
+            orientation="ypr d-123.0 d48.0 d0.0"/>
       </SaveView>
 
     </TiledView>
