@@ -110,6 +110,9 @@ void SdlWindow::initialize() {
   else if (gl_profile.size() > 0)
     GM_WRN("SdlWindow", "Unknown GL profile '" << gl_profile << "' - using default");
 
+  if (!SDL_SetHint(SDL_HINT_VIDEO_MINIMIZE_ON_FOCUS_LOSS, "0"))
+    GM_WRN("SdlWindow", "Could not suggest SDL to stay fullscreen even with focus loss");
+
   int video_flags = SDL_WINDOW_OPENGL;
   if (fullscreen)
     video_flags |= SDL_WINDOW_FULLSCREEN_DESKTOP;
