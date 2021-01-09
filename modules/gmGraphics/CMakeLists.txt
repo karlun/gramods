@@ -117,48 +117,45 @@ IF(Inkscape_FOUND)
   add_custom_target(svg-resources
     ${gramods_RESOURCE_ALL}
     DEPENDS ${SVGPNG_RESOURCE_TARGETS})
-  IF (gramods_INSTALL_RESOURCES)
-    INSTALL(FILES ${SVGPNG_RESOURCE_TARGETS}
-      DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/gramods/gmGraphics/resources)
-  ENDIF()
 
   MESSAGE (STATUS "Added 'svg-resources' target for converting SVG resources to PNG.")
 ELSE()
   MESSAGE (STATUS "Not including 'svg-resources' target - requires Inkscape")
 ENDIF()
 
-FIND_PACKAGE(GimpConsole)
-IF(GimpConsole_FOUND)
+INCLUDE(PythonResources)
+IF(PythonResources_FOUND)
 
-  SET (PYPNG_RESOURCE_TARGETS CACHE INTERNAL "The list of png resources that can be built with gimp python-fu.")
+  SET (PYPNG_RESOURCE_TARGETS CACHE INTERNAL "The list of png resources that can be built with python.")
 
   FILE(GLOB_RECURSE PY_RESOURCES ${CMAKE_CURRENT_SOURCE_DIR}/resources/*.py)
-  SOURCE_GROUP("python-fu-resources" FILES ${PY_RESOURCES})
+  SOURCE_GROUP("python-resources" FILES ${PY_RESOURCES})
 
   SET(gramods_PNG_RESOURCE_SIZE 1024 CACHE STRING "The width of generated image resources, in pixels.")
 
   FOREACH (RESOURCE ${PY_RESOURCES})
     STRING(REGEX REPLACE
-      "${CMAKE_CURRENT_SOURCE_DIR}/(.*)\\.py$"
-      "${CMAKE_CURRENT_BINARY_DIR}/\\1.png"
+      "${CMAKE_CURRENT_SOURCE_DIR}/resources/(.*)\\.py\$"
+      "${CMAKE_CURRENT_BINARY_DIR}/resources/\\1.png"
       PNG_RESOURCE ${RESOURCE})
-    gimp_build_image(${RESOURCE} ${PNG_RESOURCE} ${gramods_PNG_RESOURCE_SIZE})
+    MESSAGE("${RESOURCE} -> ${PNG_RESOURCE}")
+    python_build_image(${RESOURCE} ${PNG_RESOURCE} ${gramods_PNG_RESOURCE_SIZE})
     LIST (APPEND PYPNG_RESOURCE_TARGETS ${PNG_RESOURCE})
   ENDFOREACH()
 
-  add_custom_target(python-fu-resources
+  add_custom_target(python-resources
     ${gramods_RESOURCE_ALL}
     DEPENDS ${PYPNG_RESOURCE_TARGETS})
-  IF (gramods_INSTALL_RESOURCES)
-    INSTALL(FILES ${PYPNG_RESOURCE_TARGETS}
-      DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/gramods/gmGraphics/resources)
-  ENDIF()
 
-  MESSAGE (STATUS "Added 'python-fu-resources' target for creating PNG with gimp python-fu.")
+  MESSAGE (STATUS "Added 'python-resources' target for creating PNG with python.")
 ELSE()
-  MESSAGE (STATUS "Not including 'python-fu-resources' target - requires gimp-console")
+  MESSAGE (STATUS "Not including 'python-resources' target - requires Python3")
 ENDIF()
 
+IF (gramods_INSTALL_RESOURCES AND EXISTS ${CMAKE_CURRENT_BINARY_DIR}/resources)
+  INSTALL(DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/resources
+    DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/gramods/gmGraphics)
+ENDIF()
 
 CONFIGURE_FILE(
   ${CMAKE_CURRENT_SOURCE_DIR}/src/config_cmake.hh
