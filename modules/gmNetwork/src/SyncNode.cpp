@@ -11,6 +11,10 @@
 #include <limits>
 #include <functional>
 
+#define ASIO_STANDALONE
+#include <asio.hpp>
+#undef ASIO_STANDALONE
+
 BEGIN_NAMESPACE_GMNETWORK;
 
 GM_OFI_DEFINE(SyncNode);
