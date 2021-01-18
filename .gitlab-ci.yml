@@ -20,7 +20,7 @@ BuildMaxi:
   stage: build
   script:
     - apt-get update
-    - DEBIAN_FRONTEND="noninteractive" apt-get -y install cmake build-essential libgtest-dev libtinyxml2-dev libsdl2-dev libsdl2-ttf-dev libeigen3-dev libglew-dev libasio-dev libuvc-dev libfreeimage-dev inkscape
+    - DEBIAN_FRONTEND="noninteractive" apt-get -y install cmake build-essential libgtest-dev libtinyxml2-dev libsdl2-dev libsdl2-ttf-dev libeigen3-dev libglew-dev libasio-dev libuvc-dev libfreeimage-dev inkscape pipenv
     - mkdir build
     - cd build
     - cmake -D gramods_TEST_gmGraphics=OFF -D CPACK_BINARY_DEB=ON -D CPACK_DEBIAN_PACKAGE_DEPENDS="libtinyxml2-6a, libsdl2-2.0-0, libsdl2-ttf-2.0-0, libglew2.1, libuvc0, libfreeimage3" ..
