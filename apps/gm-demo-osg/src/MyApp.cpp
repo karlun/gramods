@@ -316,7 +316,7 @@ void MyApp::Impl::initOSG() {
     scenegraph_root->addChild(wand_transform);
   }
 
-  std::string url = "urn:gramods:resources/sphere.osgt";
+  std::string url = "urn:gramods:resources/box.osgt";
   std::filesystem::path path = gmCore::FileResolver::getDefault()->resolve(url);
   osg::ref_ptr<osg::Node> model = osgDB::readNodeFile(path.generic_u8string());
 
