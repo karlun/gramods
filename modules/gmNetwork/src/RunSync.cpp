@@ -115,7 +115,7 @@ void RunSync::Impl::processMessage(size_t local_peer_idx,
   waiting_peers.insert(peer_idx);
   GM_DBG2("RunSync", local_peer_idx << " Waiting notification from " << (int)peer_idx << " (got " << waiting_peers.size() << ")");
 
-  if (waiting_frame_odd == frame_odd)
+  if (waiting_frame_odd == bool(frame_odd))
     waiting_condition.notify_all();
 }
 
