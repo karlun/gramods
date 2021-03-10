@@ -314,13 +314,13 @@ void MyApp::Impl::initOSG() {
 
   std::string url = "urn:gramods:resources/sphere.osgt";
   std::filesystem::path path = gmCore::FileResolver::getDefault()->resolve(url);
-  osg::ref_ptr<osg::Node> model = osgDB::readNodeFile(path.u8string());
+  osg::ref_ptr<osg::Node> model = osgDB::readNodeFile(path.generic_u8string());
 
   if (!model.valid()) {
     if (url == path)
       GM_ERR("MyApp", "Could not load file \"" << url << "\"");
     else
-      GM_ERR("MyApp", "Could not load file " << path << " (" << url << ")");
+      GM_ERR("MyApp", "Could not load file " << path.generic_u8string() << " (" << url << ")");
     return;
   }
 
