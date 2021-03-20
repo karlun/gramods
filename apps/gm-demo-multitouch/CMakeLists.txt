@@ -59,5 +59,11 @@ TARGET_LINK_LIBRARIES(gm-demo-multitouch ${APP_LIBS})
 
 SET_PROPERTY(TARGET gm-demo-multitouch PROPERTY CXX_STANDARD 14)
 
+IF (gramods_INSTALL_DEMOS)
+  INSTALL(TARGETS gm-demo-multitouch
+    LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
+    RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR})
+ENDIF()
+
 INCLUDE(InstallDependencies)
 install_executable_dependencies($<TARGET_FILE:gm-demo-multitouch>)

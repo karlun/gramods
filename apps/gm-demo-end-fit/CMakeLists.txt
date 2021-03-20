@@ -46,5 +46,11 @@ TARGET_LINK_LIBRARIES(gm-demo-end-fit ${APP_LIBS})
 
 SET_PROPERTY(TARGET gm-demo-end-fit PROPERTY CXX_STANDARD 14)
 
+IF (gramods_INSTALL_DEMOS)
+  INSTALL(TARGETS gm-demo-end-fit
+    LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
+    RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR})
+ENDIF()
+
 INCLUDE(InstallDependencies)
 install_executable_dependencies($<TARGET_FILE:gm-demo-end-fit>)

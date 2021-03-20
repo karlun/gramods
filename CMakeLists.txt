@@ -26,6 +26,8 @@ ENDMACRO()
 
 OPTION(gramods_INSTALL_RESOURCES "Include module resources in INSTALL target." ON)
 
+OPTION(gramods_INSTALL_DEMOS "Include demo applications in INSTALL target." ON)
+
 OPTION(gramods_INSTALL_DEPENDENCIES "Attempt to install third party libraries together with libraries and executables." OFF)
 
 OPTION(gramods_BUILD_RESOURCES "Include building resources in the ALL target." ON)
