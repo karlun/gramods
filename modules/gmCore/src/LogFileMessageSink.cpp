@@ -42,8 +42,11 @@ void LogFileMessageSink::output(Message msg) {
     }
   }
 
-  outputMetadata(logfile, msg);
-  logfile << msg.message;
+  std::istringstream input(msg.message);
+  for (std::string line; std::getline(input, line);) {
+    outputMetadata(logfile, msg);
+    logfile << line << "\n";
+  }
   logfile.flush();
 }
 

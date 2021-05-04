@@ -25,6 +25,7 @@ GM_OFI_PARAM2(OStreamMessageSink, level, int, setLevel);
 #define ANSI_NORMAL  "\033[37m"
 #define ANSI_ERROR   "\033[91m"
 #define ANSI_WARNING "\033[93m"
+#define ANSI_RESET   "\033[0m"
 
 
 void OStreamMessageSink::output(Message msg) {
@@ -55,14 +56,18 @@ void OStreamMessageSink::output(Message msg) {
 #ifndef NDEBUG
   if (msg.source_data_available) {
     outputMetadata(out, msg);
-    out << msg.file << ":" << msg.line << " (" << msg.function << ")" << std::endl;
+    out << msg.file << ":" << msg.line << " (" << msg.function << ")\n";
   }
 #endif
 
-  outputMetadata(out, msg);
-  out << msg.message;
+  std::istringstream input(msg.message);
+  for (std::string line; std::getline(input, line);) {
+    outputMetadata(out, msg);
+    out << line << "\n";
+  }
 
-  if (use_ansi_color) out << ANSI_NORMAL;
+  if (use_ansi_color) out << ANSI_RESET;
+  std::flush(out);
 }
 
 void OStreamMessageSink::setUseAnsiColor(bool on) {
