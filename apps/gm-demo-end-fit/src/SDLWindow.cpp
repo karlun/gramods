@@ -3,6 +3,7 @@
 #include "SDLWindow.hh"
 
 #include <gmMisc/EFHOAW.hh>
+#include <gmCore/InvalidArgument.hh>
 
 #include <iostream>
 #include <sstream>
@@ -108,8 +109,8 @@ void SDLWindow::update() {
       drawPoint(points[idx].x, points[idx].y);
 
   }
-  catch (const std::invalid_argument &e) {
-    std::cerr << e.what() << std::endl;
+  catch (const gramods::gmCore::InvalidArgument &e) {
+    std::cerr << e.what << std::endl;
   }
 
   SDL_RenderPresent(sdl_renderer);
