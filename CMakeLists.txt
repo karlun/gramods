@@ -39,6 +39,9 @@ ENDIF()
 
 # --- HANDLE MODULES ---
 
+SET(gramods_EXEC_TARGET_FILES "" CACHE INTERNAL "List of generator expressions that will be evaluated to paths to executable target files")
+SET(gramods_LIB_TARGET_FILES "" CACHE INTERNAL "List of generator expressions that will be evaluated to paths to library target files")
+
 SUBDIRLIST(gramods_MODULES ${gramods_SOURCE_DIR}/modules)
 FOREACH (MODULE ${gramods_MODULES})
 
@@ -83,6 +86,11 @@ ENDFOREACH ()
 
 INCLUDE(InstallRequiredSystemLibraries)
 SET(CMAKE_DEBUG_POSTFIX "-d" CACHE STRING "Set debug library postfix")
+
+IF (gramods_INSTALL_DEPENDENCIES)
+  INCLUDE(InstallDependencies)
+  install_dependencies("${gramods_EXEC_TARGET_FILES}" "${gramods_LIB_TARGET_FILES}")
+ENDIF()
 
 # https://cmake.org/cmake/help/git-stage/guide/importing-exporting/index.html
 INCLUDE(CMakePackageConfigHelpers)

@@ -52,5 +52,4 @@ INSTALL(TARGETS gmMisc
 INSTALL(EXPORT Gramods-gmMisc-targets
   DESTINATION ${CMAKE_INSTALL_LIBDIR}/gramods/cmake)
 
-INCLUDE(InstallDependencies)
-install_library_dependencies($<TARGET_FILE:gmMisc>)
+SET(gramods_LIB_TARGET_FILES ${gramods_LIB_TARGET_FILES} "$<TARGET_FILE:gmMisc>" PARENT_SCOPE)

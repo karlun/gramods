@@ -61,5 +61,4 @@ INSTALL(TARGETS gm-load
 INSTALL(DIRECTORY config/
   DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/gramods/config)
 
-INCLUDE(InstallDependencies)
-install_executable_dependencies($<TARGET_FILE:gm-load>)
+SET(gramods_EXEC_TARGET_FILES ${gramods_EXEC_TARGET_FILES} "$<TARGET_FILE:gm-load>" PARENT_SCOPE)

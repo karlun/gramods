@@ -96,5 +96,4 @@ INSTALL(DIRECTORY resources/
 INSTALL(DIRECTORY config/
   DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/gramods/gmTrack/config)
 
-INCLUDE(InstallDependencies)
-install_library_dependencies($<TARGET_FILE:gmTrack>)
+SET(gramods_LIB_TARGET_FILES ${gramods_LIB_TARGET_FILES} "$<TARGET_FILE:gmTrack>" PARENT_SCOPE)

@@ -92,5 +92,4 @@ INSTALL(TARGETS gmTouch
 INSTALL(EXPORT Gramods-gmTouch-targets
   DESTINATION ${CMAKE_INSTALL_LIBDIR}/gramods/cmake)
 
-INCLUDE(InstallDependencies)
-install_library_dependencies($<TARGET_FILE:gmTouch>)
+SET(gramods_LIB_TARGET_FILES ${gramods_LIB_TARGET_FILES} "$<TARGET_FILE:gmTouch>" PARENT_SCOPE)

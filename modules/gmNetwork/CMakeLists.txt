@@ -69,5 +69,4 @@ INSTALL(TARGETS gmNetwork
 INSTALL(EXPORT Gramods-gmNetwork-targets
   DESTINATION ${CMAKE_INSTALL_LIBDIR}/gramods/cmake)
 
-INCLUDE(InstallDependencies)
-install_library_dependencies($<TARGET_FILE:gmNetwork>)
+SET(gramods_LIB_TARGET_FILES ${gramods_LIB_TARGET_FILES} "$<TARGET_FILE:gmNetwork>" PARENT_SCOPE)

@@ -65,5 +65,4 @@ IF (gramods_INSTALL_DEMOS)
     RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR})
 ENDIF()
 
-INCLUDE(InstallDependencies)
-install_executable_dependencies($<TARGET_FILE:gm-demo-multitouch>)
+SET(gramods_EXEC_TARGET_FILES ${gramods_EXEC_TARGET_FILES} "$<TARGET_FILE:gm-demo-multitouch>" PARENT_SCOPE)

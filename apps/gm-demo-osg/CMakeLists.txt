@@ -77,5 +77,4 @@ IF (gramods_INSTALL_DEMOS)
     DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/gramods/resources)
 ENDIF()
 
-INCLUDE(InstallDependencies)
-install_executable_dependencies($<TARGET_FILE:gm-demo-osg>)
+SET(gramods_EXEC_TARGET_FILES ${gramods_EXEC_TARGET_FILES} "$<TARGET_FILE:gm-demo-osg>" PARENT_SCOPE)

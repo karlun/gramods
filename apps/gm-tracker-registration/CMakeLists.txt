@@ -38,5 +38,4 @@ INSTALL(TARGETS gm-tracker-registration
   LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
   RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR})
 
-INCLUDE(InstallDependencies)
-install_executable_dependencies($<TARGET_FILE:gm-tracker-registration>)
+SET(gramods_EXEC_TARGET_FILES ${gramods_EXEC_TARGET_FILES} "$<TARGET_FILE:gm-tracker-registration>" PARENT_SCOPE)
