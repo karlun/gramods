@@ -32,7 +32,7 @@ ADD_EXECUTABLE(gm-tracker-registration src/main.cpp)
 TARGET_INCLUDE_DIRECTORIES(gm-tracker-registration PUBLIC ${APP_INCLUDE_DIRS})
 TARGET_LINK_LIBRARIES(gm-tracker-registration ${APP_LIBS})
 
-SET_PROPERTY(TARGET gm-tracker-registration PROPERTY CXX_STANDARD 14)
+SET_PROPERTY(TARGET gm-tracker-registration PROPERTY CXX_STANDARD 17)
 
 INSTALL(TARGETS gm-tracker-registration
   LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}

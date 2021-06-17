@@ -5,6 +5,7 @@
 #include <gmCore/OStreamMessageSink.hh>
 #include <gmCore/Updateable.hh>
 #include <gmCore/RuntimeException.hh>
+#include <gmCore/FileResolver.hh>
 
 #include <gmCore/eigen.hh>
 #include <gmTrack/Controller.hh>
@@ -405,11 +406,12 @@ int main(int argc, char *argv[]) {
     return res;
   }
 
-  std::ifstream fin(input_file);
+  std::filesystem::path input_file_path = gmCore::FileResolver::getDefault()->resolve(input_file);
+  std::ifstream fin(input_file_path);
 
   if (!fin) {
     std::cerr << std::endl
-              << "Error: could not open template file '" << input_file << "'" << std::endl
+              << "Error: could not open template file '" << input_file_path << "' (" << input_file << ")" << std::endl
               << std::endl;
     return 5;
   }
