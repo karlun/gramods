@@ -46,7 +46,7 @@ struct UvcTexture::Impl {
   void startAll(int vendor, int product, std::string serial);
   void closeAll();
 
-  void update();
+  void update(Eye e);
   GLuint getGLTextureID() { return texture_id; }
 
   uvc_context_t *context = nullptr;
@@ -85,16 +85,13 @@ UvcTexture::Impl::~Impl() {
   closeAll();
 }
 
-void UvcTexture::update() {
+GLuint UvcTexture::updateTexture(size_t frame_number, Eye eye) {
   if (!_impl->started) {
     _impl->startAll(vendor, product, serial);
     _impl->started = true;
   }
 
-  _impl->update();
-}
-
-GLuint UvcTexture::getGLTextureID() {
+  _impl->update(eye);
   return _impl->getGLTextureID();
 }
 
@@ -106,7 +103,7 @@ void UvcTexture::Impl::startAll(int vendor, int product, std::string serial) {
   if (!start_streaming()) return;
 }
 
-void UvcTexture::Impl::update() {
+void UvcTexture::Impl::update(Eye e) {
 
   if (!texture_id) {
     std::vector<GLubyte> data;

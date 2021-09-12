@@ -264,7 +264,7 @@ void GeometryCorrectedProjectorView::Impl::renderFullPipeline(ViewSettings setti
     return;
   }
 
-  Camera projector_camera;
+  Camera projector_camera(settings);
   if (!setCamera(projector_camera))
     return;
 
@@ -279,7 +279,7 @@ void GeometryCorrectedProjectorView::Impl::renderFullPipeline(ViewSettings setti
                       "No viewpoint available - using zero position and rotation"));
   }
 
-  Camera render_camera;
+  Camera render_camera(settings);
   bool camera_good =
     geometry->getCameraFromPosition(projector_camera,
                                     x_VP,

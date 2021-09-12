@@ -21,7 +21,7 @@ void FovPlanarView::renderFullPipeline(ViewSettings settings) {
     q_VP = settings.viewpoint->getOrientation();
   }
 
-  Camera camera;
+  Camera camera(settings);
   camera.setClipPlanes(planes[0], planes[1], planes[2], planes[3]);
   camera.setPose(x_VP, orientation);
 

@@ -1,0 +1,92 @@
+<config>
+
+  <!--OStreamMessageSink useAnsiColor="true" level="3"-->
+  <!--LogFileMessageSink logFilePath="gramods.log" append="false"/-->
+
+  <ImportLibrary library="gmGraphics"/>
+
+  <SdlWindow
+      size="900 900"
+      title="Spatial"
+      GLMajor="3" GLMinor="3"
+      GLProfile="core">
+
+    <SdlContext
+        DEF="SDLContext"
+        useVideo="1"/>
+
+    <TiledView>
+
+      <param name="tileLocation" value="0 0 1 1"/>
+      <SpatialPlanarView
+          topLeftCorner    ="-0.3 +0.165 +0.0"
+          bottomRightCorner="+0.3 -0.165 +0.0"
+          upDirection="0.0 1.0 0.0">
+
+        <InterlaceMultiplexer
+            pattern="2"/>
+
+        <Viewpoint
+            position="0 0 0.7"
+            eyeSeparation="0"/>
+
+        <TextureRenderer>
+          <ImageTexture
+              exit="false"
+              file="urn:gramods:gmGraphics/resources/left-right-field.png"/>
+        </TextureRenderer>
+
+      </SpatialPlanarView>
+
+      <param name="tileLocation" value="0 1 1 1"/>
+      <SpatialPlanarView
+          topLeftCorner    ="-0.3 +0.165 +0.0"
+          bottomRightCorner="+0.3 -0.165 +0.0"
+          upDirection="0.0 1.0 0.0">
+
+        <InterlaceMultiplexer
+            pattern="2"/>
+
+        <Viewpoint
+            position="0 0 0.7"
+            eyeSeparation="0"/>
+
+        <TextureRenderer>
+          <MultiscopicTextureSplitter
+              splitType="0">
+            <ImageTexture
+                exit="false"
+                file="urn:gramods:gmGraphics/resources/left-right-field.png"/>
+          </MultiscopicTextureSplitter>
+        </TextureRenderer>
+
+      </SpatialPlanarView>
+
+      <param name="tileLocation" value="1 1 1 1"/>
+      <SpatialPlanarView
+          topLeftCorner    ="-0.3 +0.165 +0.0"
+          bottomRightCorner="+0.3 -0.165 +0.0"
+          upDirection="0.0 1.0 0.0">
+
+        <SideBySideMultiplexer/>
+
+        <Viewpoint
+            position="0 0 0.7"
+            eyeSeparation="0"/>
+
+        <TextureRenderer>
+          <MultiscopicTextureSplitter
+              splitType="0">
+            <ImageTexture
+                exit="false"
+                file="urn:gramods:gmGraphics/resources/left-right-field.png"/>
+          </MultiscopicTextureSplitter>
+        </TextureRenderer>
+
+      </SpatialPlanarView>
+
+    </TiledView>
+
+  </SdlWindow>
+
+</config>

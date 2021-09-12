@@ -39,7 +39,7 @@ void Window::renderFullPipeline(ViewSettings settings) {
 
   } else {
 
-    Camera c;
+    Camera c(settings);
     for (auto renderer : settings.renderers)
       renderer->render(c);
   }

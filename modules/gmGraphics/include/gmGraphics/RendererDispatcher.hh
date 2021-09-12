@@ -31,8 +31,16 @@ public:
 
     ViewSettings() = delete;
 
+    ViewSettings(size_t frame_number)
+      : frame_number(frame_number),
+        viewpoint(std::make_shared<Viewpoint>()) {}
+
     /// Creates settings associated with the specified viewpoint.
-    ViewSettings(std::shared_ptr<Viewpoint> vp) : viewpoint(vp) {}
+    ViewSettings(size_t frame_number, std::shared_ptr<Viewpoint> vp)
+      : frame_number(frame_number), viewpoint(vp) {}
+
+    /// The frame currently being rendered.
+    size_t frame_number;
 
     /// The renderers to render in the view.
     Renderer::list renderers;
@@ -43,16 +51,6 @@ public:
     /// The preferred pixel format for buffers.
     GLenum pixel_format = GL_RGBA8;
   };
-
-  /**
-     Dispatches specified class members renders. The default
-     implementation calls the renderers but with a default Camera, and
-     should be overloaded by sub classes to implement their respective
-     effects.
-  */
-  void renderFullPipeline() {
-    renderFullPipeline(ViewSettings(viewpoint));
-  }
 
   /**
      Dispatches specified renders, both method argument and class

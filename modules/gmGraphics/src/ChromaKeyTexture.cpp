@@ -17,7 +17,7 @@ GM_OFI_PARAM2(ChromaKeyTexture, tolerance, gmCore::float2, setTolerance);
 
 struct ChromaKeyTexture::Impl {
 
-  void update();
+  void update(size_t frame_number, Eye e);
   GLuint getGLTextureID() { return texture_id; }
 
   static const std::string fragment_code;
@@ -80,18 +80,12 @@ void main() {
 ChromaKeyTexture::ChromaKeyTexture()
   : _impl(std::make_unique<Impl>()) {}
 
-void ChromaKeyTexture::update() {
-  _impl->update();
-}
-
-void ChromaKeyTexture::Impl::update() {
+void ChromaKeyTexture::Impl::update(size_t frame_number, Eye eye) {
 
   if (!texture) {
     GM_RUNONCE(GM_ERR("ChromaKeyTexture", "No texture to process."));
     return;
   }
-
-  texture->update();
 
   if (!is_setup) {
     is_setup = true;
@@ -109,7 +103,7 @@ void ChromaKeyTexture::Impl::update() {
     return;
   }
 
-  GLuint tex_id = texture->getGLTextureID();
+  GLuint tex_id = texture->updateTexture(frame_number, eye);
 
   GLint width, height;
   glGetTextureLevelParameteriv(tex_id, 0, GL_TEXTURE_WIDTH, &width);
@@ -140,7 +134,8 @@ void ChromaKeyTexture::Impl::update() {
   render_target.pop();
 }
 
-GLuint ChromaKeyTexture::getGLTextureID() {
+GLuint ChromaKeyTexture::updateTexture(size_t frame_number, Eye eye) {
+  _impl->update(frame_number, eye);
   return _impl->getGLTextureID();
 }
 

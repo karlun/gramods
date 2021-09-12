@@ -35,7 +35,7 @@ struct ViewTexture::Impl {
   GLenum pixel_format;
 
   std::vector<std::shared_ptr<View>> views;
-  int frame = 0;
+  size_t cache_frame = std::numeric_limits<size_t>::max();
 
   bool is_setup = false;
   bool is_functional = false;
@@ -126,14 +126,6 @@ void ViewTexture::Impl::renderFullPipeline(ViewSettings settings) {
   glBindTexture(GL_TEXTURE_2D, 0);
 }
 
-void ViewTexture::update() {
-  if (!_impl->setup()) return;
-
-  ViewSettings settings(viewpoint);
-  populateViewSettings(settings);
-  _impl->update(settings);
-}
-
 void ViewTexture::Impl::update(ViewSettings settings) {
   render_target.push();
   render_target.bind(resolution[0], resolution[1]);
@@ -143,6 +135,8 @@ void ViewTexture::Impl::update(ViewSettings settings) {
     view->renderFullPipeline(settings);
 
   render_target.pop();
+
+  cache_frame = settings.frame_number;
 }
 
 void ViewTexture::setResolution(gmCore::size2 res) {
@@ -176,7 +170,15 @@ void ViewTexture::clearRenderers(bool recursive) {
   RendererDispatcher::clearRenderers(recursive);
 }
 
-GLuint ViewTexture::getGLTextureID() {
+GLuint ViewTexture::updateTexture(size_t frame_number, Eye eye) {
+  if (!_impl->setup()) return 0;
+  if (_impl->cache_frame == frame_number)
+    return _impl->render_target.getTexId();
+
+  ViewSettings settings(frame_number, viewpoint);
+  populateViewSettings(settings);
+  _impl->update(settings);
+
   return _impl->render_target.getTexId();
 }
 

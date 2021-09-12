@@ -24,15 +24,21 @@ public:
   YuvDecodeTexture();
 
   /**
-     Updates the texture with new data. Must be called with GL
-     context.
-  */
-  void update();
+     Updates the texture and returns the ID of the associated GL
+     texture object. Must be called with GL context. Observe also that
+     this method may perform off-screen rendering.
 
-  /**
-     Returns the ID of the associated GL texture object.
+     @param frame_number The current frame being rendered. This number
+     should increment by one for each frame, however it may wrap
+     around and start over at zero.
+
+     @param eye Eye for which the texture is requested. An
+     implementation may use different textures for different eyes or
+     may reuse the same texture for all eyes.
+
+     @returns OpenGL texture ID of the updated texture
   */
-  GLuint getGLTextureID() override;
+  GLuint updateTexture(size_t frame_number, Eye eye) override;
 
   /**
      Sets the texture to decode.

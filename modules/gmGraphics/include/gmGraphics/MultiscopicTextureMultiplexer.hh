@@ -1,22 +1,27 @@
 
-#ifndef GRAMODS_GRAPHICS_TEXTUREINTERFACE
-#define GRAMODS_GRAPHICS_TEXTUREINTERFACE
 
-#include <gmGraphics/config.hh>
+#ifndef GRAMODS_GRAPHICS_MULTISCOPICTEXTUREMULTIPLEXER
+#define GRAMODS_GRAPHICS_MULTISCOPICTEXTUREMULTIPLEXER
 
-#include <gmGraphics/Eye.hh>
+#include <gmGraphics/Texture.hh>
 
-#include <GL/glew.h>
-#include <GL/gl.h>
+#include <gmCore/OFactory.hh>
+#include <gmCore/float.hh>
+#include <gmCore/eigen.hh>
+
+#include <memory>
 
 BEGIN_NAMESPACE_GMGRAPHICS;
 
 /**
-   The interface for classes providing texture data for rendering.
+   Decoder of Yuv encoded texture into a new texture.
 */
-class TextureInterface {
+class MultiscopicTextureMultiplexer
+  : public gmGraphics::Texture {
 
 public:
+
+  MultiscopicTextureMultiplexer();
 
   /**
      Updates the texture and returns the ID of the associated GL
@@ -33,8 +38,20 @@ public:
 
      @returns OpenGL texture ID of the updated texture
   */
-  virtual GLuint updateTexture(size_t frame_number, Eye eye) = 0;
+  GLuint updateTexture(size_t frame_number, Eye eye);
 
+  /**
+     Adds a texture to the set of multiscopic textures.
+  */
+  void addTexture(std::shared_ptr<TextureInterface> texture);
+
+
+  GM_OFI_DECLARE;
+
+private:
+
+  struct Impl;
+  std::unique_ptr<Impl> _impl;
 };
 
 END_NAMESPACE_GMGRAPHICS;

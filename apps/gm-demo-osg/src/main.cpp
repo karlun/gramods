@@ -72,6 +72,7 @@ int main(int argc, char *argv[]) {
 
   auto last_print_time = clock::now();
   size_t frame_count = 0;
+  size_t frame_number = 0;
 
   d_seconds update_time = d_seconds();
   d_seconds render_time = d_seconds();
@@ -93,7 +94,7 @@ int main(int argc, char *argv[]) {
 
       for (auto window : windows) {
         if (!window->isOpen()) continue;
-        window->RendererDispatcher::renderFullPipeline();
+        window->renderFullPipeline(frame_number);
       }
 
       auto t2 = clock::now();
@@ -113,7 +114,8 @@ int main(int argc, char *argv[]) {
 
       auto t4 = clock::now();
 
-      frame_count += 1;
+      ++frame_number;
+      ++frame_count;
 
       update_time += std::chrono::duration_cast<d_seconds>(t1 - t0);
       render_time += std::chrono::duration_cast<d_seconds>(t2 - t1);

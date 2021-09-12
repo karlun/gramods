@@ -17,7 +17,7 @@ GM_OFI_PARAM2(YuvDecodeTexture, uvRange, gmCore::float2, setUvRange);
 
 struct YuvDecodeTexture::Impl {
 
-  void update();
+  void update(size_t frame_number, Eye eye);
   GLuint getGLTextureID() { return texture_id; }
 
   static const std::string fragment_code;
@@ -71,18 +71,12 @@ void main() {
 YuvDecodeTexture::YuvDecodeTexture()
   : _impl(std::make_unique<Impl>()) {}
 
-void YuvDecodeTexture::update() {
-  _impl->update();
-}
-
-void YuvDecodeTexture::Impl::update() {
+void YuvDecodeTexture::Impl::update(size_t frame_number, Eye eye) {
 
   if (!texture) {
     GM_RUNONCE(GM_ERR("YuvDecodeTexture", "No texture to decode."));
     return;
   }
-
-  texture->update();
 
   if (!is_setup) {
     is_setup = true;
@@ -100,7 +94,7 @@ void YuvDecodeTexture::Impl::update() {
     return;
   }
 
-  GLuint tex_id = texture->getGLTextureID();
+  GLuint tex_id = texture->updateTexture(frame_number, eye);
 
   GLint width, height;
   glGetTextureLevelParameteriv(tex_id, 0, GL_TEXTURE_WIDTH, &width);
@@ -130,7 +124,8 @@ void YuvDecodeTexture::Impl::update() {
   render_target.pop();
 }
 
-GLuint YuvDecodeTexture::getGLTextureID() {
+GLuint YuvDecodeTexture::updateTexture(size_t frame_number, Eye eye) {
+  _impl->update(frame_number, eye);
   return _impl->getGLTextureID();
 }
 

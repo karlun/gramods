@@ -253,8 +253,7 @@ void SphereRenderer::Impl::render(Camera camera, float near, float far) {
 
   GLuint tex_id = 0;
   if (texture) {
-    texture->update();
-    tex_id = texture->getGLTextureID();
+    tex_id = texture->updateTexture(camera.frame_number, camera.getEye());
   }
 
   GM_DBG2("SphereRenderer", "rendering");
