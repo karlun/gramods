@@ -137,8 +137,10 @@ void SaveView::Impl::renderFullPipeline(ViewSettings settings) {
   GLint size[4];
   glGetIntegerv( GL_VIEWPORT, size );
 
-  int width = size[2] - size[0];
-  int height = size[3] - size[1];
+  int width = size[2];
+  int height = size[3];
+
+  GM_DBG2("SaveView", "Saving viewport of size " << width << "x" << height);
 
   int bits_per_channel = -1;
   int number_of_channels = use_alpha ? 4 : 3;
@@ -159,7 +161,6 @@ void SaveView::Impl::renderFullPipeline(ViewSettings settings) {
     (fi_image_type, width, height,
      bits_per_channel * number_of_channels);
   BYTE * bytes = FreeImage_GetBits(bitmap);
-
   {
     GLint current;
     glGetIntegerv(GL_DRAW_BUFFER, &current);
@@ -179,7 +180,7 @@ void SaveView::Impl::renderFullPipeline(ViewSettings settings) {
       filename.data(), filename_size, file_template.u8string().c_str(), frame);
   ++frame;
 
-  FreeImage_Save(fi_format, bitmap, filename.data(), fi_options);
+  bool success = FreeImage_Save(fi_format, bitmap, filename.data(), fi_options);
   FreeImage_Unload(bitmap);
 
   auto t2 = std::chrono::steady_clock::now();
@@ -188,7 +189,14 @@ void SaveView::Impl::renderFullPipeline(ViewSettings settings) {
   auto dt1 = std::chrono::duration_cast<d_seconds>(t1 - t0);
   auto dt2 = std::chrono::duration_cast<d_seconds>(t2 - t1);
 
-  GM_DBG2("SaveView", "Captured and saved image " << &filename[0] << " in " << int(1e3 * dt1.count() + 0.8) << " + " << int(1e3 * dt2.count() + 0.8) << " ms");
+  if (success) {
+    GM_DBG2("SaveView",
+            "Captured and saved image "
+                << &filename[0] << " in " << int(1e3 * dt1.count() + 0.8)
+                << " + " << int(1e3 * dt2.count() + 0.8) << " ms");
+  } else {
+    GM_ERR("SaveView", "Could not save image " << &filename[0]);
+  }
 
   render_target.pop();
 
