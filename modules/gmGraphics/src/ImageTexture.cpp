@@ -141,6 +141,10 @@ bool ImageTexture::Impl::loadImage(std::filesystem::path file_template,
   switch (image_type) {
   case FIT_BITMAP:
     switch (FreeImage_GetBPP(image)) {
+    case 8:
+      gl_format = GL_RED;
+      gl_type = GL_UNSIGNED_BYTE;
+      break;
     case 24:
       gl_format = GL_BGR;
       gl_type = GL_UNSIGNED_BYTE;
