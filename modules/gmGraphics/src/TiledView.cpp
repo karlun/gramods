@@ -91,6 +91,8 @@ void TiledView::Impl::renderFullPipeline(ViewSettings settings) {
     glViewport(x, y, width, height);
     tile.view->renderFullPipeline(settings);
   }
+
+  glViewport(cvp[0], cvp[1], cvp[2], cvp[3]);
 }
 
 void TiledView::addTileLocation(gmCore::size4 c) {
