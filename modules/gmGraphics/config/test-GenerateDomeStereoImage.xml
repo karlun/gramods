@@ -1,0 +1,49 @@
+<config>
+
+  <!--OStreamMessageSink useAnsiColor="true" level="3"-->
+  <!--LogFileMessageSink logFilePath="gramods.log" append="false"/-->
+
+  <ImportLibrary library="gmGraphics"/>
+
+  <SdlWindow
+      size="1000 500"
+      title="Stereo Dome Image"
+      GLMajor="3" GLMinor="3">
+
+    <SdlContext
+        useVideo="1"/>
+
+    <CubeSceneRenderer
+        cubeSize="0.2"
+        cubeSetSize="10.0"/>
+
+    <SaveView
+        file="generated-dome-stereo-image.png"
+        resolution="8192 4096">
+      <TiledView>
+
+        <param name="tileLocation" value="0 0 1 1"/>
+        <SpatialSphericalView
+            cubeMapResolution="4096"
+            linearInterpolation="1">
+
+          <EquirectangularCoordinatesMapper/>
+          <Viewpoint position="0.06 0 -7.0"/>
+
+        </SpatialSphericalView>
+
+        <param name="tileLocation" value="0 1 1 1"/>
+        <SpatialSphericalView
+            cubeMapResolution="4096"
+            linearInterpolation="1">
+
+          <EquirectangularCoordinatesMapper/>
+          <Viewpoint position="-0.06 0 -7.0"/>
+
+        </SpatialSphericalView>
+
+      </TiledView>
+    </SaveView>
+  </SdlWindow>
+
+</config>
