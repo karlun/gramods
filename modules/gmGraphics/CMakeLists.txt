@@ -165,6 +165,9 @@ CONFIGURE_FILE(
 INCLUDE(GetSourcesAndHeaders)
 get_sources_and_headers()
 
+LIST(APPEND HEADERS_MAGIC $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}/include/gmGraphics/config.hh>)
+LIST(APPEND HEADERS_MAGIC $<INSTALL_INTERFACE:include/gmGraphics/config.hh>)
+
 SOURCE_GROUP("headers" FILES ${HEADERS_ABSOLUTE})
 SOURCE_GROUP("sources" FILES ${SOURCES})
 
