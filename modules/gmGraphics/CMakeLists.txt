@@ -152,7 +152,9 @@ ELSE()
   MESSAGE (STATUS "Not including 'python-resources' target - requires Python3")
 ENDIF()
 
-IF (gramods_INSTALL_RESOURCES AND EXISTS ${CMAKE_CURRENT_BINARY_DIR}/resources)
+IF (gramods_INSTALL_RESOURCES AND
+    (gramods_BUILD_RESOURCES OR
+      EXISTS ${CMAKE_CURRENT_BINARY_DIR}/resources))
   INSTALL(DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/resources
     DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/gramods/gmGraphics)
 ENDIF()
