@@ -2,14 +2,17 @@ CMAKE_MINIMUM_REQUIRED(VERSION 3.13)
 CMAKE_POLICY(VERSION 3.13)
 
 
-SET (PUBLIC_INCLUDE_DIRS CACHE INTERNAL "The list of public include folders for the graphics module.")
-SET (PRIVATE_INCLUDE_DIRS CACHE INTERNAL "The list of private include folders for the graphics module.")
+SET (MODULE_INCLUDE_DIRS CACHE INTERNAL "The list of include folders for the graphics module.")
 SET (PUBLIC_LIBS CACHE INTERNAL "The list of public libraries that the graphics module should link against.")
 SET (PRIVATE_LIBS CACHE INTERNAL "The list of private libraries that the graphics module should link against.")
+SET (INTERNAL_LIBS CACHE INTERNAL "The list of internal libraries that the graphics module should link against.")
 
 
 LIST (APPEND PUBLIC_LIBS gmCore)
+LIST (APPEND INTERNAL_LIBS gmCore_internal_deps)
+
 LIST (APPEND PUBLIC_LIBS gmTrack)
+LIST (APPEND INTERNAL_LIBS gmTrack_internal_deps)
 
 FIND_PACKAGE (Eigen3 QUIET NO_MODULE)
 IF (Eigen3_FOUND)
@@ -55,7 +58,7 @@ IF(SDL2_FOUND)
   SET(HAVE_SDL2 1)
   OPTION(gramods_ENABLE_SDL2 "Enable functionality that requires SDL2" ON)
   IF(gramods_ENABLE_SDL2)
-    LIST (APPEND PRIVATE_INCLUDE_DIRS ${SDL2_INCLUDE_DIR})
+    LIST (APPEND MODULE_INCLUDE_DIRS ${SDL2_INCLUDE_DIR})
     LIST (APPEND PRIVATE_LIBS ${SDL2_LIBRARY})
   ENDIF(gramods_ENABLE_SDL2)
 ELSE()
@@ -67,7 +70,7 @@ IF(libuvc_FOUND)
   SET(HAVE_libuvc 1)
   OPTION(gramods_ENABLE_libuvc "Enable functionality that requires libuvc" ON)
   IF (gramods_ENABLE_libuvc)
-    LIST (APPEND PRIVATE_INCLUDE_DIRS ${libuvc_INCLUDE_DIR})
+    LIST (APPEND MODULE_INCLUDE_DIRS ${libuvc_INCLUDE_DIR})
     LIST (APPEND PRIVATE_LIBS ${libuvc_LIBRARIES})
   ENDIF(gramods_ENABLE_libuvc)
 ENDIF(libuvc_FOUND)
@@ -77,7 +80,7 @@ IF(FreeImage_FOUND)
   SET(HAVE_FreeImage 1)
   OPTION(gramods_ENABLE_FreeImage "Enable functionality that requires FreeImage" ON)
   IF (gramods_ENABLE_FreeImage)
-    LIST (APPEND PRIVATE_INCLUDE_DIRS ${FreeImage_INCLUDE_DIR})
+    LIST (APPEND MODULE_INCLUDE_DIRS ${FreeImage_INCLUDE_DIR})
     LIST (APPEND PRIVATE_LIBS ${FreeImage_LIBRARIES})
   ENDIF(gramods_ENABLE_FreeImage)
 ELSE()
@@ -89,7 +92,7 @@ IF (OPENSCENEGRAPH_FOUND)
   SET(HAVE_OpenSceneGraph 1)
   OPTION(gramods_ENABLE_OpenSceneGraph "Enable functionality that requires OpenSceneGraph" ON)
   IF (gramods_ENABLE_OpenSceneGraph)
-    LIST (APPEND PRIVATE_INCLUDE_DIRS ${OPENSCENEGRAPH_INCLUDE_DIRS})
+    LIST (APPEND MODULE_INCLUDE_DIRS ${OPENSCENEGRAPH_INCLUDE_DIRS})
     LIST (APPEND PRIVATE_LIBS ${OPENSCENEGRAPH_LIBRARIES})
   ELSE()
     MESSAGE (STATUS "Not including OpenSceneGraph support in gmGraphics - requires OpenSceneGraph (disabled)")
@@ -181,9 +184,8 @@ TARGET_INCLUDE_DIRECTORIES(gmGraphics
   $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
   $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}/include>
   $<INSTALL_INTERFACE:include>
-  ${PUBLIC_INCLUDE_DIRS}
   PRIVATE
-  ${PRIVATE_INCLUDE_DIRS})
+  ${MODULE_INCLUDE_DIRS})
 TARGET_SOURCES(gmGraphics
   PRIVATE ${SOURCES}
   PUBLIC ${HEADERS_MAGIC}
@@ -191,6 +193,14 @@ TARGET_SOURCES(gmGraphics
 TARGET_LINK_LIBRARIES(gmGraphics
   PUBLIC ${PUBLIC_LIBS}
   PRIVATE ${PRIVATE_LIBS})
+
+# Get absolute library paths of dependencies into apps and tests
+ADD_LIBRARY(gmGraphics_internal_deps INTERFACE)
+TARGET_INCLUDE_DIRECTORIES(gmGraphics_internal_deps
+  INTERFACE ${MODULE_INCLUDE_DIRS})
+TARGET_LINK_LIBRARIES(gmGraphics_internal_deps
+  INTERFACE ${PUBLIC_LIBS} ${PRIVATE_LIBS} ${INTERNAL_LIBS} gmGraphics)
+
 
 SET_PROPERTY(TARGET gmGraphics PROPERTY CXX_STANDARD 17)
 SET_PROPERTY(TARGET gmGraphics PROPERTY WINDOWS_EXPORT_ALL_SYMBOLS TRUE)

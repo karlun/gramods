@@ -83,6 +83,12 @@ TARGET_LINK_LIBRARIES(gmTrack
   PUBLIC ${PUBLIC_LIBS}
   PRIVATE ${PRIVATE_LIBS})
 
+# Get absolute library paths of dependencies into apps and tests
+ADD_LIBRARY(gmTrack_internal_deps INTERFACE)
+TARGET_LINK_LIBRARIES(gmTrack_internal_deps
+  INTERFACE ${PUBLIC_LIBS} ${PRIVATE_LIBS} gmTrack)
+
+
 INCLUDE(GenerateExportHeader)
 GENERATE_EXPORT_HEADER(gmTrack
   EXPORT_FILE_NAME include/gmTrack/export.hh

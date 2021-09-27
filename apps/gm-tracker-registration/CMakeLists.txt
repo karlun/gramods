@@ -8,8 +8,22 @@ SET (APP_LIBS CACHE INTERNAL "The list of libraries that the app should link aga
 LIST (APPEND APP_INCLUDE_DIRS ${CMAKE_CURRENT_SOURCE_DIR}/include)
 LIST (APPEND APP_INCLUDE_DIRS ${CMAKE_CURRENT_BINARY_DIR}/include)
 
-LIST (APPEND APP_LIBS gmCore)
-LIST (APPEND APP_LIBS gmTrack)
+IF (NOT TARGET gmCore)
+  MESSAGE (WARNING "Not including gm-tracker-registration - requires gmCore")
+  RETURN()
+ENDIF ()
+LIST (APPEND APP_LIBS gmCore_internal_deps)
+
+IF (NOT gramods_ENABLE_TinyXML2)
+  MESSAGE (WARNING "Not including gm-tracker-registration - requires XML support")
+  RETURN()
+ENDIF ()
+
+IF (NOT TARGET gmTrack)
+  MESSAGE (WARNING "Not including gm-tracker-registration - requires gmTrack")
+  RETURN()
+ENDIF ()
+LIST (APPEND APP_LIBS gmTrack_internal_deps)
 
 
 FIND_PACKAGE (TCLAP)
