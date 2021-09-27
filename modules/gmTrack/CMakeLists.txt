@@ -3,10 +3,11 @@ CMAKE_POLICY(VERSION 3.13)
 
 
 SET (PRIVATE_INCLUDE_DIRS CACHE INTERNAL "The list of private include folders for the track module.")
-SET (MODULE_LIBS CACHE INTERNAL "The list of libraries that the track module should link against.")
+SET (PUBLIC_LIBS CACHE INTERNAL "The list of public libraries that the track module should link against.")
+SET (PRIVATE_LIBS CACHE INTERNAL "The list of private libraries that the track module should link against.")
 
 
-LIST (APPEND MODULE_LIBS gmCore)
+LIST (APPEND PUBLIC_LIBS gmCore)
 
 FIND_PACKAGE (Eigen3 QUIET NO_MODULE)
 IF (Eigen3_FOUND)
@@ -20,7 +21,7 @@ ELSE()
   MESSAGE (WARNING "Not including gmTrack - requires Eigen3")
   RETURN()
 ENDIF()
-LIST (APPEND MODULE_LIBS Eigen3::Eigen)
+LIST (APPEND PUBLIC_LIBS Eigen3::Eigen)
 
 FIND_PACKAGE(VRPN)
 IF(VRPN_FOUND)
@@ -30,7 +31,7 @@ IF(VRPN_FOUND)
   OPTION(gramods_ENABLE_VRPN_server "Enable functionality that requires VRPN_server" ON)
   IF (gramods_ENABLE_VRPN OR gramods_ENABLE_VRPN_server)
     LIST (APPEND PRIVATE_INCLUDE_DIRS ${VRPN_INCLUDE_DIR})
-    LIST (APPEND MODULE_LIBS ${VRPN_LIBRARIES})
+    LIST (APPEND PRIVATE_LIBS ${VRPN_LIBRARIES})
   ENDIF(gramods_ENABLE_VRPN OR gramods_ENABLE_VRPN_server)
 ENDIF(VRPN_FOUND)
 
@@ -45,7 +46,7 @@ IF(OPENCV_ARUCO_FOUND)
   SET(HAVE_aruco 1)
   OPTION(gramods_ENABLE_aruco "Enable functionality that requires aruco" ON)
   IF (gramods_ENABLE_aruco)
-    LIST (APPEND MODULE_LIBS ${OpenCV_LIBS})
+    LIST (APPEND PUBLIC_LIBS ${OpenCV_LIBS})
   ENDIF()
 ENDIF()
 
@@ -78,7 +79,9 @@ TARGET_SOURCES(gmTrack
   PRIVATE ${SOURCES}
   PUBLIC ${HEADERS_MAGIC}
   )
-TARGET_LINK_LIBRARIES(gmTrack ${MODULE_LIBS})
+TARGET_LINK_LIBRARIES(gmTrack
+  PUBLIC ${PUBLIC_LIBS}
+  PRIVATE ${PRIVATE_LIBS})
 
 INCLUDE(GenerateExportHeader)
 GENERATE_EXPORT_HEADER(gmTrack
