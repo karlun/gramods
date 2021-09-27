@@ -3,7 +3,8 @@ CMAKE_POLICY(VERSION 3.13)
 
 
 SET (PUBLIC_INCLUDE_DIRS CACHE INTERNAL "The list of public include folders for the core module.")
-SET (MODULE_LIBS CACHE INTERNAL "The list of libraries that the core module must link against.")
+SET (PUBLIC_LIBS CACHE INTERNAL "The list of public libraries that the core module should link against.")
+SET (PRIVATE_LIBS CACHE INTERNAL "The list of private libraries that the core module should link against.")
 
 
 FIND_PACKAGE (Eigen3 QUIET NO_MODULE)
@@ -11,7 +12,7 @@ IF (Eigen3_FOUND)
   SET(HAVE_Eigen3 1)
   OPTION(gramods_ENABLE_Eigen3 "Enable functionality that requires Eigen3" ON)
   IF (gramods_ENABLE_Eigen3)
-    LIST (APPEND MODULE_LIBS Eigen3::Eigen)
+    LIST (APPEND PUBLIC_LIBS Eigen3::Eigen)
   ENDIF()
 ENDIF()
 
@@ -21,7 +22,7 @@ IF(TinyXML2_FOUND)
   OPTION(gramods_ENABLE_TinyXML2 "Enable functionality that requires TinyXML2" ON)
   IF(gramods_ENABLE_TinyXML2)
     LIST (APPEND PUBLIC_INCLUDE_DIRS ${TinyXML2_INCLUDE_DIRS})
-    LIST (APPEND MODULE_LIBS ${TinyXML2_LIBRARIES})
+    LIST (APPEND PUBLIC_LIBS ${TinyXML2_LIBRARIES})
     LIST (APPEND MODULE_DEFINES TINYXML2_IMPORT)
   ELSE()
     MESSAGE (STATUS "gmCore will not support XML-based configuration - requires TinyXML2 (disabled)")
@@ -36,7 +37,7 @@ IF(SDL2_FOUND)
   OPTION(gramods_ENABLE_SDL2 "Enable functionality that requires SDL2" ON)
   IF(gramods_ENABLE_SDL2)
     LIST (APPEND PUBLIC_INCLUDE_DIRS ${SDL2_INCLUDE_DIR})
-    LIST (APPEND MODULE_LIBS ${SDL2_LIBRARY})
+    LIST (APPEND PUBLIC_LIBS ${SDL2_LIBRARY})
   ELSE()
     MESSAGE (STATUS "gmCore will not be able to initialize SDL2 context - requires SDL2 (disabled)")
   ENDIF()
@@ -44,7 +45,7 @@ ELSE()
     MESSAGE (WARNING "gmCore will not be able to initialize SDL2 context - requires SDL2")
 ENDIF()
 
-LIST (APPEND MODULE_LIBS ${CMAKE_DL_LIBS})
+LIST (APPEND PRIVATE_LIBS ${CMAKE_DL_LIBS})
 
 
 OPTION(gramods_STRIP_PATH_FROM_FILE
@@ -58,6 +59,11 @@ CONFIGURE_FILE(
 
 INCLUDE(GetSourcesAndHeaders)
 get_sources_and_headers()
+
+LIST(APPEND HEADERS_MAGIC $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}/include/gmCore/config.hh>)
+LIST(APPEND HEADERS_MAGIC $<INSTALL_INTERFACE:include/gmCore/config.hh>)
+LIST(APPEND HEADERS_MAGIC $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}/include/gmCore/export.hh>)
+LIST(APPEND HEADERS_MAGIC $<INSTALL_INTERFACE:include/gmCore/export.hh>)
 
 SOURCE_GROUP("headers" FILES ${HEADERS_ABSOLUTE})
 SOURCE_GROUP("sources" FILES ${SOURCES})
@@ -74,7 +80,9 @@ TARGET_SOURCES(gmCore
   PRIVATE ${SOURCES}
   PUBLIC ${HEADERS_MAGIC}
   )
-TARGET_LINK_LIBRARIES(gmCore ${MODULE_LIBS})
+TARGET_LINK_LIBRARIES(gmCore
+  PUBLIC ${PUBLIC_LIBS}
+  PRIVATE ${PRIVATE_LIBS})
 
 
 INCLUDE(GenerateExportHeader)

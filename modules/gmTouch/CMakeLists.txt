@@ -4,10 +4,11 @@ CMAKE_POLICY(VERSION 3.13)
 
 SET (PRIVATE_INCLUDE_DIRS CACHE INTERNAL "The list of private include folders for the touch module.")
 SET (PUBLIC_INCLUDE_DIRS CACHE INTERNAL "The list of public include folders for the touch module.")
-SET (MODULE_LIBS CACHE INTERNAL "The list of libraries that the touch module should link against.")
+SET (PUBLIC_LIBS CACHE INTERNAL "The list of public libraries that the touch module should link against.")
+SET (PRIVATE_LIBS CACHE INTERNAL "The list of private libraries that the touch module should link against.")
 
 
-LIST (APPEND MODULE_LIBS gmMisc)
+LIST (APPEND PUBLIC_LIBS gmMisc)
 
 FIND_PACKAGE (Eigen3 QUIET NO_MODULE)
 IF (Eigen3_FOUND)
@@ -21,7 +22,7 @@ ELSE()
   MESSAGE (STATUS "Not including gmTouch - requires Eigen3")
   RETURN()
 ENDIF()
-LIST (APPEND MODULE_LIBS Eigen3::Eigen)
+LIST (APPEND PUBLIC_LIBS Eigen3::Eigen)
 
 FIND_PACKAGE(OpenSceneGraph)
 IF (OPENSCENEGRAPH_FOUND)
@@ -29,7 +30,7 @@ IF (OPENSCENEGRAPH_FOUND)
   OPTION(gramods_ENABLE_OpenSceneGraph "Enable functionality that requires OpenSceneGraph" ON)
   IF (gramods_ENABLE_OpenSceneGraph)
     LIST (APPEND PUBLIC_INCLUDE_DIRS ${OPENSCENEGRAPH_INCLUDE_DIRS})
-    LIST (APPEND MODULE_LIBS ${OPENSCENEGRAPH_LIBRARIES})
+    LIST (APPEND PUBLIC_LIBS ${OPENSCENEGRAPH_LIBRARIES})
   ENDIF ()
 ENDIF ()
 
@@ -39,7 +40,7 @@ IF (SDL2_FOUND)
   OPTION(gramods_ENABLE_SDL2 "Enable functionality that requires SDL2" ON)
   IF (gramods_ENABLE_SDL2)
     LIST (APPEND PUBLIC_INCLUDE_DIRS ${SDL2_INCLUDE_DIR})
-    LIST (APPEND MODULE_LIBS ${SDL2_LIBRARY})
+    LIST (APPEND PUBLIC_LIBS ${SDL2_LIBRARY})
   ENDIF ()
 ENDIF ()
 
@@ -49,7 +50,7 @@ IF (TUIO_FOUND)
   OPTION(gramods_ENABLE_TUIO "Enable functionality that requires TUIO" ON)
   IF (gramods_ENABLE_TUIO)
     LIST (APPEND PRIVATE_INCLUDE_DIRS ${TUIO_INCLUDE_DIRS})
-    LIST (APPEND MODULE_LIBS ${TUIO_LIBRARY})
+    LIST (APPEND PRIVATE_LIBS ${TUIO_LIBRARY})
   ENDIF ()
 ENDIF ()
 
@@ -61,6 +62,9 @@ CONFIGURE_FILE(
 
 INCLUDE(GetSourcesAndHeaders)
 get_sources_and_headers()
+
+LIST(APPEND HEADERS_MAGIC $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}/include/gmTouch/config.hh>)
+LIST(APPEND HEADERS_MAGIC $<INSTALL_INTERFACE:include/gmTouch/config.hh>)
 
 SOURCE_GROUP("headers" FILES ${HEADERS_ABSOLUTE})
 SOURCE_GROUP("sources" FILES ${SOURCES})
@@ -79,7 +83,9 @@ TARGET_SOURCES(gmTouch
   PRIVATE ${SOURCES}
   PUBLIC ${HEADERS_MAGIC}
   )
-TARGET_LINK_LIBRARIES(gmTouch ${MODULE_LIBS})
+TARGET_LINK_LIBRARIES(gmTouch
+  PUBLIC ${PUBLIC_LIBS}
+  PRIVATE ${PRIVATE_LIBS})
 
 SET_PROPERTY(TARGET gmTouch PROPERTY CXX_STANDARD 14)
 SET_PROPERTY(TARGET gmTouch PROPERTY WINDOWS_EXPORT_ALL_SYMBOLS TRUE)

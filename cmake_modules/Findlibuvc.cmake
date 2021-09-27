@@ -3,15 +3,9 @@
 #  libuvc_FOUND - System has libuvc
 #  libuvc_INCLUDE_DIRS - The libuvc include directories
 #  libuvc_LIBRARIES - The libraries needed to use libuvc
-#  libuvc_DEFINITIONS - Compiler switches required for using libuvc
 
-find_package(PkgConfig)
-pkg_check_modules(PC_LIBXML QUIET libxml-2.0)
-set(libuvc_DEFINITIONS ${PC_LIBXML_CFLAGS_OTHER})
-
-find_path(libuvc_INCLUDE_DIR libuvc_config.h)
-
-find_library(libuvc_LIBRARY NAMES libuvc)
+find_path(libuvc_INCLUDE_DIR libuvc/libuvc.h)
+find_library(libuvc_LIBRARY NAMES uvc)
 
 include(FindPackageHandleStandardArgs)
 # handle the QUIETLY and REQUIRED arguments and set libuvc_FOUND to TRUE

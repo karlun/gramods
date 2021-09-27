@@ -3,10 +3,10 @@ CMAKE_POLICY(VERSION 3.13)
 
 
 SET (PRIVATE_INCLUDE_DIRS CACHE INTERNAL "The list of private include folders for the network module.")
-SET (MODULE_LIBS CACHE INTERNAL "The list of libraries that the network module should link against.")
+SET (PUBLIC_LIBS CACHE INTERNAL "The list of public libraries that the network module should link against.")
 
 
-LIST (APPEND MODULE_LIBS gmCore)
+LIST (APPEND PUBLIC_LIBS gmCore)
 
 # Boost ASIO (headers only)
 FIND_PACKAGE (ASIO)
@@ -40,6 +40,9 @@ CONFIGURE_FILE(
 INCLUDE(GetSourcesAndHeaders)
 get_sources_and_headers()
 
+LIST(APPEND HEADERS_MAGIC $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}/include/gmNetwork/config.hh>)
+LIST(APPEND HEADERS_MAGIC $<INSTALL_INTERFACE:include/gmNetwork/config.hh>)
+
 SOURCE_GROUP("headers" FILES ${HEADERS_ABSOLUTE})
 SOURCE_GROUP("sources" FILES ${SOURCES})
 
@@ -56,7 +59,8 @@ TARGET_SOURCES(gmNetwork
   PRIVATE ${SOURCES}
   PUBLIC ${HEADERS_MAGIC}
   )
-TARGET_LINK_LIBRARIES(gmNetwork ${MODULE_LIBS})
+TARGET_LINK_LIBRARIES(gmNetwork
+  PUBLIC ${PUBLIC_LIBS})
 
 SET_PROPERTY(TARGET gmNetwork PROPERTY CXX_STANDARD 14)
 SET_PROPERTY(TARGET gmNetwork PROPERTY WINDOWS_EXPORT_ALL_SYMBOLS TRUE)
