@@ -55,6 +55,9 @@ CONFIGURE_FILE(
   ${CMAKE_CURRENT_BINARY_DIR}/include/gmTrack/config.hh)
 
 
+INCLUDE(MakeDependenciesRelocatable)
+make_dependencies_relocatable(PUBLIC_LIBS_MAGIC ${PUBLIC_LIBS})
+
 INCLUDE(GetSourcesAndHeaders)
 get_sources_and_headers()
 
@@ -80,7 +83,7 @@ TARGET_SOURCES(gmTrack
   PUBLIC ${HEADERS_MAGIC}
   )
 TARGET_LINK_LIBRARIES(gmTrack
-  PUBLIC ${PUBLIC_LIBS}
+  PUBLIC ${PUBLIC_LIBS_MAGIC}
   PRIVATE ${PRIVATE_LIBS})
 
 # Get absolute library paths of dependencies into apps and tests

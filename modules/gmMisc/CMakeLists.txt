@@ -2,17 +2,17 @@ CMAKE_MINIMUM_REQUIRED(VERSION 3.13)
 CMAKE_POLICY(VERSION 3.13)
 
 
-SET (MODULE_LIBS CACHE INTERNAL "The list of libraries that the misc module should link against.")
+SET (PUBLIC_LIBS CACHE INTERNAL "The list of public libraries that the misc module should link against.")
 
 
-LIST (APPEND MODULE_LIBS gmCore)
+LIST (APPEND PUBLIC_LIBS gmCore)
 
 FIND_PACKAGE (Eigen3 QUIET NO_MODULE)
 IF (Eigen3_FOUND)
   SET(HAVE_Eigen3 1)
   OPTION(gramods_ENABLE_Eigen3 "Enable functionality that requires Eigen3" ON)
   IF (gramods_ENABLE_Eigen3)
-    LIST (APPEND MODULE_LIBS Eigen3::Eigen)
+    LIST (APPEND PUBLIC_LIBS Eigen3::Eigen)
   ENDIF()
 ENDIF()
 
@@ -42,7 +42,8 @@ TARGET_SOURCES(gmMisc
   PRIVATE ${SOURCES}
   PUBLIC ${HEADERS_MAGIC}
   )
-TARGET_LINK_LIBRARIES(gmMisc ${MODULE_LIBS})
+TARGET_LINK_LIBRARIES(gmMisc
+  PUBLIC ${PUBLIC_LIBS})
 
 SET_PROPERTY(TARGET gmMisc PROPERTY CXX_STANDARD 14)
 SET_PROPERTY(TARGET gmMisc PROPERTY WINDOWS_EXPORT_ALL_SYMBOLS TRUE)
