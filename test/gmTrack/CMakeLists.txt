@@ -11,7 +11,7 @@ IF (NOT TARGET gmTrack)
   MESSAGE(STATUS "gmTrack test will not be built without gmTrack module")
   RETURN()
 ENDIF ()
-LIST (APPEND TEST_LIBS gmTrack)
+LIST (APPEND TEST_LIBS gmTrack_internal_deps)
 
 FIND_PACKAGE(GTest)
 IF (NOT GTest_FOUND)

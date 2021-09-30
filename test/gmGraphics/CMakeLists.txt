@@ -12,7 +12,7 @@ IF (NOT TARGET gmGraphics)
   MESSAGE(STATUS "gmGraphics test will not be built without gmGraphics module")
   RETURN()
 ENDIF ()
-LIST (APPEND TEST_LIBS gmGraphics)
+LIST (APPEND TEST_LIBS gmGraphics_internal_deps)
 
 FIND_PACKAGE(GTest)
 IF (NOT GTest_FOUND)

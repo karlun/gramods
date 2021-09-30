@@ -2,7 +2,7 @@ CMAKE_MINIMUM_REQUIRED(VERSION 3.13)
 CMAKE_POLICY(VERSION 3.13)
 
 
-SET (PUBLIC_INCLUDE_DIRS CACHE INTERNAL "The list of public include folders for the core module.")
+SET (MODULE_INCLUDE_DIRS CACHE INTERNAL "The list of public include folders for the core module.")
 SET (PUBLIC_LIBS CACHE INTERNAL "The list of public libraries that the core module should link against.")
 SET (PRIVATE_LIBS CACHE INTERNAL "The list of private libraries that the core module should link against.")
 
@@ -21,7 +21,7 @@ IF(TinyXML2_FOUND)
   SET(HAVE_TinyXML2 1)
   OPTION(gramods_ENABLE_TinyXML2 "Enable functionality that requires TinyXML2" ON)
   IF(gramods_ENABLE_TinyXML2)
-    LIST (APPEND PUBLIC_INCLUDE_DIRS ${TinyXML2_INCLUDE_DIRS})
+    LIST (APPEND MODULE_INCLUDE_DIRS ${TinyXML2_INCLUDE_DIRS})
     LIST (APPEND PUBLIC_LIBS ${TinyXML2_LIBRARIES})
     LIST (APPEND MODULE_DEFINES TINYXML2_IMPORT)
   ELSE()
@@ -36,7 +36,7 @@ IF(SDL2_FOUND)
   SET(HAVE_SDL2 1)
   OPTION(gramods_ENABLE_SDL2 "Enable functionality that requires SDL2" ON)
   IF(gramods_ENABLE_SDL2)
-    LIST (APPEND PUBLIC_INCLUDE_DIRS ${SDL2_INCLUDE_DIR})
+    LIST (APPEND MODULE_INCLUDE_DIRS ${SDL2_INCLUDE_DIR})
     LIST (APPEND PUBLIC_LIBS ${SDL2_LIBRARY})
   ELSE()
     MESSAGE (STATUS "gmCore will not be able to initialize SDL2 context - requires SDL2 (disabled)")
@@ -56,6 +56,8 @@ CONFIGURE_FILE(
   ${CMAKE_CURRENT_SOURCE_DIR}/src/config_cmake.hh
   ${CMAKE_CURRENT_BINARY_DIR}/include/gmCore/config.hh)
 
+INCLUDE(MakeDependenciesRelocatable)
+make_dependencies_relocatable(PUBLIC_LIBS_MAGIC ${PUBLIC_LIBS})
 
 INCLUDE(GetSourcesAndHeaders)
 get_sources_and_headers()
@@ -75,14 +77,22 @@ TARGET_INCLUDE_DIRECTORIES(gmCore
   $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
   $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}/include>
   $<INSTALL_INTERFACE:include>
-  ${PUBLIC_INCLUDE_DIRS})
+  PRIVATE
+  ${MODULE_INCLUDE_DIRS})
 TARGET_SOURCES(gmCore
   PRIVATE ${SOURCES}
   PUBLIC ${HEADERS_MAGIC}
   )
 TARGET_LINK_LIBRARIES(gmCore
-  PUBLIC ${PUBLIC_LIBS}
+  PUBLIC ${PUBLIC_LIBS_MAGIC}
   PRIVATE ${PRIVATE_LIBS})
+
+# Get absolute library paths of dependencies into apps and tests
+ADD_LIBRARY(gmCore_internal_deps INTERFACE)
+TARGET_INCLUDE_DIRECTORIES(gmCore_internal_deps
+  INTERFACE ${MODULE_INCLUDE_DIRS})
+TARGET_LINK_LIBRARIES(gmCore_internal_deps
+  INTERFACE ${PUBLIC_LIBS} ${PRIVATE_LIBS} gmCore)
 
 
 INCLUDE(GenerateExportHeader)

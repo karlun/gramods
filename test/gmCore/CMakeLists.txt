@@ -11,7 +11,7 @@ IF (NOT TARGET gmCore)
   MESSAGE(STATUS "gmCore test will not be built without gmCore module")
   RETURN()
 ENDIF ()
-LIST (APPEND TEST_LIBS gmCore)
+LIST (APPEND TEST_LIBS gmCore_internal_deps)
 
 FIND_PACKAGE(GTest)
 IF (NOT GTest_FOUND)

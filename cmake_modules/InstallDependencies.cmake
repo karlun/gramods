@@ -33,6 +33,8 @@ function(install_dependencies EXEC_FILES LIB_FILES)
     ENDIF()
     FOREACH (file ${_c_deps_FILENAMES})
       MESSAGE(WARNING "There were conflicting dependencies for ${file}: ${_c_deps_${file}}!")
+      LIST(GET _c_deps_${file} 0 tmp)
+      LIST(APPEND _r_deps ${tmp})
     ENDFOREACH ()
 
     IF (WIN32)
