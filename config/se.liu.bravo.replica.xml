@@ -82,8 +82,6 @@
     </SyncNode>
   </if>
 
-  <ImportLibrary library="gmGraphics"/>
-
   <SphereGeometry
       DEF="GEOMETRY"
       radius="7.4"
