@@ -39,8 +39,8 @@ ENDIF()
 
 # --- HANDLE MODULES ---
 
-SET(gramods_EXEC_TARGET_FILES "" CACHE INTERNAL "List of generator expressions that will be evaluated to paths to executable target files")
-SET(gramods_LIB_TARGET_FILES "" CACHE INTERNAL "List of generator expressions that will be evaluated to paths to library target files")
+SET(gramods_EXEC_TARGET_FILES "")
+SET(gramods_LIB_TARGET_FILES "")
 
 SUBDIRLIST(gramods_MODULES ${gramods_SOURCE_DIR}/modules)
 FOREACH (MODULE ${gramods_MODULES})
