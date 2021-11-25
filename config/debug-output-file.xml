@@ -1,0 +1,3 @@
+<config>
+  <LogFileMessageSink logFilePath="gramods.log" append="false"/>
+</config>

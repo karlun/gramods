@@ -57,9 +57,8 @@ public:
   void output(Message msg);
 
   /**
-     Set the level of messages to output. This is an integer 0-4 where
-     0 results in only error messages begin printed and 4 results in
-     all messages.
+     Set the level of messages to output. This is an integer typically
+     following the level of importance in ConsoleLevel, inclusive.
 
      \gmXmlTag{gmCore,OStreamMessageSink,level}
   */
