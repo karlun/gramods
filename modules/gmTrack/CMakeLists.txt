@@ -11,8 +11,11 @@ LIST (APPEND PUBLIC_LIBS gmCore)
 
 FIND_PACKAGE (Eigen3 QUIET NO_MODULE)
 IF (Eigen3_FOUND)
+
   SET(HAVE_Eigen3 1)
+  LIST(APPEND gramods_DOCS_DEFINES HAVE_Eigen3)
   OPTION(gramods_ENABLE_Eigen3 "Enable functionality that requires Eigen3" ON)
+
   IF (NOT gramods_ENABLE_Eigen3)
     MESSAGE (STATUS "Not including gmTrack - requires Eigen3 (disabled)")
     RETURN()
@@ -22,17 +25,30 @@ ELSE()
   RETURN()
 ENDIF()
 LIST (APPEND PUBLIC_LIBS Eigen3::Eigen)
+LIST(APPEND gramods_DOCS_DEFINES gramods_ENABLE_Eigen3)
 
 FIND_PACKAGE(VRPN)
 IF(VRPN_FOUND)
+
   SET(HAVE_VRPN 1)
+  LIST(APPEND gramods_DOCS_DEFINES HAVE_VRPN)
   OPTION(gramods_ENABLE_VRPN "Enable functionality that requires VRPN" ON)
+
   SET(HAVE_VRPN_server 1)
+  LIST(APPEND gramods_DOCS_DEFINES HAVE_VRPN_server)
   OPTION(gramods_ENABLE_VRPN_server "Enable functionality that requires VRPN_server" ON)
-  IF (gramods_ENABLE_VRPN OR gramods_ENABLE_VRPN_server)
+
+  IF (gramods_ENABLE_VRPN)
     LIST (APPEND PRIVATE_INCLUDE_DIRS ${VRPN_INCLUDE_DIR})
     LIST (APPEND PRIVATE_LIBS ${VRPN_LIBRARIES})
-  ENDIF(gramods_ENABLE_VRPN OR gramods_ENABLE_VRPN_server)
+    LIST (APPEND gramods_DOCS_DEFINES gramods_ENABLE_VRPN)
+  ENDIF(gramods_ENABLE_VRPN)
+
+  IF (gramods_ENABLE_VRPN_server)
+    LIST (APPEND PRIVATE_INCLUDE_DIRS ${VRPN_INCLUDE_DIR})
+    LIST (APPEND PRIVATE_LIBS ${VRPN_LIBRARIES})
+    LIST (APPEND gramods_DOCS_DEFINES gramods_ENABLE_VRPN_server)
+  ENDIF(gramods_ENABLE_VRPN_server)
 ENDIF(VRPN_FOUND)
 
 FIND_PACKAGE(OpenCV QUIET OPTIONAL_COMPONENTS aruco)
@@ -44,11 +60,16 @@ IF(OPENCV_ARUCO_FOUND)
     MESSAGE(WARNING "OpenCV version is not 4 - errors may occur")
   ENDIF()
   SET(HAVE_aruco 1)
+  LIST(APPEND gramods_DOCS_DEFINES HAVE_aruco)
   OPTION(gramods_ENABLE_aruco "Enable functionality that requires aruco" ON)
   IF (gramods_ENABLE_aruco)
     LIST (APPEND PUBLIC_LIBS ${OpenCV_LIBS})
+    LIST (APPEND gramods_DOCS_DEFINES gramods_ENABLE_aruco)
   ENDIF()
 ENDIF()
+
+
+SET(gramods_DOCS_DEFINES ${gramods_DOCS_DEFINES} PARENT_SCOPE)
 
 CONFIGURE_FILE(
   ${CMAKE_CURRENT_SOURCE_DIR}/src/config_cmake.hh

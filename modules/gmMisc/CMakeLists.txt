@@ -10,11 +10,15 @@ LIST (APPEND PUBLIC_LIBS gmCore)
 FIND_PACKAGE (Eigen3 QUIET NO_MODULE)
 IF (Eigen3_FOUND)
   SET(HAVE_Eigen3 1)
+  LIST(APPEND gramods_DOCS_DEFINES HAVE_Eigen3)
   OPTION(gramods_ENABLE_Eigen3 "Enable functionality that requires Eigen3" ON)
   IF (gramods_ENABLE_Eigen3)
     LIST (APPEND PUBLIC_LIBS Eigen3::Eigen)
   ENDIF()
 ENDIF()
+
+
+SET(gramods_DOCS_DEFINES ${gramods_DOCS_DEFINES} PARENT_SCOPE)
 
 
 CONFIGURE_FILE(

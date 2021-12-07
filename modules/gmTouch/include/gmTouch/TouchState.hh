@@ -621,10 +621,10 @@ public:
 
     /**
      * Adds a touch point sample
+     *
      * @param id The id of the touch point
      * @param x position in (sub) pixels from left edge.
      * @param y position in (sub) pixels from top edge.
-     * @param time the time of the event in seconds.
      */
     void addTouchState(TouchPointId id, float x, float y);
 

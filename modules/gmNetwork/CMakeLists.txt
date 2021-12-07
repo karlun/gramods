@@ -11,18 +11,24 @@ LIST (APPEND PUBLIC_LIBS gmCore)
 # Boost ASIO (headers only)
 FIND_PACKAGE (ASIO)
 IF (ASIO_FOUND)
+
   SET(HAVE_ASIO 1)
+  LIST(APPEND gramods_DOCS_DEFINES HAVE_ASIO)
   OPTION(gramods_ENABLE_ASIO "Enable functionality that requires ASIO" ON)
+
   IF (NOT gramods_ENABLE_ASIO)
     MESSAGE (STATUS "Not including gmNetwork - requires ASIO (disabled)")
     RETURN()
   ENDIF()
+  LIST(APPEND gramods_DOCS_DEFINES gramods_ENABLE_ASIO)
 ELSE()
   MESSAGE (STATUS "Not including gmNetwork - requires ASIO")
   RETURN()
 ENDIF()
 LIST (APPEND PRIVATE_INCLUDE_DIRS ${ASIO_INCLUDE_DIRS})
 
+
+SET(gramods_DOCS_DEFINES ${gramods_DOCS_DEFINES} PARENT_SCOPE)
 
 OPTION(gramods_ACTIVATE_ASIO_HANDLER_TRACKING
   "Activate ASIO handler tracking and debug output to the standard error stream."

@@ -2192,9 +2192,7 @@ INCLUDE_PATH           = @CMAKE_CURRENT_BINARY_DIR@/modules/gmCore/include \
                          @CMAKE_CURRENT_BINARY_DIR@/modules/gmNetwork/include \
                          @CMAKE_CURRENT_SOURCE_DIR@/modules/gmNetwork/include \
                          @CMAKE_CURRENT_BINARY_DIR@/modules/gmTrack/include \
-                         @CMAKE_CURRENT_SOURCE_DIR@/modules/gmTrack/include \
-                         @CMAKE_CURRENT_BINARY_DIR@/modules/gmTypes/include \
-                         @CMAKE_CURRENT_SOURCE_DIR@/modules/gmTypes/include
+                         @CMAKE_CURRENT_SOURCE_DIR@/modules/gmTrack/include
 
 # You can use the INCLUDE_FILE_PATTERNS tag to specify one or more wildcard
 # patterns (like *.h and *.hpp) to filter out the header-files in the
@@ -2212,7 +2210,7 @@ INCLUDE_FILE_PATTERNS  =
 # recursively expanded use the := operator instead of the = operator.
 # This tag requires that the tag ENABLE_PREPROCESSING is set to YES.
 
-PREDEFINED             =
+PREDEFINED             = @DOCS_DEFINES_STRING@
 
 # If the MACRO_EXPANSION and EXPAND_ONLY_PREDEF tags are set to YES then this
 # tag can be used to specify a list of macro names that should be expanded. The
