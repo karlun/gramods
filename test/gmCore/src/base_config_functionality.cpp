@@ -110,6 +110,33 @@ TEST(gmCoreBaseFunctionality, Multiple) {
   EXPECT_EQ(3, sub->ptrs[2]->a);
 }
 
+TEST(gmCoreBaseFunctionality, Named) {
+  std::string xml = R"lang=xml(
+  <config>
+    <Base AS="abc" a="123"/>
+    <Base AS="xyz" a="321"/>
+    <Base AS="UVW" a="999"/>
+  </config>
+  )lang=xml";
+
+  gmCore::Configuration config(xml);
+  std::shared_ptr<Base> base_abc;
+  std::shared_ptr<Base> base_xyz;
+  std::shared_ptr<Base> base_uvw;
+
+  EXPECT_TRUE(config.getObject("abc", base_abc));
+  EXPECT_FALSE(config.getObject("xYz", base_xyz));
+  EXPECT_FALSE(config.getObject("xyzz", base_xyz));
+  EXPECT_FALSE(config.getObject(" xyz", base_xyz));
+  EXPECT_TRUE(config.getObject("xyz", base_xyz));
+  EXPECT_FALSE(config.getObject("uvw", base_uvw));
+  EXPECT_TRUE(config.getObject("UVW", base_uvw));
+
+  if (base_abc) EXPECT_EQ(123, base_abc->a);
+  if (base_xyz) EXPECT_EQ(321, base_xyz->a);
+  if (base_uvw) EXPECT_EQ(999, base_uvw->a);
+}
+
 TEST(gmCoreBaseFunctionality, ConfigCommandLine) {
 
   char arg0[] = "test";
