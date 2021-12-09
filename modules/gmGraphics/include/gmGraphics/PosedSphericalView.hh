@@ -46,6 +46,8 @@ public:
   /**
      Sets the coordinates mapper that should be used to map the 3D
      surrounding into the 2D view.
+
+     \gmXmlTag{gmGraphics,PosedSphericalView,coordinatesMapper}
   */
   void setCoordinatesMapper(std::shared_ptr<CoordinatesMapper> mapper);
 
