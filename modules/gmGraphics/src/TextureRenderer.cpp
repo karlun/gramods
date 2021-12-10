@@ -10,17 +10,20 @@ BEGIN_NAMESPACE_GMGRAPHICS;
 
 GM_OFI_DEFINE(TextureRenderer);
 GM_OFI_POINTER2(TextureRenderer, texture, gmGraphics::TextureInterface, setTexture);
+GM_OFI_PARAM2(TextureRenderer, flip, bool, setFlip);
 
 namespace {
   const char * vertex_shader_code = R"lang=glsl(
 #version 330 core
+
+uniform bool flip;
 
 in vec2 a_vertex;
 out vec2 v_uv;
 
 void main() {
   v_uv = a_vertex * 0.5 - 0.5;
-  v_uv.y = 1 - v_uv.y;
+  if (flip) { v_uv.y = 1 - v_uv.y; }
   gl_Position = vec4(a_vertex, 0.0, 1.0);
 }
 )lang=glsl";
@@ -53,6 +56,8 @@ struct TextureRenderer::Impl {
   GLuint vbo_id = 0;
 
   bool has_been_setup = false;
+
+  bool flip = false;
 };
 
 TextureRenderer::TextureRenderer()
@@ -85,6 +90,7 @@ void TextureRenderer::Impl::render(TextureInterface *texture, Camera &) {
   glActiveTexture(GL_TEXTURE0 + TEXTURE_IDX);
   glBindTexture(GL_TEXTURE_2D, tex_id);
   glUseProgram(program_id);
+  glUniform1i(glGetUniformLocation(program_id, "flip"), flip ? 1 : 0);
   glUniform1i(glGetUniformLocation(program_id, "tex"), TEXTURE_IDX);
 
   glBindVertexArray(vao_id);
@@ -152,5 +158,8 @@ TextureRenderer::Impl::~Impl() {
   vbo_id = 0;
 }
 
+void TextureRenderer::setFlip(bool flip) {
+  _impl->flip = flip;
+}
 
 END_NAMESPACE_GMGRAPHICS;

@@ -42,6 +42,13 @@ public:
     texture = tex;
   }
 
+  /**
+     Flip the image up-down for upside-down textures.
+
+     \gmXmlTag{gmGraphics,TextureRenderer,flip}
+  */
+  void setFlip(bool on);
+
   GM_OFI_DECLARE;
 
 private:
