@@ -96,7 +96,7 @@ public:
   /**
      Replaces the contents of p with pose data.
   */
-  bool getPose(std::map<int, PoseSample> &p);
+  bool getPose(std::map<int, PoseSample> &p) override;
 
   GM_OFI_DECLARE;
 

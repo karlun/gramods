@@ -69,7 +69,7 @@ public:
   /**
      Returns a reference to the board defined by this node.
   */
-  cv::Ptr<cv::aruco::Board> getBoard();
+  cv::Ptr<cv::aruco::Board> getBoard() override;
 
   GM_OFI_DECLARE;
 

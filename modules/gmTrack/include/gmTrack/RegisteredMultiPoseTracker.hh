@@ -65,7 +65,7 @@ public:
      could be read, false otherwise. Use sample time to check if data
      are fresh.
   */
-  bool getPose(std::map<int, PoseSample> &p);
+  bool getPose(std::map<int, PoseSample> &p) override;
 
   GM_OFI_DECLARE;
 

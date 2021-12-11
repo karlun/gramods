@@ -30,7 +30,7 @@ public:
      Returns the default key, in Configuration, for the
      Object.
   */
-  std::string getDefaultKey() { return "arucoBoard"; }
+  std::string getDefaultKey() override { return "arucoBoard"; }
 
 };
 

@@ -37,7 +37,7 @@ public:
   /**
      Called to initialize the Object. This should be called once only!
   */
-  void initialize();
+  void initialize() override;
 
   /**
      Set full path to library file.

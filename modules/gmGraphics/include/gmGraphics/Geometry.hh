@@ -86,7 +86,7 @@ public:
      Returns the default key, in Configuration, for the
      Object.
   */
-  virtual std::string getDefaultKey() { return "geometry"; }
+  virtual std::string getDefaultKey() override { return "geometry"; }
 
   GM_OFI_DECLARE;
 

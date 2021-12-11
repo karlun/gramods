@@ -33,17 +33,17 @@ public:
   /**
      Prepares the multiplexer for rendering to the two eyes.
   */
-  void prepare();
+  void prepare() override;
 
   /**
      Sets up rendering for one eye at a time.
   */
-  void setupRendering(size_t eye);
+  void setupRendering(size_t eye) override;
 
   /**
      Finalizes the multiplexing.
   */
-  void finalize();
+  void finalize() override;
 
   GM_OFI_DECLARE;
 

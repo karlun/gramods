@@ -33,7 +33,7 @@ public:
      Returns the default key, in Configuration, for the
      Object.
   */
-  std::string getDefaultKey() { return "videoSource"; }
+  std::string getDefaultKey() override { return "videoSource"; }
 
 };
 

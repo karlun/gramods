@@ -20,7 +20,7 @@ public:
      Returns the default key, in Configuration, for the
      Object. Returns multiPoseTracker.
   */
-  virtual std::string getDefaultKey() { return "multiPoseTracker"; }
+  virtual std::string getDefaultKey() override { return "multiPoseTracker"; }
 
   /**
      Adds or updates pose data in the specified map. Returns true if

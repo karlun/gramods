@@ -32,7 +32,7 @@ public:
   /**
      Returns the ID of the associated GL texture object.
   */
-  GLuint getGLTextureID();
+  GLuint getGLTextureID() override;
 
   /**
      Sets the texture to decode.

@@ -17,7 +17,7 @@ class MultiscopicView
 
 public:
 
-  virtual void renderFullPipeline(ViewSettings settings);
+  virtual void renderFullPipeline(ViewSettings settings) override;
 
   /**
      Sets the multiscopic multiplexing to use for rendering. If not

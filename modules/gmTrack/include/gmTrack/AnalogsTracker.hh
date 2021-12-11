@@ -30,7 +30,7 @@ public:
      Returns the default key, in Configuration, for the
      Object.
   */
-  virtual std::string getDefaultKey() { return "analogsTracker"; }
+  virtual std::string getDefaultKey() override { return "analogsTracker"; }
 
   /**
      Replaces the contents of p with analogs data. Returns true if

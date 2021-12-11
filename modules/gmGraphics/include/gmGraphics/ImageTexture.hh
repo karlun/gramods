@@ -30,7 +30,7 @@ public:
 
   ImageTexture();
 
-  void initialize();
+  void initialize() override;
 
   /**
      Updates the live texture with new data. Must be called with GL
@@ -41,12 +41,12 @@ public:
   /**
      Called by Updateable::updateAll to increment the frame counter.
   */
-  void update(clock::time_point t);
+  void update(clock::time_point t) override;
 
   /**
      Returns the ID of the associated GL texture object.
   */
-  GLuint getGLTextureID();
+  GLuint getGLTextureID() override;
 
   /**
      Set the file to read image data from. If a sequence of image

@@ -32,7 +32,7 @@ public:
   /**
      Updates the animation.
   */
-  void update(clock::time_point t);
+  void update(clock::time_point t) override;
 
   /**
      Sets the controller to use for calibration.

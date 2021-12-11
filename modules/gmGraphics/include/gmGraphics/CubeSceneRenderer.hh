@@ -23,7 +23,7 @@ public:
   /**
      Performs rendering of 3D objects in the scene.
   */
-  void render(Camera camera, float near = -1, float far = -1);
+  void render(Camera camera, float near = -1, float far = -1) override;
 
   /**
      Extracts the currently optimal near and far plane distances. This
@@ -31,7 +31,7 @@ public:
      need to be rendered with the same near and far planes for correct
      depth testing.
   */
-  void getNearFar(Camera camera, float &near, float &far);
+  void getNearFar(Camera camera, float &near, float &far) override;
 
   /**
      Sets the size of each cube to be drawn.

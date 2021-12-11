@@ -40,7 +40,7 @@ public:
   /**
      Replaces the contents of p with analog data.
   */
-  bool getAnalogs(AnalogsSample &a);
+  bool getAnalogs(AnalogsSample &a) override;
 
   GM_OFI_DECLARE;
 

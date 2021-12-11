@@ -41,7 +41,7 @@ public:
      Returns the default key, in Configuration, for the
      Object.
   */
-  virtual std::string getDefaultKey() { return "buttonsTracker"; }
+  virtual std::string getDefaultKey() override { return "buttonsTracker"; }
 
   /**
      Replaces the contents of p with button data. Returns true if data

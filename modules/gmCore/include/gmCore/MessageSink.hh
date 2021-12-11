@@ -61,7 +61,7 @@ public:
      Called to initialize the MessageSink. This should be called once
      only!
   */
-  virtual void initialize();
+  virtual void initialize() override;
 
   /**
      Activate or deactivate the output of the time of each

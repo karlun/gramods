@@ -19,7 +19,7 @@ public:
   /**
      Replaces the contents of p with pose data.
   */
-  bool getPose(PoseSample &p);
+  bool getPose(PoseSample &p) override;
 
   /**
      Sets the tracker to be used to read off the origin pose of the

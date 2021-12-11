@@ -54,7 +54,7 @@ public:
      Returns the default key, in Configuration, for the
      Object.
   */
-  virtual std::string getDefaultKey() { return "coordinatesMapper"; }
+  virtual std::string getDefaultKey() override { return "coordinatesMapper"; }
 
 };
 

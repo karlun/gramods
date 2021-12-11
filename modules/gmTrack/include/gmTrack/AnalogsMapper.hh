@@ -78,7 +78,7 @@ public:
      could be read, false otherwise. Use sample time to check if data
      are fresh.
   */
-  bool getAnalogs(AnalogsSample &p);
+  bool getAnalogs(AnalogsSample &p) override;
 
   GM_OFI_DECLARE;
 

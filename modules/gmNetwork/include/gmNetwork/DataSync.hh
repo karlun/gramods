@@ -110,7 +110,7 @@ public:
   /**
      Receives data values and sets the associated container.
   */
-  void processMessage(Message m);
+  void processMessage(Message m) override;
 
   /**
      Synchronizes the specified data object. This method is
@@ -124,7 +124,7 @@ public:
      header of messages to indicate which protocol instance to call
      for interpretation and processing.
   */
-  char getProtocolFlag() { return 11; }
+  char getProtocolFlag() override { return 11; }
 
 private:
 

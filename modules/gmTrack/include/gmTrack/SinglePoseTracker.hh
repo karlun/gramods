@@ -18,7 +18,7 @@ public:
      Returns the default key, in Configuration, for the
      Object. Returns singlePoseTracker.
   */
-  virtual std::string getDefaultKey() { return "singlePoseTracker"; }
+  virtual std::string getDefaultKey() override { return "singlePoseTracker"; }
 
   /**
      Replaces the contents of p with pose data. Returns true if data

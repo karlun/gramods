@@ -57,7 +57,7 @@ public:
      Returns the default key, in Configuration, for the
      Object.
   */
-  virtual std::string getDefaultKey() { return "multiscopicMultiplexer"; }
+  virtual std::string getDefaultKey() override { return "multiscopicMultiplexer"; }
 
 };
 

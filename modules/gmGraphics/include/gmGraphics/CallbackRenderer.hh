@@ -60,7 +60,7 @@ public:
      need to be rendered with the same near and far planes for correct
      depth testing.
   */
-  void getNearFar(Camera camera, float &near, float &far) {
+  void getNearFar(Camera camera, float &near, float &far) override {
     if (nearfar_function) nearfar_function(camera, near, far);
     else near = far = -1;
   }

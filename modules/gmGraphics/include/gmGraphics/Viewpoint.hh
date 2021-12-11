@@ -107,7 +107,7 @@ public:
      Returns the default key, in Configuration, for the
      Object.
   */
-  virtual std::string getDefaultKey() { return "viewpoint"; }
+  virtual std::string getDefaultKey() override { return "viewpoint"; }
 
   GM_OFI_DECLARE;
 

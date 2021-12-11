@@ -44,7 +44,7 @@ public:
   /**
      Sets up the server. This should be called once only!
   */
-  void initialize();
+  void initialize() override;
 
   /**
      Sets the port to bind the VRPN server to.

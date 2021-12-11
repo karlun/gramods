@@ -38,12 +38,12 @@ public:
   /**
    * Called by the owner (TouchState) when eventsInit is called.
    */
-  void init(int width, int height);
+  void init(int width, int height) override;
 
   /**
    * Called by the owner (TouchState) when eventsDone is called.
    */
-  void done();
+  void done() override;
 
   /**
    * Updates the internal touch states based on the provided

@@ -83,13 +83,13 @@ public:
   /**
      Returns the ID of the associated GL texture object.
   */
-  GLuint getGLTextureID();
+  GLuint getGLTextureID() override;
 
   /**
      Returns the default key, in Configuration, for the
      Object.
   */
-  virtual std::string getDefaultKey() { return "texture"; }
+  virtual std::string getDefaultKey() override { return "texture"; }
 
   GM_OFI_DECLARE;
 

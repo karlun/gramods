@@ -29,12 +29,12 @@ public:
   /**
      Calls the scenegraph root for rendering.
   */
-  void render(Camera camera, float near = -1, float far = -1);
+  void render(Camera camera, float near = -1, float far = -1) override;
 
   /**
      Extracts the currently optimal near and far plane distances.
   */
-  void getNearFar(Camera camera, float &near, float &far);
+  void getNearFar(Camera camera, float &near, float &far) override;
 
   /**
      Sets the scenegraph.

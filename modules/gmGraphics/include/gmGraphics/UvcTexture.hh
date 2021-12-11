@@ -24,7 +24,7 @@ public:
 
   UvcTexture();
 
-  void initialize();
+  void initialize() override;
 
   /**
      Updates the live texture with new data. Must be called with GL
@@ -35,7 +35,7 @@ public:
   /**
      Returns the ID of the associated GL texture object.
   */
-  GLuint getGLTextureID();
+  GLuint getGLTextureID() override;
 
   /**
      Set the vendor ID of the UVC device to stream from. As XML

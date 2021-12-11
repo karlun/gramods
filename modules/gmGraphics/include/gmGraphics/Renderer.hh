@@ -36,7 +36,7 @@ public:
      Returns the default key, in Configuration, for the
      Object.
   */
-  virtual std::string getDefaultKey() { return "renderer"; }
+  virtual std::string getDefaultKey() override { return "renderer"; }
 
   /**
      Finds good near and far plane distances from the optimal near and

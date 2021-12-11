@@ -43,13 +43,13 @@ public:
        position. Return true if pos3 is set to the 3D mapping of pos2,
        false if there is no such mapping.
   */
-  std::string getMapperCode();
+  std::string getMapperCode() override;
 
   /**
      Called by the code that is using this CoordinatesMapper object,
      to let it set the uniforms used by the mapper code.
   */
-  void setMapperUniforms(GLuint program);
+  void setMapperUniforms(GLuint program) override;
 
   /**
      Sets the radius of the stereographic sphere. In comparison, the

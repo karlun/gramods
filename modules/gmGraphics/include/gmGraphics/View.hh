@@ -17,7 +17,7 @@ class View
      Returns the default key, in Configuration, for the
      Object.
   */
-  virtual std::string getDefaultKey() { return "view"; }
+  virtual std::string getDefaultKey() override { return "view"; }
 
 public:
 

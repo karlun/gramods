@@ -178,13 +178,13 @@ public:
   /**
      Called to initialize the Object. This should be called once only!
   */
-  void initialize();
+  void initialize() override;
 
   /**
      Returns the default key, in Configuration, for the
      Object.
   */
-  virtual std::string getDefaultKey() { return "syncNode"; }
+  virtual std::string getDefaultKey() override { return "syncNode"; }
 
   GM_OFI_DECLARE;
 

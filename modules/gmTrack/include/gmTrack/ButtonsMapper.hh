@@ -76,7 +76,7 @@ public:
      could be read, false otherwise. Use sample time to check if data
      are fresh.
   */
-  bool getButtons(ButtonsSample &p);
+  bool getButtons(ButtonsSample &p) override;
 
   GM_OFI_DECLARE;
 

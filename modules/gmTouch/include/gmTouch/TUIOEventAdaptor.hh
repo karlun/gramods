@@ -50,13 +50,13 @@ public:
   /**
    * Called by the owner (TouchState) when eventsInit is called.
    */
-  void init(int width, int height);
+  void init(int width, int height) override;
 
   /**
    * Synchronizes touch events from Tuio to the touch state. Called
    * by the owner (TouchState) when eventsDone is called.
    */
-  void done();
+  void done() override;
 
 private:
   struct Impl;

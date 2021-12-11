@@ -33,13 +33,13 @@ public:
      specified 3D position. Return true if pos2 is set to the 2D
      mapping of pos3, false if there is no such mapping.
   */
-  std::string getMapperCode();
+  std::string getMapperCode() override;
 
   /**
      Called by the code that is using this CoordinatesMapper object,
      to let it set the uniforms used by the mapper code.
   */
-  void setMapperUniforms(GLuint program);
+  void setMapperUniforms(GLuint program) override;
 
   /**
      Set the distortion parameters (k1 k2 k3 k4) for the camera model.

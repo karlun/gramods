@@ -40,7 +40,7 @@ public:
   /**
      Replaces the contents of p with button data.
   */
-  bool getButtons(ButtonsSample &b);
+  bool getButtons(ButtonsSample &b) override;
 
   GM_OFI_DECLARE;
 

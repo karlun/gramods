@@ -36,13 +36,7 @@ public:
        position. Return true if pos3 is set to the 3D mapping of pos2,
        false if there is no such mapping.
   */
-  std::string getMapperCode();
-
-  /**
-     Called by the code that is using this CoordinatesMapper object,
-     to let it set the uniforms used by the mapper code.
-  */
-  void setMapperUniforms(GLuint) {}
+  std::string getMapperCode() override;
 
   GM_OFI_DECLARE;
 };

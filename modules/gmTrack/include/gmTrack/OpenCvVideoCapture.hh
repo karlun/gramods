@@ -136,7 +136,7 @@ public:
      @param[out] image The latest image in the video source.
      @returns True if the image was successfully read.
   */
-  bool retrieve(cv::Mat &image);
+  bool retrieve(cv::Mat &image) override;
 
   GM_OFI_DECLARE;
 

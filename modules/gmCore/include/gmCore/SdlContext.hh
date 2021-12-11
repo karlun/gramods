@@ -53,13 +53,13 @@ public:
   */
   static bool hasAudio();
 
-  void initialize();
+  void initialize() override;
 
   /**
      Returns the default key, in Configuration, for the
      Object.
   */
-  virtual std::string getDefaultKey() { return "context"; }
+  virtual std::string getDefaultKey() override { return "context"; }
 
 private:
 

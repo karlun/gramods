@@ -68,7 +68,7 @@ public:
   */
   bool getCameraFromPosition(Camera vfrustum,
                              Eigen::Vector3f position,
-                             Camera &rfrustum);
+                             Camera &rfrustum) override;
 
   /**
      Returns shader code that implements the necessary functions for
@@ -81,13 +81,13 @@ public:
        and direction vector and the SphereGeometry. Return (0,0) if there is
        no intersection.
   */
-  std::string getMapperCode();
+  std::string getMapperCode() override;
 
   /**
      Called by the code that is using this geometry object, to let the
      it set the uniforms used by the mapper code.
   */
-  void setMapperUniforms(GLuint program);
+  void setMapperUniforms(GLuint program) override;
 
   GM_OFI_DECLARE;
 
