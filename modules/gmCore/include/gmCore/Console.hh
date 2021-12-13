@@ -303,7 +303,7 @@ private:
   static gmCore_API std::vector<std::shared_ptr<MessageSink>> message_sinks;
 
   ConsoleBuffer buffer;
-  static std::mutex lock;
+  static gmCore_API std::mutex lock;
 };
 
 END_NAMESPACE_GMCORE;
