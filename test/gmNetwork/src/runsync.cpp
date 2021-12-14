@@ -30,7 +30,7 @@ TEST(gmNetwork, SyncNode_createdestroy) {
 
   std::shared_ptr<gmNetwork::SyncNode> node =
     std::make_shared<gmNetwork::SyncNode>();
-  node->addPeer("0.0.0.0:24040");
+  node->addPeer("127.0.0.1:24040");
   node->setLocalPeerIdx(0);
   gmNetwork::RunSync * run =
     node->getProtocol<gmNetwork::RunSync>();
@@ -56,7 +56,7 @@ namespace {
 
     for (size_t port = PORT0; port < PORT0 + peer_count; ++port) {
       std::stringstream ss;
-      ss << "0.0.0.0:" << port;
+      ss << "127.0.0.1:" << port;
       node->addPeer(ss.str());
     }
     node->setLocalPeerIdx(idx);
@@ -161,7 +161,7 @@ namespace {
 
     for (size_t port = PORT1; port < PORT1 + peer_count; ++port) {
       std::stringstream ss;
-      ss << "0.0.0.0:" << port;
+      ss << "127.0.0.1:" << port;
       node->addPeer(ss.str());
     }
     node->setLocalPeerIdx(idx);
