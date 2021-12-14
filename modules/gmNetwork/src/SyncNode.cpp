@@ -527,10 +527,9 @@ void SyncNode::Impl::Peer::on_data
     message = Protocol::Message(*read_buffer);
     message.from_peer_idx = peer_idx;
     GM_DBG3("SyncNode", local_peer_idx << " RECV"
-             << " peer=" << message.from_peer_idx
-             << " protocol=" << (int)message.protocol
-             << " length=" << message.length) << " bytes"
-             << " (" << message.data.data() << ")";
+            << " peer=" << message.from_peer_idx
+            << " protocol=" << (int)message.protocol
+            << " length=" << message.length << " bytes");
   }
 
   guard.unlock();
