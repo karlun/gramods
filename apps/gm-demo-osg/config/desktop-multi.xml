@@ -135,8 +135,8 @@
   <SyncNode
       localPeerIdx="-1"
       exitWhenAPeerIsDisconnected="true">
-    <param name="peer" value="0.0.0.0:25040"/>
-    <param name="peer" value="0.0.0.0:25041"/>
+    <param name="peer" value="127.0.0.1:25040"/>
+    <param name="peer" value="127.0.0.1:25041"/>
   </SyncNode>
 
 </config>

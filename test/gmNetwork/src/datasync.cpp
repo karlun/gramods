@@ -52,7 +52,7 @@ namespace {
 
     for (size_t port = PORT2; port < PORT2 + peer_count; ++port) {
       std::stringstream ss;
-      ss << "0.0.0.0:" << port;
+      ss << "127.0.0.1:" << port;
       node->addPeer(ss.str());
     }
     node->setLocalPeerIdx(idx);
