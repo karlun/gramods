@@ -29,6 +29,7 @@ struct Sub : Base {
   void setB(int v) { b = v; }
   void setPtr(std::shared_ptr<Sub> p) { ptr = p; }
   void addPtr(std::shared_ptr<Sub> p) { ptrs.push_back(p); }
+  std::string getDefaultKey() override { return "blurb"; }
   GM_OFI_DECLARE;
 };
 
@@ -41,7 +42,7 @@ std::string xml = R"lang=xml(
 <config>
   <Base a="412"/>
   <Sub a="517" b="917">
-    <Sub AS="ptr" a="1" b="4"/>
+    <Sub KEY="ptr" a="1" b="4"/>
   </Sub>
 </config>
 )lang=xml";
@@ -87,9 +88,9 @@ std::string xml2 = R"lang=xml(
 <config>
   <Base a="412"/>
   <Sub a="517" b="917">
-    <Sub AS="ptrs" a="1" b="4"/>
-    <Sub AS="ptrs" a="2" b="8"/>
-    <Sub AS="ptrs" a="3" b="12"/>
+    <Sub KEY="ptrs" a="1" b="4"/>
+    <Sub KEY="ptrs" a="2" b="8"/>
+    <Sub KEY="ptrs" a="3" b="12"/>
   </Sub>
 </config>
 )lang=xml";
@@ -111,11 +112,15 @@ TEST(gmCoreBaseFunctionality, Multiple) {
 }
 
 TEST(gmCoreBaseFunctionality, Named) {
+
   std::string xml = R"lang=xml(
   <config>
-    <Base AS="abc" a="123"/>
-    <Base AS="xyz" a="321"/>
-    <Base AS="UVW" a="999"/>
+    <Base DEF="abc" a="123"/>
+    <Base DEF="xyz" a="321"/>
+    <Base DEF="UVW" a="999"/>
+    <Base DEF="UVw" KEY="bbt" a="999"/>
+    <Base KEY="qqq" a="999"/>
+    <Base a="999"/>
   </config>
   )lang=xml";
 
@@ -123,14 +128,20 @@ TEST(gmCoreBaseFunctionality, Named) {
   std::shared_ptr<Base> base_abc;
   std::shared_ptr<Base> base_xyz;
   std::shared_ptr<Base> base_uvw;
+  std::shared_ptr<Base> base_bbt;
+  std::shared_ptr<Base> base_qqq;
+  std::shared_ptr<Base> base_Base;
 
-  EXPECT_TRUE(config.getObject("abc", base_abc));
-  EXPECT_FALSE(config.getObject("xYz", base_xyz));
-  EXPECT_FALSE(config.getObject("xyzz", base_xyz));
-  EXPECT_FALSE(config.getObject(" xyz", base_xyz));
-  EXPECT_TRUE(config.getObject("xyz", base_xyz));
-  EXPECT_FALSE(config.getObject("uvw", base_uvw));
-  EXPECT_TRUE(config.getObject("UVW", base_uvw));
+  EXPECT_TRUE(config.getObjectByDef("abc", base_abc));
+  EXPECT_FALSE(config.getObjectByDef("xYz", base_xyz));
+  EXPECT_FALSE(config.getObjectByDef("xyzz", base_xyz));
+  EXPECT_FALSE(config.getObjectByDef(" xyz", base_xyz));
+  EXPECT_TRUE(config.getObjectByDef("xyz", base_xyz));
+  EXPECT_FALSE(config.getObjectByDef("uvw", base_uvw));
+  EXPECT_TRUE(config.getObjectByDef("UVW", base_uvw));
+  EXPECT_TRUE(config.getObjectByDef("UVW", base_bbt));
+  EXPECT_TRUE(config.getObjectByKey("qqq", base_qqq));
+  EXPECT_TRUE(config.getObjectByKey("object", base_Base));
 
   if (base_abc) EXPECT_EQ(123, base_abc->a);
   if (base_xyz) EXPECT_EQ(321, base_xyz->a);
@@ -146,9 +157,9 @@ TEST(gmCoreBaseFunctionality, ConfigCommandLine) {
   <config>
     <Base a="412"/>
     <Sub a="517" b="917">
-      <Sub AS="ptrs" a="1" b="4"/>
-      <Sub AS="ptrs" a="2" b="8"/>
-      <Sub AS="ptrs" a="3" b="12"/>
+      <Sub KEY="ptrs" a="1" b="4"/>
+      <Sub KEY="ptrs" a="2" b="8"/>
+      <Sub KEY="ptrs" a="3" b="12"/>
     </Sub>
   </config>
   )lang=xml";
@@ -202,7 +213,7 @@ TEST(gmCoreBaseFunctionality, ConfigCommandLine) {
 
   {
     char param[] = "--param";
-    char valueA[] = "Base.a=199";
+    char valueA[] = "object.a=199";
     char valueB[] = "Sub.ptrs.a=299";
     char *argv[] = { arg2, arg3, param, valueA, param, valueB };
     int argc = 6;

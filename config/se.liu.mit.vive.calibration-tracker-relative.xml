@@ -5,7 +5,7 @@
   <Controller>
     <RelativeSinglePoseTracker>
       <OffsetSinglePoseTracker
-          AS="targetTracker"
+          KEY="targetTracker"
           positionOffset="0 -0.0904 0">
         <MultiToSinglePoseTracker
             sensor="0">
@@ -14,7 +14,7 @@
         </MultiToSinglePoseTracker>
       </OffsetSinglePoseTracker>
       <MultiToSinglePoseTracker
-          AS="originTracker"
+          KEY="originTracker"
           sensor="0">
         <VrpnPoseTracker
             connectionString="openvr/device/LHR-1BDC55AF@tcp://itn-vrhmd-01.ad.liu.se"/>

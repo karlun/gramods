@@ -64,8 +64,9 @@ public:
 
   /**
      Returns the default key, in Configuration, for the
-     Object. Default is "object", but this can be overridden in XML by
-     using the attribute `AS`, as in `AS="view"`.
+     Object. Default is "object", but this should be overriden by sub
+     classes and can also be overridden in XML by using the attribute
+     `KEY`, as in `KEY="view"`.
 
      The key is both the name under which the object will be stored in
      the Configuration instance, and the pointer in the parent (in the

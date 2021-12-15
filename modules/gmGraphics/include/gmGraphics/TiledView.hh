@@ -17,11 +17,11 @@ BEGIN_NAMESPACE_GMGRAPHICS;
    <SomeWindow>
      <TiledView>
        <param name="tileLocation" value="0 2 1 1"/>
-       <SomeView AS="view"/>
+       <SomeView ... />
        <param name="tileLocation" value="1 2 1 1"/>
-       <SomeView AS="view"/>
+       <SomeView ... />
        <param name="tileLocation" value="0 0 2 2"/>
-       <SomeView AS="view"/>
+       <SomeView ... />
      </TiledView>
    </SdlWindow>
    ~~~~~

@@ -54,7 +54,7 @@
   </SdlWindow>
 
   <TimeSamplePoseTracker
-      AS="head"
+      DEF="head"
       position="0 0.5 2"
       orientation="ypr 0 0 0"/>
 
