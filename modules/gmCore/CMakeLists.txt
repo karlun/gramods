@@ -53,8 +53,6 @@ CONFIGURE_FILE(
   ${CMAKE_CURRENT_SOURCE_DIR}/src/config_cmake.hh
   ${CMAKE_CURRENT_BINARY_DIR}/include/gmCore/config.hh)
 
-INCLUDE(MakeDependenciesRelocatable)
-make_dependencies_relocatable(PUBLIC_LIBS_MAGIC ${PUBLIC_LIBS})
 
 INCLUDE(GetSourcesAndHeaders)
 get_sources_and_headers()
@@ -81,7 +79,7 @@ TARGET_SOURCES(gmCore
   PUBLIC ${HEADERS_MAGIC}
   )
 TARGET_LINK_LIBRARIES(gmCore
-  PUBLIC ${PUBLIC_LIBS_MAGIC}
+  PUBLIC ${PUBLIC_LIBS}
   PRIVATE ${PRIVATE_LIBS})
 
 # Get absolute library paths of dependencies into apps and tests
