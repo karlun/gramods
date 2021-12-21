@@ -16,6 +16,8 @@
 #include <GL/gl.h>
 
 #include <chrono>
+#include <thread>
+#include <condition_variable>
 
 BEGIN_NAMESPACE_GMGRAPHICS;
 
@@ -27,6 +29,9 @@ GM_OFI_PARAM2(SaveView, useFloat, bool, setUseFloat);
 GM_OFI_POINTER2(SaveView, view, gmGraphics::View, addView);
 
 struct SaveView::Impl {
+
+  Impl();
+  ~Impl();
 
   bool alpha_support = true;
   bool float_support = false;
@@ -52,11 +57,64 @@ struct SaveView::Impl {
   bool is_functional = false;
 
   void renderFullPipeline(ViewSettings settings);
+
+  struct FileBuffer {
+
+    FileBuffer(std::string filename,
+               FREE_IMAGE_TYPE image_type,
+               int width,
+               int height,
+               int bits_per_pixel)
+      : filename(filename) {
+      bitmap = FreeImage_AllocateT(image_type, width, height, bits_per_pixel);
+    }
+
+    ~FileBuffer() { FreeImage_Unload(bitmap); }
+
+    BYTE *getBytes() { return FreeImage_GetBits(bitmap); }
+
+    FIBITMAP *bitmap;
+    std::string filename;
+  };
+
+  void saveImage(std::unique_ptr<FileBuffer> image);
+  void save_process();
+
+  bool save_process_alive = true;
+  std::thread save_thread;
+  std::condition_variable save_condition;
+  std::mutex save_lock;
+  std::unique_ptr<FileBuffer> save_image;
 };
 
 SaveView::SaveView()
   : _impl(std::make_unique<Impl>()) {
   _impl->free_image = FreeImage::get();
+}
+
+SaveView::Impl::Impl() {
+  save_thread = std::thread([this]{ this->save_process(); });
+}
+
+SaveView::Impl::~Impl() {
+
+  {
+    std::unique_lock<std::mutex> guard(save_lock);
+    save_process_alive = false;
+    save_condition.notify_all();
+  }
+
+  if (!save_thread.joinable()) return;
+
+  try {
+    save_thread.join();
+  } catch (const std::invalid_argument &e) {
+    GM_DBG2("SaveView", "Could not join save thread: " << e.what() << ".");
+  } catch (const std::system_error &e) {
+    GM_WRN("SaveView",
+           "Caught system_error while joining save thread. Code "
+           << e.code() << " meaning " << e.what() << ".");
+  }
 }
 
 const std::string SaveView::Impl::fragment_code =
@@ -140,7 +198,18 @@ void SaveView::Impl::renderFullPipeline(ViewSettings settings) {
   int width = size[2];
   int height = size[3];
 
-  GM_DBG2("SaveView", "Saving viewport of size " << width << "x" << height);
+  size_t filename_size =
+      snprintf(nullptr, 0, file_template.u8string().c_str(), frame) + 1;
+  std::vector<char> filename_buffer(filename_size + 1);
+  snprintf(
+      filename_buffer.data(), filename_size, file_template.u8string().c_str(), frame);
+  std::string filename = std::string(filename_buffer.begin(), filename_buffer.end());
+
+  ++frame;
+
+  GM_DBG2("SaveView",
+          "Saving viewport of size " << width << "x" << height << " to file "
+                                     << filename);
 
   int bits_per_channel = -1;
   int number_of_channels = use_alpha ? 4 : 3;
@@ -157,46 +226,41 @@ void SaveView::Impl::renderFullPipeline(ViewSettings settings) {
     bits_per_channel = 8;
   }
 
-  FIBITMAP *bitmap = FreeImage_AllocateT
-    (fi_image_type, width, height,
-     bits_per_channel * number_of_channels);
-  BYTE * bytes = FreeImage_GetBits(bitmap);
   {
     GLint current;
     glGetIntegerv(GL_DRAW_BUFFER, &current);
     glReadBuffer(current);
   }
 
-  glReadPixels(size[0], size[1], width, height,
-               use_alpha ? GL_BGRA : GL_BGR,
-               channel_type, bytes);
+  std::unique_ptr<FileBuffer> image =
+      std::make_unique<FileBuffer>(filename,
+                                   fi_image_type,
+                                   width,
+                                   height,
+                                   bits_per_channel * number_of_channels);
 
   auto t1 = std::chrono::steady_clock::now();
 
-  size_t filename_size =
-      snprintf(nullptr, 0, file_template.u8string().c_str(), frame) + 1;
-  std::vector<char> filename(filename_size + 1);
-  snprintf(
-      filename.data(), filename_size, file_template.u8string().c_str(), frame);
-  ++frame;
-
-  bool success = FreeImage_Save(fi_format, bitmap, filename.data(), fi_options);
-  FreeImage_Unload(bitmap);
+  glReadPixels(size[0], size[1], width, height,
+               use_alpha ? GL_BGRA : GL_BGR,
+               channel_type, image->getBytes());
 
   auto t2 = std::chrono::steady_clock::now();
+
+  saveImage(std::move(image));
+
+  auto t3 = std::chrono::steady_clock::now();
 
   typedef std::chrono::duration<double, std::ratio<1>> d_seconds;
   auto dt1 = std::chrono::duration_cast<d_seconds>(t1 - t0);
   auto dt2 = std::chrono::duration_cast<d_seconds>(t2 - t1);
+  auto dt3 = std::chrono::duration_cast<d_seconds>(t3 - t2);
 
-  if (success) {
-    GM_DBG2("SaveView",
-            "Captured and saved image "
-                << &filename[0] << " in " << int(1e3 * dt1.count() + 0.8)
-                << " + " << int(1e3 * dt2.count() + 0.8) << " ms");
-  } else {
-    GM_ERR("SaveView", "Could not save image " << &filename[0]);
-  }
+  GM_DBG2("SaveView",
+          "Captured image for saving: "
+              << filename << " in " << int(1e3 * dt1.count() + 0.8) << " + "
+              << int(1e3 * dt2.count() + 0.8) << " + "
+              << int(1e3 * dt3.count() + 0.8) << " ms");
 
   render_target.pop();
 
@@ -318,6 +382,41 @@ void SaveView::clearRenderers(bool recursive) {
     for (auto view : _impl->views)
       view->clearRenderers(recursive);
   RendererDispatcher::clearRenderers(recursive);
+}
+
+void SaveView::Impl::saveImage(std::unique_ptr<FileBuffer> image) {
+  std::lock_guard<std::mutex> guard(save_lock);
+  save_image = std::move(image);
+  save_condition.notify_all();
+}
+
+void SaveView::Impl::save_process() {
+  std::unique_lock<std::mutex> guard(save_lock);
+  while(save_process_alive) {
+    save_condition.wait_for(guard, std::chrono::seconds(1));
+
+    if (!save_image) continue;
+
+    auto t0 = std::chrono::steady_clock::now();
+
+    bool success = FreeImage_Save(
+        fi_format, save_image->bitmap, save_image->filename.data(), fi_options);
+
+    auto t1 = std::chrono::steady_clock::now();
+
+    typedef std::chrono::duration<double, std::ratio<1>> d_seconds;
+    auto dt1 = std::chrono::duration_cast<d_seconds>(t1 - t0);
+
+    if (success) {
+      GM_DBG2("SaveView",
+              "Asynchroneous image save in " << int(1e3 * dt1.count() + 0.8)
+                                             << " ms");
+    } else {
+      GM_ERR("SaveView", "Could not save image " << save_image->filename);
+    }
+
+    save_image = nullptr;
+  }
 }
 
 END_NAMESPACE_GMGRAPHICS;
