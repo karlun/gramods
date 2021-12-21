@@ -7,6 +7,9 @@
 #include <gmCore/CommandLineParser.hh>
 #include <gmCore/InvalidArgument.hh>
 #include <gmCore/FileResolver.hh>
+#include <gmCore/Stringify.hh>
+
+#include <set>
 
 #include <stdlib.h>
 
@@ -14,13 +17,11 @@ BEGIN_NAMESPACE_GMCORE;
 
 Configuration::Configuration()
   : def_objects(std::make_shared<def_list>()),
-    parameter_overrides(std::make_shared<overrides_list>()),
     warn_unused_overrides(false) {}
 
 Configuration::Configuration(std::string xml,
                              std::vector<std::string> *error_list)
   : def_objects(std::make_shared<def_list>()),
-    parameter_overrides(std::make_shared<overrides_list>()),
     warn_unused_overrides(false) {
 
   tinyxml2::XMLDocument doc;
@@ -34,7 +35,6 @@ Configuration::Configuration(std::string xml,
 Configuration::Configuration(int &argc, char *argv[],
                              std::vector<std::string> *error_list)
   : def_objects(std::make_shared<def_list>()),
-    parameter_overrides(std::make_shared<overrides_list>()),
     warn_unused_overrides(true) {
 
   std::vector<std::string> configs;
@@ -81,7 +81,7 @@ Configuration::Configuration(int &argc, char *argv[],
       std::string name = value.substr(0, sep_pos);
       value = value.substr(sep_pos + 1);
 
-      (*parameter_overrides)[name] = parameter_t(value);
+      parameter_overrides[name] = std::make_shared<parameter_t>(value);
     }
   }
 
@@ -120,11 +120,9 @@ Configuration::Configuration(int &argc, char *argv[],
 
 Configuration::Configuration(tinyxml2::XMLNode *node,
                              std::shared_ptr<def_list> defs,
-                             std::string param_path,
-                             std::shared_ptr<overrides_list> overrides,
+                             overrides_list overrides,
                              std::vector<std::string> *error_list)
   : def_objects(defs),
-    param_path(param_path),
     parameter_overrides(overrides),
     warn_unused_overrides(false) {
   load(node, error_list);
@@ -143,7 +141,7 @@ void Configuration::load(tinyxml2::XMLNode *node,
     for( const tinyxml2::XMLAttribute *attr_it = node->ToElement()->FirstAttribute() ;
          attr_it != NULL ; attr_it = attr_it->Next()) {
       std::string name = attr_it->Name();
-      if (name == "AS" || name == "DEF" || name == "USE")
+      if (name == "KEY" || name == "DEF" || name == "USE")
         continue;
       std::string value = attr_it->Value();
       addParam(name,value);
@@ -171,19 +169,14 @@ void Configuration::load(tinyxml2::XMLNode *node,
     
     std::string type = std::string(node_it->Value());
     
-    const char* as_attribute = node_element->Attribute("AS");
-    std::string name = as_attribute != NULL
-      ? std::string(as_attribute) : type;
-    
-    const char* def_attribute = node_element->Attribute("DEF");
-    std::string DEF = def_attribute != NULL
-      ? std::string(def_attribute) : "";
-    
-    const char* use_attribute = node_element->Attribute("USE");
-    std::string USE = use_attribute != NULL
-      ? std::string(use_attribute) : "";
+    const char* key_attribute = node_element->Attribute("KEY");
+    std::string KEY = key_attribute != NULL
+      ? std::string(key_attribute) : "";
 
-    if (USE != "") {
+    const char* use_attribute = node_element->Attribute("USE");
+    if (use_attribute != NULL) {
+
+      std::string USE = std::string(use_attribute);
 
       if (def_objects->count(USE) == 0) {
         GM_WRN("Configuration", "no DEF to match USE " << USE << " in " << type);
@@ -192,10 +185,8 @@ void Configuration::load(tinyxml2::XMLNode *node,
         continue;
       }
 
-      if (as_attribute != NULL)
-        addObject(std::string(as_attribute), (*def_objects)[USE]);
-      else
-        addObject((*def_objects)[USE]->getDefaultKey(), (*def_objects)[USE]);
+      if (KEY.empty()) KEY = (*def_objects)[USE]->getDefaultKey();
+      addObject((*def_objects)[USE], KEY, USE);
 
       continue;
     }
@@ -208,37 +199,42 @@ void Configuration::load(tinyxml2::XMLNode *node,
       continue;
     }
 
-    if (DEF != "") {
-      if (def_objects->count(USE) != 0) {
+    if (KEY.empty()) KEY = nn->getDefaultKey();
+    std::vector<std::string> alias({KEY, type});
+
+    const char* def_attribute = node_element->Attribute("DEF");
+    std::string DEF = def_attribute != NULL ? std::string(def_attribute) : "";
+
+    if (!DEF.empty()) {
+      if (def_objects->count(DEF) != 0) {
         GM_WRN("Configuration", "DEF " << DEF << " has multiple associations");
         if (error_list) error_list->push_back(GM_STR("DEF " << DEF << " has multiple associations"));
         else throw gmCore::InvalidArgument(GM_STR("DEF " << DEF << " has multiple associations"));
       }
       (*def_objects)[DEF] = nn;
+      alias.push_back(DEF);
     }
 
-    std::string node_path = param_path.size() == 0 ? name : param_path + "." + name;
-
-    Configuration node_conf(node_it, def_objects, node_path, parameter_overrides);
+    overrides_list node_overrides =
+        propagateOverrides(parameter_overrides, alias);
+    Configuration node_conf(node_it, def_objects, node_overrides);
 
     std::vector<std::string> param_names;
     node_conf.getAllParamNames(param_names);
 
     for (auto param_name : param_names) {
 
-      std::string param_path = node_path + "." + param_name;
-      GM_DBG1("Configuration", "Checking parameter override for " << param_path);
+      GM_DBG2("Configuration", "Processing parameter " << param_name);
 
       std::vector<std::string> values;
       node_conf.getAllParams(param_name, values);
 
-      if (parameter_overrides->find(param_path) ==
-          parameter_overrides->end()) {
+      if (node_overrides.find(param_name) == node_overrides.end()) {
 
         for (std::string value : values) {
 
-          GM_DBG1("Configuration", name << " -> " <<
-                 type << "::" << param_name << " = " << value);
+          GM_DBG2("Configuration", KEY << " -> " <<
+                  type << "::" << param_name << " = " << value);
 
           try {
             bool good = OFactory::getOFI(type)->
@@ -257,10 +253,11 @@ void Configuration::load(tinyxml2::XMLNode *node,
 
       } else {
 
-        std::string value = (*parameter_overrides)[param_path].value;
-        (*parameter_overrides)[param_path].checked = true;
-        GM_DBG1("Configuration", name << " -> " <<
-               type << "::" << param_name << " = " << value << " (overridden)");
+        std::string value = node_overrides[param_name]->value;
+        node_overrides[param_name]->checked = true;
+        GM_DBG2("Configuration",
+                KEY << " -> " << type << "::" << param_name << " = " << value
+                    << " (overridden)");
 
         try {
           bool good = OFactory::getOFI(type)->
@@ -279,14 +276,14 @@ void Configuration::load(tinyxml2::XMLNode *node,
     }
 
     std::vector<std::string> child_keys;
-    node_conf.getAllObjectNames(child_keys);
+    node_conf.getAllObjectKeys(child_keys);
 
     for (auto child_key : child_keys) {
       std::vector<std::shared_ptr<Object>> ptrs;
-      node_conf.getAllObjects(child_key, ptrs);
+      node_conf.getAllObjectsByKey(child_key, ptrs);
       assert(ptrs.size() > 0);
       for (auto ptr : ptrs) {
-        GM_DBG1("Configuration", name << " -> " << type << "::" << child_key << " = ptr");
+        GM_DBG2("Configuration", KEY << " -> " << type << "::" << child_key << " = ptr");
         try {
           bool good = OFactory::getOFI(type)->setPointerValue(nn.get(), child_key, ptr);
           if (!good) {
@@ -310,10 +307,7 @@ void Configuration::load(tinyxml2::XMLNode *node,
       continue;
     }
 
-    if (as_attribute != NULL)
-      addObject(std::string(as_attribute), nn);
-    else
-      addObject(nn->getDefaultKey(), nn);
+    addObject(nn, KEY, DEF);
   }
 }
 
@@ -328,10 +322,10 @@ Configuration::~Configuration(){
   }
 
   if (warn_unused_overrides)
-    for (auto param : *parameter_overrides)
-      if (!param.second.checked)
+    for (auto param : parameter_overrides)
+      if (!param.second->checked)
         GM_WRN("Configuration", "Override '" << param.first << "', "
-               << "set to '" << param.second.value << "', "
+               << "set to '" << param.second->value << "', "
                << "has not been used!");
 }
 
@@ -360,14 +354,11 @@ size_t Configuration::getAllParamNames(std::vector<std::string> &name) {
   return new_names.size();
 }
 
-size_t Configuration::getAllObjectNames(std::vector<std::string> &name) {
-  std::vector<std::string> new_names;
-  for (auto child : child_objects)
-    if (std::find(new_names.begin(), new_names.end(), child.first) == new_names.end())
-      new_names.push_back(child.first);
+size_t Configuration::getAllObjectKeys(std::vector<std::string> &name) {
+  std::set<std::string> new_names;
+  for (auto child : child_objects) new_names.insert(child.key);
 
   name.insert(name.end(), new_names.begin(), new_names.end());
-
   return new_names.size();
 }
 
@@ -425,9 +416,42 @@ void Configuration::parse_param(tinyxml2::XMLElement *element,
   std::string name = name_attribute;
   std::string value = value_attribute;
 
-  GM_DBG1("Configuration", "Parsed param: " << name << " = " << value);
+  GM_DBG2("Configuration", "Parsed param: " << name << " = " << value);
 
   addParam(name, value);
+}
+
+Configuration::overrides_list
+Configuration::propagateOverrides(const overrides_list &list,
+                                  std::vector<std::string> alias) {
+
+  overrides_list newlist;
+
+  if (list.empty() || alias.empty()) return newlist;
+
+  for (auto &item : list) {
+
+    std::string name = item.first;
+    auto first_dot = name.find(".");
+    if (first_dot == std::string::npos) continue;
+    name = name.substr(0, first_dot);
+
+    if (std::find(alias.begin(), alias.end(), name) == alias.end()) continue;
+    std::string res = item.first.substr(first_dot + 1);
+    newlist[res] = item.second;
+  }
+
+  if (!newlist.empty()) {
+    GM_WRN("Configuration",
+           "Propagating (" << stringify(newlist) << ") to ("
+                           << stringify(alias) << ")");
+  } else {
+    GM_WRN("Configuration",
+           "Not propagating (" << stringify(list) << ") to ("
+                               << stringify(alias) << ")");
+  }
+
+  return std::move(newlist);
 }
 
 END_NAMESPACE_GMCORE;

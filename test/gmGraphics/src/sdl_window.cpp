@@ -40,7 +40,7 @@ TEST(gmGraphics, SdlWindowXml) {
   <config>
     <ImportLibrary library="libgmGraphics.so"/>
     <SdlWindow size="100 100">
-      <SdlContext AS="context" useVideo="1"/>
+      <SdlContext useVideo="1"/>
     </SdlWindow>
   </config>
   )lang=xml";

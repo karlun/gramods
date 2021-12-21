@@ -45,7 +45,7 @@ int main(int argc, char *argv[]) {
 
   // Extract head tracker to hand over to MyApp
   std::shared_ptr<gmTrack::SinglePoseTracker> head;
-  config->getObject("head", head);
+  config->getObjectByDef("head", head);
 
   // Instantiate MyApp and hand over SyncNode and Controller. We do
   // not care if the lists are empty or not, that is for MyApp to take

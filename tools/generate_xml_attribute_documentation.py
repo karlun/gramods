@@ -131,7 +131,7 @@ def main(argv):
     count = 0
 
     mod_string = f"/**\page xml-{mod} XML Documentation for {mod}\n\n"
-    mod_string += f"""This page lists elements defined in the {mod} module and parameters (P), containers (C), their types and their corresponding C++ methods. Parameters are set either as attributes or with the param tag, e.g. &lt;param name="fullscreen" value="true"&gt;. Containers are typically automatically associated with the child type, through the \\link gramods::gmCore::Object::getDefaultKey() Object::getDefaultKey() \\endlink method, however it can be explicitly controlled through the \\c AS="container" attribute. Observe also that futher documentation for how an attribute should be used is sometimes available adjacent to the C++ methods.\n\n"""
+    mod_string += f"""This page lists elements defined in the {mod} module and parameters (P), containers (C), their types and their corresponding C++ methods. Parameters are set either as attributes or with the param tag, e.g. &lt;param name="fullscreen" value="true"&gt;. Containers are typically automatically associated with the child type, through the \\link gramods::gmCore::Object::getDefaultKey() Object::getDefaultKey() \\endlink method, however it can be explicitly controlled through the \\c KEY="container" attribute. Observe also that futher documentation for how an attribute should be used is sometimes available adjacent to the C++ methods.\n\n"""
     mod_string += """XML attributes are parsed by stream operators. For more information about how this is done, refer to the documentation of the respective stream operator in the \\ref gramods namespace.\n\n"""
 
     for clas in sorted(attrs[mod].keys()):

@@ -1,34 +1,30 @@
 <config>
 
   <MultiToSingleTracker
-      AS="head"
+      DEF="head"
       sensor="0">
     <VRPNTracker
-        AS="tracker"
         connectionString="openvr/tracker/LHR-1BDC55AF@itn-vrhmd-01.ad.liu.se"/>
   </MultiToSingleTracker>
 
   <MultiToSingleTracker
-      AS="wand"
+      DEF="wand"
       sensor="0">
     <VRPNTracker
-        AS="tracker"
         connectionString="openvr/controller/LHR-FFAF7B46@itn-vrhmd-01.ad.liu.se"/>
   </MultiToSingleTracker>
 
   <MultiToSingleTracker
-      AS="wand2"
+      DEF="wand2"
       sensor="0">
     <VRPNTracker
-        AS="tracker"
         connectionString="openvr/controller/LHR-F7663D47@itn-vrhmd-01.ad.liu.se"/>
   </MultiToSingleTracker>
 
   <MultiToSingleTracker
-      AS="spike"
+      DEF="spike"
       sensor="0">
     <VRPNTracker
-        AS="tracker"
         connectionString="openvr/tracker/LHR-0FC1EC83@itn-vrhmd-01.ad.liu.se"/>
   </MultiToSingleTracker>
 

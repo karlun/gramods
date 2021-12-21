@@ -34,7 +34,7 @@ class Object;
    config->getParam("width", width);
    ~~~~~
 
-   In XML every node accepts attributes AS, for specifying container,
+   In XML every node accepts attributes KEY, for specifying container,
    DEF, for specifying handle, and USE, for reusing node with
    specified handle.
 */
@@ -91,11 +91,11 @@ public:
   std::size_t getAllParamNames(std::vector<std::string> &name);
 
   /**
-     Adds all currently available object names to the specified vector
-     and returns the count. Names used for multiple objects will only
+     Adds all currently available object's keys to the specified vector
+     and returns the count. Keys used for multiple objects will only
      appear once and be counted once.
    */
-  std::size_t getAllObjectNames(std::vector<std::string> &name);
+  std::size_t getAllObjectKeys(std::vector<std::string> &name);
 
   /**
      Add a parameter value.
@@ -131,25 +131,41 @@ public:
   std::size_t getAllParams(std::string name, std::vector<T> &value) const;
 
   /**
-     Retrieve an object by its name. If there are multiple objects of
-     the same type, there is no saying which will be retrieved with
-     this function.
+     Retrieve an object by its key. If there are multiple objects of
+     the same type, then the first object will be retrieved with this
+     function.
 
-     @param[in] name name of the parameter to retrieve
-     @param[out] ptr a pointer to the object, if set
-     @return false if no object was found by that name or if it could
+     @param[in] key The key of the object to retrieve
+
+     @param[out] ptr A pointer to the object, if set
+
+     @return False if no object was found by that name or if it could
      not be casted to the specified type.
    */
   template<class T>
-  bool getObject(std::string name, std::shared_ptr<T> &ptr) const;
+  bool getObjectByKey(std::string key, std::shared_ptr<T> &ptr) const;
+
+  /**
+     Retrieve an object by its DEF name.
+
+     @param[in] def The DEF name of the object to retrieve
+
+     @param[out] ptr A pointer to the object, if set
+
+     @return False if no object was found by that name or if it could
+     not be casted to the specified type.
+   */
+  template<class T>
+  bool getObjectByDef(std::string def, std::shared_ptr<T> &ptr) const;
 
   /**
      Retrieve an object by its type. If there are multiple objects of
-     the same type, there is no saying which will be retrieved with
-     this function.
+     the same type, then the first object will be retrieved with this
+     function.
 
-     @param[out] ptr a pointer to the object, if set
-     @return false if no object was found by that name or if it could
+     @param[out] ptr A pointer to the retrieved object, if set
+
+     @return False if no object was found by that name or if it could
      not be casted to the specified type.
    */
   template<class T>
@@ -159,40 +175,36 @@ public:
      Set an object.
    */
   template<class T>
-  void addObject(std::string name, std::shared_ptr<T> ptr);
-
-  /**
-     Set an object.
-   */
-  template<class T>
-  void addObject(std::shared_ptr<T> ptr){ addObject(typeid(T).name(), ptr); }
+  void addObject(std::shared_ptr<T> ptr, std::string key, std::string def);
 
   /**
      Retrieve all objects of a specified type. This function will
      append the retrieved objects to the specified list. Use
-     Object as type to retrieve all objects.
+     gmCore::Object as type to retrieve all objects.
 
      @param[out] value a vector of pointer to fill with objects
+
      @return the number of objects added to the list.
    */
   template<class T>
   std::size_t getAllObjects(std::vector<std::shared_ptr<T>> &value) const;
 
   /**
-     Retrieve all objects with the specified name.
+     Retrieve all objects with the specified key.
 
-     @param[in] name name of the objects to retrieve
-     @param[out] ptr a pointer to the object, if set
-     @return false if no object was found by that name or if it could
+     @param[in] key The key of the objects to retrieve
+
+     @param[out] ptr A pointer to the retrieved object, if set
+
+     @return False if no object was found by that name or if it could
      not be casted to the specified type.
    */
   template<class T>
-  std::size_t getAllObjects(std::string name, std::vector<std::shared_ptr<T>> &ptr) const;
+  std::size_t getAllObjectsByKey(std::string key, std::vector<std::shared_ptr<T>> &ptr) const;
 
 private:
 
   typedef std::map<std::string, std::shared_ptr<Object>> def_list;
-  typedef std::map<std::string, std::string> override_list;
 
   void load(tinyxml2::XMLNode *node,
             std::vector<std::string> *error_list = nullptr);
@@ -205,15 +217,19 @@ private:
   };
 
   typedef std::vector<std::pair<std::string, parameter_t>> parameter_list;
-  typedef std::map<std::string, parameter_t> overrides_list;
-  typedef std::vector<std::pair<std::string, std::shared_ptr<Object>>> child_object_list;
+  typedef std::map<std::string, std::shared_ptr<parameter_t>> overrides_list;
+  struct child_t {
+    std::shared_ptr<Object> object;
+    std::string key;
+    std::string def;
+  };
+  typedef std::vector<child_t> child_object_list;
 
   child_object_list child_objects;
   parameter_list parameters;
 
   std::shared_ptr<def_list> def_objects;
-  std::string param_path;
-  std::shared_ptr<overrides_list> parameter_overrides;
+  overrides_list parameter_overrides;
   bool warn_unused_overrides;
 
   bool parse_if(tinyxml2::XMLElement *element,
@@ -221,14 +237,16 @@ private:
   void parse_param(tinyxml2::XMLElement *element,
                    std::vector<std::string> *error_list);
 
+  overrides_list propagateOverrides(const overrides_list &,
+                                    std::vector<std::string>);
+
   /**
      Read the XML data, create objects as specified by the XML data
      and configure the objects.
    */
   Configuration(tinyxml2::XMLNode *node,
                 std::shared_ptr<def_list> defs,
-                std::string param_path,
-                std::shared_ptr<overrides_list> overrides,
+                overrides_list overrides,
                 std::vector<std::string> *error_list = nullptr);
 };
 
@@ -240,56 +258,57 @@ std::size_t Configuration::getAllObjects(std::vector<std::shared_ptr<T>> &value)
 
   auto original_size = value.size();
 
-  for( child_object_list::iterator it = _this->child_objects.begin() ;
-       it != _this->child_objects.end() ; ++it ){
-
-    std::shared_ptr<T> node = std::dynamic_pointer_cast<T>(it->second);
-
-    if (node)
-      value.push_back(node);
+  for (auto &child : _this->child_objects) {
+    std::shared_ptr<T> node = std::dynamic_pointer_cast<T>(child.object);
+    if (node) value.push_back(node);
   }
 
   return value.size() - original_size;
 }
 
 template<class T>
-std::size_t Configuration::getAllObjects(std::string name,
-                                         std::vector<std::shared_ptr<T>> &value) const {
+std::size_t Configuration::getAllObjectsByKey(
+    std::string key, std::vector<std::shared_ptr<T>> &value) const {
 
   Configuration *_this = const_cast<Configuration*>(this);
 
   auto original_size = value.size();
 
-  for( child_object_list::iterator it = _this->child_objects.begin() ;
-       it != _this->child_objects.end() ; ++it ){
+  for (auto &child : _this->child_objects) {
 
-    if (it->first != name)
-      continue;
+    if (child.key != key) continue;
 
-    std::shared_ptr<T> node = std::dynamic_pointer_cast<T>(it->second);
-
-    if (node)
-      value.push_back(node);
+    std::shared_ptr<T> node = std::dynamic_pointer_cast<T>(child.object);
+    if (node) value.push_back(node);
   }
 
   return value.size() - original_size;
 }
 
 template<class T>
-bool Configuration::getObject(std::string name, std::shared_ptr<T> &ptr) const {
+bool Configuration::getObjectByKey(std::string key, std::shared_ptr<T> &ptr) const {
 
   auto it = std::find_if(child_objects.begin(),
                          child_objects.end(),
-                         [name](const std::pair<std::string, std::shared_ptr<Object>> &pair) {
-                           return pair.first == name;
+                         [key](const child_t &child) {
+                           return key == child.key;
                          });
-  if (it == child_objects.end())
-    return false;
+  if (it == child_objects.end()) return false;
 
-  std::shared_ptr<T> _value = std::dynamic_pointer_cast<T>(it->second);
+  std::shared_ptr<T> _value = std::dynamic_pointer_cast<T>(it->object);
+  if (!_value) return false;
 
-  if (!_value) {
-    return false; }
+  ptr = _value;
+  return true;
+}
+
+template<class T>
+bool Configuration::getObjectByDef(std::string def, std::shared_ptr<T> &ptr) const {
+
+  if (def_objects->count(def) == 0) return false;
+
+  std::shared_ptr<T> _value = std::dynamic_pointer_cast<T>((*def_objects)[def]);
+  if (!_value) return false;
 
   ptr = _value;
   return true;
@@ -300,23 +319,24 @@ bool Configuration::getObject(std::shared_ptr<T> &ptr) const {
 
   Configuration *_this = const_cast<Configuration*>(this);
 
-  for (child_object_list::iterator it = _this->child_objects.begin() ;
-       it != _this->child_objects.end() ; ++it) {
+  for (auto &child : _this->child_objects) {
 
-    std::shared_ptr<T> _value = std::dynamic_pointer_cast<T>(it->second);
+    std::shared_ptr<T> _value = std::dynamic_pointer_cast<T>(child.object);
 
-    if (_value != NULL) {
-      ptr = _value;
-      return true;
-    }
+    if (_value == nullptr) continue;
+
+    ptr = _value;
+    return true;
   }
 
   return false;
 }
 
 template<class T>
-void Configuration::addObject(std::string name, std::shared_ptr<T> ptr) {
-  child_objects.push_back(std::pair<std::string, std::shared_ptr<Object>>(name, ptr));
+void Configuration::addObject(std::shared_ptr<T> ptr,
+                              std::string key,
+                              std::string def) {
+  child_objects.push_back(child_t({ptr, key, def}));
 }
 
 template<class T>
