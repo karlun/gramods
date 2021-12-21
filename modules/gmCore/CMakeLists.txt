@@ -16,14 +16,12 @@ IF (Eigen3_FOUND)
   ENDIF()
 ENDIF()
 
-FIND_PACKAGE(TinyXML2)
+FIND_PACKAGE(TinyXML2 CONFIG)
 IF(TinyXML2_FOUND)
   SET(HAVE_TinyXML2 1)
   OPTION(gramods_ENABLE_TinyXML2 "Enable functionality that requires TinyXML2" ON)
   IF(gramods_ENABLE_TinyXML2)
-    LIST (APPEND MODULE_INCLUDE_DIRS ${TinyXML2_INCLUDE_DIRS})
-    LIST (APPEND PUBLIC_LIBS ${TinyXML2_LIBRARIES})
-    LIST (APPEND MODULE_DEFINES TINYXML2_IMPORT)
+    LIST (APPEND PUBLIC_LIBS tinyxml2::tinyxml2)
   ELSE()
     MESSAGE (STATUS "gmCore will not support XML-based configuration - requires TinyXML2 (disabled)")
   ENDIF()
@@ -36,8 +34,7 @@ IF(SDL2_FOUND)
   SET(HAVE_SDL2 1)
   OPTION(gramods_ENABLE_SDL2 "Enable functionality that requires SDL2" ON)
   IF(gramods_ENABLE_SDL2)
-    LIST (APPEND MODULE_INCLUDE_DIRS ${SDL2_INCLUDE_DIR})
-    LIST (APPEND PUBLIC_LIBS ${SDL2_LIBRARY})
+    LIST (APPEND PUBLIC_LIBS SDL2::SDL2)
   ELSE()
     MESSAGE (STATUS "gmCore will not be able to initialize SDL2 context - requires SDL2 (disabled)")
   ENDIF()
@@ -56,8 +53,6 @@ CONFIGURE_FILE(
   ${CMAKE_CURRENT_SOURCE_DIR}/src/config_cmake.hh
   ${CMAKE_CURRENT_BINARY_DIR}/include/gmCore/config.hh)
 
-INCLUDE(MakeDependenciesRelocatable)
-make_dependencies_relocatable(PUBLIC_LIBS_MAGIC ${PUBLIC_LIBS})
 
 INCLUDE(GetSourcesAndHeaders)
 get_sources_and_headers()
@@ -84,7 +79,7 @@ TARGET_SOURCES(gmCore
   PUBLIC ${HEADERS_MAGIC}
   )
 TARGET_LINK_LIBRARIES(gmCore
-  PUBLIC ${PUBLIC_LIBS_MAGIC}
+  PUBLIC ${PUBLIC_LIBS}
   PRIVATE ${PRIVATE_LIBS})
 
 # Get absolute library paths of dependencies into apps and tests

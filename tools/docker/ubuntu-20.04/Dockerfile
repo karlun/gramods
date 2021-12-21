@@ -29,12 +29,11 @@ RUN \
   cmake \
     -G Ninja \
     -D CMAKE_BUILD_TYPE=Release \
-    -D CMAKE_INSTALL_PREFIX=/gramods-install \
-    -D VRPN_INCLUDE_DIR:PATH=/vrpn-install/include \
-    -D VRPN_LIBRARY:FILEPATH=/vrpn-install/lib/libvrpn.a \
-    -D VRPN_SERVER_LIBRARY:FILEPATH=/vrpn-install/lib/libvrpnserver.a \
-    -D QUAT_INCLUDE_DIR:PATH=/vrpn-install/include \
-    -D QUAT_LIBRARY:FILEPATH=/vrpn-install/lib/libquat.a \
+    -D CMAKE_INSTALL_PREFIX:PATH=/gramods-install \
+    -D TinyXML2_DIR:PATH=/gramods/cmake_modules/tinyxml2-shared/ \
+    -D SDL2_DIR:PATH=/gramods/cmake_modules/sdl2-shared/ \
+    -D VRPN_DIR:PATH=/gramods/cmake_modules/vrpn-static/ \
+    -D CMAKE_PREFIX_PATH=/vrpn-install \
     .. ; \
   mkdir -p /gramods/build/modules/gmGraphics/resources
 RUN \

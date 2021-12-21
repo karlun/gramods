@@ -27,28 +27,18 @@ ENDIF()
 LIST (APPEND PUBLIC_LIBS Eigen3::Eigen)
 LIST(APPEND gramods_DOCS_DEFINES gramods_ENABLE_Eigen3)
 
-FIND_PACKAGE(VRPN)
+FIND_PACKAGE(VRPN CONFIG)
 IF(VRPN_FOUND)
-
-  SET(HAVE_VRPN 1)
-  LIST(APPEND gramods_DOCS_DEFINES HAVE_VRPN)
-  OPTION(gramods_ENABLE_VRPN "Enable functionality that requires VRPN" ON)
 
   SET(HAVE_VRPN_server 1)
   LIST(APPEND gramods_DOCS_DEFINES HAVE_VRPN_server)
   OPTION(gramods_ENABLE_VRPN_server "Enable functionality that requires VRPN_server" ON)
 
-  IF (gramods_ENABLE_VRPN)
-    LIST (APPEND PRIVATE_INCLUDE_DIRS ${VRPN_INCLUDE_DIR})
-    LIST (APPEND PRIVATE_LIBS ${VRPN_LIBRARIES})
-    LIST (APPEND gramods_DOCS_DEFINES gramods_ENABLE_VRPN)
-  ENDIF(gramods_ENABLE_VRPN)
-
   IF (gramods_ENABLE_VRPN_server)
-    LIST (APPEND PRIVATE_INCLUDE_DIRS ${VRPN_INCLUDE_DIR})
-    LIST (APPEND PRIVATE_LIBS ${VRPN_LIBRARIES})
+    LIST (APPEND PRIVATE_LIBS VRPN::Server)
+    LIST (APPEND PRIVATE_LIBS VRPN::Quat)
     LIST (APPEND gramods_DOCS_DEFINES gramods_ENABLE_VRPN_server)
-  ENDIF(gramods_ENABLE_VRPN_server)
+  ENDIF()
 ENDIF(VRPN_FOUND)
 
 FIND_PACKAGE(OpenCV QUIET OPTIONAL_COMPONENTS aruco)
@@ -76,9 +66,6 @@ CONFIGURE_FILE(
   ${CMAKE_CURRENT_BINARY_DIR}/include/gmTrack/config.hh)
 
 
-INCLUDE(MakeDependenciesRelocatable)
-make_dependencies_relocatable(PUBLIC_LIBS_MAGIC ${PUBLIC_LIBS})
-
 INCLUDE(GetSourcesAndHeaders)
 get_sources_and_headers()
 
@@ -104,7 +91,7 @@ TARGET_SOURCES(gmTrack
   PUBLIC ${HEADERS_MAGIC}
   )
 TARGET_LINK_LIBRARIES(gmTrack
-  PUBLIC ${PUBLIC_LIBS_MAGIC}
+  PUBLIC ${PUBLIC_LIBS}
   PRIVATE ${PRIVATE_LIBS})
 
 # Get absolute library paths of dependencies into apps and tests

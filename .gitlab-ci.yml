@@ -20,10 +20,30 @@ BuildMaxi:
   stage: build
   script:
     - apt-get update
-    - DEBIAN_FRONTEND="noninteractive" apt-get -y install cmake build-essential libgtest-dev libtinyxml2-dev libsdl2-dev libsdl2-ttf-dev libeigen3-dev libglew-dev libasio-dev libopenscenegraph-dev libuvc-dev libfreeimage-dev inkscape pipenv
+    - DEBIAN_FRONTEND="noninteractive" apt-get -y install cmake git build-essential libgtest-dev libtinyxml2-dev libsdl2-dev libsdl2-ttf-dev libeigen3-dev libglew-dev libasio-dev libopenscenegraph-dev libuvc-dev libfreeimage-dev inkscape pipenv
+    - git clone https://github.com/vrpn/vrpn.git
+    - mkdir vrpn/build
+    - cd vrpn/build; cmake ..
+      -D CMAKE_BUILD_TYPE=Release
+      -D CMAKE_INSTALL_PREFIX=$(pwd)/../../vrpn-install;
+      cd ../..
+    - pwd
+    - ls
+    - echo $(pwd)
+    - ls -d $(pwd)/cmake_modules/tinyxml2-shared/
+    - ls -d $(pwd)/cmake_modules/vrpn-static/
+    - ls -d $(pwd)/cmake_modules/sdl2-shared/
+    - make -C vrpn/build install
+    - ls -d $(pwd)/vrpn-install/
     - mkdir build
-    - cd build
-    - cmake -D gramods_TEST_gmGraphics=OFF -D CPACK_BINARY_DEB=ON -D CPACK_DEBIAN_PACKAGE_DEPENDS="libtinyxml2-6a, libsdl2-2.0-0, libsdl2-ttf-2.0-0, libglew2.1, libopenscenegraph160, libuvc0, libfreeimage3" ..
+    - cd build; cmake ..
+      -D gramods_TEST_gmGraphics=OFF
+      -D CPACK_BINARY_DEB=ON
+      -D TinyXML2_DIR:PATH=$(pwd)/../cmake_modules/tinyxml2-shared/
+      -D VRPN_DIR:PATH=$(pwd)/../cmake_modules/vrpn-static/
+      -D SDL2_DIR:PATH=$(pwd)/../cmake_modules/sdl2-shared/
+      -D CMAKE_PREFIX_PATH:PATH=$(pwd)/../vrpn-install/
+      -D CPACK_DEBIAN_PACKAGE_DEPENDS="libtinyxml2-6a, libsdl2-2.0-0, libsdl2-ttf-2.0-0, libglew2.1, libopenscenegraph160, libuvc0, libfreeimage3"
     - mkdir -p modules/gmGraphics/resources/
     - make
     - ./test/gmCore/test_gmCore

@@ -38,8 +38,7 @@ IF (SDL2_FOUND)
   SET(HAVE_SDL2 1)
   OPTION(gramods_ENABLE_SDL2 "Enable functionality that requires SDL2" ON)
   IF (gramods_ENABLE_SDL2)
-    LIST (APPEND MODULE_INCLUDE_DIRS ${SDL2_INCLUDE_DIR})
-    LIST (APPEND PUBLIC_LIBS ${SDL2_LIBRARY})
+    LIST (APPEND PUBLIC_LIBS SDL2::SDL2)
   ENDIF ()
 ENDIF ()
 
@@ -58,9 +57,6 @@ CONFIGURE_FILE(
   ${CMAKE_CURRENT_SOURCE_DIR}/src/config_cmake.hh
   ${CMAKE_CURRENT_BINARY_DIR}/include/gmTouch/config.hh)
 
-
-INCLUDE(MakeDependenciesRelocatable)
-make_dependencies_relocatable(PUBLIC_LIBS_MAGIC ${PUBLIC_LIBS})
 
 INCLUDE(GetSourcesAndHeaders)
 get_sources_and_headers()
@@ -85,7 +81,7 @@ TARGET_SOURCES(gmTouch
   PUBLIC ${HEADERS_MAGIC}
   )
 TARGET_LINK_LIBRARIES(gmTouch
-  PUBLIC ${PUBLIC_LIBS_MAGIC}
+  PUBLIC ${PUBLIC_LIBS}
   PRIVATE ${PRIVATE_LIBS})
 
 # Get absolute library paths of dependencies into apps and tests
