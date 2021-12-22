@@ -42,7 +42,7 @@ public:
   /**
      Adds a location and span that is used when adding views. Format
      is [row col rowspan colspan] where row and col start at zero at
-     bottom left corner.
+     top left corner.
 
      \gmXmlTag{gmGraphics,TiledView,tileLocation}
   */
