@@ -32,6 +32,7 @@ struct ImageTexture::Impl {
   bool fail = false;
   gmCore::size2 animation_range;
   long int animation_frame = -1;
+  long int loaded_frame = -1;
   bool animate = false;
   bool do_loop = false;
   bool do_exit = false;
@@ -73,9 +74,10 @@ void ImageTexture::Impl::update() {
   if (fail) return;
 
   if (animate) {
+    if (loaded_frame == animation_frame) return;
+
     GM_DBG2("ImageTexture", "Animation frame " << animation_frame);
     fail = !loadImage(file, animation_frame);
-
 
   } else if (!texture_id) {
     fail = !loadImage(file);
@@ -225,6 +227,8 @@ bool ImageTexture::Impl::loadImage(std::filesystem::path file_template,
           << " image " << filename.data()
           << " " << image_width << "x" << image_height
           );
+
+  loaded_frame = animation_frame;
 	return true;
 }
 
