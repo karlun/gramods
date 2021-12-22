@@ -29,10 +29,12 @@ OsgRenderer::OsgRenderer() : Updateable(0), _impl(std::make_unique<Impl>()) {}
 OsgRenderer::~OsgRenderer() {}
 
 void OsgRenderer::render(Camera camera, float near, float far) {
+  if (!eyes.empty() && eyes.count(camera.getEye()) == 0) return;
   _impl->render(camera, near, far);
 }
 
 void OsgRenderer::getNearFar(Camera camera, float &near, float &far) {
+  if (!eyes.empty() && eyes.count(camera.getEye()) == 0) return;
   _impl->getNearFar(camera, near, far);
 }
 

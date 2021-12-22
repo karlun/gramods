@@ -14,7 +14,7 @@
 
 BEGIN_NAMESPACE_GMGRAPHICS;
 
-GM_OFI_DEFINE(SphereRenderer);
+GM_OFI_DEFINE_SUB(SphereRenderer, Renderer);
 GM_OFI_PARAM2(SphereRenderer, radius, float, setRadius);
 GM_OFI_PARAM2(SphereRenderer, position, Eigen::Vector3f, setPosition);
 GM_OFI_PARAM2(SphereRenderer, orientation, Eigen::Quaternionf, setOrientation);
@@ -57,11 +57,13 @@ struct SphereRenderer::Impl {
 SphereRenderer::SphereRenderer()
   : _impl(std::make_unique<Impl>()) {}
 
-void SphereRenderer::render(Camera camera, float near, float far) {
+void SphereRenderer::render(Camera camera, float near, float far) { 
+  if (!eyes.empty() && eyes.count(camera.getEye()) == 0) return;
   _impl->render(camera, near, far);
 }
 
 void SphereRenderer::getNearFar(Camera camera, float &near, float &far) {
+  if (!eyes.empty() && eyes.count(camera.getEye()) == 0) return;
   _impl->getNearFar(camera, near, far);
 }
 
