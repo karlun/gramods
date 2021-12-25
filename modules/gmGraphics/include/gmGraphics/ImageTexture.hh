@@ -75,6 +75,12 @@ public:
   void setRange(gmCore::size2 range);
 
   /**
+     Activates auto range, with which the range of images is guessed
+     based on the available files with the specified name pattern.
+  */
+  void setAutoRange(bool on);
+
+  /**
      Activates or deactivates looping the animation. Default is false.
 
      \gmXmlTag{gmGraphics,ImageTexture,loop}
