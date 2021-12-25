@@ -65,7 +65,7 @@ public:
      1.6 = 44.8 mm) and calculate 36 divided by this value (e.g. 36 /
      44.8 ≈ 0.8). This will be the focal distance for your largest
      dimension. For the other dimension you divide the previous value
-     with the image ratio (e.g. 0.8 / (4/3) = 0.6).
+     with the image ratio (e.g. 0.8 * (4/3) ≈ 1.07).
 
      \gmXmlTag{gmGraphics,RectilinearCameraModel,focalDistance}
   */
