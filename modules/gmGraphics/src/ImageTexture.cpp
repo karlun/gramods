@@ -90,25 +90,21 @@ void ImageTexture::update(clock::time_point t) {
 
 void ImageTexture::Impl::update(clock::time_point) {
 
-  ++animation_frame;
+  if (!animate) return;
 
-  if ((size_t)animation_frame > animation_range[1]) {
+  if ((size_t)++animation_frame <= animation_range[1]) return;
 
-    if (do_loop) {
+  if (do_loop) {
+    GM_DBG2("ImageTexture", "Looping animation");
+    animation_frame = animation_range[0];
+    return;
+  }
 
-      GM_DBG2("ImageTexture", "Looping animation");
-      animation_frame = animation_range[0];
+  GM_DBG2("ImageTexture", "Animation done");
+  animate = false;
 
-    } else if (do_exit) {
-
-      exit(0);
-
-    } else {
-
-      GM_DBG2("ImageTexture", "Animation done");
-      animate = false;
-
-    }
+  if (do_exit) {
+    exit(0);
   }
 }
 
