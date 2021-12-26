@@ -26,7 +26,8 @@ public:
   /**
      Renders the cube map.
   */
-  void renderFullPipeline(Renderer::list renderers,
+  void renderFullPipeline(size_t frame_number,
+                          Renderer::list renderers,
                           Eigen::Vector3f pos,
                           Eigen::Quaternionf rot,
                           Eye eye,

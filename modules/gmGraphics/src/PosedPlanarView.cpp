@@ -39,7 +39,7 @@ void PosedPlanarView::renderFullPipeline(ViewSettings settings) {
     return;
   }
 
-  Camera camera;
+  Camera camera(settings);
 
   if (fov_h < 0) {
 

@@ -48,6 +48,21 @@ struct Eye {
   bool valid() { return idx < count; }
 
   /**
+     Less than operator, returns true if this has lower count or lower
+     idx than the other.
+  */
+  bool operator<(const gramods::gmGraphics::Eye &e2) const {
+    return count < e2.count || (count == e2.count && idx < e2.idx);
+  }
+
+  /**
+     Equals operator, returns true if this is identical to the other.
+  */
+  bool operator==(const gramods::gmGraphics::Eye &e2) const {
+    return count == e2.count && idx == e2.idx;
+  }
+
+  /**
      Pre-defined Eye for monoscopic rendering.
   */
   static const Eye MONO;

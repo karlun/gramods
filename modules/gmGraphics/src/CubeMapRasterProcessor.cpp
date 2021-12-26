@@ -55,12 +55,14 @@ struct CubeMapRasterProcessor::Impl {
   void setup();
   void teardown();
 
-  void renderFullPipeline(Renderer::list renderers,
+  void renderFullPipeline(size_t frame_number,
+                          Renderer::list renderers,
                           Eigen::Vector3f pos,
                           Eigen::Quaternionf rot,
                           Eye eye,
                           bool make_square);
-  void renderSide(Renderer::list renderers,
+  void renderSide(size_t frame_number,
+                  Renderer::list renderers,
                   Eigen::Vector3f pos,
                   Eigen::Quaternionf rot,
                   Eye eye,
@@ -80,12 +82,13 @@ CubeMapRasterProcessor::~CubeMapRasterProcessor() {
 }
 
 void CubeMapRasterProcessor::renderFullPipeline
-(Renderer::list renderers,
+(size_t frame_number,
+ Renderer::list renderers,
  Eigen::Vector3f pos,
  Eigen::Quaternionf rot,
  Eye eye,
  bool make_square) {
-  _impl->renderFullPipeline(renderers, pos, rot, eye, make_square);
+  _impl->renderFullPipeline(frame_number, renderers, pos, rot, eye, make_square);
 }
 
 void CubeMapRasterProcessor::Impl::setup() {
@@ -220,7 +223,8 @@ GLint CubeMapRasterProcessor::getProgram() {
 }
 
 void CubeMapRasterProcessor::Impl::renderFullPipeline
-(Renderer::list renderers,
+(size_t frame_number,
+ Renderer::list renderers,
  Eigen::Vector3f pos,
  Eigen::Quaternionf rot,
  Eye eye,
@@ -242,7 +246,7 @@ void CubeMapRasterProcessor::Impl::renderFullPipeline
   glEnable(GL_BLEND);
 
   for (size_t idx = 0; idx < SIDE_COUNT; ++idx)
-    renderSide(renderers, pos, rot, eye, idx);
+    renderSide(frame_number, renderers, pos, rot, eye, idx);
 
   GM_DBG2("CubeMapRasterProcessor", "finalizing");
 
@@ -301,7 +305,8 @@ void CubeMapRasterProcessor::Impl::renderFullPipeline
 }
 
 void CubeMapRasterProcessor::Impl::renderSide
-(Renderer::list renderers,
+(size_t frame_number,
+ Renderer::list renderers,
  Eigen::Vector3f pos,
  Eigen::Quaternionf rot,
  Eye eye,
@@ -313,7 +318,7 @@ void CubeMapRasterProcessor::Impl::renderSide
   glClearColor(0, 0, 0, 0);
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-  Camera camera;
+  Camera camera(frame_number);
   camera.setPose(pos, rot * side_orientation[side]);
   camera.setEye(eye);
 

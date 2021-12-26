@@ -9,6 +9,7 @@
 #include <FreeImage.h>
 #include <stdlib.h>
 
+
 BEGIN_NAMESPACE_GMGRAPHICS;
 
 GM_OFI_DEFINE(ImageTexture);
@@ -21,18 +22,18 @@ struct ImageTexture::Impl {
 
   Impl();
 
-  GLuint getGLTextureID() { return texture_id; }
-
-  void update();
+  GLuint update(size_t frame_number, Eye eye);
   void update(clock::time_point t);
-  bool loadImage(std::filesystem::path filename, long int frame = 0);
+  bool loadImage(std::filesystem::path filename,
+                 long int frame = 0);
 
   GLuint texture_id = 0;
-  std::filesystem::path file = {};
+  size_t texture_frame = std::numeric_limits<size_t>::max();
   bool fail = false;
-  gmCore::size2 animation_range;
+
+  std::filesystem::path file = {};
+  gmCore::size2 animation_range = {0, 0};
   long int animation_frame = -1;
-  long int loaded_frame = -1;
   bool animate = false;
   bool do_loop = false;
   bool do_exit = false;
@@ -69,19 +70,30 @@ ImageTexture::Impl::Impl() {
   free_image = FreeImage::get();
 }
 
-void ImageTexture::Impl::update() {
+GLuint ImageTexture::updateTexture(size_t frame_number, Eye eye) {
+  return _impl->update(frame_number, eye);
+}
 
-  if (fail) return;
+GLuint ImageTexture::Impl::update(size_t frame_number, Eye eye) {
 
-  if (animate) {
-    if (loaded_frame == animation_frame) return;
-
-    GM_DBG2("ImageTexture", "Animation frame " << animation_frame);
-    fail = !loadImage(file, animation_frame);
-
-  } else if (!texture_id) {
-    fail = !loadImage(file);
+  if (!animate) {
+    if (!texture_id) {
+      GM_DBG2("ImageTexture", "Loading image");
+      fail = !loadImage(file);
+    }
+    if (fail) return 0;
+    return texture_id;
   }
+
+  if (texture_frame != frame_number) {
+    GM_DBG2("ImageTexture",
+            "Loading animation frame " << animation_frame << ".");
+    texture_frame = frame_number;
+    fail = !loadImage(file, animation_frame);
+  }
+
+  if (fail) return 0;
+  return texture_id;
 }
 
 void ImageTexture::update(clock::time_point t) {
@@ -141,6 +153,10 @@ bool ImageTexture::Impl::loadImage(std::filesystem::path file_template,
   switch (image_type) {
   case FIT_BITMAP:
     switch (FreeImage_GetBPP(image)) {
+    case 8:
+      gl_format = GL_RED;
+      gl_type = GL_UNSIGNED_BYTE;
+      break;
     case 24:
       gl_format = GL_BGR;
       gl_type = GL_UNSIGNED_BYTE;
@@ -224,16 +240,7 @@ bool ImageTexture::Impl::loadImage(std::filesystem::path file_template,
           << " " << image_width << "x" << image_height
           );
 
-  loaded_frame = animation_frame;
 	return true;
-}
-
-void ImageTexture::update() {
-  _impl->update();
-}
-
-GLuint ImageTexture::getGLTextureID() {
-  return _impl->getGLTextureID();
 }
 
 END_NAMESPACE_GMGRAPHICS;

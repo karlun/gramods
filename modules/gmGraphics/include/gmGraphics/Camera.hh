@@ -20,6 +20,42 @@ class Camera {
 public:
 
   /**
+     Creates a camera for rendering the specified frame number.
+  */
+  Camera(size_t frame_number) : frame_number(frame_number) {}
+
+  Camera(const Camera &other)
+    : left(other.left),
+      right(other.right),
+      bottom(other.bottom),
+      top(other.top),
+      position(other.position),
+      orientation(other.orientation),
+      eye(other.eye),
+      frame_number(other.frame_number) {}
+
+  Camera &operator=(const Camera &other) {
+    if (frame_number != other.frame_number)
+      throw gmCore::InvalidArgument(
+          GM_STR("Cannot assign with camera from different frame ("
+                 << frame_number << " != " << other.frame_number << ")"));
+
+    left = other.left;
+    right = other.right;
+    bottom = other.bottom;
+    top = other.top;
+    position = other.position;
+    orientation = other.orientation;
+    eye = other.eye;
+  }
+
+  /**
+     Creates a camera copying frame number from another object.
+  */
+  template<class T>
+  Camera(const T &object) : frame_number(object.frame_number) {}
+
+  /**
      Computes and returns a projection matrix for the current camera
      and the provided near and far distances.
   */
@@ -46,70 +82,81 @@ public:
      projection matrix for the camera.
   */
   void setClipPlanes(float l, float r, float b, float t) {
-    left = l; right = r; top = t; bottom = b;
-  }
+    left = l;
+    right = r;
+    top = t;
+    bottom = b;
+    }
 
-  /**
+    /**
      Gets the frustum clip planes at a distance of 1.
   */
-  void getClipPlanes(float &l, float &r, float &b, float &t) {
-    l = left; r = right; t = top; b = bottom;
-  }
+    void getClipPlanes(float &l, float &r, float &b, float &t) {
+      l = left;
+      r = right;
+      t = top;
+      b = bottom;
+    }
 
-  /**
+    /**
      Sets the frustum planes of a symmetric frustum for the camera
      based on horizontal and vertical field-of-view, expressed in
      radians.
   */
-  void setFieldOfView(float fov_h, float fov_v);
+    void setFieldOfView(float fov_h, float fov_v);
 
-  /**
+    /**
      Sets the frustum planes of an asymmetric frustum for the camera
      based on left, right, bottom and top field-of-view, expressed in
      radians. The left field-of-view increase left-wise while the
      right field-of-view increase right-wise.
   */
-  void setClipAngles(float l, float r, float b, float t);
+    void setClipAngles(float l, float r, float b, float t);
 
-  /**
+    /**
      Sets the pose of the camera.
   */
-  void setPose(Eigen::Vector3f p, Eigen::Quaternionf r) {
-    position = p; orientation = r;
-  }
+    void setPose(Eigen::Vector3f p, Eigen::Quaternionf r) {
+      position = p;
+      orientation = r;
+    }
 
-  /**
+    /**
      Sets which eye the camera is supposed to render.
   */
-  void setEye(Eye e) { eye = e; }
+    void setEye(Eye e) { eye = e; }
 
-  /**
+    /**
      Sets which eye the camera is supposed to render. Use this for
      example to select between left or right eye textures.
   */
-  Eye getEye() { return eye; }
+    Eye getEye() { return eye; }
 
-private:
+    /**
+     The frame currently being rendered.
+  */
+    const size_t frame_number;
 
-  /**
+  private:
+    /**
      Frustum planes at distance of 1.0 (meters, typically).
   */
-  float left = -1.f, right = 1.f, bottom = -1.f, top = 1.f;
+    float left = -1.f, right = 1.f, bottom = -1.f, top = 1.f;
 
-  /**
+    /**
      The position of the camera.
   */
-  Eigen::Vector3f position = Eigen::Vector3f::Zero();
+    Eigen::Vector3f position = Eigen::Vector3f::Zero();
 
-  /**
+    /**
      The orientation of the camera.
   */
-  Eigen::Quaternionf orientation = Eigen::Quaternionf::Identity();
+    Eigen::Quaternionf orientation = Eigen::Quaternionf::Identity();
 
-  /**
+    /**
      The current eye being for the camera to render.
   */
-  Eye eye = Eye::MONO;
+    Eye eye = Eye::MONO;
 };
 
 END_NAMESPACE_GMGRAPHICS;

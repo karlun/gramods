@@ -33,20 +33,26 @@ public:
   void initialize() override;
 
   /**
-     Updates the live texture with new data. Must be called with GL
-     context.
-  */
-  void update();
-
-  /**
      Called by Updateable::updateAll to increment the frame counter.
   */
   void update(clock::time_point t) override;
 
   /**
-     Returns the ID of the associated GL texture object.
+     Updates the texture and returns the ID of the associated GL
+     texture object. Must be called with GL context. Observe also that
+     this method may perform off-screen rendering.
+
+     @param frame_number The current frame being rendered. This number
+     should increment by one for each frame, however it may wrap
+     around and start over at zero.
+
+     @param eye Eye for which the texture is requested. An
+     implementation may use different textures for different eyes or
+     may reuse the same texture for all eyes.
+
+     @returns OpenGL texture ID of the updated texture
   */
-  GLuint getGLTextureID() override;
+  GLuint updateTexture(size_t frame_number, Eye eye) override;
 
   /**
      Set the file to read image data from. If a sequence of image

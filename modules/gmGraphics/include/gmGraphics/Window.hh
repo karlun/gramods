@@ -43,6 +43,13 @@ public:
   void renderFullPipeline(ViewSettings settings);
 
   /**
+     Dispatches specified class members renders.
+  */
+  void renderFullPipeline(size_t frame_number) {
+    renderFullPipeline(ViewSettings(frame_number, viewpoint));
+  }
+
+  /**
      Adds a view to the window. A window without views will render
      nothing - it is the tiles that provide the graphics. If multiple
      views are added, then these will be rendered over each other.

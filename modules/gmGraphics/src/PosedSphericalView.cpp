@@ -131,7 +131,12 @@ void PosedSphericalView::Impl::renderFullPipeline(ViewSettings settings) {
     cubemap->setFragmentCode(createFragmentCode());
 
     Renderer::list no_renderers;
-    cubemap->renderFullPipeline(no_renderers, eye_pos, head_rot, Eye::MONO, make_square);
+    cubemap->renderFullPipeline(settings.frame_number,
+                                no_renderers,
+                                eye_pos,
+                                head_rot,
+                                Eye::MONO,
+                                make_square);
     program_id = cubemap->getProgram();
 
     if (!program_id) {
@@ -144,7 +149,12 @@ void PosedSphericalView::Impl::renderFullPipeline(ViewSettings settings) {
   mapper->setMapperUniforms(program_id);
   glUseProgram(0);
 
-  cubemap->renderFullPipeline(settings.renderers, eye_pos, head_rot, Eye::MONO, make_square);
+  cubemap->renderFullPipeline(settings.frame_number,
+                              settings.renderers,
+                              eye_pos,
+                              head_rot,
+                              Eye::MONO,
+                              make_square);
 }
 
 std::string PosedSphericalView::Impl::createFragmentCode() {

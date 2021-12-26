@@ -1,7 +1,7 @@
 
 
-#ifndef GRAMODS_GRAPHICS_CHROMAKEYTEXTURE
-#define GRAMODS_GRAPHICS_CHROMAKEYTEXTURE
+#ifndef GRAMODS_GRAPHICS_MULTISCOPICTEXTURESPLITTER
+#define GRAMODS_GRAPHICS_MULTISCOPICTEXTURESPLITTER
 
 #include <gmGraphics/Texture.hh>
 
@@ -14,19 +14,20 @@
 BEGIN_NAMESPACE_GMGRAPHICS;
 
 /**
-   Decoder of Yuv encoded texture into a new texture.
+   Texture that reads off one part at a time from another texture that
+   encodes multiple textures, typically for stereoscopic transcoding.
 */
-class ChromaKeyTexture
+class MultiscopicTextureSplitter
   : public gmGraphics::Texture {
 
 public:
 
-  ChromaKeyTexture();
+  MultiscopicTextureSplitter();
 
   /**
      Updates the texture and returns the ID of the associated GL
-     texture object. Must be called with GL context. Observe also that
-     this method may perform off-screen rendering.
+     texture object. Must be called with GL context. This method will
+     perform off-screen rendering.
 
      @param frame_number The current frame being rendered. This number
      should increment by one for each frame, however it may wrap
@@ -38,28 +39,26 @@ public:
 
      @returns OpenGL texture ID of the updated texture
   */
-  GLuint updateTexture(size_t frame_number, Eye eye) override;
+  GLuint updateTexture(size_t frame_number, Eye eye);
 
   /**
-     Sets the texture to decode.
+     Set the texture to split.
+
+     \gmXmlTag{gmGraphics,MultiscopicTextureSplitter,texture}
   */
   void setTexture(std::shared_ptr<TextureInterface> texture);
 
   /**
-     Set the RGB key to mask with. Default is [0, 1, 0].
+     Sets the type of multiscopic splitting of the input
+     texture. Possible values are
 
-     \gmXmlTag{gmGraphics,ChromaKeyTexture,key}
+      - 0, horizontal (default) and
+      - 1, vertical
+
+     \gmXmlTag{gmGraphics,MultiscopicTextureSplitter,splitType}
   */
-  void setKey(gmCore::float3 key);
+  void setSplitType(size_t type);
 
-  /**
-     Set the minimum and maximum tolerances against the key when
-     masking. This will specify a ramp in decimal CrCb (2D) color
-     space. Default is [0.48, 0.50].
-
-     \gmXmlTag{gmGraphics,ChromaKeyTexture,key}
-  */
-  void setTolerance(gmCore::float2 tol);
 
   GM_OFI_DECLARE;
 

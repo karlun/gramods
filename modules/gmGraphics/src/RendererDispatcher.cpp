@@ -11,7 +11,7 @@ void RendererDispatcher::renderFullPipeline(ViewSettings settings) {
 
   populateViewSettings(settings);
 
-  Camera camera;
+  Camera camera(settings);
   float near, far;
   Renderer::getNearFar(settings.renderers, camera, near, far);
   for (auto renderer : settings.renderers)

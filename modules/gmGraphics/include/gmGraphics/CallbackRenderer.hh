@@ -46,7 +46,7 @@ public:
   /**
      Performs rendering of 3D objects in the scene.
   */
-  void render(Camera camera, float near = -1, float far = -1) {
+  void render(Camera camera, float near = -1, float far = -1) override {
     if (!has_been_setup) {
       if (setup_function) setup_function();
       has_been_setup = true;
