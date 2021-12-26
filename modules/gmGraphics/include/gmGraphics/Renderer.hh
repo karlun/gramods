@@ -7,6 +7,8 @@
 #include <gmCore/Object.hh>
 #include <gmGraphics/Camera.hh>
 
+#include <set>
+
 BEGIN_NAMESPACE_GMGRAPHICS;
 
 /**
@@ -46,6 +48,20 @@ public:
   static void getNearFar(Renderer::list renderers, Camera camera,
                          float &near, float &far);
 
+  /**
+     Add an eye to render to. If no eye is specified, then all eyes
+     should be rendered.
+  */
+  void addEye(Eye e);
+
+  GM_OFI_DECLARE;
+
+protected:
+  /**
+     Eyes to render. Sub classes should render consider a camera only
+     if its eye is in this set or if the set is empty.
+  */
+  std::set<Eye> eyes;
 };
 
 END_NAMESPACE_GMGRAPHICS;

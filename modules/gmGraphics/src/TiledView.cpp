@@ -66,9 +66,9 @@ void TiledView::Impl::renderFullPipeline(ViewSettings settings) {
           << " " << cvp[3] << ")");
 
   for (auto tile : tiles) {
-    GLint tile_location_0 = total_rows - 1 - tile.location[0];
+    GLint tile_location_0 = total_rows - tile.location[2] - tile.location[0];
     GLint x = (GLint)(cvp[0] + tile.location[1] * col_width);
-    GLint y = (GLint)(cvp[1] + tile_location_0  * row_height);
+    GLint y = (GLint)(cvp[1] + tile_location_0 * row_height);
     GLsizei width = (tile.location[1] + tile.location[3] < total_cols)
                         ? GLsizei(tile.location[3] * col_width)
                         : GLsizei(cvp[2] - tile.location[1] * col_width);

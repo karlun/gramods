@@ -2,6 +2,7 @@
 #ifndef GRAMODS_GRAPHICS_EYE
 #define GRAMODS_GRAPHICS_EYE
 
+#include <gmCore/config.hh>
 #include <gmGraphics/config.hh>
 
 #include <stdexcept>
@@ -79,5 +80,15 @@ struct Eye {
 };
 
 END_NAMESPACE_GMGRAPHICS;
+
+BEGIN_NAMESPACE_GRAMODS;
+
+/**
+   Stream operator reading into an Eye. This is typically used to read
+   XML attributes. This will recognize "MONO", "LEFT" and "RIGHT".
+*/
+std::istream& operator>> (std::istream &in, gmGraphics::Eye &e);
+
+END_NAMESPACE_GRAMODS;
 
 #endif

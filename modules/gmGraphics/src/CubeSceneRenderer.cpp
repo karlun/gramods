@@ -12,7 +12,7 @@
 
 BEGIN_NAMESPACE_GMGRAPHICS;
 
-GM_OFI_DEFINE(CubeSceneRenderer);
+GM_OFI_DEFINE_SUB(CubeSceneRenderer, Renderer);
 GM_OFI_PARAM2(CubeSceneRenderer, cubeSize, float, setCubeSize);
 GM_OFI_PARAM2(CubeSceneRenderer, cubeSetSize, float, setCubeSetSize);
 GM_OFI_PARAM2(CubeSceneRenderer, position, Eigen::Vector3f, setPosition);
@@ -48,6 +48,7 @@ CubeSceneRenderer::CubeSceneRenderer()
   : _impl(std::make_unique<Impl>()) {}
 
 void CubeSceneRenderer::render(Camera camera, float near, float far) {
+  if (!eyes.empty() && eyes.count(camera.getEye()) == 0) return;
   _impl->render(camera, near, far);
 }
 
@@ -188,6 +189,7 @@ void CubeSceneRenderer::Impl::setup() {
 }
 
 void CubeSceneRenderer::getNearFar(Camera camera, float &near, float &far){
+  if (!eyes.empty() && eyes.count(camera.getEye()) == 0) return;
   _impl->getNearFar(camera, near, far);
 }
 

@@ -8,6 +8,8 @@
 #include <gmCore/ExitLock.hh>
 
 #include <FreeImage.h>
+
+#include <regex>
 #include <stdlib.h>
 
 
@@ -16,6 +18,7 @@ BEGIN_NAMESPACE_GMGRAPHICS;
 GM_OFI_DEFINE(ImageTexture);
 GM_OFI_PARAM2(ImageTexture, file, std::filesystem::path, setFile);
 GM_OFI_PARAM2(ImageTexture, range, gmCore::size2, setRange);
+GM_OFI_PARAM2(ImageTexture, autoRange, bool, setAutoRange);
 GM_OFI_PARAM2(ImageTexture, loop, bool, setLoop);
 GM_OFI_PARAM2(ImageTexture, exit, bool, setExit);
 
@@ -25,8 +28,8 @@ struct ImageTexture::Impl {
 
   GLuint update(size_t frame_number, Eye eye);
   void update(clock::time_point t);
-  bool loadImage(std::filesystem::path filename,
-                 long int frame = 0);
+  void findRange();
+  bool loadImage(long int frame = 0);
 
   GLuint texture_id = 0;
   size_t texture_frame = std::numeric_limits<size_t>::max();
@@ -34,6 +37,7 @@ struct ImageTexture::Impl {
 
   std::filesystem::path file = {};
   gmCore::size2 animation_range = {0, 0};
+  bool auto_range = false;
   long int animation_frame = -1;
   bool animate = false;
   bool do_loop = false;
@@ -59,6 +63,11 @@ void ImageTexture::setRange(gmCore::size2 range) {
   _impl->animate = true;
 }
 
+void ImageTexture::setAutoRange(bool on) {
+  _impl->auto_range = on;
+  _impl->animate = true;
+}
+
 void ImageTexture::setLoop(bool on) {
   _impl->do_loop = on;
 }
@@ -80,7 +89,7 @@ GLuint ImageTexture::Impl::update(size_t frame_number, Eye eye) {
   if (!animate) {
     if (!texture_id) {
       GM_DBG2("ImageTexture", "Loading image");
-      fail = !loadImage(file);
+      fail = !loadImage();
     }
     if (fail) return 0;
     return texture_id;
@@ -90,7 +99,7 @@ GLuint ImageTexture::Impl::update(size_t frame_number, Eye eye) {
     GM_DBG2("ImageTexture",
             "Loading animation frame " << animation_frame << ".");
     texture_frame = frame_number;
-    fail = !loadImage(file, animation_frame);
+    fail = !loadImage(animation_frame);
   }
 
   if (fail) return 0;
@@ -104,6 +113,11 @@ void ImageTexture::update(clock::time_point t) {
 void ImageTexture::Impl::update(clock::time_point) {
 
   if (!animate) return;
+
+  if (auto_range) {
+    findRange();
+    auto_range = false;
+  }
 
   if ((size_t)++animation_frame <= animation_range[1]) return;
 
@@ -122,13 +136,80 @@ void ImageTexture::Impl::update(clock::time_point) {
   }
 }
 
-bool ImageTexture::Impl::loadImage(std::filesystem::path file_template,
-                                   long int frame) {
+void ImageTexture::Impl::findRange() {
 
-  size_t filename_size = snprintf(nullptr, 0, file_template.u8string().c_str(), frame) + 1;
+  size_t range_min = std::numeric_limits<size_t>::max();
+  size_t range_max = std::numeric_limits<size_t>::min();
+
+  const std::string filename = file.filename();
+  const auto folder =
+      file.has_parent_path() ? file.parent_path() : std::filesystem::path(".");
+
+  const std::regex regex1("([^%]*)%[^d]*d(.*)");
+  std::smatch match1;
+  if (!std::regex_match(filename, match1, regex1) || match1.size() != 3) {
+    GM_ERR("ImageTexture",
+           "Could not autodetect range of current filename '"
+               << filename << "' (in folder '" << folder << "')");
+    animate = false;
+    return;
+  }
+
+  const std::string pattern2 = GM_STR(match1[1] << "([0-9]+)" << match1[2]);
+  const std::regex regex2(pattern2);
+  std::smatch match2;
+  for (const auto & entry : std::filesystem::directory_iterator(folder)) {
+    const std::string filename = entry.path().filename().string();
+
+    if (!entry.is_regular_file()) {
+      GM_DBG3("ImageTexture", "Skipping non file entry '" << filename << "'.");
+      continue;
+    }
+
+    if (!std::regex_match(filename, match2, regex2)) {
+      GM_DBG3("ImageTexture",
+              "No match for pattern '" << pattern2 << "' on file '" << filename
+                                       << "'.");
+      continue;
+    }
+    if (match2.size() != 2) {
+      GM_WRN("ImageTexture",
+             "Could not fully match pattern '" << pattern2 << "' on file '"
+                                               << filename << "'.");
+      continue;
+    }
+
+    size_t frame;
+    if (!(std::stringstream(match2[1]) >> frame)) {
+      GM_WRN("ImageTexture",
+             "Could not parse frame number '" << match2[1] << "' on file '"
+                                              << filename << "'.");
+      continue;
+    }
+
+    range_min = std::min(range_min, frame);
+    range_max = std::max(range_max, frame);
+  }
+
+  if (range_min == std::numeric_limits<size_t>::max()) {
+    GM_ERR("ImageTexture",
+           "Failed to automatically determine animation range");
+    return;
+  }
+
+  GM_DBG1("ImageTexture",
+          "Automatically determined animation range " << range_min << " - "
+                                                      << range_max << ".");
+  animation_range = {range_min, range_max};
+  animation_frame = range_min - 1;
+}
+
+bool ImageTexture::Impl::loadImage(long int frame) {
+
+  size_t filename_size = snprintf(nullptr, 0, file.u8string().c_str(), frame) + 1;
   std::vector<char> filename(filename_size + 1);
   snprintf(
-      filename.data(), filename_size, file_template.u8string().c_str(), frame);
+      filename.data(), filename_size, file.u8string().c_str(), frame);
 
 	FREE_IMAGE_FORMAT image_format = FreeImage_GetFileType(filename.data(), 0);
 	if(image_format == FIF_UNKNOWN)

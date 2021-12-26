@@ -48,7 +48,7 @@ std::istream& operator>> (std::istream &in, gmCore::angle &v) {
       GM_WRN("operator>>(std::istream, str_angle)",
              "Parsed angle (" << value << ") is large to be in radians"
              " - did yoy mean degrees ('d" << str_angle << "')? Otherwise"
-             " use 'r" << str_angle << "' do disable this warning.");
+             " use 'r" << str_angle << "' to disable this warning.");
   }
 
   return in;

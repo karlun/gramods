@@ -8,7 +8,7 @@
 
 BEGIN_NAMESPACE_GMGRAPHICS;
 
-GM_OFI_DEFINE(TextureRenderer);
+GM_OFI_DEFINE_SUB(TextureRenderer, Renderer);
 GM_OFI_POINTER2(TextureRenderer, texture, gmGraphics::TextureInterface, setTexture);
 GM_OFI_PARAM2(TextureRenderer, flip, bool, setFlip);
 
@@ -64,6 +64,7 @@ TextureRenderer::TextureRenderer()
   : _impl(new Impl) {}
 
 void TextureRenderer::render(Camera camera, float, float) {
+  if (!eyes.empty() && eyes.count(camera.getEye()) == 0) return;
   _impl->render(camera.frame_number, texture.get(), camera);
 }
 
