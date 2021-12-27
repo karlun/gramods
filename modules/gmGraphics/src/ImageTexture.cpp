@@ -124,11 +124,10 @@ GLuint ImageTexture::updateTexture(size_t frame_number, Eye eye) {
 
 GLuint ImageTexture::Impl::update(size_t frame_number, Eye eye) {
 
+  if (fail) return 0;
+
   if (!animate) {
-    if (texture_id) {
-      if (fail) return 0;
-      return texture_id;
-    }
+    if (texture_id) return texture_id;
 
     GM_DBG2("ImageTexture", "Loading image");
     auto filename = file.u8string();
@@ -139,10 +138,7 @@ GLuint ImageTexture::Impl::update(size_t frame_number, Eye eye) {
     return texture_id;
   }
 
-  if (texture_frame == frame_number) {
-    if (fail) return 0;
-    return texture_id;
-  }
+  if (texture_frame == frame_number) return texture_id;
 
   GM_DBG2("ImageTexture",
           "Loading animation frame " << animation_frame << ".");
@@ -223,14 +219,24 @@ void ImageTexture::Impl::findRange() {
   const std::string filename = file.filename();
   const auto folder =
       file.has_parent_path() ? file.parent_path() : std::filesystem::path(".");
+  if (!std::filesystem::is_directory(folder)) {
+    GM_ERR("ImageTexture",
+           "Could not autodetect range of current filename '"
+               << filename << "' because folder '" << folder.u8string()
+               << "' is not a folder.");
+    animate = false;
+    fail = true;
+    return;
+  }
 
   const std::regex regex1("([^%]*)%[^d]*d(.*)");
   std::smatch match1;
   if (!std::regex_match(filename, match1, regex1) || match1.size() != 3) {
     GM_ERR("ImageTexture",
            "Could not autodetect range of current filename '"
-               << filename << "' (in folder '" << folder << "')");
+               << filename << "' (in folder '" << folder.u8string() << "')");
     animate = false;
+    fail = true;
     return;
   }
 
@@ -273,6 +279,8 @@ void ImageTexture::Impl::findRange() {
   if (range_min == std::numeric_limits<size_t>::max()) {
     GM_ERR("ImageTexture",
            "Failed to automatically determine animation range");
+    animate = false;
+    fail = true;
     return;
   }
 
