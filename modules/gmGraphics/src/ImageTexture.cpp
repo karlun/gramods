@@ -12,6 +12,9 @@
 #include <regex>
 #include <stdlib.h>
 
+#include <chrono>
+#include <thread>
+#include <condition_variable>
 
 BEGIN_NAMESPACE_GMGRAPHICS;
 
@@ -25,11 +28,14 @@ GM_OFI_PARAM2(ImageTexture, exit, bool, setExit);
 struct ImageTexture::Impl {
 
   Impl();
+  ~Impl();
 
   GLuint update(size_t frame_number, Eye eye);
   void update(clock::time_point t);
   void findRange();
-  bool loadImage(long int frame = 0);
+  static std::string getFrameFilename(std::string file, long int frame);
+  static FIBITMAP *loadImage(std::string filename);
+  bool setTexture(FIBITMAP *image, std::string filename);
 
   GLuint texture_id = 0;
   size_t texture_frame = std::numeric_limits<size_t>::max();
@@ -44,6 +50,16 @@ struct ImageTexture::Impl {
   bool do_exit = false;
 
   std::shared_ptr<FreeImage> free_image;
+
+  void load_process();
+
+  bool load_process_alive = true;
+  std::thread load_thread;
+  std::condition_variable load_condition;
+  std::mutex load_lock;
+  size_t load_frame = std::numeric_limits<size_t>::max();
+  std::string load_filename;
+  FIBITMAP *load_image = nullptr;
 };
 
 ImageTexture::ImageTexture()
@@ -78,6 +94,28 @@ void ImageTexture::setExit(bool on) {
 
 ImageTexture::Impl::Impl() {
   free_image = FreeImage::get();
+  load_thread = std::thread([this]{ this->load_process(); });
+}
+
+ImageTexture::Impl::~Impl() {
+
+  {
+    std::unique_lock<std::mutex> guard(load_lock);
+    load_process_alive = false;
+    load_condition.notify_all();
+  }
+
+  if (!load_thread.joinable()) return;
+
+  try {
+    load_thread.join();
+  } catch (const std::invalid_argument &e) {
+    GM_DBG2("ImageTexture", "Could not join load thread: " << e.what() << ".");
+  } catch (const std::system_error &e) {
+    GM_WRN("ImageTexture",
+           "Caught system_error while joining load thread. Code "
+           << e.code() << " meaning " << e.what() << ".");
+  }
 }
 
 GLuint ImageTexture::updateTexture(size_t frame_number, Eye eye) {
@@ -87,19 +125,60 @@ GLuint ImageTexture::updateTexture(size_t frame_number, Eye eye) {
 GLuint ImageTexture::Impl::update(size_t frame_number, Eye eye) {
 
   if (!animate) {
-    if (!texture_id) {
-      GM_DBG2("ImageTexture", "Loading image");
-      fail = !loadImage();
+    if (texture_id) {
+      if (fail) return 0;
+      return texture_id;
     }
+
+    GM_DBG2("ImageTexture", "Loading image");
+    auto filename = file.u8string();
+    FIBITMAP *image = loadImage(filename);
+    fail = !setTexture(image, filename);
+
     if (fail) return 0;
     return texture_id;
   }
 
-  if (texture_frame != frame_number) {
+  if (texture_frame == frame_number) {
+    if (fail) return 0;
+    return texture_id;
+  }
+
+  GM_DBG2("ImageTexture",
+          "Loading animation frame " << animation_frame << ".");
+
+  std::unique_lock<std::mutex> guard(load_lock);
+
+  if (load_frame != animation_frame) {
     GM_DBG2("ImageTexture",
-            "Loading animation frame " << animation_frame << ".");
-    texture_frame = frame_number;
-    fail = !loadImage(animation_frame);
+            "Asynchroneous loading not triggered - triggering and waiting.");
+    load_frame = animation_frame;
+    load_filename = getFrameFilename(file.u8string(), load_frame);
+    load_condition.notify_all();
+    while (load_image == nullptr) {
+      load_condition.wait_for(guard, std::chrono::seconds(1));
+      if (!load_process_alive) return 0;
+    }
+  }
+
+  fail = !setTexture(load_image, load_filename);
+  load_image = nullptr;
+
+  texture_frame = frame_number;
+
+  auto next_frame = animation_frame + 1;
+  if (next_frame <= animation_range[1]) {
+    GM_DBG2("ImageTexture",
+            "Triggering asynchroneous pre-loading of frame " << next_frame << ".");
+    load_frame = next_frame;
+    load_filename = getFrameFilename(file.u8string(), load_frame);
+    load_condition.notify_all();
+  } else if (do_loop) {
+    GM_DBG2("ImageTexture",
+            "Triggering asynchroneous pre-loading of frame " << next_frame << ".");
+    load_frame = animation_range[0];
+    load_filename = getFrameFilename(file.u8string(), load_frame);
+    load_condition.notify_all();
   }
 
   if (fail) return 0;
@@ -204,31 +283,39 @@ void ImageTexture::Impl::findRange() {
   animation_frame = range_min - 1;
 }
 
-bool ImageTexture::Impl::loadImage(long int frame) {
-
-  size_t filename_size = snprintf(nullptr, 0, file.u8string().c_str(), frame) + 1;
+std::string ImageTexture::Impl::getFrameFilename(std::string file,
+                                                 long int frame) {
+  size_t filename_size = snprintf(nullptr, 0, file.c_str(), frame) + 1;
   std::vector<char> filename(filename_size + 1);
-  snprintf(
-      filename.data(), filename_size, file.u8string().c_str(), frame);
+  snprintf(filename.data(), filename_size, file.c_str(), frame);
+  return std::string(filename.begin(), filename.end());
+}
 
-	FREE_IMAGE_FORMAT image_format = FreeImage_GetFileType(filename.data(), 0);
+FIBITMAP *ImageTexture::Impl::loadImage(std::string filename) {
+
+	FREE_IMAGE_FORMAT image_format = FreeImage_GetFileType(filename.c_str(), 0);
 	if(image_format == FIF_UNKNOWN)
-		image_format = FreeImage_GetFIFFromFilename(filename.data());
+		image_format = FreeImage_GetFIFFromFilename(filename.c_str());
 	if(image_format == FIF_UNKNOWN) {
-    GM_ERR("ImageTexture", "Unknown image file type of file '" << filename.data() << "'");
-		return false;
+    GM_ERR("ImageTexture", "Unknown image file type of file '" << filename << "'");
+		return nullptr;
   }
 
   if (!FreeImage_FIFSupportsReading(image_format)) {
-    GM_ERR("ImageTexture", "No read support for image '" << filename.data() << "'");
-		return false;
+    GM_ERR("ImageTexture", "No read support for image '" << filename << "'");
+		return nullptr;
   }
 
-	FIBITMAP *image = FreeImage_Load(image_format, filename.data());
+	FIBITMAP *image = FreeImage_Load(image_format, filename.c_str());
 	if(!image) {
-    GM_ERR("ImageTexture", "Could not load image '" << filename.data() << "'");
-		return false;
+    GM_ERR("ImageTexture", "Could not load image '" << filename << "'");
+		return nullptr;
   }
+
+  return image;
+}
+
+bool ImageTexture::Impl::setTexture(FIBITMAP *image, std::string filename) {
 
   FREE_IMAGE_TYPE image_type = FreeImage_GetImageType(image);
   GLenum gl_format;
@@ -249,7 +336,9 @@ bool ImageTexture::Impl::loadImage(long int frame) {
       gl_type = GL_UNSIGNED_BYTE;
       break;
     default:
-      GM_ERR("ImageTexture", "Unsupported image format (" << FreeImage_GetBPP(image) << " bits per pixel)");
+      GM_ERR("ImageTexture",
+             "Unsupported image format (" << FreeImage_GetBPP(image)
+                                          << " bits per pixel)");
       FreeImage_Unload(image);
       return false;
     }
@@ -258,55 +347,57 @@ bool ImageTexture::Impl::loadImage(long int frame) {
     gl_format = GL_RED;
     gl_type = GL_UNSIGNED_SHORT;
     break;
-	case FIT_INT16:
+  case FIT_INT16:
     gl_format = GL_RED;
     gl_type = GL_SHORT;
     break;
-	case FIT_UINT32:
+  case FIT_UINT32:
     gl_format = GL_RED;
-    gl_type =  GL_UNSIGNED_INT;
+    gl_type = GL_UNSIGNED_INT;
     break;
-	case FIT_INT32:
+  case FIT_INT32:
     gl_format = GL_RED;
     gl_type = GL_INT;
     break;
-	case FIT_FLOAT:
+  case FIT_FLOAT:
     gl_format = GL_RED;
     gl_type = GL_FLOAT;
     break;
-	case FIT_RGB16:
+  case FIT_RGB16:
     gl_format = GL_RGB;
     gl_type = GL_SHORT;
     break;
-	case FIT_RGBA16:
+  case FIT_RGBA16:
     gl_format = GL_RGBA;
     gl_type = GL_SHORT;
     break;
-	case FIT_RGBF:
+  case FIT_RGBF:
     gl_format = GL_RGB;
     gl_type = GL_FLOAT;
     break;
-	case FIT_RGBAF:
+  case FIT_RGBAF:
     gl_format = GL_RGBA;
     gl_type = GL_FLOAT;
     break;
   default:
-    GM_ERR("ImageTexture", "Unknown pixel type (" << image_type << ") of image '" << filename.data() << "'");
+    GM_ERR("ImageTexture",
+           "Unknown pixel type (" << image_type << ") of image '"
+                                  << filename << "'");
     FreeImage_Unload(image);
     return false;
   }
 
-	BYTE* image_data = FreeImage_GetBits(image);
-	unsigned int image_width = FreeImage_GetWidth(image);
-	unsigned int image_height = FreeImage_GetHeight(image);
-	if((image_data == 0) || (image_width == 0) || (image_height == 0)) {
+  BYTE *image_data = FreeImage_GetBits(image);
+  unsigned int image_width = FreeImage_GetWidth(image);
+  unsigned int image_height = FreeImage_GetHeight(image);
+  if ((image_data == 0) || (image_width == 0) || (image_height == 0)) {
+    GM_ERR("ImageTexture",
+           "No valid pixel data in image '" << filename << "'");
     FreeImage_Unload(image);
-		return false;
+    return false;
   }
 
-  if (!texture_id) {
-    glGenTextures(1, &texture_id);
-  }
+  if (!texture_id) { glGenTextures(1, &texture_id); }
 
   glBindTexture(GL_TEXTURE_2D, texture_id);
   glTexImage2D(GL_TEXTURE_2D,
@@ -319,11 +410,39 @@ bool ImageTexture::Impl::loadImage(long int frame) {
 	FreeImage_Unload(image);
 
   GM_DBG2("ImageTexture", "Loaded"
-          << " image " << filename.data()
+          << " image " << filename
           << " " << image_width << "x" << image_height
           );
 
 	return true;
+}
+
+void ImageTexture::Impl::load_process() {
+  std::unique_lock<std::mutex> guard(load_lock);
+  while(load_process_alive) {
+    GM_DBG3("ImageTexture",
+            "Asynchroneous loader sleeping.");
+    load_condition.wait_for(guard, std::chrono::seconds(1));
+
+    if (load_filename.empty()) continue;
+
+    GM_DBG3("ImageTexture",
+            "Asynchroneous loading triggered.");
+
+    auto t0 = std::chrono::steady_clock::now();
+
+    if (load_image != nullptr) FreeImage_Unload(load_image);
+    load_image = loadImage(load_filename);
+    load_filename.clear();
+
+    auto t1 = std::chrono::steady_clock::now();
+
+    typedef std::chrono::duration<double, std::ratio<1>> d_seconds;
+    auto dt1 = std::chrono::duration_cast<d_seconds>(t1 - t0);
+    GM_DBG2("ImageTexture",
+            "Asynchroneous image load in " << int(1e3 * dt1.count() + 0.8)
+                                           << " ms");
+  }
 }
 
 END_NAMESPACE_GMGRAPHICS;
