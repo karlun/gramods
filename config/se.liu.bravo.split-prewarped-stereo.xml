@@ -10,6 +10,8 @@
 
     <SdlContext useVideo="true"/>
 
+    <Viewpoint eyeSeparation="0.0"/>
+
     <TiledView>
 
       <param name="tileLocation" value="0 0 2 1"/>
@@ -20,7 +22,6 @@
             distance="7.4"
             clipAngles="d58.865 d58.865 d-7.701 d70.238">
           <LinearAnaglyphsMultiplexer/>
-          <Viewpoint eyeSeparation="0.0"/>
 
           <SphereRenderer
               eye="LEFT"
@@ -63,7 +64,7 @@
                 DEF="LEFT_RENDERER"
                 radius="7.4">
               <ImageTexture USE="LEFT_TEXTURE"/>
-              <AngularFisheyeCoordinatesMapper coverageAngle="d165"/>
+              <EquirectangularCoordinatesMapper/>
             </SphereRenderer>
           </SpatialPlanarView>
 
@@ -76,7 +77,7 @@
                 DEF="RIGHT_RENDERER"
                 radius="7.4">
               <ImageTexture USE="RIGHT_TEXTURE"/>
-              <AngularFisheyeCoordinatesMapper coverageAngle="d165"/>
+              <EquirectangularCoordinatesMapper/>
             </SphereRenderer>
           </SpatialPlanarView>
         </TiledView>

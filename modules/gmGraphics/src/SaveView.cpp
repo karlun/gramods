@@ -6,7 +6,6 @@
 #include <gmGraphics/FreeImage.hh>
 #include <gmCore/RunOnce.hh>
 #include <gmCore/Stringify.hh>
-#include <gmCore/ExitLock.hh>
 
 #include <gmGraphics/OffscreenRenderTargets.hh>
 #include <gmGraphics/RasterProcessor.hh>
@@ -86,7 +85,6 @@ struct SaveView::Impl {
   std::condition_variable save_condition;
   std::mutex save_lock;
   std::unique_ptr<FileBuffer> save_image;
-  std::shared_ptr<gmCore::ExitLock> exit_lock;
 };
 
 SaveView::SaveView()
@@ -201,11 +199,13 @@ void SaveView::Impl::renderFullPipeline(ViewSettings settings) {
   int height = size[3];
 
   size_t filename_size =
-      snprintf(nullptr, 0, file_template.u8string().c_str(), frame) + 1;
+      snprintf(nullptr, 0, file_template.u8string().c_str(), frame);
   std::vector<char> filename_buffer(filename_size + 1);
-  snprintf(
-      filename_buffer.data(), filename_size, file_template.u8string().c_str(), frame);
-  std::string filename = std::string(filename_buffer.begin(), filename_buffer.end());
+  snprintf(filename_buffer.data(),
+           filename_size + 1,
+           file_template.u8string().c_str(),
+           frame);
+  std::string filename(filename_buffer.begin(), filename_buffer.end() - 1);
 
   ++frame;
 
@@ -387,10 +387,6 @@ void SaveView::clearRenderers(bool recursive) {
 }
 
 void SaveView::Impl::saveImage(std::unique_ptr<FileBuffer> image) {
-
-  exit_lock = gmCore::ExitLock::get();
-  if (!exit_lock) return;
-
   std::lock_guard<std::mutex> guard(save_lock);
   assert(!save_image);
   save_image = std::move(image);
@@ -416,14 +412,14 @@ void SaveView::Impl::save_process() {
 
     if (success) {
       GM_DBG2("SaveView",
-              "Asynchroneous image save in " << int(1e3 * dt1.count() + 0.8)
-                                             << " ms");
+              "Asynchroneous image save '" << save_image->filename << "' in "
+                                           << int(1e3 * dt1.count() + 0.8)
+                                           << " ms");
     } else {
-      GM_ERR("SaveView", "Could not save image " << save_image->filename);
+      GM_ERR("SaveView", "Could not save image '" << save_image->filename << "'");
     }
 
     save_image.reset();
-    exit_lock.reset();
   }
 }
 

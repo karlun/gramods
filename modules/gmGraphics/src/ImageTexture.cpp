@@ -5,7 +5,7 @@
 
 #include <gmGraphics/FreeImage.hh>
 #include <gmCore/Console.hh>
-#include <gmCore/ExitLock.hh>
+#include <gmCore/ExitException.hh>
 
 #include <FreeImage.h>
 
@@ -206,8 +206,7 @@ void ImageTexture::Impl::update(clock::time_point) {
   animate = false;
 
   if (do_exit) {
-    auto exit_lock = gmCore::ExitLock::get();
-    if (exit_lock) exit_lock->requestExit(0);
+    throw gmCore::ExitException(0);
   }
 }
 
@@ -293,10 +292,10 @@ void ImageTexture::Impl::findRange() {
 
 std::string ImageTexture::Impl::getFrameFilename(std::string file,
                                                  long int frame) {
-  size_t filename_size = snprintf(nullptr, 0, file.c_str(), frame) + 1;
+  size_t filename_size = snprintf(nullptr, 0, file.c_str(), frame);
   std::vector<char> filename(filename_size + 1);
-  snprintf(filename.data(), filename_size, file.c_str(), frame);
-  return std::string(filename.begin(), filename.end());
+  snprintf(filename.data(), filename_size + 1, file.c_str(), frame);
+  return std::string(filename.begin(), filename.end() - 1);
 }
 
 FIBITMAP *ImageTexture::Impl::loadImage(std::string filename) {
