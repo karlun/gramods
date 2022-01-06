@@ -6,7 +6,6 @@
 #include <gmGraphics/FreeImage.hh>
 #include <gmCore/RunOnce.hh>
 #include <gmCore/Stringify.hh>
-#include <gmCore/ExitLock.hh>
 
 #include <gmGraphics/OffscreenRenderTargets.hh>
 #include <gmGraphics/RasterProcessor.hh>
@@ -86,7 +85,6 @@ struct SaveView::Impl {
   std::condition_variable save_condition;
   std::mutex save_lock;
   std::unique_ptr<FileBuffer> save_image;
-  std::shared_ptr<gmCore::ExitLock> exit_lock;
 };
 
 SaveView::SaveView()
@@ -387,10 +385,6 @@ void SaveView::clearRenderers(bool recursive) {
 }
 
 void SaveView::Impl::saveImage(std::unique_ptr<FileBuffer> image) {
-
-  exit_lock = gmCore::ExitLock::get();
-  if (!exit_lock) return;
-
   std::lock_guard<std::mutex> guard(save_lock);
   assert(!save_image);
   save_image = std::move(image);
@@ -423,7 +417,6 @@ void SaveView::Impl::save_process() {
     }
 
     save_image.reset();
-    exit_lock.reset();
   }
 }
 

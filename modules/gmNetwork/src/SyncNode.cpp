@@ -1,9 +1,9 @@
 
 #include <gmNetwork/SyncNode.hh>
 
+#include <gmCore/ExitException.hh>
 #include <gmCore/RunOnce.hh>
 #include <gmCore/InvalidArgument.hh>
-#include <gmCore/ExitLock.hh>
 #include <gmCore/Console.hh>
 #include <gmCore/Stringify.hh>
 
@@ -276,8 +276,7 @@ std::set<std::size_t> SyncNode::Impl::getConnectedPeers() {
       connected_peers.insert(peer->getPeerIdx());
     } else {
       if (exit_when_a_peer_is_disconnected) {
-        auto exit_lock = gmCore::ExitLock::get();
-        if (exit_lock) exit_lock->requestExit(0);
+        throw gmCore::ExitException(0);
       } else {
         connected_peers.erase(peer->getPeerIdx());
       }
@@ -289,8 +288,7 @@ std::set<std::size_t> SyncNode::Impl::getConnectedPeers() {
       connected_peers.insert(peer->getPeerIdx());
     } else {
       if (exit_when_a_peer_is_disconnected) {
-        auto exit_lock = gmCore::ExitLock::get();
-        if (exit_lock) exit_lock->requestExit(0);
+        throw gmCore::ExitException(0);
       } else {
         connected_peers.erase(peer->getPeerIdx());
       }

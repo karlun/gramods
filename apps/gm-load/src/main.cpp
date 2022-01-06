@@ -102,7 +102,9 @@ int main(int argc, char *argv[]) {
   if (sync_start.getValue() || sync_swap.getValue())
     sync_node->waitForConnection();
 
-  try{
+  int exit_code = 0;
+
+  try {
     bool alive = true;
     while (alive) {
 
@@ -196,15 +198,21 @@ int main(int argc, char *argv[]) {
     }
   }
   catch (const gmCore::ExitException &e) {
-    return e.exit_code;
+    exit_code = e.exit_code;
   }
   catch (const gmCore::RuntimeException &e) {
     GM_ERR("gm-load", "Terminated by runtime exception: " << e.what);
+    exit_code = -2;
   }
   catch (...) {
     GM_ERR("gm-load", "Terminated by unknown exception");
-    return -255;
+    exit_code = -255;
   }
 
-  return 0;
+  objects.clear();
+  sync_node.reset();
+  windows.clear();
+  config.reset();
+
+  return exit_code;
 }

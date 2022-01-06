@@ -5,7 +5,7 @@
 
 #include <gmGraphics/FreeImage.hh>
 #include <gmCore/Console.hh>
-#include <gmCore/ExitLock.hh>
+#include <gmCore/ExitException.hh>
 
 #include <FreeImage.h>
 
@@ -206,8 +206,7 @@ void ImageTexture::Impl::update(clock::time_point) {
   animate = false;
 
   if (do_exit) {
-    auto exit_lock = gmCore::ExitLock::get();
-    if (exit_lock) exit_lock->requestExit(0);
+    throw gmCore::ExitException(0);
   }
 }
 
