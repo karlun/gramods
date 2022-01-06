@@ -199,11 +199,13 @@ void SaveView::Impl::renderFullPipeline(ViewSettings settings) {
   int height = size[3];
 
   size_t filename_size =
-      snprintf(nullptr, 0, file_template.u8string().c_str(), frame) + 1;
+      snprintf(nullptr, 0, file_template.u8string().c_str(), frame);
   std::vector<char> filename_buffer(filename_size + 1);
-  snprintf(
-      filename_buffer.data(), filename_size, file_template.u8string().c_str(), frame);
-  std::string filename = std::string(filename_buffer.begin(), filename_buffer.end());
+  snprintf(filename_buffer.data(),
+           filename_size + 1,
+           file_template.u8string().c_str(),
+           frame);
+  std::string filename(filename_buffer.begin(), filename_buffer.end() - 1);
 
   ++frame;
 
@@ -410,10 +412,11 @@ void SaveView::Impl::save_process() {
 
     if (success) {
       GM_DBG2("SaveView",
-              "Asynchroneous image save in " << int(1e3 * dt1.count() + 0.8)
-                                             << " ms");
+              "Asynchroneous image save '" << save_image->filename << "' in "
+                                           << int(1e3 * dt1.count() + 0.8)
+                                           << " ms");
     } else {
-      GM_ERR("SaveView", "Could not save image " << save_image->filename);
+      GM_ERR("SaveView", "Could not save image '" << save_image->filename << "'");
     }
 
     save_image.reset();
