@@ -209,10 +209,29 @@ int main(int argc, char *argv[]) {
     exit_code = -255;
   }
 
-  objects.clear();
-  sync_node.reset();
-  windows.clear();
-  config.reset();
+
+  try {
+    objects.clear();
+    sync_node.reset();
+    windows.clear();
+    config.reset();
+  } catch (const gmCore::ExitException &e) {
+    GM_WRN("gm-load",
+           "ExitException while already terminating with exit code "
+               << exit_code << ".");
+    exit_code = e.exit_code;
+  } catch (const gmCore::RuntimeException &e) {
+    GM_WRN("gm-load",
+           "RuntimeException (" << e.what
+                                << ") while already terminating with exit code "
+                                << exit_code << ".");
+    exit_code = -2;
+  } catch (...) {
+    GM_WRN("gm-load",
+           "Unknown exception while already terminating with exit code "
+               << exit_code << ".");
+    exit_code = -255;
+  }
 
   return exit_code;
 }

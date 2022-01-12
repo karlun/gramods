@@ -79,6 +79,8 @@ int main(int argc, char *argv[]) {
   d_seconds swap_time = d_seconds();
   d_seconds vsync_time = d_seconds();
 
+  int exit_code = 0;
+
   try {
     bool alive = true;
     while (alive) {
@@ -149,13 +151,36 @@ int main(int argc, char *argv[]) {
       }
     }
   } catch (const gmCore::ExitException &e) {
-    return e.exit_code;
+    exit_code = e.exit_code;
   } catch (const gmCore::RuntimeException &e) {
-    GM_ERR("gm-demo-osg", "Terminated by runtime exception: " << e.what);
+    GM_ERR("gm-demo-org", "Terminated by runtime exception: " << e.what);
+    exit_code = -2;
   } catch (...) {
-    GM_ERR("gm-demo-osg", "Terminated by unknown exception");
-    return -255;
+    GM_ERR("gm-demo-org", "Terminated by unknown exception");
+    exit_code = -255;
   }
 
-  return 0;
+  try {
+    objects.clear();
+    windows.clear();
+    config.reset();
+  } catch (const gmCore::ExitException &e) {
+    GM_WRN("gm-demo-osg",
+           "ExitException while already terminating with exit code "
+               << exit_code << ".");
+    exit_code = e.exit_code;
+  } catch (const gmCore::RuntimeException &e) {
+    GM_WRN("gm-demo-osg",
+           "RuntimeException (" << e.what
+                                << ") while already terminating with exit code "
+                                << exit_code << ".");
+    exit_code = -2;
+  } catch (...) {
+    GM_WRN("gm-demo-osg",
+           "Unknown exception while already terminating with exit code "
+               << exit_code << ".");
+    exit_code = -255;
+  }
+
+  return exit_code;
 }
