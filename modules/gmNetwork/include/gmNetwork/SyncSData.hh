@@ -20,7 +20,7 @@ public:
   /**
      Initializes without specifying value.
   */
-  SyncSData() {}
+  SyncSData() { back = front = {}; }
 
   /**
      Initializes the SyncSData to the specified value.

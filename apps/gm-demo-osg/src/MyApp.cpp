@@ -84,11 +84,13 @@ struct MyApp::Impl {
 
   // wand pose (position + orientation)
   std::shared_ptr<SyncSVec> sync_wand_position = std::make_shared<SyncSVec>();
-  std::shared_ptr<SyncSQuat> sync_wand_orientation = std::make_shared<SyncSQuat>();
+  std::shared_ptr<SyncSQuat> sync_wand_orientation =
+      std::make_shared<SyncSQuat>(Eigen::Quaternionf::Identity());
 
   // head pose (position + orientation)
   std::shared_ptr<SyncSVec> sync_head_position = std::make_shared<SyncSVec>();
-  std::shared_ptr<SyncSQuat> sync_head_orientation = std::make_shared<SyncSQuat>();
+  std::shared_ptr<SyncSQuat> sync_head_orientation =
+      std::make_shared<SyncSQuat>(Eigen::Quaternionf::Identity());
 
   /// ----- OSG Stuff -----
 
@@ -170,10 +172,6 @@ void MyApp::Impl::setup_sync(
   data_sync->addData(sync_head_orientation);
   data_sync->addData(sync_wand_position);
   data_sync->addData(sync_wand_orientation);
-
-  *sync_main_button = false;
-  *sync_second_button = false;
-  *sync_menu_button = false;
 }
 
 void MyApp::Impl::setup_wand(
