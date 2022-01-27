@@ -25,14 +25,14 @@ public:
   Camera(size_t frame_number) : frame_number(frame_number) {}
 
   Camera(const Camera &other)
-    : left(other.left),
+    : frame_number(other.frame_number),
+      left(other.left),
       right(other.right),
       bottom(other.bottom),
       top(other.top),
       position(other.position),
       orientation(other.orientation),
-      eye(other.eye),
-      frame_number(other.frame_number) {}
+      eye(other.eye) {}
 
   Camera &operator=(const Camera &other) {
     if (frame_number != other.frame_number)
@@ -47,6 +47,8 @@ public:
     position = other.position;
     orientation = other.orientation;
     eye = other.eye;
+
+    return *this;
   }
 
   /**

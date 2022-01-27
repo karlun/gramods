@@ -451,7 +451,7 @@ Configuration::propagateOverrides(const overrides_list &list,
                                << stringify(alias) << ")");
   }
 
-  return std::move(newlist);
+  return newlist;
 }
 
 END_NAMESPACE_GMCORE;
