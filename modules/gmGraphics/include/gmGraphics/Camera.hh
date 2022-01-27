@@ -47,6 +47,8 @@ public:
     position = other.position;
     orientation = other.orientation;
     eye = other.eye;
+
+    return *this;
   }
 
   /**
