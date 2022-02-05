@@ -13,6 +13,13 @@
 BEGIN_NAMESPACE_GRAMODS;
 
 /**
+   Stream operator reading two values into an Eigen::Vector2f. This
+   is typically used to read XML position and vector attributes. This
+   will read three values (x y) from the stream.
+*/
+std::istream& operator>> (std::istream &in, Eigen::Vector2f &v);
+
+/**
    Stream operator reading three values into an Eigen::Vector3f. This
    is typically used to read XML position and vector attributes. This
    will read three values (x y z) from the stream.
