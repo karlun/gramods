@@ -2,6 +2,7 @@
 #include <gmGraphics/Camera.hh>
 
 #include <gmCore/Console.hh>
+#include <gmCore/RunLimited.hh>
 
 BEGIN_NAMESPACE_GMGRAPHICS;
 
@@ -63,6 +64,92 @@ void Camera::setClipAngles(float l, float r, float b, float t) {
   right = tanf(r);
   bottom = -tanf(b);
   top = tanf(t);
+}
+
+bool Camera::setLookAtPoints(Eigen::Vector3f eye_position,
+                             const std::vector<Eigen::Vector3f> &pts) {
+
+  if (pts.size() <= 3) {
+    GM_DBG2("Camera", "Too few points to look at (" << pts.size() << ").");
+    return false;
+  }
+
+  Eigen::Vector3f center = Eigen::Vector3f::Zero();
+  for (auto pt : pts)
+    center += pt;
+  center /= (float)pts.size();
+
+  Eigen::Vector3f direction = center - eye_position;
+  float direction_norm = direction.norm();
+  if (direction_norm < std::numeric_limits<float>::epsilon()) {
+    GM_RUNLIMITED(
+        GM_ERR("Camera", "Cannot look at points surrounding viewer position."),
+        1);
+    return false;
+  }
+  direction /= direction_norm;
+
+  for (auto pt : pts)
+    if ((pt - eye_position).dot(direction) < std::numeric_limits<float>::epsilon()) {
+      GM_RUNLIMITED(
+          GM_ERR("Camera",
+                 "Cannot look at points surrounding viewer position."),
+          1);
+      return false;
+    }
+
+  Eigen::MatrixXf data_matrix(3, pts.size());
+
+  for (size_t idx = 0; idx < pts.size(); ++idx)
+    data_matrix.col(idx) = pts[idx] - center;
+
+  Eigen::JacobiSVD<Eigen::MatrixXf> svd(data_matrix, Eigen::ComputeFullU);
+  auto U = svd.matrixU();
+
+  // Find camera coordinates
+  Eigen::Vector3f data_X = U.col(0);
+  float dim_power_X = direction.cross(data_X).norm();
+  for (size_t idx = 1; idx < 3; ++idx) {
+    Eigen::Vector3f data_cand = U.col(idx);
+    float dim_power_cand = direction.cross(data_cand).norm();
+    if (dim_power_cand > dim_power_X) {
+      data_X = data_cand;
+      dim_power_X = dim_power_cand;
+    }
+  }
+  Eigen::Vector3f data_Y = data_X.cross(direction).normalized();
+  data_X = direction.cross(data_Y).normalized();
+
+  // Find camera orientation
+  Eigen::Quaternionf R0 =
+      Eigen::Quaternionf::FromTwoVectors(-Eigen::Vector3f::UnitZ(), direction);
+  Eigen::Vector3f data_Y0 = R0.conjugate() * data_Y;
+  Eigen::Quaternionf R1 = Eigen::Quaternionf::FromTwoVectors(Eigen::Vector3f::UnitY(), data_Y0);
+  orientation = R0 * R1;
+
+  left = std::numeric_limits<float>::max();
+  right = std::numeric_limits<float>::lowest();
+  bottom = std::numeric_limits<float>::max();
+  top = std::numeric_limits<float>::lowest();
+
+  // Find camera frustum planes
+  for (auto pt : pts) {
+
+    Eigen::Vector3f pos = pt - eye_position;
+
+    float D = 1.f / pos.dot(direction);
+    float R = pos.dot(data_X) * D;
+    float U = pos.dot(data_Y) * D;
+
+    left = std::min(left, R);
+    right = std::max(right, R);
+    bottom = std::min(bottom, U);
+    top = std::max(top, U);
+  }
+
+  position = eye_position;
+
+  return true;
 }
 
 END_NAMESPACE_GMGRAPHICS;
