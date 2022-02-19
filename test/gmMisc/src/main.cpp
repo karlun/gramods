@@ -2,6 +2,7 @@
 #include <gtest/gtest.h>
 
 #include "end-fit.cpp"
+#include "polyfit.cpp"
 
 int main(int argc, char **argv) {
   ::testing::InitGoogleTest(&argc, argv);
