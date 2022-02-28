@@ -27,14 +27,7 @@ BuildMaxi:
       -D CMAKE_BUILD_TYPE=Release
       -D CMAKE_INSTALL_PREFIX=$(pwd)/../../vrpn-install;
       cd ../..
-    - pwd
-    - ls
-    - echo $(pwd)
-    - ls -d $(pwd)/cmake_modules/tinyxml2-shared/
-    - ls -d $(pwd)/cmake_modules/vrpn-static/
-    - ls -d $(pwd)/cmake_modules/sdl2-shared/
     - make -C vrpn/build install
-    - ls -d $(pwd)/vrpn-install/
     - mkdir build
     - cd build; cmake ..
       -D gramods_TEST_gmGraphics=OFF
