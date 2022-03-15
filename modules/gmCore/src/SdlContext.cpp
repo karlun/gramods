@@ -18,7 +18,7 @@ bool SdlContext::hasAudio() { return has_audio; }
 
 SdlContext::SdlContext() {
   if (has_instance)
-    throw std::runtime_error("Cannot instantiate SdlContext - SDL already initialized");
+    throw RuntimeException("Cannot instantiate SdlContext - SDL already initialized");
   has_instance = true;
 }
 

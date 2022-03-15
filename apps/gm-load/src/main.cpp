@@ -55,10 +55,16 @@ int main(int argc, char *argv[]) {
     config = std::make_unique<gmCore::Configuration>(argc, argv);
   }
   catch (const gmCore::RuntimeException &e) {
-    std::cerr << "Error while creating Configuration instance: " << e.what << std::endl;
+    std::cerr << "Runtime exception while creating Configuration instance: "
+              << e.what << std::endl;
+  }
+  catch (const std::exception &e) {
+    std::cerr << "Unknown exception while creating Configuration instance: "
+              << e.what() << std::endl;
   }
   catch (...) {
-    std::cerr << "Unknown internal error while creating Configuration instance." << std::endl;
+    std::cerr << "Unknown exception while creating Configuration instance."
+              << std::endl;
   }
 
   if (!config) {
@@ -204,8 +210,12 @@ int main(int argc, char *argv[]) {
     GM_ERR("gm-load", "Terminated by runtime exception: " << e.what);
     exit_code = -2;
   }
+  catch (const std::exception &e) {
+    GM_ERR("gm-load", "Terminated by unknown exception: " << e.what());
+    exit_code = -3;
+  }
   catch (...) {
-    GM_ERR("gm-load", "Terminated by unknown exception");
+    GM_ERR("gm-load", "Terminated by unknown exception.");
     exit_code = -255;
   }
 
@@ -217,20 +227,23 @@ int main(int argc, char *argv[]) {
     config.reset();
   } catch (const gmCore::ExitException &e) {
     GM_WRN("gm-load",
-           "ExitException while already terminating with exit code "
+           "ExitException (code "
+               << e.exit_code << ") while already terminating with exit code "
                << exit_code << ".");
-    exit_code = e.exit_code;
   } catch (const gmCore::RuntimeException &e) {
     GM_WRN("gm-load",
            "RuntimeException (" << e.what
                                 << ") while already terminating with exit code "
                                 << exit_code << ".");
-    exit_code = -2;
+  } catch (const std::exception &e) {
+    GM_WRN("gm-load",
+           "Unknown exception ("
+               << e.what() << ") while already terminating with exit code "
+               << exit_code << ".");
   } catch (...) {
     GM_WRN("gm-load",
            "Unknown exception while already terminating with exit code "
                << exit_code << ".");
-    exit_code = -255;
   }
 
   return exit_code;
