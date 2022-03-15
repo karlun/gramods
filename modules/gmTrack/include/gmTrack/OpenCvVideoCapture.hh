@@ -6,7 +6,7 @@
 
 #ifdef gramods_ENABLE_aruco
 
-#include <gmTrack/OpenCvVideoSource.hh>
+#include <gmCore/VideoSource.hh>
 
 #include <gmCore/path.hh>
 
@@ -24,7 +24,8 @@ BEGIN_NAMESPACE_GMTRACK;
    intervals. This is done automatically by gm-load.
 */
 class OpenCvVideoCapture
-  : public OpenCvVideoSource,
+  : public gmCore::Object,
+    public gmCore::VideoSource,
     public gmCore::Updateable {
 
 public:
@@ -133,10 +134,17 @@ public:
 
   /**
      Retrieve the latest read image captured.
+
      @param[out] image The latest image in the video source.
+
      @returns True if the image was successfully read.
   */
   bool retrieve(cv::Mat &image) override;
+
+  /**
+     Returns the default key, in Configuration, for the Object.
+  */
+  std::string getDefaultKey() override { return "videoSource"; }
 
   GM_OFI_DECLARE;
 
