@@ -8,6 +8,8 @@
 
 #include <gmCore/size.hh>
 #include <gmCore/OFactory.hh>
+#include <gmCore/VideoSource.hh>
+
 #include <gmGraphics/Texture.hh>
 #include <memory>
 
@@ -17,8 +19,11 @@ BEGIN_NAMESPACE_GMGRAPHICS;
    The UvcTexture connects to a USB video class device and populates
    its texture data with RGB streamed from that device.
 */
-class UvcTexture
-  : public gmGraphics::Texture {
+class UvcTexture :
+#ifdef gramods_ENABLE_OpenCV
+  public gmCore::VideoSource,
+#endif
+  public gmGraphics::Texture {
 
 public:
 
@@ -105,9 +110,23 @@ public:
      using this texture to decode each four channel texel into two
      three channel RGB pixels.
 
-     \gmXmlTag{gmGraphics,UvcTexture,convertToRgb}
+     \gmXmlTag{gmGraphics,UvcTexture,decode}
   */
-  void setConvertToRbg(bool on);
+  void setDecode(bool on);
+
+#ifdef gramods_ENABLE_OpenCV
+
+  /**
+     Retrieve the latest read image in the video source in OpenCV
+     format.
+
+     @param[out] image The latest image in the video source.
+
+     @returns True if the image was successfully read.
+  */
+  bool retrieve(cv::Mat &image) override;
+
+#endif
 
   GM_OFI_DECLARE;
 
@@ -119,7 +138,6 @@ private:
   int vendor;
   int product;
   std::string serial;
-
 };
 
 END_NAMESPACE_GMGRAPHICS;
