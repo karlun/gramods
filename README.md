@@ -6,6 +6,9 @@
      1. Purpose
      2. Repository Structure
 2. Build and Install
+     1. Dependencies
+     2. Standard Build Procedure
+     3. Simple Out-of-the-box Usage
 3. Apps and Dependencies
      1. gm-load
      2. gm-tracker-registration
@@ -43,11 +46,11 @@ The Gramods modules are designed to be weakly dependent on each other and on thi
 
 Use CMake to find dependencies and to set up the build environment. Every modules, app and dependency is activated when found, however dependencies can be individually deactivated through CMake by setting *gramods_ENABLE_* to false in CMake, and modules and apps by setting *gramods_INCLUDE_* to false.
 
-Observe that CMake cannot automatically deactivate dependent modules when a modules is made unavailable, either by a missing dependency or by deactivation, so this will result in a build error.
+Observe that CMake cannot automatically deactivate dependent modules when a modules is made unavailable, by a missing dependency or by deactivation, so this will result in a build error.
 
 Most dependencies can be automatically installed and handled, with *vcpkg* through `vcpkg install asio eigen3 freeimage glew sdl2 tclap tinyxml2`, or with *apt* through `apt install libasio-dev libeigen3-dev libfreeimage-dev libglew-dev libsdl2-dev libtclap-dev libtinyxml2-dev`. When using vcpkg, do not forget to set `VCPKG_DEFAULT_TRIPLET=x64-windows` or use command line argument `--triplet x64-windows` (see [vcpkg issue #12357](https://github.com/microsoft/vcpkg/issues/12357)).
 
-## Standard Procedure
+## Standard Build Procedure
 
 After installing the necessary dependencies, a typical build and install would look something like this:
 
@@ -59,10 +62,18 @@ cmake ..
 cmake --build . --target install
 ~~~~~~~~~~~~~
 
+## Simple Out-of-the-box Usage
+
+Gramods is primarily a library for implementing your own applications, however there are also some apps included in the package. The simplest to use for testing Gramods functionality is `gm-load`. When the package has been fully built and installed, use the following command-line to run test configurations:
+
+~~~~~~~~~~~~~{.sh}
+gm-load --config urn:gramods:config/debug-output-console.xml --config urn:gramods:gmGraphics/config/test-TileViewOfCubeSet.xml
+~~~~~~~~~~~~~
+
 
 # Apps and Dependencies
 
-The Gramods package includes a number of apps, for the purpose of testing or demonstrating Gramods functionality, of for running Gramods configurations.
+The Gramods package includes a number of apps, for the purpose of testing or demonstrating Gramods functionality, or for running Gramods configurations.
 
 ## gm-load
 
