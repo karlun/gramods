@@ -206,6 +206,7 @@ int main(int argc, char *argv[]) {
   catch (const gmCore::ExitException &e) {
     exit_code = e.exit_code;
   }
+#ifdef NDEBUG
   catch (const gmCore::RuntimeException &e) {
     GM_ERR("gm-load", "Terminated by runtime exception: " << e.what);
     exit_code = -2;
@@ -218,7 +219,7 @@ int main(int argc, char *argv[]) {
     GM_ERR("gm-load", "Terminated by unknown exception.");
     exit_code = -255;
   }
-
+#endif
 
   try {
     objects.clear();
@@ -230,6 +231,7 @@ int main(int argc, char *argv[]) {
            "ExitException (code "
                << e.exit_code << ") while already terminating with exit code "
                << exit_code << ".");
+#ifdef NDEBUG
   } catch (const gmCore::RuntimeException &e) {
     GM_WRN("gm-load",
            "RuntimeException (" << e.what
@@ -244,6 +246,7 @@ int main(int argc, char *argv[]) {
     GM_WRN("gm-load",
            "Unknown exception while already terminating with exit code "
                << exit_code << ".");
+#endif
   }
 
   return exit_code;
