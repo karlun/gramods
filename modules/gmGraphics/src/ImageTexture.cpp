@@ -215,7 +215,7 @@ void ImageTexture::Impl::findRange() {
   size_t range_min = std::numeric_limits<size_t>::max();
   size_t range_max = std::numeric_limits<size_t>::min();
 
-  const std::string filename = file.filename();
+  const std::string filename = file.filename().u8string();
   const auto folder =
       file.has_parent_path() ? file.parent_path() : std::filesystem::path(".");
   if (!std::filesystem::is_directory(folder)) {
