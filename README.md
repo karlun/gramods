@@ -57,9 +57,12 @@ After installing the necessary dependencies, a typical build and install would l
 ~~~~~~~~~~~~~{.sh}
 cd gramods
 mkdir build
-cd build
-cmake ..
-cmake --build . --target install
+cmake                                                                   ^
+  -B build                                                              ^
+  -DCMAKE_TOOLCHAIN_FILE=path-to-vcpkg/scripts/buildsystems/vcpkg.cmake ^
+  -DCMAKE_INSTALL_PREFIX=../install                                     ^
+  -DVCPKG_APPLOCAL_DEPS:BOOL=OFF ..
+cmake --build build --target install
 ~~~~~~~~~~~~~
 
 ## Simple Out-of-the-box Usage
