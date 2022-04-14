@@ -55,15 +55,15 @@ Most dependencies can be automatically installed and handled, with *vcpkg* throu
 After installing the necessary dependencies, a typical build and install would look something like this:
 
 ~~~~~~~~~~~~~{.sh}
-cd gramods
-mkdir build
 cmake                                                                   ^
-  -B build                                                              ^
+  -S gramods/ -B gramods/build/                                         ^
   -DCMAKE_TOOLCHAIN_FILE=path-to-vcpkg/scripts/buildsystems/vcpkg.cmake ^
-  -DCMAKE_INSTALL_PREFIX=../install                                     ^
-  -DVCPKG_APPLOCAL_DEPS:BOOL=OFF ..
-cmake --build build --target install
+  -DCMAKE_INSTALL_PREFIX=gramods/install
+cmake --build gramods/build --target install
 ~~~~~~~~~~~~~
+
+Depending on your local platform and its configuration you might want to also set `VCPKG_APPLOCAL_DEPS` to `OFF` and/or `gramods_INSTALL_DEPENDENCIES` to `ON`. The first flag controls copying dependencies into the build folder and `gramods_INSTALL_DEPENDENCIES` controls copying dependencies into the install tree.
+
 
 ## Simple Out-of-the-box Usage
 
@@ -167,7 +167,6 @@ struct MyClass : gramods::gmCore::Object {
 GM_OFI_DEFINE(MyClass);
 GM_OFI_PARAM(MyClass, parameter, int, MyClass::setParameter);
 ~~~~~~~~~~~~~
-
 This class can then be instantiated by loading this configuration file:
 
 ~~~~~~~~~~~~~{.xml}
