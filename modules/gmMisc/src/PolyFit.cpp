@@ -24,8 +24,7 @@ struct PolyFit::Impl {
 
   polco estimateCoefficients();
 
-  std::vector<double>
-  getPolynomialPosition(const std::vector<double> &inval);
+  std::vector<double> getValue(const std::vector<double> &inval);
 
   std::vector<std::vector<double>> in_values;
   std::vector<std::vector<double>> out_values;
@@ -129,12 +128,12 @@ PolyFit::polco PolyFit::Impl::estimateCoefficients() {
 }
 
 std::vector<double>
-PolyFit::getPolynomialPosition(const std::vector<double> &in_values) {
-  return _impl->getPolynomialPosition(in_values);
+PolyFit::getValue(const std::vector<double> &in_values) {
+  return _impl->getValue(in_values);
 }
 
 std::vector<double>
-PolyFit::Impl::getPolynomialPosition(const std::vector<double> &in_values) {
+PolyFit::Impl::getValue(const std::vector<double> &in_values) {
 
   if (in_values.size() != IDIM)
     throw gmCore::InvalidArgument(GM_STR("Wrong size on polynomial input ("

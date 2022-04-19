@@ -174,7 +174,7 @@ void ProjectionTextureGenerator::Impl::saveImage() {
         auto nan = std::numeric_limits<float>::quiet_NaN();
         image_data.push_back({nan, nan, nan});
       } else {
-        auto res = polys[closest]->getPolynomialPosition({x, y});
+        auto res = polys[closest]->getValue({x, y});
         image_data.push_back({(float)res[0], (float)res[1], (float)res[2]});
       }
     }
