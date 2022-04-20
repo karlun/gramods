@@ -19,5 +19,10 @@ namespace gramods {
 
 #include <gmCore/config.hh>
 
+#cmakedefine HAVE_Lehdari_Delaunay
+#ifdef HAVE_Lehdari_Delaunay
+#cmakedefine gramods_ENABLE_Lehdari_Delaunay
+#endif
+
 
 #endif
