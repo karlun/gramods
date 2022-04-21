@@ -20,7 +20,8 @@ BEGIN_NAMESPACE_GMCORE;
 
 class Configuration;
 
-/**\def GM_OFI_DECLARE
+/**
+   \def GM_OFI_DECLARE
    Macro for declaring the registration of OFactoryInformation as a
    class member. Put this in your class definition, under a public or
    protected access specifier to allow for inheritance.
@@ -28,7 +29,8 @@ class Configuration;
 #define GM_OFI_DECLARE                                              \
   static gramods::gmCore::OFactory::OFactoryInformation _gm_ofi;//
 
-/**\def GM_OFI_DEFINE(OFI, NAME)
+/**
+   \def GM_OFI_DEFINE(NAME)
    Macro for instantiating the registration of a OFactoryInformation
    declared with OFI_DECLARE.
 
@@ -40,7 +42,8 @@ class Configuration;
   gramods::gmCore::OFactory::OFactoryInformation                        \
   NAME::_gm_ofi(#NAME, new gramods::gmCore::OFactory::ObjectCreator<NAME>());
 
-/**\def GM_OFI_DEFINE_ABSTRACT(OFI, NAME)
+/**
+   \def GM_OFI_DEFINE_ABSTRACT(NAME)
    Macro for instantiating the registration of a OFactoryInformation
    declared with OFI_DECLARE. A class registered with this macro
    cannot be instantiated, but may declare attributes.
@@ -66,7 +69,8 @@ class Configuration;
   gramods::gmCore::OFactory::OFactoryInformation                        \
   NAME::_gm_ofi(#NAME, new gramods::gmCore::OFactory::ObjectCreator<NAME>(), &BASE::_gm_ofi);
 
-/**\def GM_OFI_DEFINE_ABSTRACT_SUB(NAME, BASE)
+/**
+   \def GM_OFI_DEFINE_ABSTRACT_SUB(NAME, BASE)
    Macro for instantiating the registration of a OFactoryInformation
    declared with GM_OFI_DECLARE, with association with its base class'
    registration data. A class registered with this macro cannot be
@@ -79,7 +83,8 @@ class Configuration;
   gramods::gmCore::OFactory::OFactoryInformation  \
   NAME::_gm_ofi(#NAME, nullptr, &BASE::_gm_ofi);
 
-/**\def GM_OFI_PARAM(CLASS, NAME, TYPE, FUNC)
+/**
+   \def GM_OFI_PARAM(CLASS, NAME, TYPE, FUNC)
    Macro for registering a parameter setter to a OFactoryInformation
    node.
 
@@ -103,7 +108,8 @@ class Configuration;
       #NAME,                                                                   \
       new gramods::gmCore::OFactory::ParamSetter<CLASS, TYPE>(&FUNC));
 
-/**\def GM_OFI_PARAM2(CLASS, NAME, TYPE, FUNC)
+/**
+   \def GM_OFI_PARAM2(CLASS, NAME, TYPE, FUNC)
    Macro for registering a parameter setter to a OFactoryInformation
    node.
 
@@ -127,7 +133,8 @@ class Configuration;
       #NAME,                                                                   \
       new gramods::gmCore::OFactory::ParamSetter<CLASS, TYPE>(&CLASS::FUNC));
 
-/**\def GM_OFI_POINTER(OFI, CLASS, NAME, TYPE, FUNC)
+/**
+   \def GM_OFI_POINTER(CLASS, NAME, TYPE, FUNC)
    Macro for registering a shared object setter to a
    OFactoryInformation node.
 
@@ -150,7 +157,8 @@ class Configuration;
   (&CLASS::_gm_ofi, #NAME,                                              \
    new gramods::gmCore::OFactory::PointerSetter<CLASS, TYPE>(&FUNC));
 
-/**\def GM_OFI_POINTER2(OFI, CLASS, NAME, TYPE, FUNC)
+/**
+   \def GM_OFI_POINTER2(CLASS, NAME, TYPE, FUNC)
    Macro for registering a shared object setter to a
    OFactoryInformation node.
 
@@ -177,6 +185,19 @@ class Configuration;
    This is an object factory for classes with Object as base type,
    instantiating them by name and calling their registered setters
    based on configuration XML DOM data.
+
+   The following macros are useful for correctly setting up a class
+   and its members for use with OFactory.
+
+   - #GM_OFI_DECLARE
+   - #GM_OFI_DEFINE(NAME)
+   - #GM_OFI_DEFINE_ABSTRACT(NAME)
+   - #GM_OFI_DEFINE_SUB(NAME, BASE)
+   - #GM_OFI_DEFINE_ABSTRACT_SUB(NAME, BASE)
+   - #GM_OFI_PARAM(CLASS, NAME, TYPE, FUNC)
+   - #GM_OFI_PARAM2(CLASS, NAME, TYPE, FUNC)
+   - #GM_OFI_POINTER(CLASS, NAME, TYPE, FUNC)
+   - #GM_OFI_POINTER2(CLASS, NAME, TYPE, FUNC)
 */
 class OFactory {
 
@@ -389,7 +410,7 @@ public:
 
 private:
 
-  static std::map<std::string,OFactoryInformation*>& getOFIByNameMap();
+  static std::map<std::string, OFactoryInformation *> &getOFIByNameMap();
 
   static void registerOFI(std::string name, OFactoryInformation *info);
   static void unregisterOFI(std::string name);
