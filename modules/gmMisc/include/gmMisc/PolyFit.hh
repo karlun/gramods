@@ -72,6 +72,11 @@ public:
   */
   std::vector<double> getValue(const std::vector<double> &inval);
 
+  /**
+     Resets the contents of this object.
+  */
+  void clear();
+
 private:
 
   struct Impl;

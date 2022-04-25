@@ -26,6 +26,8 @@ struct PolyFit::Impl {
 
   std::vector<double> getValue(const std::vector<double> &inval);
 
+  void clear();
+
   std::vector<std::vector<double>> in_values;
   std::vector<std::vector<double>> out_values;
 
@@ -174,6 +176,14 @@ PolyFit::Impl::getValue(const std::vector<double> &in_values) {
       res[odim] += comp_val[idx] * (*coeffs)(odim, idx);
 
   return res;
+}
+
+void PolyFit::clear() { _impl->clear(); }
+
+void PolyFit::Impl::clear() {
+  in_values.clear();
+  out_values.clear();
+  coeffs = std::nullopt;
 }
 
 END_NAMESPACE_GMMISC;
