@@ -140,20 +140,21 @@ void main() {
 
   if (pattern == 0) {
 
-    int idx = int(height * v_uv.y);
+    int idx = int(gl_FragCoord.y);
+
     if (mod(idx, 2) == 0) fragColor = texture(texL, v_uv);
     else fragColor = texture(texR, v_uv);
 
   } else if (pattern == 1) {
 
-    int idx = int(width * v_uv.x);
+    int idx = int(gl_FragCoord.x);
     if (mod(idx, 2) == 0) fragColor = texture(texL, v_uv);
     else fragColor = texture(texR, v_uv);
 
   } else if (pattern == 2) {
 
-    int idxH = int(width * v_uv.x);
-    int idxV = int(height * v_uv.y);
+    int idxH = int(gl_FragCoord.x);
+    int idxV = int(gl_FragCoord.y);
     if (mod(idxH + idxV, 2) == 0) fragColor = texture(texL, v_uv);
     else fragColor = texture(texR, v_uv);
 
