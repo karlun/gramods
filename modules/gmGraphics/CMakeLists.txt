@@ -156,7 +156,8 @@ ELSE()
 ENDIF()
 
 IF (gramods_INSTALL_RESOURCES AND
-    (gramods_BUILD_RESOURCES OR
+    ((gramods_BUILD_RESOURCES AND
+        (Inkscape_FOUND OR PythonResources_FOUND)) OR
       EXISTS ${CMAKE_CURRENT_BINARY_DIR}/resources))
   INSTALL(DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/resources
     DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/gramods/gmGraphics)
