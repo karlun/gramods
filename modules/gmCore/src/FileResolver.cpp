@@ -8,8 +8,8 @@
 #include <fstream>
 #include <filesystem>
 #include <unordered_map>
-#include <stdlib.h>
 #include <cstring>
+#include <cstdlib>
 
 #ifdef _WIN32
 #define WIN32_LEAN_AND_MEAN
@@ -66,7 +66,7 @@ struct FileResolver::Impl {
 
 FileResolver::FileResolver() : _impl(std::make_unique<Impl>()) {
 
-  char *env_urn_file = ::getenv("GM_URN_FILE");
+  char *env_urn_file = std::getenv("GM_URN_FILE");
   if (env_urn_file) {
 
     std::filesystem::path urn_file(env_urn_file);
@@ -82,7 +82,7 @@ FileResolver::FileResolver() : _impl(std::make_unique<Impl>()) {
     }
   }
 
-  char *env_root = getenv("GM_HOME");
+  char *env_root = std::getenv("GM_HOME");
   if (env_root) {
 
     std::filesystem::path root(env_root);
@@ -231,7 +231,7 @@ std::filesystem::path FileResolver::Impl::resolve(std::string str_path, size_t r
         (GM_STR("path variable without closing bracket: '" << str_path.substr(var_pos) << "'"));
 
     std::string var_name = str_path.substr(var_pos + 2, var_end - var_pos - 2);
-    char * var_value_ptr = getenv(var_name.c_str());
+    char * var_value_ptr = std::getenv(var_name.c_str());
     if (!var_value_ptr || strlen(var_value_ptr) > 4096)
       throw gmCore::InvalidArgument(GM_STR("path variable ('" << var_name << "') not of valid value"));
 

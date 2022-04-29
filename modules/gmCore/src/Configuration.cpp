@@ -11,7 +11,7 @@
 
 #include <set>
 
-#include <stdlib.h>
+#include <cstdlib>
 
 BEGIN_NAMESPACE_GMCORE;
 
@@ -373,7 +373,7 @@ bool Configuration::parse_if(tinyxml2::XMLElement *element,
     return false;
   }
 
-  char * variable_value = getenv(variable_attribute);
+  char * variable_value = std::getenv(variable_attribute);
   if (variable_value == NULL) {
     GM_WRN("Configuration", "Environment variable \"" << variable_attribute << "\" not found - cannot compare.");
     if (error_list) error_list->push_back(GM_STR("Environment variable \"" << variable_attribute << "\" not found - cannot compare."));
