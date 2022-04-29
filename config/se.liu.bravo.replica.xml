@@ -1,8 +1,5 @@
 <config>
 
-  <!--OStreamMessageSink useAnsiColor="true" level="3"-->
-  <!--LogFileMessageSink logFilePath="gramods.log" append="false"/-->
-
   <if variable="COMPUTERNAME" value="BRAVO-01">
     <SyncNode
         exitWhenAPeerIsDisconnected="true"
