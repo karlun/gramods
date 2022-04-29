@@ -1,7 +1,6 @@
 <config>
 
-  <!--OStreamMessageSink useAnsiColor="true" level="3"-->
-  <!--LogFileMessageSink logFilePath="gramods.log" append="false"/-->
+  <ImportLibrary library="gmGraphics"/>
 
   <SdlWindow
       size="1024 512"
