@@ -84,6 +84,9 @@ void PoseRegistrationEstimator::setController(std::shared_ptr<gramods::gmTrack::
 }
 
 void PoseRegistrationEstimator::addPoint(Eigen::Vector3f p) {
+  if (_impl->actual_positions.empty())
+    GM_INF("PoseRegistrationEstimator",
+           "First point to collect: " << p.transpose());
   _impl->actual_positions.push_back(p);
 }
 
@@ -178,8 +181,10 @@ void PoseRegistrationEstimator::Impl::update(clock::time_point now) {
 
   samples.clear();
 
-  if (tracker_positions.size() < actual_positions.size())
+  if (tracker_positions.size() < actual_positions.size()) {
+    GM_INF("PoseRegistrationEstimator", "Next point to collect: " << actual_positions[tracker_positions.size()].transpose());
     return;
+  }
 
   GM_INF("PoseRegistrationEstimator", "have all " << actual_positions.size() << " samples");
   performRegistration();
