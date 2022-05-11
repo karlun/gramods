@@ -67,7 +67,9 @@ void Camera::setClipAngles(float l, float r, float b, float t) {
 }
 
 bool Camera::setLookAtPoints(Eigen::Vector3f eye_position,
-                             const std::vector<Eigen::Vector3f> &pts) {
+                             const std::vector<Eigen::Vector3f> &pts,
+                             bool symmetric,
+                             Eigen::Vector3f up) {
 
   if (pts.size() <= 3) {
     GM_DBG2("Camera", "Too few points to look at (" << pts.size() << ").");
@@ -98,27 +100,41 @@ bool Camera::setLookAtPoints(Eigen::Vector3f eye_position,
       return false;
     }
 
-  Eigen::MatrixXf data_matrix(3, pts.size());
+  Eigen::Vector3f data_X, data_Y;
 
-  for (size_t idx = 0; idx < pts.size(); ++idx)
-    data_matrix.col(idx) = pts[idx] - center;
+  if (up.squaredNorm() > 0.5) {
 
-  Eigen::JacobiSVD<Eigen::MatrixXf> svd(data_matrix, Eigen::ComputeFullU);
-  auto U = svd.matrixU();
+    data_X = direction.cross(up);
+    if (data_X.norm() < std::numeric_limits<float>::epsilon())
+      data_X = direction.cross(
+          Eigen::Vector3f(direction[1], direction[2], direction[0]));
+    data_X = data_X.normalized();
+    data_Y = data_X.cross(direction).normalized();
 
-  // Find camera coordinates
-  Eigen::Vector3f data_X = U.col(0);
-  float dim_power_X = direction.cross(data_X).norm();
-  for (size_t idx = 1; idx < 3; ++idx) {
-    Eigen::Vector3f data_cand = U.col(idx);
-    float dim_power_cand = direction.cross(data_cand).norm();
-    if (dim_power_cand > dim_power_X) {
-      data_X = data_cand;
-      dim_power_X = dim_power_cand;
+  } else {
+
+    Eigen::MatrixXf data_matrix(3, pts.size());
+
+    for (size_t idx = 0; idx < pts.size(); ++idx)
+      data_matrix.col(idx) = pts[idx] - center;
+
+    Eigen::JacobiSVD<Eigen::MatrixXf> svd(data_matrix, Eigen::ComputeFullU);
+    auto U = svd.matrixU();
+
+    // Find camera coordinates
+    data_X = U.col(0);
+    float dim_power_X = direction.cross(data_X).norm();
+    for (size_t idx = 1; idx < 3; ++idx) {
+      Eigen::Vector3f data_cand = U.col(idx);
+      float dim_power_cand = direction.cross(data_cand).norm();
+      if (dim_power_cand > dim_power_X) {
+        data_X = data_cand;
+        dim_power_X = dim_power_cand;
+      }
     }
+    data_Y = data_X.cross(direction).normalized();
+    data_X = direction.cross(data_Y).normalized();
   }
-  Eigen::Vector3f data_Y = data_X.cross(direction).normalized();
-  data_X = direction.cross(data_Y).normalized();
 
   // Find camera orientation
   Eigen::Quaternionf R0 =
@@ -148,6 +164,19 @@ bool Camera::setLookAtPoints(Eigen::Vector3f eye_position,
   }
 
   position = eye_position;
+
+  if (symmetric) {
+    left = std::min(left, -right);
+    right = std::max(right, -left);
+    bottom = std::min(bottom, -top);
+    top = std::max(top, -bottom);
+  }
+
+  GM_DBG1("Camera",
+          "Set to look at "
+              << pts.size() << " point from " << position.transpose()
+              << ": direction = " << direction.transpose() << ", (l,r,b,t) = ("
+              << left << "," << right << "," << bottom << "," << top << ")");
 
   return true;
 }

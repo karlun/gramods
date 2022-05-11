@@ -128,7 +128,9 @@ public:
      from this point.
   */
   bool setLookAtPoints(Eigen::Vector3f p,
-                       const std::vector<Eigen::Vector3f> &pts);
+                       const std::vector<Eigen::Vector3f> &pts,
+                       bool symmetric = true,
+                       Eigen::Vector3f up = Eigen::Vector3f::Zero());
 
   /**
      Sets which eye the camera is supposed to render.
