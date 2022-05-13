@@ -6,7 +6,7 @@
 
 BEGIN_NAMESPACE_GMGRAPHICS;
 
-Eigen::Matrix4f Camera::getProjectionMatrix(float near, float far) {
+Eigen::Matrix4f Camera::getProjectionMatrix(float near, float far) const {
 
   GM_DBG2("Camera", "Creating projection matrix from ("
           << left << ", " << right << ", "
@@ -26,7 +26,7 @@ Eigen::Matrix4f Camera::getProjectionMatrix(float near, float far) {
   return Mp;
 }
 
-Eigen::Affine3f Camera::getViewMatrix() {
+Eigen::Affine3f Camera::getViewMatrix() const {
 
   {
     Eigen::AngleAxis<float> aa(orientation);
@@ -42,14 +42,6 @@ Eigen::Affine3f Camera::getViewMatrix() {
   Mv.translation() = - (Mv.linear() * position);
 
   return Mv;
-}
-
-Eigen::Vector3f Camera::getPosition() {
-  return position;
-}
-
-Eigen::Quaternionf Camera::getOrientation() {
-  return orientation;
 }
 
 void Camera::setFieldOfView(float fov_h, float fov_v) {
