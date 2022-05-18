@@ -73,9 +73,19 @@ public:
   Eigen::Vector3f getPosition() const { return position; }
 
   /**
+     Set the position of the camera.
+  */
+  void setPosition(Eigen::Vector3f p) { position = p; }
+
+  /**
      Get the orientation of the camera.
   */
   Eigen::Quaternionf getOrientation() const { return orientation; }
+
+  /**
+     Set the orientation of the camera.
+  */
+  void setOrientation(Eigen::Quaternionf q) { orientation = q; }
 
   /**
      Explicitly sets the frustum clip planes at a distance of 1. Near
