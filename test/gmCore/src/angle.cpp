@@ -29,7 +29,7 @@ TEST(gmCoreAngle, ReadFloat) {
     ss >> a;
 
     EXPECT_TRUE(ss);
-    EXPECT_LE(fabsf(180 - a), std::numeric_limits<float>::epsilon());
+    EXPECT_FLOAT_EQ(a, 180.f);
 
     EXPECT_FALSE(out.str().find("'d180'") == std::string::npos);
     EXPECT_FALSE(out.str().find("'r180'") == std::string::npos);
@@ -53,7 +53,7 @@ TEST(gmCoreAngle, ReadRadians) {
     gmCore::angle a;
     ss >> a;
     EXPECT_TRUE(ss);
-    EXPECT_LE(fabsf(180 - a), std::numeric_limits<float>::epsilon());
+    EXPECT_FLOAT_EQ(a, 180.f);
 
     EXPECT_TRUE(out.str().empty());
   }
@@ -76,7 +76,7 @@ TEST(gmCoreAngle, ReadDegrees) {
     gmCore::angle a;
     ss >> a;
     EXPECT_TRUE(ss);
-    EXPECT_LE(fabsf(GM_PI - a), std::numeric_limits<float>::epsilon());
+    EXPECT_FLOAT_EQ(a, GM_PI);
 
     EXPECT_TRUE(out.str().empty());
   }
@@ -91,7 +91,7 @@ TEST(gmCoreAngle, ReadNegativeDegrees) {
     gmCore::angle a;
     ss >> a;
     EXPECT_TRUE(ss);
-    EXPECT_LE(fabsf(GM_PI + a), std::numeric_limits<float>::epsilon());
+    EXPECT_FLOAT_EQ(a, -GM_PI);
   }
 }
 
@@ -132,9 +132,9 @@ TEST(gmCoreAngle, ReadMultiple) {
     gmCore::angle a, b, c;
     ss >> a >> b >> c;
     EXPECT_TRUE(ss);
-    EXPECT_LE(fabsf(180 - a), std::numeric_limits<float>::epsilon());
-    EXPECT_LE(fabsf(GM_PI - b), std::numeric_limits<float>::epsilon());
-    EXPECT_LE(fabsf(3 - c), std::numeric_limits<float>::epsilon());
+    EXPECT_FLOAT_EQ(a, 180.f);
+    EXPECT_FLOAT_EQ(b, GM_PI);
+    EXPECT_FLOAT_EQ(c, 3.f);
 
     EXPECT_TRUE(out.str().empty());
   }
