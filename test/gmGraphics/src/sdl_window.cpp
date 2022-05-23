@@ -16,7 +16,7 @@ using namespace gramods;
 TEST(gmGraphics, SdlWindow) {
 
   gmCore::ImportLibrary importer;
-  importer.setLibrary("libgmGraphics.so");
+  importer.setLibrary("gmGraphics");
 
   auto context = std::make_shared<gmCore::SdlContext>();
   context->setUseVideo(true);
@@ -38,7 +38,7 @@ TEST(gmGraphics, SdlWindowXml) {
 
   std::string xml = R"lang=xml(
   <config>
-    <ImportLibrary library="libgmGraphics.so"/>
+    <ImportLibrary library="gmGraphics"/>
     <SdlWindow size="100 100">
       <SdlContext useVideo="1"/>
     </SdlWindow>

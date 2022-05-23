@@ -1,7 +1,5 @@
 <config>
 
-  <!--OStreamMessageSink useAnsiColor="true" level="3"-->
-
   <Controller>
     <RelativeSinglePoseTracker>
       <OffsetSinglePoseTracker

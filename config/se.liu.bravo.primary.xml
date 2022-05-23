@@ -1,8 +1,5 @@
 <config>
 
-  <!--OStreamMessageSink useAnsiColor="true" level="3"-->
-  <!--LogFileMessageSink logFilePath="gramods.log" append="false"/-->
-
   <SyncNode
       localPeerIdx="0">
     <param name="peer" value="172.19.2.10:20400"/>

@@ -132,6 +132,11 @@ GLuint ImageTexture::Impl::update(size_t frame_number, Eye eye) {
     GM_DBG2("ImageTexture", "Loading image");
     auto filename = file.u8string();
     FIBITMAP *image = loadImage(filename);
+    if (!image) {
+      fail = true;
+      return 0;
+    }
+
     fail = !setTexture(image, filename);
 
     if (fail) return 0;

@@ -1,0 +1,3 @@
+<config>
+  <OStreamMessageSink useAnsiColor="true" level="2"/>
+</config>

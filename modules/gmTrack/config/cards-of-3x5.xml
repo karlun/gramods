@@ -1,9 +1,6 @@
 <config>
 
-  <!--OStreamMessageSink useAnsiColor="true" level="3"-->
-  <!--LogFileMessageSink logFilePath="gramod.log" append="false"/-->
-
-  <ImportLibrary lib="libgmTrack.so"/>
+  <ImportLibrary lib="gmTrack"/>
 
   <ArucoPoseTracker
       showDebug="true"
