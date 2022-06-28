@@ -38,6 +38,11 @@ public:
        3D coordinates that correspond to the specified 2D
        position. Return true if pos3 is set to the 3D mapping of pos2,
        false if there is no such mapping.
+
+     For both functions pos2 is a 2D vector with each dimension
+     ranging between -1 and 1, for left/bottom and right/top,
+     respectively, and pos3 is a unit 3D vector pointing in any
+     direction.
   */
   std::string getMapperCode() override;
 
