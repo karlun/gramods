@@ -73,6 +73,7 @@ void GLAPIENTRY MessageCallback
     GM_ERR("OpenGL", "OpenGL " << type_str
            << ", severity = " << severity_str
            << ", message = " << message );
+    exit(1);
     break;
   case GL_DEBUG_SEVERITY_MEDIUM:
     GM_WRN("OpenGL", "OpenGL " << type_str

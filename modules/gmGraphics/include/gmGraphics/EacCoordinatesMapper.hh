@@ -1,10 +1,8 @@
 
-#ifndef GRAMODS_GRAPHICS_ANGULARFISHEYECOORDINATESMAPPER
-#define GRAMODS_GRAPHICS_ANGULARFISHEYECOORDINATESMAPPER
+#ifndef GRAMODS_GRAPHICS_EACCOORDINATESMAPPER
+#define GRAMODS_GRAPHICS_EACCOORDINATESMAPPER
 
 #include <gmGraphics/CoordinatesMapper.hh>
-
-#include <gmCore/angle.hh>
 
 #include <GL/glew.h>
 #include <GL/gl.h>
@@ -12,16 +10,16 @@
 BEGIN_NAMESPACE_GMGRAPHICS;
 
 /**
-   Coordinates mapper that provides an angular fisheye mapping between
-   2D and fully spherical 3D.
+   Coordinates mapper that provides an Equi-angular Cubemap (EAC)
+   mapping between 2D and fully spherical 3D.
 */
-class AngularFisheyeCoordinatesMapper
+class EacCoordinatesMapper
   : public gmGraphics::CoordinatesMapper {
 
 public:
 
-  AngularFisheyeCoordinatesMapper();
-  virtual ~AngularFisheyeCoordinatesMapper();
+  EacCoordinatesMapper();
+  virtual ~EacCoordinatesMapper();
 
   /**
      Returns shader code that implements the necessary functions for
@@ -50,19 +48,28 @@ public:
      Called by the code that is using this CoordinatesMapper object,
      to let it set the uniforms used by the mapper code.
   */
-  void setMapperUniforms(GLuint program_id) override;
+  void setMapperUniforms(GLuint program) override;
 
   /**
-     Set the vertical coverage that the 2D coordinates (y=[-1, 1])
-     should have in the 3D sphere, as angle expressed as a value in
-     radians between 0 and 2π. The typical fulldome format uses a
-     coverage angle of π, which is also the default.
+     Sets the cubemap layout through a string of row-wise cube sides,
+     optionally rotated, and row-break(s).
 
-     \gmXmlTag{gmGraphics,AngularFisheyeCoordinatesMapper,coverageAngle}
+     Valid characters are
 
-     \sa operator>>(std::istream &, gmCore::angle &)
+     - L R U D F B for left, right, up, down, front, back,
+       respectively
+     - / for a new row
+     - - + for rotating the last square left or right, respectively
+
+     Some example layouts are
+
+     - LFR/D-B-U- (upper row is left-to-right; default)
+     - LFR/U+B+D+ (same, but lower row reversed)
+     - L-U/F-B/R-D (columns instead of rows)
+
+     \gmXmlTag{gmGraphics,EacCoordinatesMapper,layout}
   */
-  void setCoverageAngle(gmCore::angle a);
+  void setLayout(std::string layout);
 
   GM_OFI_DECLARE;
 
