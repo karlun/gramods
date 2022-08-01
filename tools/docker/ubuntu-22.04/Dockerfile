@@ -1,4 +1,4 @@
-FROM ubuntu:20.04
+FROM ubuntu:22.04
 
 RUN \
   apt-get update; \
@@ -31,7 +31,6 @@ RUN \
     -D CMAKE_BUILD_TYPE=Release \
     -D CMAKE_INSTALL_PREFIX:PATH=/gramods-install \
     -D TinyXML2_DIR:PATH=/gramods/cmake_modules/tinyxml2-shared/ \
-    -D SDL2_DIR:PATH=/gramods/cmake_modules/sdl2-shared/ \
     -D VRPN_DIR:PATH=/gramods/cmake_modules/vrpn-static/ \
     -D CMAKE_PREFIX_PATH=/vrpn-install \
     .. ; \

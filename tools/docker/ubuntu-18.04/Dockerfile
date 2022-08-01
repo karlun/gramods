@@ -20,7 +20,7 @@ RUN \
     .. ; \
   ninja install
 RUN \
-  git clone https://github.com/vrpn/vrpn.git; \
+  git clone https://github.com/vrpn/vrpn.git -b v07.35; \
   mkdir vrpn/build; \
   cd vrpn/build; \
   cmake \
@@ -30,7 +30,7 @@ RUN \
     .. ; \
   ninja install
 
-ARG GM_GIT_BRANCH=master
+ARG GM_GIT_BRANCH=main
 ARG GM_DEPLOY_KEY
 ARG GM_DEPLOY_TOKEN
 
