@@ -30,7 +30,7 @@ RUN \
     .. ; \
   ninja install
 
-ARG GM_GIT_BRANCH=master
+ARG GM_GIT_BRANCH=main
 ARG GM_DEPLOY_KEY
 ARG GM_DEPLOY_TOKEN
 
