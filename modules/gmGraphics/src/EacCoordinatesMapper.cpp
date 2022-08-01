@@ -253,17 +253,13 @@ void EacCoordinatesMapper::Impl::setLayout(std::string layout) {
 
   data_M_to3D.clear();
   data_M_to3D.reserve(9 * M_to3D.size());
-  for (const auto &M : M_to3D) {
-    const auto &Mc = M.reshaped();
-    data_M_to3D.insert(data_M_to3D.end(), Mc.begin(), Mc.end());
-  }
+  for (const auto &M : M_to3D)
+    data_M_to3D.insert(data_M_to3D.end(), M.data(), M.data() + M.size());
 
   data_M_to2D.clear();
   data_M_to2D.reserve(9 * M_to2D.size());
-  for (const auto &M : M_to2D) {
-    const auto &Mc = M.reshaped();
-    data_M_to2D.insert(data_M_to2D.end(), Mc.begin(), Mc.end());
-  }
+  for (const auto &M : M_to2D)
+    data_M_to2D.insert(data_M_to2D.end(), M.data(), M.data() + M.size());
 }
 
 END_NAMESPACE_GMGRAPHICS;
