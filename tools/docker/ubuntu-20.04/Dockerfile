@@ -8,7 +8,7 @@ RUN \
   apt-get -y install libgtest-dev libasio-dev libtclap-dev libtinyxml2-dev libsdl2-dev libeigen3-dev libglew-dev libuvc-dev libfreeimage-dev libopenscenegraph-dev inkscape
 
 RUN \
-  git clone https://github.com/vrpn/vrpn.git; \
+  git clone https://github.com/vrpn/vrpn.git -b v07.35; \
   mkdir vrpn/build; \
   cd vrpn/build; \
   cmake \
