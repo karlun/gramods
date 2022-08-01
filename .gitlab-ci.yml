@@ -21,7 +21,7 @@ BuildMaxi:
   script:
     - apt-get update
     - DEBIAN_FRONTEND="noninteractive" apt-get -y install cmake git build-essential libgtest-dev libtinyxml2-dev libsdl2-dev libsdl2-ttf-dev libeigen3-dev libglew-dev libasio-dev libopenscenegraph-dev libuvc-dev libfreeimage-dev inkscape pipenv
-    - git clone https://github.com/vrpn/vrpn.git
+    - git clone https://github.com/vrpn/vrpn.git -b v07.35
     - mkdir vrpn/build
     - cd vrpn/build; cmake ..
       -D CMAKE_BUILD_TYPE=Release
