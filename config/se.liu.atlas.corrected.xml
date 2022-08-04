@@ -34,7 +34,7 @@
     <Viewpoint
         position="0 0 0"/>
 
-    <if variable="COMPUTERNAME" value="BRAVO-00">
+    <if variable="COMPUTERNAME" value="ATLAS-00">
       <SpatialSphericalView
           makeSquare="true"
           radius="7.4">
@@ -43,7 +43,7 @@
       </SpatialSphericalView>
     </if>
 
-    <if variable="COMPUTERNAME" value="BRAVO-01">
+    <if variable="COMPUTERNAME" value="ATLAS-02">
       <!--FOV left="55.82" right="55.82" up="74.10" down="-7.70" /-->
       <!--Orientation heading="-45.0" pitch="0.0" roll="0.0" /-->
       <GeometryCorrectedProjectorView
@@ -57,7 +57,7 @@
       </GeometryCorrectedProjectorView>
     </if>
 
-    <if variable="COMPUTERNAME" value="BRAVO-02">
+    <if variable="COMPUTERNAME" value="ATLAS-04">
       <!--FOV left="55.82" right="55.82" up="74.10" down="-7.70" /-->
       <!--Orientation heading="45.0" pitch="0.0" roll="0.0" /-->
       <GeometryCorrectedProjectorView
@@ -71,7 +71,7 @@
       </GeometryCorrectedProjectorView>
     </if>
 
-    <if variable="COMPUTERNAME" value="BRAVO-03">
+    <if variable="COMPUTERNAME" value="ATLAS-06">
       <!--FOV left="55.82" right="55.82" up="74.10" down="-7.70" /-->
       <!--Orientation heading="135.0" pitch="0.0" roll="0.0" /-->
       <GeometryCorrectedProjectorView
@@ -85,7 +85,7 @@
       </GeometryCorrectedProjectorView>
     </if>
 
-    <if variable="COMPUTERNAME" value="BRAVO-04">
+    <if variable="COMPUTERNAME" value="ATLAS-08">
       <!--FOV left="55.82" right="55.82" up="74.10" down="-7.70" /-->
       <!--Orientation heading="-135.0" pitch="0.0" roll="0.0" /-->
       <GeometryCorrectedProjectorView
@@ -99,7 +99,7 @@
       </GeometryCorrectedProjectorView>
     </if>
 
-    <if variable="COMPUTERNAME" value="BRAVO-05">
+    <if variable="COMPUTERNAME" value="ATLAS-10">
       <!--FOV left="57.05" right="57.05" up="65.31" down="6.50" /-->
       <!--Orientation heading="57.0" pitch="49.5" roll="0.0" /-->
       <GeometryCorrectedProjectorView
@@ -113,7 +113,7 @@
       </GeometryCorrectedProjectorView>
     </if>
 
-    <if variable="COMPUTERNAME" value="BRAVO-06">
+    <if variable="COMPUTERNAME" value="ATLAS-12">
       <!--FOV left="57.05" right="57.05" up="65.31" down="6.50" /-->
       <!--Orientation heading="-123.0" pitch="49.5" roll="0.0" /-->
       <GeometryCorrectedProjectorView

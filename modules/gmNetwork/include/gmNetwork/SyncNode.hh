@@ -21,11 +21,11 @@ BEGIN_NAMESPACE_GMNETWORK;
    peers, and forward incoming messages from the peers to the protocol
    instances.
 
-   The SyncNode does not enforce a master-slave or client-server
+   The SyncNode does not enforce a primary-replica or client-server
    architecture, but employ a peer-to-peer architecture.  However,
    client software may use the local peer index (getLocalPeerIdx) and
    assume, for example, that the peer with local peer index of zero is
-   the master.
+   the primary.
 */
 class SyncNode
   : public gmCore::Object {
