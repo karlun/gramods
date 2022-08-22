@@ -47,7 +47,7 @@ namespace {
     static std::mutex random_lock;
     random_lock.lock();
     static std::default_random_engine generator
-      (51254324234L);
+      (51254324234U);
     static std::uniform_real_distribution<double> distribution(0, 1);
     random_lock.unlock();
 
