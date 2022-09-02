@@ -60,12 +60,17 @@ public:
      typically expressed in pixels so divide by the pixel size in each
      dimension, respectively, before entering values here.
 
-     To convert from focal distance in mm and sensor ratio, multiply
-     the focal distance of the lens by the sensor ratio (e.g. 28 mm x
-     1.6 = 44.8 mm) and calculate 36 divided by this value (e.g. 36 /
-     44.8 ≈ 0.8). This will be the focal distance for your largest
-     dimension. For the other dimension you divide the previous value
-     with the image ratio (e.g. 0.8 * (4/3) ≈ 1.07).
+     To convert from focal distance in mm and sensor ratio, divide the
+     focal distance by the size of your sensor (e.g. 28 mm lens with
+     sensor size 23.5 x 15.6 mm gives fx = 28/23.5 and fy =
+     28/15.6). Use the largest sensor dimension for your largest image
+     dimension. If the sensor size is unknown but your camera reports
+     standard 35 mm equivalent focal distance, then instead divide
+     this focal distance value by the standard sensor size, 36 x 27 mm
+     (e.g. 28 mm equivalent gives fx = 28/36 and fy = 28/27).  If your
+     camera only reports it actual focal distance (e.g. 2.2 mm in a
+     phone camera) then multiply this by the reported crop factor and
+     proceed by using this value in the standard sensor estimation.
 
      \gmXmlTag{gmGraphics,RectilinearCameraModel,focalDistance}
   */
