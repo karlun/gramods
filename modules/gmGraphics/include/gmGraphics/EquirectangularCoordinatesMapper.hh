@@ -4,6 +4,8 @@
 
 #include <gmGraphics/CoordinatesMapper.hh>
 
+#include <gmCore/angle.hh>
+
 #include <GL/glew.h>
 #include <GL/gl.h>
 
@@ -18,6 +20,7 @@ class EquirectangularCoordinatesMapper
 
 public:
 
+  EquirectangularCoordinatesMapper();
   virtual ~EquirectangularCoordinatesMapper();
 
   /**
@@ -43,7 +46,32 @@ public:
   */
   std::string getMapperCode() override;
 
+  /**
+     Called by the code that is using this CoordinatesMapper object,
+     to let it set the uniforms used by the mapper code.
+  */
+  void setMapperUniforms(GLuint program_id) override;
+
+  /**
+     Set the horizontal and vertical coverage angles, respectively,
+     that the 2D coordinates (y=[-1, 1]) should have in the 3D sphere,
+     as angle expressed as a value in radians between 0 and 2π for
+     horizontal and between 0 and π for vertical. The typical
+     equirectangular format uses a coverage angle of 2π and π, which
+     is also the default.
+
+     \gmXmlTag{gmGraphics,EquirectangularCoordinatesMapper,coverageAngle}
+
+     \sa operator>>(std::istream &, gmCore::angle &)
+  */
+  void setCoverageAngle(gmCore::angle2 a);
+
   GM_OFI_DECLARE;
+
+private:
+
+  struct Impl;
+  std::unique_ptr<Impl> _impl;
 };
 
 END_NAMESPACE_GMGRAPHICS;
