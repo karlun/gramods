@@ -1,4 +1,4 @@
-FROM ubuntu:18.04
+FROM ubuntu:18.04 AS build-stage
 
 RUN \
   apt-get update; \
@@ -35,15 +35,15 @@ ARG GM_DEPLOY_KEY
 ARG GM_DEPLOY_TOKEN
 
 RUN \
-  git clone https://$GM_DEPLOY_KEY:$GM_DEPLOY_TOKEN@gitlab.liu.se/karlu20/gramods.git -b $GM_GIT_BRANCH; \
-  mkdir gramods/build; \
+  git clone https://$GM_DEPLOY_KEY:$GM_DEPLOY_TOKEN@gitlab.liu.se/karlu20/gramods.git -b $GM_GIT_BRANCH gramods.git; \
+  mkdir gramods.git/build; \
   cd gramods; \
   git apply tools/patches/2020-11-16_ubuntu-18.04-fixes.patch; \
   cd build; \
   cmake \
     -G Ninja \
     -D CMAKE_BUILD_TYPE=Release \
-    -D CMAKE_INSTALL_PREFIX=/gramods-install \
+    -D CMAKE_INSTALL_PREFIX=/gramods \
     -D ASIO_INCLUDE_DIRS=/asio/asio/include \
     -D OSG_INCLUDE_DIR:PATH=/osg-install/include \
     -D OSG_LIBRARY:FILEPATH=/osg-install/lib/libosg.so \
@@ -65,7 +65,9 @@ RUN \
     -D gramods_INSTALL_DOCUMENTATION:BOOL=ON \
     -D gramods_INSTALL_RESOURCES:BOOL=ON \
     .. ; \
-  mkdir -p /gramods/build/modules/gmGraphics/resources/
+  mkdir -p /gramods.git/build/modules/gmGraphics/resources/
 RUN \
-  ninja -C /gramods/build; \
-  ninja -C /gramods/build install
+  ninja -C /gramods.git/build; \
+  ninja -C /gramods.git/build install
+RUN \
+  tar cf gramods-ubuntu-18.04.tar gramods
