@@ -27,6 +27,13 @@ public:
   ~OsgRenderer();
 
   /**
+     Sets the current frame number. This is propagated to the OSG
+     viewer to be used for example in animation updates. This is
+     automatically incremented if not set.
+  */
+  void setFrameNumber(unsigned int n);
+
+  /**
      Calls the scenegraph root for rendering.
   */
   void render(Camera camera, float near = -1, float far = -1) override;

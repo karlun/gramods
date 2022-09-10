@@ -3,11 +3,14 @@
 
 #ifdef gramods_ENABLE_OpenSceneGraph
 
+#include <gmCore/TimeTools.hh>
 #include <osgViewer/Viewer>
 
 BEGIN_NAMESPACE_GMGRAPHICS;
 
 struct OsgRenderer::Impl {
+
+  void setFrameNumber(unsigned int n);
 
   void setup();
 
@@ -22,11 +25,23 @@ struct OsgRenderer::Impl {
   bool is_initialized = false;
   osg::ref_ptr<osgViewer::Viewer> viewer;
   osg::ref_ptr<osg::Node> tmp_scene_data;
+
+  unsigned int frame_number = 0;
+  bool external_frame_count = false;
 };
 
 OsgRenderer::OsgRenderer() : Updateable(0), _impl(std::make_unique<Impl>()) {}
 
 OsgRenderer::~OsgRenderer() {}
+
+void OsgRenderer::setFrameNumber(unsigned int n) {
+  _impl->setFrameNumber(n);
+}
+
+void OsgRenderer::Impl::setFrameNumber(unsigned int n) {
+  if (!external_frame_count) external_frame_count = true;
+  frame_number = n;
+}
 
 void OsgRenderer::render(Camera camera, float near, float far) {
   if (!eyes.empty() && eyes.count(camera.getEye()) == 0) return;
@@ -105,6 +120,16 @@ void OsgRenderer::Impl::setSceneData(osg::Node *node) {
 
 void OsgRenderer::Impl::update(clock::time_point t) {
   if (!viewer) return;
+
+  double time = gmCore::TimeTools::timePointToSeconds(t);
+  unsigned int frame = external_frame_count ? frame_number : frame_number++;
+
+  if (!viewer->getFrameStamp()) viewer->setFrameStamp(new osg::FrameStamp);
+  viewer->getFrameStamp()->setFrameNumber(frame);
+  viewer->getFrameStamp()->setReferenceTime(time);
+  viewer->getFrameStamp()->setSimulationTime(time);
+  viewer->advance();
+
   viewer->eventTraversal();
   viewer->updateTraversal();
 }

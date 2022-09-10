@@ -66,6 +66,10 @@ struct MyApp::Impl {
   std::shared_ptr<gmNetwork::SyncSFloat64> sync_time =
       std::make_shared<gmNetwork::SyncSFloat64>();
 
+  // steady frame number
+  std::shared_ptr<gmNetwork::SyncSUInt64> sync_frame_number =
+      std::make_shared<gmNetwork::SyncSUInt64>(0);
+
   // wand analogs
   std::shared_ptr<gmNetwork::SyncMFloat32> sync_analogs =
       std::make_shared<gmNetwork::SyncMFloat32>();
@@ -164,6 +168,7 @@ void MyApp::Impl::setup_sync(
 
   // Do not forget to add all containers to the synchronization queue
   data_sync->addData(sync_time);
+  data_sync->addData(sync_frame_number);
   data_sync->addData(sync_analogs);
   data_sync->addData(sync_main_button);
   data_sync->addData(sync_second_button);
@@ -222,6 +227,7 @@ void MyApp::Impl::update_data(gmCore::Updateable::clock::time_point time) {
   // end up in the corresponding instance's back buffer.
 
   *sync_time = gmCore::TimeTools::timePointToSeconds(time);
+  *sync_frame_number = *sync_frame_number + 1;
 
   if (head) {
     gmTrack::PoseTracker::PoseSample pose;
@@ -310,7 +316,7 @@ void MyApp::Impl::initOSG() {
     scenegraph_root->addChild(wand_transform);
   }
 
-  std::string url = "urn:gramods:resources/sphere.osgt";
+  std::string url = "urn:gramods:resources/box.osgt";
   std::filesystem::path path = gmCore::FileResolver::getDefault()->resolve(url);
   osg::ref_ptr<osg::Node> model = osgDB::readNodeFile(path.generic_u8string());
 
