@@ -47,7 +47,8 @@ public:
   void setLibraryFile(std::filesystem::path path);
 
   /**
-     Set name of library file.
+     Set name of library, used to create the name of the file. The
+     filename is generated as prefix + library + suffix.
 
      \gmXmlTag{gmCore,ImportLibrary,library}
   */
