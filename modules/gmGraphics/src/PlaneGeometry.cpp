@@ -109,7 +109,7 @@ bool PlaneGeometry::Impl::getCameraFromPosition(Camera vfrustum,
   return true;
 }
 
-std::string PlaneGeometry::getMapperCode() {
+std::string PlaneGeometry::getIntersectionCode() {
   return R"lang=glsl(
 uniform vec3 pg_position;
 uniform vec3 pg_normal;
