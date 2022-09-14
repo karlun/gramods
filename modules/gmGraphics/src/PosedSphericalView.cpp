@@ -146,7 +146,8 @@ void PosedSphericalView::Impl::renderFullPipeline(ViewSettings settings) {
   }
 
   glUseProgram(program_id);
-  mapper->setMapperUniforms(program_id);
+  mapper->setCommonUniforms(program_id);
+  mapper->setTo3DUniforms(program_id);
   glUseProgram(0);
 
   cubemap->renderFullPipeline(settings.frame_number,
@@ -161,7 +162,8 @@ std::string PosedSphericalView::Impl::createFragmentCode() {
   assert(mapper);
   assert(fragment_template_code.find(mapper_pattern) != std::string::npos);
 
-  std::string mapper_code = mapper->getMapperCode();
+  std::string mapper_code =
+      mapper->getCommonCode() + "\n" + mapper->getTo3DCode();
   std::string fragment_code = fragment_template_code;
 
   fragment_code.replace(fragment_code.find(mapper_pattern),

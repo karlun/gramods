@@ -11,28 +11,33 @@ GM_OFI_PARAM2(RectilinearCameraModel, focalOffset, gmCore::float2, setFocalOffse
 
 struct RectilinearCameraModel::Impl {
 
-  void setMapperUniforms(GLuint program_id);
-
   gmCore::float3 k_dist = { 0.f, 0.f, 0.f };
   gmCore::float2 p_dist = { 0.f, 0.f };
   gmCore::float2 focal = { 1.f, 1.f };
   gmCore::float2 offset = {0.5f, 0.5f };
+
+  GLint k_loc = 0;
+  GLint p_loc = 0;
+
+  GLint fx_loc = 0;
+  GLint fy_loc = 0;
+  GLint cx_loc = 0;
+  GLint cy_loc = 0;
 };
 
 RectilinearCameraModel::RectilinearCameraModel()
   : _impl(std::make_unique<Impl>()) {}
 RectilinearCameraModel::~RectilinearCameraModel() {}
 
-std::string RectilinearCameraModel::getMapperCode() {
-  static const std::string code = R"lang=glsl(
+std::string RectilinearCameraModel::getTo2DCode() {
+  return R"lang=glsl(
+uniform vec3 ID_k;
+uniform vec2 ID_p;
 
-uniform vec3 k;
-uniform vec2 p;
-
-uniform float fx;
-uniform float fy;
-uniform float cx;
-uniform float cy;
+uniform float ID_fx;
+uniform float ID_fy;
+uniform float ID_cx;
+uniform float ID_cy;
 
 bool mapTo2D(vec3 pos3, out vec2 pos2) {
 
@@ -63,20 +68,23 @@ bool mapTo2D(vec3 pos3, out vec2 pos2) {
   return true;
 }
 )lang=glsl";
-  return code;
 }
 
-void RectilinearCameraModel::setMapperUniforms(GLuint program_id) {
-  _impl->setMapperUniforms(program_id);
-}
+#define LOC(VAR, NAME)                                                         \
+  (VAR > 0                                                                     \
+       ? VAR                                                                   \
+       : (VAR = glGetUniformLocation(program_id, withVarId(NAME).c_str())))
 
-void RectilinearCameraModel::Impl::setMapperUniforms(GLuint program_id) {
-  glUniform3f(glGetUniformLocation(program_id, "k"), k_dist[0], k_dist[1], k_dist[2]);
-  glUniform2f(glGetUniformLocation(program_id, "p"), p_dist[0], p_dist[1]);
-  glUniform1f(glGetUniformLocation(program_id, "fx"), focal[0]);
-  glUniform1f(glGetUniformLocation(program_id, "fy"), focal[1]);
-  glUniform1f(glGetUniformLocation(program_id, "cx"), offset[0]);
-  glUniform1f(glGetUniformLocation(program_id, "cy"), offset[1]);
+void RectilinearCameraModel::setTo2DUniforms(GLuint program_id) {
+  glUniform3f(LOC(_impl->k_loc, "ID_k"),
+              _impl->k_dist[0],
+              _impl->k_dist[1],
+              _impl->k_dist[2]);
+  glUniform2f(LOC(_impl->p_loc, "ID_p"), _impl->p_dist[0], _impl->p_dist[1]);
+  glUniform1f(LOC(_impl->fx_loc, "ID_fx"), _impl->focal[0]);
+  glUniform1f(LOC(_impl->fy_loc, "ID_fy"), _impl->focal[1]);
+  glUniform1f(LOC(_impl->cx_loc, "ID_cx"), _impl->offset[0]);
+  glUniform1f(LOC(_impl->cy_loc, "ID_cy"), _impl->offset[1]);
 }
 
 void RectilinearCameraModel::setKDistortion(gmCore::float3 k) {

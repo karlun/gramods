@@ -13,23 +13,32 @@ GM_OFI_PARAM2(StereographicCoordinatesMapper, phi0, gmCore::angle, setPhi0);
 
 struct StereographicCoordinatesMapper::Impl {
   float radius = 0.5;
-  gmCore::angle phi_0 = float(GM_PI_2);
-  gmCore::angle theta_0 = 0;
+  gmCore::angle phi0 = float(GM_PI_2);
+  gmCore::angle theta0 = 0;
+
+  GLint R_loc = 0;
+  GLint theta0_loc = 0;
+  GLint phi0_loc = 0;
 };
 
 StereographicCoordinatesMapper::StereographicCoordinatesMapper()
   : _impl(std::make_unique<Impl>()) {}
 StereographicCoordinatesMapper::~StereographicCoordinatesMapper() {}
 
-std::string StereographicCoordinatesMapper::getMapperCode() {
-  static const std::string code = R"lang=glsl(
+std::string StereographicCoordinatesMapper::getCommonCode() {
+  return R"lang=glsl(
+uniform float ID_R;
+uniform float ID_theta0;
+uniform float ID_phi0;
 
-uniform float R;
-uniform float theta_0;
-uniform float phi_0;
-
+#ifndef PI2
 #define PI2 1.57079632679489661923132169163975144209858469968755
+#endif
+)lang=glsl";
+}
 
+std::string StereographicCoordinatesMapper::getTo2DCode() {
+  return R"lang=glsl(
 bool mapTo2D(vec3 pos3, out vec2 pos2) {
 
   float r = sqrt(dot(pos3.xz, pos3.xz));
@@ -37,38 +46,46 @@ bool mapTo2D(vec3 pos3, out vec2 pos2) {
   float phi = atan(pos3.y, r);
   float theta = atan(pos3.x, -pos3.z);
 
-  float k = 2 * R / (1 + sin(phi_0) * sin(phi) + cos(phi_0) * cos(phi) * cos(theta - theta_0));
+  float k = 2 * ID_R / (1 + sin(ID_phi0) * sin(phi) + cos(ID_phi0) * cos(phi) * cos(theta - ID_theta0));
 
-  float x = k * cos(phi) * sin(theta - theta_0);
-  float y = k * (cos(phi_0) * sin(phi) -
-                 sin(phi_0) * cos(phi) * cos(theta - theta_0));
+  float x = k * cos(phi) * sin(theta - ID_theta0);
+  float y = k * (cos(ID_phi0) * sin(phi) -
+                 sin(ID_phi0) * cos(phi) * cos(theta - ID_theta0));
 
   if (x < -1 || x > 1 || y < -1 || y > 1) return false;
 
   pos2 = vec2(x, y);
   return true;
 }
+)lang=glsl";
+}
 
+std::string StereographicCoordinatesMapper::getTo3DCode() {
+  return R"lang=glsl(
 bool mapTo3D(vec2 pos2, out vec3 pos3) {
 
   float r = sqrt(dot(pos2, pos2));
-  float c = 2 * atan(r/(2*R));
+  float c = 2 * atan(r/(2*ID_R));
 
-  float phi = asin(cos(c) * sin(phi_0) + (pos2.y * sin(c) * cos(phi_0))/r);
-  float theta = theta_0 + atan((pos2.x * sin(c)),
-                               (r * cos(phi_0) * cos(c) - pos2.y * sin(phi_0) * sin(c)));
+  float phi = asin(cos(c) * sin(ID_phi0) + (pos2.y * sin(c) * cos(ID_phi0))/r);
+  float theta = ID_theta0 + atan((pos2.x * sin(c)),
+                               (r * cos(ID_phi0) * cos(c) - pos2.y * sin(ID_phi0) * sin(c)));
 
   pos3 = vec3(cos(phi) * sin(theta), sin(phi), -cos(phi) * cos(theta));
   return true;
 }
 )lang=glsl";
-  return code;
 }
 
-void StereographicCoordinatesMapper::setMapperUniforms(GLuint program_id) {
-  glUniform1f(glGetUniformLocation(program_id, "R"), _impl->radius);
-  glUniform1f(glGetUniformLocation(program_id, "theta_0"), _impl->theta_0);
-  glUniform1f(glGetUniformLocation(program_id, "phi_0"), _impl->phi_0);
+#define LOC(VAR, NAME)                                                         \
+  (VAR > 0                                                                     \
+       ? VAR                                                                   \
+       : (VAR = glGetUniformLocation(program_id, withVarId(NAME).c_str())))
+
+void StereographicCoordinatesMapper::setCommonUniforms(GLuint program_id) {
+  glUniform1f(LOC(_impl->R_loc, "ID_R"), _impl->radius);
+  glUniform1f(LOC(_impl->theta0_loc, "ID_theta0"), _impl->theta0);
+  glUniform1f(LOC(_impl->phi0_loc, "ID_phi0"), _impl->phi0);
 }
 
 void StereographicCoordinatesMapper::setRadius(float R) {
@@ -86,11 +103,11 @@ void StereographicCoordinatesMapper::setCoverageAngle(gmCore::angle a) {
 }
 
 void StereographicCoordinatesMapper::setTheta0(gmCore::angle a) {
-  _impl->theta_0 = a;
+  _impl->theta0 = a;
 }
 
 void StereographicCoordinatesMapper::setPhi0(gmCore::angle a) {
-  _impl->phi_0 = a;
+  _impl->phi0 = a;
 }
 
 END_NAMESPACE_GMGRAPHICS;
