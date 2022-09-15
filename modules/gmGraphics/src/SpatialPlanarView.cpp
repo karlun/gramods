@@ -62,7 +62,9 @@ void SpatialPlanarView::Impl::renderFullPipeline(ViewSettings settings, Eye eye)
   }
 
   if (!have_corner_tl || !have_corner_br || !have_up) {
-    GM_RUNLIMITED(GM_ERR("SpatialPlanarView", "Missing parameters for estimating projection."), 1);
+    GM_RUNONCE(GM_ERR("SpatialPlanarView",
+                      "Missing parameters for estimating projection"
+                      " - need corners and up, or angles and distance"));
     return;
   }
 

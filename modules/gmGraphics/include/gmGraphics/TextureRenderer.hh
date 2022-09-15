@@ -10,7 +10,8 @@
 BEGIN_NAMESPACE_GMGRAPHICS;
 
 /**
-   A renderer that renders a texture.
+   A renderer that renders a texture flat (2D) filling the view,
+   thereby ignoring camera and view specific projection.
 */
 class TextureRenderer
   : public Renderer {
