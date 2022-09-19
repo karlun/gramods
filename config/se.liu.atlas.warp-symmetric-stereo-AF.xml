@@ -1,0 +1,55 @@
+<config>
+
+  <SdlWindow
+      fullscreen="false"
+      size="2048 1024"
+      GLMajor="3" GLMinor="3">
+
+    <SdlContext useVideo="true"/>
+
+    <Viewpoint
+        position="0 0 0"
+        eyeSeparation="0.065"/>
+
+    <SaveView
+        file="warp-angularfisheye.png"
+        resolution="16384 8192">
+
+      <SpatialSphericalView
+          radius="7.4"
+          cubeMapResolution="8192"
+          linearInterpolation="1">
+
+        <SideBySideMultiplexer pattern="0"/>
+        <AngularFisheyeCoordinatesMapper/>
+
+        <SphereRenderer
+            eye="LEFT"
+            position="-0.0325 0 0"
+            radius="7.4">
+
+          <AngularFisheyeCoordinatesMapper/>
+
+          <MultiscopicTextureSplitter DEF="TEXTURE" splitType="0">
+            <ImageTexture file="stereo-image.jpg"/>
+          </MultiscopicTextureSplitter>
+
+        </SphereRenderer>
+
+        <SphereRenderer
+            eye="RIGHT"
+            position="+0.0325 0 0"
+            radius="7.4">
+
+          <AngularFisheyeCoordinatesMapper/>
+
+          <MultiscopicTextureSplitter USE="TEXTURE"/>
+
+        </SphereRenderer>
+
+      </SpatialSphericalView>
+
+    </SaveView>
+
+  </SdlWindow>
+</config>
