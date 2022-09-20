@@ -129,9 +129,9 @@ void MultiscopicTextureSplitter::Impl::update(size_t frame_number, Eye eye) {
     glUniform1f(glGetUniformLocation(program_id, "r0"), 0.f);
     glUniform1f(glGetUniformLocation(program_id, "r1"), 1.f);
     glUniform1f(glGetUniformLocation(program_id, "s0"),
-                (eye.idx + 0) / float(eye.count));
+                (eye.count - eye.idx - 1) / float(eye.count));
     glUniform1f(glGetUniformLocation(program_id, "s1"),
-                (eye.idx + 1) / float(eye.count));
+                (eye.count - eye.idx) / float(eye.count));
   default:
     assert(0);
   }
