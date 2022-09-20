@@ -1,8 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <config>
+  <![CDATA[
+
+    Configuration file to warp a single image for the LiU dome. This
+    file assumes that the input file forwardstereo.jpg' is encoding
+    symmetrical forward stereo with 180° top-below equirectangular and
+    will output 8k side-by-side equirectangular.
+
+  ]]>
 
   <SdlWindow
       fullscreen="false"
-      size="1024 1024"
+      size="2048 512"
       GLMajor="3" GLMinor="3">
 
     <SdlContext useVideo="true"/>
@@ -12,34 +21,32 @@
         eyeSeparation="0.065"/>
 
     <SaveView
-        file="warp-equirectangular.png"
-        resolution="8192 8192">
+        file="warp-equirectangular.jpg"
+        resolution="16384 4096">
 
       <SpatialSphericalView
           radius="7.4"
           cubeMapResolution="8192"
           linearInterpolation="1">
 
-        <SideBySideMultiplexer pattern="1"/>
+        <SideBySideMultiplexer pattern="0"/>
         <EquirectangularCoordinatesMapper/>
 
         <SphereRenderer
             eye="LEFT"
-            position="-0.0325 0 0"
-            radius="7.4">
+            position="-0.0325 0 0">
 
           <EquirectangularCoordinatesMapper/>
 
           <MultiscopicTextureSplitter DEF="TEXTURE" splitType="1">
-            <ImageTexture file="stereo-image.jpg"/>
+            <ImageTexture file="forwardstereo.jpg"/>
           </MultiscopicTextureSplitter>
 
         </SphereRenderer>
 
         <SphereRenderer
             eye="RIGHT"
-            position="+0.0325 0 0"
-            radius="7.4">
+            position="+0.0325 0 0">
 
           <EquirectangularCoordinatesMapper/>
 

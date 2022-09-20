@@ -1,4 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <config>
+  <![CDATA[
+
+    Configuration file to warp a single image for the LiU dome. This
+    file assumes that the input file forwardstereo.jpg' is encoding
+    symmetrical forward stereo with 180° side-by-side angular fisheye
+    and will output 8k side-by-side angular fisheye.
+
+  ]]>
 
   <SdlWindow
       fullscreen="false"
@@ -12,7 +21,7 @@
         eyeSeparation="0.065"/>
 
     <SaveView
-        file="warp-angularfisheye.png"
+        file="warp-angularfisheye.jpg"
         resolution="16384 8192">
 
       <SpatialSphericalView
@@ -25,21 +34,19 @@
 
         <SphereRenderer
             eye="LEFT"
-            position="-0.0325 0 0"
-            radius="7.4">
+            position="-0.0325 0 0">
 
           <AngularFisheyeCoordinatesMapper/>
 
           <MultiscopicTextureSplitter DEF="TEXTURE" splitType="0">
-            <ImageTexture file="stereo-image.jpg"/>
+            <ImageTexture file="forwardstereo.jpg"/>
           </MultiscopicTextureSplitter>
 
         </SphereRenderer>
 
         <SphereRenderer
             eye="RIGHT"
-            position="+0.0325 0 0"
-            radius="7.4">
+            position="+0.0325 0 0">
 
           <AngularFisheyeCoordinatesMapper/>
 
