@@ -4,7 +4,7 @@
 
 #include <gmTrack/config.hh>
 
-#ifdef gramods_ENABLE_VRPN_server
+#ifdef gramods_ENABLE_VRPN
 
 #include <gmCore/Object.hh>
 #include <gmCore/OFactory.hh>

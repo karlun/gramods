@@ -1,7 +1,7 @@
 
 #include <gmTrack/VrpnServer.hh>
 
-#ifdef gramods_ENABLE_VRPN_server
+#ifdef gramods_ENABLE_VRPN
 
 #include <gmTrack/SinglePoseTracker.hh>
 #include <gmTrack/MultiPoseTracker.hh>
