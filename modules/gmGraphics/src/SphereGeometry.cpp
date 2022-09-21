@@ -154,7 +154,7 @@ bool SphereGeometry::Impl::getCameraFromPosition(Camera vfrustum,
   return true;
 }
 
-std::string SphereGeometry::getMapperCode() {
+std::string SphereGeometry::getIntersectionCode() {
   return R"lang=glsl(
 uniform vec3 sg_position;
 uniform float sg_radius;

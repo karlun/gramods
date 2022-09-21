@@ -81,7 +81,7 @@ public:
        and direction vector and the SphereGeometry. Return (0,0) if there is
        no intersection.
   */
-  std::string getMapperCode() override;
+  std::string getIntersectionCode() override;
 
   /**
      Called by the code that is using this geometry object, to let the

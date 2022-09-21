@@ -246,7 +246,7 @@ std::string GeometryCorrectedProjectorView::Impl::createFragmentCode() {
   assert(geometry);
   assert(fragment_template_code.find(mapper_pattern) != std::string::npos);
 
-  std::string mapper_code = geometry->getMapperCode();
+  std::string mapper_code = geometry->getIntersectionCode();
   std::string fragment_code = fragment_template_code;
 
   fragment_code.replace(fragment_code.find(mapper_pattern),

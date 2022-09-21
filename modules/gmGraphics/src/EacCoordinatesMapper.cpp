@@ -10,7 +10,9 @@ GM_OFI_PARAM2(EacCoordinatesMapper, layout, std::string, setLayout);
 
 struct EacCoordinatesMapper::Impl {
 
-  void setMapperUniforms(GLuint program_id);
+  void setCommonUniforms(GLuint program_id);
+  void setTo2DUniforms(GLuint program_id);
+  void setTo3DUniforms(GLuint program_id);
   void setLayout(std::string layout);
 
   std::vector<float> data_M_to2D;
@@ -20,6 +22,15 @@ struct EacCoordinatesMapper::Impl {
   std::vector<float> data_M_to3D;
   size_t rows;
   size_t cols;
+
+  GLint rows_loc = 0;
+  GLint cols_loc = 0;
+
+  GLint M_to2D_loc = 0;
+  GLint pos_row_loc = 0;
+  GLint pos_col_loc = 0;
+
+  GLint M_to3D_loc = 0;
 };
 
 EacCoordinatesMapper::EacCoordinatesMapper()
@@ -28,18 +39,22 @@ EacCoordinatesMapper::EacCoordinatesMapper()
 }
 EacCoordinatesMapper::~EacCoordinatesMapper() {}
 
-std::string EacCoordinatesMapper::getMapperCode() {
-  static const std::string code = R"lang=glsl(
-
-#define PI1 3.14159265358979323846264338327950288419716939937511
+std::string EacCoordinatesMapper::getCommonCode() {
+  return withVarId(R"lang=glsl(
+#ifndef PI2
 #define PI2 1.57079632679489661923132169163975144209858469968755
+#endif
 
-uniform int rows;
-uniform int cols;
+uniform int ID_rows;
+uniform int ID_cols;
+)lang=glsl");
+}
 
-uniform mat3 M_to2D[6];
-uniform int pos_row[6];
-uniform int pos_col[6];
+std::string EacCoordinatesMapper::getTo2DCode() {
+  return withVarId(R"lang=glsl(
+uniform mat3 ID_M_to2D[6];
+uniform int ID_pos_row[6];
+uniform int ID_pos_col[6];
 
 bool mapTo2D(vec3 pos3, out vec2 pos2) {
 
@@ -55,7 +70,7 @@ bool mapTo2D(vec3 pos3, out vec2 pos2) {
   else if (pos3.z >  abs_x && pos3.z >  abs_y) section = 4;
   else section = 5;
 
-  pos3 = M_to2D[section] * pos3;
+  pos3 = ID_M_to2D[section] * pos3;
 
   // (2/pi)*arctan(2*x) [-0.5, 0.5] -> [-0.5, 0.5]
   // Find angles φ_x∊[-π,π] and φ_y∊[-π,π]
@@ -65,16 +80,20 @@ bool mapTo2D(vec3 pos3, out vec2 pos2) {
   // Go from [-π/4,π/4] to [-1,1]
   pos2 = vec2((1.0 / PI2) * phi_x + 0.5, (1.0 / PI2) * phi_y + 0.5);
 
-  pos2.x = (1.0 / float(cols)) * pos2.x + pos_col[section] / float(cols);
-  int row = rows - pos_row[section] - 1;
-  pos2.y = (1.0 / float(rows)) * pos2.y + row              / float(rows);
+  pos2.x = (1.0 / float(ID_cols)) * pos2.x + ID_pos_col[section] / float(ID_cols);
+  int row = ID_rows - ID_pos_row[section] - 1;
+  pos2.y = (1.0 / float(ID_rows)) * pos2.y + row              / float(ID_rows);
 
   pos2 = 2.0 * pos2 - 1.0;
 
   return true;
 }
+)lang=glsl");
+}
 
-uniform mat3 M_to3D[6];
+std::string EacCoordinatesMapper::getTo3DCode() {
+  return withVarId(R"lang=glsl(
+uniform mat3 ID_M_to3D[6];
 
 bool mapTo3D(vec2 pos2, out vec3 pos3) {
 
@@ -82,18 +101,18 @@ bool mapTo3D(vec2 pos2, out vec3 pos3) {
   pos2 = 0.5 * (pos2 + 1.0);
 
   int section = 0;
-  for (int idx = 0; idx < cols; ++idx) {
-    if (pos2.x > (idx + 1.0) / cols) continue;
-    pos2.x = cols * (pos2.x - idx / float(cols));
+  for (int idx = 0; idx < ID_cols; ++idx) {
+    if (pos2.x > (idx + 1.0) / ID_cols) continue;
+    pos2.x = ID_cols * (pos2.x - idx / float(ID_cols));
     section = idx;
     break;
   }
 
-  for (int idx = 0; idx < rows; ++idx) {
-    if (pos2.y > (idx + 1.0) / rows) continue;
-    int row = rows - idx - 1;
-    pos2.y = rows * (pos2.y - idx / float(rows));
-    section = section + row * cols;
+  for (int idx = 0; idx < ID_rows; ++idx) {
+    if (pos2.y > (idx + 1.0) / ID_rows) continue;
+    int row = ID_rows - idx - 1;
+    pos2.y = ID_rows * (pos2.y - idx / float(ID_rows));
+    section = section + row * ID_cols;
     break;
   }
 
@@ -104,38 +123,41 @@ bool mapTo3D(vec2 pos2, out vec3 pos3) {
 
   // (0,0) = -z, ax = +x, ay = +y
   pos3 = vec3(ax, ay, -1.0);
-  pos3 = M_to3D[section] * normalize(pos3);
+  pos3 = ID_M_to3D[section] * normalize(pos3);
 
   return true;
 }
-
-)lang=glsl";
-  return code;
+)lang=glsl");
 }
 
-void EacCoordinatesMapper::setMapperUniforms(GLuint program_id) {
-  _impl->setMapperUniforms(program_id);
+#define LOC(VAR, NAME)                                                         \
+  (VAR > 0                                                                     \
+       ? VAR                                                                   \
+       : (VAR = glGetUniformLocation(program_id, withVarId(NAME).c_str())))
+
+void EacCoordinatesMapper::setCommonUniforms(GLuint program_id) {
+  glUniform1i(LOC(_impl->rows_loc, "ID_rows"), GLint(_impl->rows));
+  glUniform1i(LOC(_impl->cols_loc, "ID_cols"), GLint(_impl->cols));
 }
 
-void EacCoordinatesMapper::Impl::setMapperUniforms(GLuint program_id) {
-  glUniform1i(glGetUniformLocation(program_id, "rows"), GLint(rows));
-  glUniform1i(glGetUniformLocation(program_id, "cols"), GLint(cols));
-
-  glUniformMatrix3fv(glGetUniformLocation(program_id, "M_to2D"),
-                     data_M_to2D.size() / 9,
+void EacCoordinatesMapper::setTo2DUniforms(GLuint program_id) {
+  glUniformMatrix3fv(LOC(_impl->M_to2D_loc, "ID_M_to2D"),
+                     _impl->data_M_to2D.size() / 9,
                      false,
-                     data_M_to2D.data());
-  glUniform1iv(glGetUniformLocation(program_id, "pos_row"),
-               pos_row.size(),
-               pos_row.data());
-  glUniform1iv(glGetUniformLocation(program_id, "pos_col"),
-               pos_col.size(),
-               pos_col.data());
+                     _impl->data_M_to2D.data());
+  glUniform1iv(LOC(_impl->pos_row_loc, "ID_pos_row"),
+               _impl->pos_row.size(),
+               _impl->pos_row.data());
+  glUniform1iv(LOC(_impl->pos_col_loc, "ID_pos_col"),
+               _impl->pos_col.size(),
+               _impl->pos_col.data());
+}
 
-  glUniformMatrix3fv(glGetUniformLocation(program_id, "M_to3D"),
-                     data_M_to3D.size() / 9,
+void EacCoordinatesMapper::setTo3DUniforms(GLuint program_id) {
+  glUniformMatrix3fv(LOC(_impl->M_to2D_loc, "ID_M_to3D"),
+                     _impl->data_M_to3D.size() / 9,
                      false,
-                     data_M_to3D.data());
+                     _impl->data_M_to3D.data());
 }
 
 void EacCoordinatesMapper::setLayout(std::string layout) {

@@ -22,7 +22,10 @@
 
     <TiledView>
 
-      <param name="tileLocation" value="0 1 1 2"/>
+      <param name="tileLocation" value="0 2 1 1"/>
+      <RemapperView>
+        <EquirectangularCoordinatesMapper KEY="from"/>
+        <AngularFisheyeCoordinatesMapper KEY="to"/>
       <SpatialSphericalView
           cubeMapResolution="1024"
           linearInterpolation="1">
@@ -30,8 +33,12 @@
         <EquirectangularCoordinatesMapper/>
 
       </SpatialSphericalView>
+      </RemapperView>
 
-      <param name="tileLocation" value="0 0 1 1"/>
+      <param name="tileLocation" value="0 0 1 2"/>
+      <RemapperView>
+        <AngularFisheyeCoordinatesMapper KEY="from"/>
+        <EquirectangularCoordinatesMapper KEY="to"/>
       <SpatialSphericalView
           cubeMapResolution="1024"
           linearInterpolation="1">
@@ -40,8 +47,12 @@
             coverageAngle="6.283"/>
 
       </SpatialSphericalView>
+      </RemapperView>
 
-      <param name="tileLocation" value="1 1 1 2"/>
+      <param name="tileLocation" value="1 2 1 1"/>
+      <RemapperView>
+        <EquirectangularCoordinatesMapper KEY="from"/>
+        <AngularFisheyeCoordinatesMapper KEY="to"/>
       <PosedSphericalView
           cubeMapResolution="1024"
           linearInterpolation="1">
@@ -49,8 +60,12 @@
         <EquirectangularCoordinatesMapper/>
 
       </PosedSphericalView>
+      </RemapperView>
 
-      <param name="tileLocation" value="1 0 1 1"/>
+      <param name="tileLocation" value="1 0 1 2"/>
+      <RemapperView>
+        <AngularFisheyeCoordinatesMapper KEY="from"/>
+        <EquirectangularCoordinatesMapper KEY="to"/>
       <PosedSphericalView
           cubeMapResolution="1024"
           linearInterpolation="1">
@@ -59,6 +74,7 @@
           coverageAngle="6.283"/>
 
       </PosedSphericalView>
+      </RemapperView>
     </TiledView>
 
   </SdlWindow>

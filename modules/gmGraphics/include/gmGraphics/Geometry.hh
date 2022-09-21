@@ -65,7 +65,7 @@ public:
        and direction vector and the geometry. Return (0,0,0) if there
        is no intersection.
   */
-  virtual std::string getMapperCode() { return ""; }
+  virtual std::string getIntersectionCode() { return ""; }
 
   /**
      Called by the code that is using this geometry object, to let the

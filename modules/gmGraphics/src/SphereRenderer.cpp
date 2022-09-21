@@ -233,7 +233,8 @@ std::string SphereRenderer::Impl::createFragmentCode() {
   assert(mapper);
   assert(fragment_template_code.find(mapper_pattern) != std::string::npos);
 
-  std::string mapper_code = mapper->getMapperCode();
+  std::string mapper_code =
+      mapper->getCommonCode() + "\n" + mapper->getTo2DCode();
   std::string fragment_code = fragment_template_code;
 
   fragment_code.replace(fragment_code.find(mapper_pattern),
@@ -282,7 +283,8 @@ void SphereRenderer::Impl::render(Camera camera, float near, float far) {
   glUniformMatrix4fv(glGetUniformLocation(program_id, "Mv"),  1, false, Mv.data());
   glUniformMatrix4fv(glGetUniformLocation(program_id, "Mm"),  1, false, Mm.data());
   glUniform1i(glGetUniformLocation(program_id, "tex"), 0);
-  mapper->setMapperUniforms(program_id);
+  mapper->setCommonUniforms(program_id);
+  mapper->setTo2DUniforms(program_id);
 
   glBindVertexArray(vao_id);
   glDrawArrays(GL_TRIANGLES, 0, vertex_count);
