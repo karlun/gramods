@@ -5,7 +5,7 @@ RUN \
   DEBIAN_FRONTEND="noninteractive" \
   apt-get -y install cmake git build-essential ninja-build doxygen graphviz; \
   DEBIAN_FRONTEND="noninteractive" \
-  apt-get -y install libgtest-dev libasio-dev libtclap-dev libtinyxml2-dev libsdl2-dev libeigen3-dev libglew-dev libuvc-dev libfreeimage-dev libopenscenegraph-dev inkscape
+  apt-get -y install libgtest-dev libasio-dev libtclap-dev libtinyxml2-dev libsdl2-dev libeigen3-dev libglew-dev libfreeimage-dev libopenscenegraph-dev inkscape
 
 RUN \
   git clone https://github.com/vrpn/vrpn.git -b v07.35; \
@@ -40,4 +40,4 @@ RUN \
   ninja -C gramods.git/build; \
   ninja -C gramods.git/build install
 RUN \
-  tar cf gramods-ubuntu-20.04.tar gramods
+  tar cf /gramods-liu-thinlinc.tar /gramods

@@ -1,4 +1,4 @@
-FROM ubuntu:22.04
+FROM ubuntu:22.04 AS build-stage
 
 RUN \
   apt-get update; \
@@ -23,18 +23,20 @@ ARG GM_DEPLOY_KEY
 ARG GM_DEPLOY_TOKEN
 
 RUN \
-  git clone https://$GM_DEPLOY_KEY:$GM_DEPLOY_TOKEN@gitlab.liu.se/karlu20/gramods.git -b $GM_GIT_BRANCH; \
-  mkdir gramods/build;\
-  cd gramods/build;\
+  git clone https://$GM_DEPLOY_KEY:$GM_DEPLOY_TOKEN@gitlab.liu.se/karlu20/gramods.git -b $GM_GIT_BRANCH gramods.git; \
+  mkdir gramods.git/build;\
+  cd gramods.git/build;\
   cmake \
     -G Ninja \
     -D CMAKE_BUILD_TYPE=Release \
-    -D CMAKE_INSTALL_PREFIX:PATH=/gramods-install \
-    -D TinyXML2_DIR:PATH=/gramods/cmake_modules/tinyxml2-shared/ \
-    -D VRPN_DIR:PATH=/gramods/cmake_modules/vrpn-static/ \
+    -D CMAKE_INSTALL_PREFIX:PATH=/gramods \
+    -D TinyXML2_DIR:PATH=/gramods.git/cmake_modules/tinyxml2-shared/ \
+    -D VRPN_DIR:PATH=/gramods.git/cmake_modules/vrpn-static/ \
     -D CMAKE_PREFIX_PATH=/vrpn-install \
     .. ; \
-  mkdir -p /gramods/build/modules/gmGraphics/resources
+  mkdir -p /gramods.git/build/modules/gmGraphics/resources
 RUN \
-  ninja -C gramods/build; \
-  ninja -C gramods/build install
+  ninja -C gramods.git/build; \
+  ninja -C gramods.git/build install
+RUN \
+  tar cf gramods-ubuntu-22.04.tar gramods
