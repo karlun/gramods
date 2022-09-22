@@ -332,25 +332,30 @@ bool ImageTexture::Impl::setTexture(FIBITMAP *image, std::string filename) {
   FREE_IMAGE_TYPE image_type = FreeImage_GetImageType(image);
   GLenum gl_format;
   GLenum gl_type;
+  std::string str_format = "";
   switch (image_type) {
   case FIT_BITMAP:
     switch (FreeImage_GetBPP(image)) {
     case 8:
       gl_format = GL_RED;
       gl_type = GL_UNSIGNED_BYTE;
+      str_format = "u8 gray";
       break;
     case 24:
       gl_format = GL_BGR;
       gl_type = GL_UNSIGNED_BYTE;
+      str_format = "u8 RGB";
       break;
     case 32:
       gl_format = GL_BGRA;
       gl_type = GL_UNSIGNED_BYTE;
+      str_format = "u8 RGBA";
       break;
     default:
       GM_ERR("ImageTexture",
              "Unsupported image format (" << FreeImage_GetBPP(image)
-                                          << " bits per pixel)");
+                                          << " bits per pixel) of image '"
+                                          << filename << "'");
       FreeImage_Unload(image);
       return false;
     }
@@ -358,38 +363,47 @@ bool ImageTexture::Impl::setTexture(FIBITMAP *image, std::string filename) {
   case FIT_UINT16:
     gl_format = GL_RED;
     gl_type = GL_UNSIGNED_SHORT;
+    str_format = "u16 gray";
     break;
   case FIT_INT16:
     gl_format = GL_RED;
     gl_type = GL_SHORT;
+    str_format = "s16 gray";
     break;
   case FIT_UINT32:
     gl_format = GL_RED;
     gl_type = GL_UNSIGNED_INT;
+    str_format = "u32 gray";
     break;
   case FIT_INT32:
     gl_format = GL_RED;
     gl_type = GL_INT;
+    str_format = "s32 gray";
     break;
   case FIT_FLOAT:
     gl_format = GL_RED;
     gl_type = GL_FLOAT;
+    str_format = "f32 gray";
     break;
   case FIT_RGB16:
     gl_format = GL_RGB;
     gl_type = GL_SHORT;
+    str_format = "s16 RGB";
     break;
   case FIT_RGBA16:
     gl_format = GL_RGBA;
     gl_type = GL_SHORT;
+    str_format = "s16 RGBA";
     break;
   case FIT_RGBF:
     gl_format = GL_RGB;
     gl_type = GL_FLOAT;
+    str_format = "f32 RGB";
     break;
   case FIT_RGBAF:
     gl_format = GL_RGBA;
     gl_type = GL_FLOAT;
+    str_format = "f32 RGBA";
     break;
   default:
     GM_ERR("ImageTexture",
@@ -419,14 +433,14 @@ bool ImageTexture::Impl::setTexture(FIBITMAP *image, std::string filename) {
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
   glBindTexture(GL_TEXTURE_2D, 0);
 
-	FreeImage_Unload(image);
+  FreeImage_Unload(image);
 
-  GM_DBG2("ImageTexture", "Loaded"
-          << " image " << filename
-          << " " << image_width << "x" << image_height
-          );
+  GM_DBG2("ImageTexture",
+          "Loaded "
+              << " image '" << filename << "' (" << image_width << "x"
+          << image_height << " " << str_format << ")");
 
-	return true;
+  return true;
 }
 
 void ImageTexture::Impl::load_process() {
