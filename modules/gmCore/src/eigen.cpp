@@ -11,6 +11,11 @@
 
 BEGIN_NAMESPACE_GRAMODS;
 
+std::istream& operator>> (std::istream &in, Eigen::Vector2f &v) {
+  in >> v[0] >> v[1];
+  return in;
+}
+
 std::istream& operator>> (std::istream &in, Eigen::Vector3f &v) {
   in >> v[0] >> v[1] >> v[2];
   return in;
