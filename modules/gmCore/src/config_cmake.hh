@@ -46,6 +46,11 @@ namespace gramods {
 #cmakedefine gramods_ENABLE_TinyXML2
 #endif
 
+#cmakedefine HAVE_FreeImage
+#ifdef HAVE_FreeImage
+#cmakedefine gramods_ENABLE_FreeImage
+#endif
+
 #cmakedefine SDL2_FOUND
 #ifdef SDL2_FOUND
 #cmakedefine gramods_ENABLE_SDL2

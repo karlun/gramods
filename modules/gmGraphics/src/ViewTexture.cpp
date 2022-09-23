@@ -3,7 +3,7 @@
 
 #ifdef gramods_ENABLE_FreeImage
 
-#include <gmGraphics/FreeImage.hh>
+#include <gmCore/FreeImage.hh>
 #include <gmCore/RunOnce.hh>
 
 #include <gmGraphics/OffscreenRenderTargets.hh>

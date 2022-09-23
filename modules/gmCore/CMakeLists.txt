@@ -43,6 +43,18 @@ ELSE()
     MESSAGE (WARNING "gmCore will not be able to initialize SDL2 context - requires SDL2")
 ENDIF()
 
+FIND_PACKAGE(FreeImage)
+IF(FreeImage_FOUND)
+  SET(HAVE_FreeImage 1)
+  OPTION(gramods_ENABLE_FreeImage "Enable functionality that requires FreeImage" ON)
+  IF (gramods_ENABLE_FreeImage)
+    LIST (APPEND MODULE_INCLUDE_DIRS ${FreeImage_INCLUDE_DIR})
+    LIST (APPEND PUBLIC_LIBS ${FreeImage_LIBRARIES})
+  ENDIF(gramods_ENABLE_FreeImage)
+ELSE()
+  MESSAGE (WARNING "Not including image loading support in gmCore - requires FreeImage")
+ENDIF(FreeImage_FOUND)
+
 LIST (APPEND PRIVATE_LIBS ${CMAKE_DL_LIBS})
 
 
