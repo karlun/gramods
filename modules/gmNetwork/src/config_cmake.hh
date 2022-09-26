@@ -15,6 +15,10 @@ namespace gramods {
   namespace gmNetwork {}
 }
 
+
+#include <gmCore/config.hh>
+
+
 // Increment this when making braking changes to how gmNetwork
 // communicates.
 #define GRAMODS_NETWORK_VERSION 0

@@ -2,11 +2,14 @@ CMAKE_MINIMUM_REQUIRED(VERSION 3.13)
 CMAKE_POLICY(VERSION 3.13)
 
 
-SET (PRIVATE_INCLUDE_DIRS CACHE INTERNAL "The list of private include folders for the network module.")
-SET (PUBLIC_LIBS CACHE INTERNAL "The list of public libraries that the network module should link against.")
+SET (PRIVATE_INCLUDE_DIRS CACHE INTERNAL "Includes *not* used in module header files")
+SET (PUBLIC_LIBS CACHE INTERNAL "Libraries with headers used in module header files")
+SET (PRIVATE_LIBS CACHE INTERNAL "Libraries *not* used in module header files.")
+SET (INTERNAL_LIBS CACHE INTERNAL "Internal targets and dependencies with full paths.")
 
 
 LIST (APPEND PUBLIC_LIBS gmCore)
+LIST (APPEND INTERNAL_LIBS gmCore_internal_deps)
 
 # Boost ASIO (headers only)
 FIND_PACKAGE (ASIO)
@@ -63,10 +66,15 @@ TARGET_INCLUDE_DIRECTORIES(gmNetwork
   ${PRIVATE_INCLUDE_DIRS})
 TARGET_SOURCES(gmNetwork
   PRIVATE ${SOURCES}
-  PUBLIC ${HEADERS_MAGIC}
-  )
+  PUBLIC ${HEADERS_MAGIC})
 TARGET_LINK_LIBRARIES(gmNetwork
-  PUBLIC ${PUBLIC_LIBS})
+  PUBLIC ${PUBLIC_LIBS}
+  PRIVATE ${PRIVATE_LIBS})
+
+# Get absolute library paths of dependencies into apps and tests
+ADD_LIBRARY(gmNetwork_internal_deps INTERFACE)
+TARGET_LINK_LIBRARIES(gmNetwork_internal_deps
+  INTERFACE ${PUBLIC_LIBS} ${PRIVATE_LIBS} ${INTERNAL_LIBS} gmNetwork)
 
 SET_PROPERTY(TARGET gmNetwork PROPERTY CXX_STANDARD 14)
 SET_PROPERTY(TARGET gmNetwork PROPERTY WINDOWS_EXPORT_ALL_SYMBOLS TRUE)

@@ -43,8 +43,7 @@ SET(gramods_EXEC_TARGET_FILES "")
 SET(gramods_LIB_TARGET_FILES "")
 SET(gramods_DOCS_DEFINES "")
 
-SUBDIRLIST(gramods_MODULES ${gramods_SOURCE_DIR}/modules)
-FOREACH (MODULE ${gramods_MODULES})
+FOREACH (MODULE gmCore gmMisc gmTrack gmGraphics gmNetwork gmTouch)
 
   OPTION(gramods_MODULE_${MODULE} "Include the module ${MODULE}" ON)
 
@@ -191,7 +190,7 @@ IF (DOXYGEN_FOUND)
   IF (Python3_FOUND)
     ADD_CUSTOM_TARGET (docs ${gramods_DOCS_ALL}
       COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_CURRENT_BINARY_DIR}/xml-attributes
-      COMMAND ${Python3_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/tools/generate_xml_attribute_documentation.py --modules ${CMAKE_CURRENT_SOURCE_DIR}/modules --output ${CMAKE_CURRENT_BINARY_DIR}/xml-attributes --defines ${DOCS_DEFINES_STRING}
+      COMMAND ${Python3_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/tools/generate_xml_attribute_documentation.py --modules "${CMAKE_CURRENT_SOURCE_DIR}/modules" --output "${CMAKE_CURRENT_BINARY_DIR}/xml-attributes" --defines "${DOCS_DEFINES_STRING}"
       COMMAND ${DOXYGEN_EXECUTABLE} ${CMAKE_CURRENT_BINARY_DIR}/Doxyfile
       WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
       COMMENT "Generating API documentation with Doxygen" VERBATIM
