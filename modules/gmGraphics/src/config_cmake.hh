@@ -24,6 +24,9 @@ namespace gramods {
 }
 
 
+#include <gmTrack/config.hh>
+
+
 #cmakedefine HAVE_SDL2
 #ifdef HAVE_SDL2
 #cmakedefine gramods_ENABLE_SDL2

@@ -2,7 +2,6 @@
 #ifndef GRAMODS_GRAPHICS_EYE
 #define GRAMODS_GRAPHICS_EYE
 
-#include <gmCore/config.hh>
 #include <gmGraphics/config.hh>
 
 #include <stdexcept>

@@ -2,9 +2,10 @@ CMAKE_MINIMUM_REQUIRED(VERSION 3.13)
 CMAKE_POLICY(VERSION 3.13)
 
 
-SET (MODULE_INCLUDE_DIRS CACHE INTERNAL "The list of public include folders for the core module.")
-SET (PUBLIC_LIBS CACHE INTERNAL "The list of public libraries that the core module should link against.")
-SET (PRIVATE_LIBS CACHE INTERNAL "The list of private libraries that the core module should link against.")
+SET (PRIVATE_INCLUDE_DIRS CACHE INTERNAL "Includes *not* used in module header files")
+SET (PUBLIC_LIBS CACHE INTERNAL "Libraries with headers used in module header files")
+SET (PRIVATE_LIBS CACHE INTERNAL "Libraries *not* used in module header files.")
+SET (INTERNAL_LIBS CACHE INTERNAL "Internal targets and dependencies with full paths.")
 
 
 FIND_PACKAGE (Eigen3 QUIET NO_MODULE)
@@ -71,23 +72,18 @@ TARGET_INCLUDE_DIRECTORIES(gmCore
   PUBLIC
   $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
   $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}/include>
-  $<INSTALL_INTERFACE:include>
-  PRIVATE
-  ${MODULE_INCLUDE_DIRS})
+  $<INSTALL_INTERFACE:include>)
 TARGET_SOURCES(gmCore
   PRIVATE ${SOURCES}
-  PUBLIC ${HEADERS_MAGIC}
-  )
+  PUBLIC ${HEADERS_MAGIC})
 TARGET_LINK_LIBRARIES(gmCore
   PUBLIC ${PUBLIC_LIBS}
   PRIVATE ${PRIVATE_LIBS})
 
 # Get absolute library paths of dependencies into apps and tests
 ADD_LIBRARY(gmCore_internal_deps INTERFACE)
-TARGET_INCLUDE_DIRECTORIES(gmCore_internal_deps
-  INTERFACE ${MODULE_INCLUDE_DIRS})
 TARGET_LINK_LIBRARIES(gmCore_internal_deps
-  INTERFACE ${PUBLIC_LIBS} ${PRIVATE_LIBS} gmCore)
+  INTERFACE ${PUBLIC_LIBS} ${PRIVATE_LIBS} ${INTERNAL_LIBS} gmCore)
 
 
 INCLUDE(GenerateExportHeader)

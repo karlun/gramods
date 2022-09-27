@@ -16,10 +16,8 @@ namespace gramods {
   namespace gmMisc {}
 }
 
-#cmakedefine HAVE_Eigen3
-#ifdef HAVE_Eigen3
-#cmakedefine gramods_ENABLE_Eigen3
-#endif
+
+#include <gmCore/config.hh>
 
 
 #endif

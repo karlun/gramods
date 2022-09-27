@@ -1,12 +1,12 @@
 # How to Build Gramods on Docker
 
 The [`Dockerfile`](Dockerfile) file is a docker configuration for
-building on Ubuntu 18.04. Below are instructions on how to use this.
+building on Ubuntu. Below are instructions on how to use this.
 
 ## Building the Docker Image
 
 ```{bash}
-docker build -t gramods-on-18.04 .
+docker build -t gramods-on-Ubuntu .
 ```
 
 Run (interactively) to copy the resulting files:
