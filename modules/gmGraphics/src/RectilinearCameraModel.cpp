@@ -30,7 +30,7 @@ RectilinearCameraModel::RectilinearCameraModel()
 RectilinearCameraModel::~RectilinearCameraModel() {}
 
 std::string RectilinearCameraModel::getTo2DCode() {
-  return R"lang=glsl(
+  return withVarId(R"lang=glsl(
 uniform vec3 ID_k;
 uniform vec2 ID_p;
 
@@ -40,6 +40,13 @@ uniform float ID_cx;
 uniform float ID_cy;
 
 bool mapTo2D(vec3 pos3, out vec2 pos2) {
+  vec3 k = ID_k;
+  vec2 p = ID_p;
+
+  float fx = ID_fx;
+  float fy = ID_fy;
+  float cx = ID_cx;
+  float cy = ID_cy;
 
   // Go to OpenCV coordinates
   float x = pos3.x;
@@ -67,7 +74,7 @@ bool mapTo2D(vec3 pos3, out vec2 pos2) {
 
   return true;
 }
-)lang=glsl";
+)lang=glsl");
 }
 
 #define LOC(VAR, NAME)                                                         \

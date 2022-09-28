@@ -26,7 +26,7 @@ StereographicCoordinatesMapper::StereographicCoordinatesMapper()
 StereographicCoordinatesMapper::~StereographicCoordinatesMapper() {}
 
 std::string StereographicCoordinatesMapper::getCommonCode() {
-  return R"lang=glsl(
+  return withVarId(R"lang=glsl(
 uniform float ID_R;
 uniform float ID_theta0;
 uniform float ID_phi0;
@@ -34,11 +34,11 @@ uniform float ID_phi0;
 #ifndef PI2
 #define PI2 1.57079632679489661923132169163975144209858469968755
 #endif
-)lang=glsl";
+)lang=glsl");
 }
 
 std::string StereographicCoordinatesMapper::getTo2DCode() {
-  return R"lang=glsl(
+  return withVarId(R"lang=glsl(
 bool mapTo2D(vec3 pos3, out vec2 pos2) {
 
   float r = sqrt(dot(pos3.xz, pos3.xz));
@@ -57,11 +57,11 @@ bool mapTo2D(vec3 pos3, out vec2 pos2) {
   pos2 = vec2(x, y);
   return true;
 }
-)lang=glsl";
+)lang=glsl");
 }
 
 std::string StereographicCoordinatesMapper::getTo3DCode() {
-  return R"lang=glsl(
+  return withVarId(R"lang=glsl(
 bool mapTo3D(vec2 pos2, out vec3 pos3) {
 
   float r = sqrt(dot(pos2, pos2));
@@ -74,7 +74,7 @@ bool mapTo3D(vec2 pos2, out vec3 pos3) {
   pos3 = vec3(cos(phi) * sin(theta), sin(phi), -cos(phi) * cos(theta));
   return true;
 }
-)lang=glsl";
+)lang=glsl");
 }
 
 #define LOC(VAR, NAME)                                                         \
