@@ -219,6 +219,12 @@ void SpatialSphericalView::setCoordinatesMapper(std::shared_ptr<CoordinatesMappe
 }
 
 void SpatialSphericalView::setMakeSquare(bool on) {
+  if (on) {
+    GM_RUNONCE(
+        GM_WRN("SpatialSphericalView",
+               "MakeSquare set to true; using square view instead is safer!"));
+  }
+
   _impl->make_square = on;
 }
 

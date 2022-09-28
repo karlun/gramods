@@ -178,6 +178,12 @@ void PosedSphericalView::setCoordinatesMapper(std::shared_ptr<CoordinatesMapper>
 }
 
 void PosedSphericalView::setMakeSquare(bool on) {
+  if (on) {
+    GM_RUNONCE(
+        GM_WRN("PosedSphericalView",
+               "MakeSquare set to true; using square view instead is safer!"));
+  }
+
   _impl->make_square = on;
 }
 
