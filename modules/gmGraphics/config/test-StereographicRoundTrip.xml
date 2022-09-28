@@ -28,9 +28,7 @@
             resolution="4096 4096">
 
           <SpatialSphericalView
-              cubeMapResolution="4096"
               linearInterpolation="1"
-              makeSquare="true"
               radius="10">
 
             <StereographicCoordinatesMapper

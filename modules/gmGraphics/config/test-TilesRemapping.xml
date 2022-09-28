@@ -27,7 +27,6 @@
         <EquirectangularCoordinatesMapper KEY="from"/>
         <AngularFisheyeCoordinatesMapper KEY="to"/>
       <SpatialSphericalView
-          cubeMapResolution="1024"
           linearInterpolation="1">
 
         <EquirectangularCoordinatesMapper/>
@@ -40,7 +39,6 @@
         <AngularFisheyeCoordinatesMapper KEY="from"/>
         <EquirectangularCoordinatesMapper KEY="to"/>
       <SpatialSphericalView
-          cubeMapResolution="1024"
           linearInterpolation="1">
 
         <AngularFisheyeCoordinatesMapper
@@ -54,7 +52,6 @@
         <EquirectangularCoordinatesMapper KEY="from"/>
         <AngularFisheyeCoordinatesMapper KEY="to"/>
       <PosedSphericalView
-          cubeMapResolution="1024"
           linearInterpolation="1">
 
         <EquirectangularCoordinatesMapper/>
@@ -67,7 +64,6 @@
         <AngularFisheyeCoordinatesMapper KEY="from"/>
         <EquirectangularCoordinatesMapper KEY="to"/>
       <PosedSphericalView
-          cubeMapResolution="1024"
           linearInterpolation="1">
 
         <AngularFisheyeCoordinatesMapper

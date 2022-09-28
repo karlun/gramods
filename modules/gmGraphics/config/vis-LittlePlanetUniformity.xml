@@ -16,7 +16,6 @@
         sphereSetRadius="10.0"/>
 
     <PosedSphericalView
-        cubeMapResolution="1024"
         linearInterpolation="1">
 
       <AngularFisheyeCoordinatesMapper

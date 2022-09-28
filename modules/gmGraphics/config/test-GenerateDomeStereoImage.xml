@@ -21,7 +21,6 @@
 
         <param name="tileLocation" value="0 0 1 1"/>
         <SpatialSphericalView
-            cubeMapResolution="4096"
             linearInterpolation="1">
 
           <EquirectangularCoordinatesMapper/>
@@ -31,7 +30,6 @@
 
         <param name="tileLocation" value="0 1 1 1"/>
         <SpatialSphericalView
-            cubeMapResolution="4096"
             linearInterpolation="1">
 
           <EquirectangularCoordinatesMapper/>

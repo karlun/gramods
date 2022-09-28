@@ -36,7 +36,6 @@
 
     <if variable="COMPUTERNAME" value="ATLAS-00">
       <SpatialSphericalView
-          makeSquare="true"
           radius="7.4">
         <AngularFisheyeCoordinatesMapper
             coverageAngle="d165"/>

@@ -21,7 +21,6 @@
       <!-- Little Planet -->
       <param name="tileLocation" value="0 0 1 1"/>
       <PosedSphericalView
-          cubeMapResolution="1024"
           linearInterpolation="1">
         <AngularFisheyeCoordinatesMapper
             coverageAngle="d360"/>
@@ -30,7 +29,6 @@
       <!-- Fisheye -->
       <param name="tileLocation" value="0 1 1 1"/>
       <PosedSphericalView
-          cubeMapResolution="1024"
           linearInterpolation="1">
         <AngularFisheyeCoordinatesMapper
             coverageAngle="d180"/>
@@ -39,7 +37,6 @@
       <!-- Equirectangular -->
       <param name="tileLocation" value="1 0 1 2"/>
       <PosedSphericalView
-          cubeMapResolution="1024"
           linearInterpolation="1">
         <EquirectangularCoordinatesMapper/>
       </PosedSphericalView>
