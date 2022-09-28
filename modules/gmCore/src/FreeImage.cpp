@@ -1,5 +1,5 @@
 
-#include <gmGraphics/FreeImage.hh>
+#include <gmCore/FreeImage.hh>
 
 #ifdef gramods_ENABLE_FreeImage
 
@@ -7,7 +7,7 @@
 
 #include <FreeImage.h>
 
-BEGIN_NAMESPACE_GMGRAPHICS;
+BEGIN_NAMESPACE_GMCORE;
 
 std::shared_ptr<FreeImage> FreeImage::get() {
   static std::weak_ptr<FreeImage> singleton;
@@ -34,6 +34,6 @@ FreeImage::~FreeImage() {
   FreeImage_DeInitialise();
 }
 
-END_NAMESPACE_GMGRAPHICS;
+END_NAMESPACE_GMCORE;
 
 #endif

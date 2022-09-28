@@ -1,14 +1,14 @@
 
-#ifndef GRAMODS_GRAPHICS_FREEIMAGE
-#define GRAMODS_GRAPHICS_FREEIMAGE
+#ifndef GRAMODS_CORE_FREEIMAGE
+#define GRAMODS_CORE_FREEIMAGE
 
-#include <gmGraphics/config.hh>
+#include <gmCore/config.hh>
 
 #ifdef gramods_ENABLE_FreeImage
 
 #include <memory>
 
-BEGIN_NAMESPACE_GMGRAPHICS;
+BEGIN_NAMESPACE_GMCORE;
 
 /**
    Initializer for FreeImage. FreeImage will be in initialized state
@@ -28,7 +28,7 @@ private:
 
 };
 
-END_NAMESPACE_GMGRAPHICS;
+END_NAMESPACE_GMCORE;
 
 #endif
 #endif

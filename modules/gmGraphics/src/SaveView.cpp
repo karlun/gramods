@@ -3,7 +3,7 @@
 
 #ifdef gramods_ENABLE_FreeImage
 
-#include <gmGraphics/FreeImage.hh>
+#include <gmCore/FreeImage.hh>
 #include <gmCore/RunOnce.hh>
 #include <gmCore/Stringify.hh>
 
@@ -51,7 +51,7 @@ struct SaveView::Impl {
   std::vector<std::shared_ptr<View>> views;
   int frame = 0;
 
-  std::shared_ptr<FreeImage> free_image;
+  std::shared_ptr<gmCore::FreeImage> free_image;
 
   bool is_setup = false;
   bool is_functional = false;
@@ -89,7 +89,7 @@ struct SaveView::Impl {
 
 SaveView::SaveView()
   : _impl(std::make_unique<Impl>()) {
-  _impl->free_image = FreeImage::get();
+  _impl->free_image = gmCore::FreeImage::get();
 }
 
 SaveView::Impl::Impl() {

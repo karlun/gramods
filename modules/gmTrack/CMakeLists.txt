@@ -10,6 +10,8 @@ SET (INTERNAL_LIBS CACHE INTERNAL "Internal targets and dependencies with full p
 
 LIST (APPEND PUBLIC_LIBS gmCore)
 LIST (APPEND INTERNAL_LIBS gmCore_internal_deps)
+LIST (APPEND PUBLIC_LIBS gmMisc)
+LIST (APPEND INTERNAL_LIBS gmMisc_internal_deps)
 
 IF (NOT gramods_ENABLE_Eigen3)
   MESSAGE (WARNING "Not including gmTrack - requires Eigen3")
@@ -55,6 +57,13 @@ IF(OPENCV_VIDEOIO_FOUND AND OPENCV_HIGHGUI_FOUND)
     ENDIF()
   ENDIF()
 ENDIF()
+
+IF(gramods_ENABLE_FreeImage)
+  LIST (APPEND MODULE_INCLUDE_DIRS ${FreeImage_INCLUDE_DIR})
+  LIST (APPEND PRIVATE_LIBS ${FreeImage_LIBRARIES})
+ELSE()
+  MESSAGE (WARNING "Not including image support in gmTrack - requires FreeImage")
+ENDIF(gramods_ENABLE_FreeImage)
 
 SET(gramods_DOCS_DEFINES ${gramods_DOCS_DEFINES} PARENT_SCOPE)
 

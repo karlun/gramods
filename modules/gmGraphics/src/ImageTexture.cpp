@@ -3,8 +3,8 @@
 
 #ifdef gramods_ENABLE_FreeImage
 
-#include <gmGraphics/FreeImage.hh>
 #include <gmCore/Console.hh>
+#include <gmCore/FreeImage.hh>
 #include <gmCore/ExitException.hh>
 
 #include <FreeImage.h>
@@ -49,7 +49,7 @@ struct ImageTexture::Impl {
   bool do_loop = false;
   bool do_exit = false;
 
-  std::shared_ptr<FreeImage> free_image;
+  std::shared_ptr<gmCore::FreeImage> free_image;
 
   void load_process();
 
@@ -93,7 +93,7 @@ void ImageTexture::setExit(bool on) {
 }
 
 ImageTexture::Impl::Impl() {
-  free_image = FreeImage::get();
+  free_image = gmCore::FreeImage::get();
   load_thread = std::thread([this]{ this->load_process(); });
 }
 
