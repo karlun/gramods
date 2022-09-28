@@ -1,10 +1,9 @@
 
-#include <gmMisc/config.hh>
 #include <gmMisc/NelderMead.hh>
 
-#include <Eigen/Eigen>
-
 #ifdef gramods_ENABLE_Eigen3
+
+#include <Eigen/Eigen>
 
 using namespace gramods;
 
