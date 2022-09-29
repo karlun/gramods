@@ -32,7 +32,7 @@ struct ProjectionTextureGenerator::Impl : SampleCollector::Impl {
   std::vector<std::vector<Eigen::Vector2f>> region_hull_positions;
   size_t total_region_positions_count = 0;
 
-  std::string file = "output.tif";
+  std::filesystem::path file = "output.tif";
   gmCore::size2 resolution = {4096, 4096};
 
   Eigen::Vector3f scale = Eigen::Vector3f::Ones();
@@ -222,7 +222,7 @@ void ProjectionTextureGenerator::Impl::saveImage() {
          image_data.data(),
          resolution[0] * resolution[1] * 3 * 4);
 
-  bool success = FreeImage_Save(FIF_TIFF, bitmap, file.data(), TIFF_LZW);
+  bool success = FreeImage_Save(FIF_TIFF, bitmap, file.c_str(), TIFF_LZW);
 
   FreeImage_Unload(bitmap);
 
