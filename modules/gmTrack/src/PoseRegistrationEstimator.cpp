@@ -43,14 +43,18 @@ struct PoseRegistrationEstimator::Impl : SampleCollector::Impl {
   */
   void expandPlanar(std::vector<Eigen::Vector3f> &data, int &idx0, int &idx1);
 
-  bool estimateRegistration(std::vector<Eigen::Vector3f> tracker_data,
-                            std::vector<Eigen::Vector3f> actual_data,
+  bool estimateRegistration(const std::vector<Eigen::Vector3f> &tracker_data,
+                            const std::vector<Eigen::Vector3f> &actual_data,
                             Eigen::Matrix4f &M);
 
-  void estimateUnitRegistration(std::vector<Eigen::Vector3f> tracker_data,
-                                std::vector<Eigen::Vector3f> actual_data,
-                                Eigen::Matrix4f M_raw,
+  void estimateUnitRegistration(const std::vector<Eigen::Vector3f> &tracker_data,
+                                const std::vector<Eigen::Vector3f> &actual_data,
+                                const Eigen::Matrix4f &M_raw,
                                 Eigen::Matrix4f &M_unit);
+
+  void checkResult(const std::vector<Eigen::Vector3f> &tracker_data,
+                   const std::vector<Eigen::Vector3f> &actual_data,
+                   const Eigen::Matrix4f &M_unit);
 
   float planar_sphericity = 0.3f;
 
@@ -131,6 +135,8 @@ void PoseRegistrationEstimator::Impl::performRegistration() {
   Eigen::Matrix4f M_unit;
   estimateUnitRegistration(tracker_data, actual_data, M_reg, M_unit);
   registration_unit = M_unit;
+
+  checkResult(tracker_data, actual_data, M_unit);
 
   GM_DBG1("PoseRegistrationEstimator", "Unit registration matrix:\n" << M_unit);
 
@@ -241,8 +247,8 @@ void PoseRegistrationEstimator::Impl::expandPlanar(std::vector<Eigen::Vector3f> 
 }
 
 bool PoseRegistrationEstimator::Impl::estimateRegistration
-(std::vector<Eigen::Vector3f> tracker_data,
- std::vector<Eigen::Vector3f> actual_data,
+(const std::vector<Eigen::Vector3f> &tracker_data,
+ const std::vector<Eigen::Vector3f> &actual_data,
  Eigen::Matrix4f &M) {
 
   assert(tracker_data.size() == actual_data.size());
@@ -292,9 +298,9 @@ bool PoseRegistrationEstimator::Impl::estimateRegistration
 
 
 void PoseRegistrationEstimator::Impl::estimateUnitRegistration
-(std::vector<Eigen::Vector3f> tracker_data,
- std::vector<Eigen::Vector3f> actual_data,
- Eigen::Matrix4f M_raw,
+(const std::vector<Eigen::Vector3f> &tracker_data,
+ const std::vector<Eigen::Vector3f> &actual_data,
+ const Eigen::Matrix4f &M_raw,
  Eigen::Matrix4f &M_unit) {
 
   if (tracker_data.empty() || actual_data.empty())
@@ -324,6 +330,33 @@ void PoseRegistrationEstimator::Impl::estimateUnitRegistration
 
   Eigen::Vector3f offset = actual_cp - (M_unit * tracker_cp.homogeneous()).hnormalized();
   M_unit.block<3,1>(0,3) = offset;
+}
+
+void PoseRegistrationEstimator::Impl::checkResult(
+    const std::vector<Eigen::Vector3f> &tracker_data,
+    const std::vector<Eigen::Vector3f> &actual_data,
+    const Eigen::Matrix4f &M_unit) {
+
+  float worst_sqr_offset = 0.f;
+  for (size_t idx = 0; idx < std::min(tracker_data.size(), actual_data.size());
+       ++idx) {
+    Eigen::Vector3f offset =
+        actual_data[idx] -
+        (M_unit * tracker_data[idx].homogeneous()).hnormalized();
+    float sqr_offset = offset.squaredNorm();
+    worst_sqr_offset = std::max(worst_sqr_offset, sqr_offset);
+  }
+
+  float worst_offset = std::sqrt(worst_sqr_offset);
+  if (worst_offset > 0.01) {
+    GM_WRN("PoseRegistrationEstimator",
+           "Worst reprojected tracker-point has an offset of " << worst_offset
+                                                               << " m!");
+  } else {
+    GM_DBG1("PoseRegistrationEstimator",
+            "Worst reprojected tracker-point has an offset of " << worst_offset
+                                                                << " m.");
+  }
 }
 
 END_NAMESPACE_GMTRACK;

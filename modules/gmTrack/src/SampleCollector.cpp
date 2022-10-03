@@ -130,9 +130,18 @@ void SampleCollector::Impl::getAverage(std::vector<Eigen::Vector3f> samples,
     return;
   }
 
-  Eigen::Vector3f sum;
+  Eigen::Vector3f sum = Eigen::Vector3f::Zero();
   for (auto p : samples) sum += p;
   x = (1.0 / samples.size()) * sum;
+
+  float stddev = 0.f;
+  for (auto p : samples) stddev += (p - x).squaredNorm();
+  stddev = std::sqrt(stddev);
+
+  GM_DBG1("SampleCollector",
+          "Estimated mean (" << x.transpose() << ") and stddev ("
+                             << stddev << ") from "
+                             << samples.size() << " samples.");
 }
 
 void SampleCollector::Impl::getAverage(std::vector<Eigen::Quaternionf> samples,
