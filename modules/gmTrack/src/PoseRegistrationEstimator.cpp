@@ -208,7 +208,7 @@ void PoseRegistrationEstimator::Impl::expandPlanar(std::vector<Eigen::Vector3f> 
       float value = fabsf(data_X.dot((data[idx] - cp)));
       if (value > best_value0) {
         best_value0 = value;
-        idx0 = idx;
+        idx0 = (int)idx;
       }
     }
 
@@ -218,11 +218,14 @@ void PoseRegistrationEstimator::Impl::expandPlanar(std::vector<Eigen::Vector3f> 
       float value = fabsf(data_Y.dot((data[idx] - cp)));
       if (value > best_value1) {
         best_value1 = value;
-        idx1 = idx;
+        idx1 = (int)idx;
       }
     }
 
-    GM_DBG1("PoseRegistrationEstimator", "Estimated primary samples: " << idx0 << " (" << best_value0 << ") and " << idx1 << "(" << best_value1 << ")");
+    GM_DBG1("PoseRegistrationEstimator",
+            "Estimated primary samples: " << idx0 << " (" << best_value0
+                                          << ") and " << idx1 << "("
+                                          << best_value1 << ")");
   }
 
   if ((data[idx0] - cp).cross(data[idx1] - cp).dot(data_normal) < 0) {
