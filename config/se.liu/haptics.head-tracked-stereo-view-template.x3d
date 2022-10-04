@@ -16,25 +16,25 @@
 
     1. Calibration of helmet mount:
 
-    gm-tracker-registration
-      --output-file output.xml
-      --output-template urn:gramods:config/se.liu.haptics.head-tracked-stereo-view-template.x3d
-      --config urn:gramods:config/se.liu.mit.vive.calibration-tracker-relative.xml
-      --a-point -0.05,0,0
-      --a-point +0.05,0,0
+    gm-tracker-registration \
+      --output-file se.liu.haptics.helmet-calibrated-template.xml \
+      --output-template urn:gramods:config/se.liu.haptics.head-tracked-stereo-view-template.x3d \
+      --config urn:gramods:config/se.liu.mit.vive.calibration-tracker-relative.xml \
+      --a-point -0.05,0,0 \
+      --a-point +0.05,0,0 \
       --a-point 0,-0.12,0
 
 
     2. Calibration of tracker relative monitor:
 
-    gm-tracker-registration
-      --output-file se.liu.haptics.head-tracked-stereo-view.x3d
-      --output-template output.xml
-      --config urn:gramods:config/se.liu.mit.vive.calibration-tracker.xml
-      --a-point -0.267,0.277,0.125
-      --a-point -0.267,0.277,0.429
-      --a-point +0.267,0.277,0.429
-      --a-point +0.267,0.277,0.125
+    gm-tracker-registration \
+      --output-file se.liu.haptics.head-tracked-stereo-view.x3d \
+      --output-template se.liu.haptics.helmet-calibrated-template.xml \
+      --config urn:gramods:config/se.liu.mit.vive.calibration-tracker.xml \
+      --a-point -0.266,0.278,0.128 \
+      --a-point -0.266,0.278,0.428 \
+      --a-point +0.266,0.278,0.428 \
+      --a-point +0.266,0.278,0.128
   ]]>
 
   <PythonScript url="urn:candy:python/AutoLoadSO.py"/>
@@ -45,8 +45,8 @@
       DEF="VIEWPOINT"
       useHeadOrientation="true"
       position="0 0 1.0"
-      screenLowerLeft="-0.267 -0.152 0"
-      screenUpperRight="0.267  0.152 0">
+      screenLowerLeft="-0.267 -0.151 0"
+      screenUpperRight="0.267  0.151 0">
     <SinglePointTrackerFilter
         index="0">
       <MappedTrackerFilter>
