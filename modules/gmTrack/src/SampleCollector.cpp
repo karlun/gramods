@@ -16,6 +16,7 @@ BEGIN_NAMESPACE_GMTRACK;
 
 GM_OFI_DEFINE(SampleCollector);
 GM_OFI_PARAM(SampleCollector, samplesPerSecond, float, SampleCollector::setSamplesPerSecond);
+GM_OFI_PARAM(SampleCollector, warningThreshold, float, SampleCollector::setWarningThreshold);
 GM_OFI_PARAM(SampleCollector, trackerPosition, Eigen::Vector3f, SampleCollector::addTrackerPosition);
 GM_OFI_PARAM(SampleCollector, trackerOrientation, Eigen::Quaternionf, SampleCollector::addTrackerOrientation);
 GM_OFI_POINTER(SampleCollector, controller, Controller, SampleCollector::setController);
@@ -46,6 +47,10 @@ void SampleCollector::addTrackerOrientation(Eigen::Quaternionf o) {
 
 void SampleCollector::setSamplesPerSecond(float n) {
   _impl->samples_per_second = n;
+}
+
+void SampleCollector::setWarningThreshold(float d) {
+  _impl->warning_threshold = d;
 }
 
 void SampleCollector::Impl::update(clock::time_point now) {
@@ -138,10 +143,24 @@ void SampleCollector::Impl::getAverage(std::vector<Eigen::Vector3f> samples,
   for (auto p : samples) stddev += (p - x).squaredNorm();
   stddev = std::sqrt(stddev);
 
-  GM_DBG1("SampleCollector",
-          "Estimated mean (" << x.transpose() << ") and stddev ("
-                             << stddev << ") from "
+  float worst_sqr_offset = 0.f;
+  for (size_t idx = 0; idx < samples.size(); ++idx) {
+    float sqr_offset = (samples[idx] - x).squaredNorm();
+    worst_sqr_offset = std::max(worst_sqr_offset, sqr_offset);
+  }
+  float worst_offset = std::sqrt(worst_sqr_offset);
+
+  if (worst_offset > warning_threshold) {
+    GM_WRN("SampleCollector",
+           "Estimated mean " << x.transpose() << " (stddev " << stddev
+                             << ") has worst offset " << worst_offset << " in "
                              << samples.size() << " samples.");
+  } else {
+    GM_DBG1("SampleCollector",
+            "Estimated mean " << x.transpose() << " (stddev " << stddev
+                              << ", worst offset " << worst_offset << ") from "
+                              << samples.size() << " samples.");
+  }
 }
 
 void SampleCollector::Impl::getAverage(std::vector<Eigen::Quaternionf> samples,

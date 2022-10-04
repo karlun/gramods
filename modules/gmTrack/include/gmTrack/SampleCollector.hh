@@ -63,6 +63,14 @@ public:
   void setSamplesPerSecond(float n);
 
   /**
+     Sets the data offset required to trigger a warning. Default is
+     0.01, i.e. one cm.
+
+     \gmXmlTag{gmTrack,SampleCollector,warningThreshold}
+  */
+  void setWarningThreshold(float d);
+
+  /**
      Returns the current list of tracker positions.
   */
   const std::vector<Eigen::Vector3f> &getTrackerPositions() const;

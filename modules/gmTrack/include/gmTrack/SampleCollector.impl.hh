@@ -13,6 +13,7 @@ struct SampleCollector::Impl {
 
   clock::time_point last_sample_time = clock::time_point::min();
   float samples_per_second = 1;
+  float warning_threshold = 0.01f;
   bool collecting = false;
 
   virtual void update(clock::time_point t);

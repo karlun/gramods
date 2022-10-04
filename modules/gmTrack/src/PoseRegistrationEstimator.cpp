@@ -351,7 +351,7 @@ void PoseRegistrationEstimator::Impl::checkResult(
   }
 
   float worst_offset = std::sqrt(worst_sqr_offset);
-  if (worst_offset > 0.01) {
+  if (worst_offset > warning_threshold) {
     GM_WRN("PoseRegistrationEstimator",
            "Worst reprojected tracker-point has an offset of " << worst_offset
                                                                << " m!");
