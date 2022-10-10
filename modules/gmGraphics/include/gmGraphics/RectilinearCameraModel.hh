@@ -60,10 +60,12 @@ public:
      dimension. If the sensor size is unknown but your camera reports
      standard 35 mm equivalent focal distance, then instead divide
      this focal distance value by the standard sensor size, 36 x 27 mm
-     (e.g. 28 mm equivalent gives fx = 28/36 and fy = 28/27).  If your
-     camera only reports it actual focal distance (e.g. 2.2 mm in a
-     phone camera) then multiply this by the reported crop factor and
-     proceed by using this value in the standard sensor estimation.
+     (e.g. 28 mm equivalent gives fx = 28/36 and fy = 28/27). Adjust
+     the smaller dimension if the image ratio does not perfectly match
+     the standard ratio (4/3). If your camera only reports it actual
+     focal distance (e.g. 2.2 mm in a phone camera) then multiply this
+     by the reported crop factor and proceed by using this value in
+     the standard sensor estimation.
 
      \gmXmlTag{gmGraphics,RectilinearCameraModel,focalDistance}
   */
