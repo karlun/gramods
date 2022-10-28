@@ -30,7 +30,7 @@ struct MultiscopicTextureSplitter::Impl {
 
   std::shared_ptr<TextureInterface> texture;
 
-  size_t split_type;
+  size_t split_type = 0;
 };
 
 const std::string MultiscopicTextureSplitter::Impl::fragment_code =
@@ -105,8 +105,10 @@ void MultiscopicTextureSplitter::Impl::update(size_t frame_number, Eye eye) {
   case 1:
     render_target.push();
     render_target.bind(width, height / 2);
+    break;
   default:
-    assert(0);
+    throw gmCore::InvalidArgument(
+        GM_STR("Unsupported split type " << split_type));
   }
 
   glActiveTexture(GL_TEXTURE0);
@@ -132,8 +134,6 @@ void MultiscopicTextureSplitter::Impl::update(size_t frame_number, Eye eye) {
                 (eye.count - eye.idx - 1) / float(eye.count));
     glUniform1f(glGetUniformLocation(program_id, "s1"),
                 (eye.count - eye.idx) / float(eye.count));
-  default:
-    assert(0);
   }
 
   raster_processor.run();
@@ -153,6 +153,8 @@ void MultiscopicTextureSplitter::setTexture(std::shared_ptr<TextureInterface> te
 }
 
 void MultiscopicTextureSplitter::setSplitType(size_t type) {
+  if (type > 1)
+    throw gmCore::InvalidArgument(GM_STR("Unsupported split type " << type));
   _impl->split_type = type;
 }
 
