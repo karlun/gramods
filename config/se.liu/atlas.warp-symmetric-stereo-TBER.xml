@@ -4,8 +4,8 @@
 
     Configuration file to warp a single image for the LiU dome. This
     file assumes that the input file 'forwardstereo.jpg' is encoding
-    symmetrical forward stereo with 180° top-below equirectangular and
-    will output 8k side-by-side equirectangular.
+    symmetrical forward stereo with 180° top-bottom equirectangular
+    and will output 8k side-by-side equirectangular.
 
   ]]>
 

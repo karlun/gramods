@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<config>
+  <![CDATA[
+
+    Configuration file to split movie frames for the LiU dome. This
+    file assumes that the frames 'raw/out_XXXXXXXXX.png' are encoding
+    symmetrical omni-directional stereo with 360° top-bottom
+    equirectangular and will output 8k side-by-side per projector
+    frame, 'split/splitX_XXXXXXXXX.png'.
+
+  ]]>
+
+  <SdlWindow
+      fullscreen="false"
+      size="2048 256"
+      GLMajor="3" GLMinor="3">
+
+    <SdlContext useVideo="true"/>
+
+    <Viewpoint eyeSeparation="0"/>
+
+    <SphereRenderer
+        eye="LEFT"
+        orientation="ypr -0.004 0 0">
+      <!-- rotating atan(eye offset / dome radius) -->
+      <EquirectangularCoordinatesMapper/>
+
+      <MultiscopicTextureSplitter
+          DEF="TEXTURE"
+          splitType="1">
+        <ImageTexture
+            autoRange="true"
+            exit="true"
+            file="raw/out_%09d.png"/>
+      </MultiscopicTextureSplitter>
+    </SphereRenderer>
+
+    <SphereRenderer
+        eye="RIGHT"
+        orientation="ypr 0.004 0 0">
+      <!-- rotating atan(eye offset / dome radius) -->
+      <EquirectangularCoordinatesMapper/>
+      <MultiscopicTextureSplitter USE="TEXTURE"/>
+    </SphereRenderer>
+
+    <TiledView>
+
+      <param name="tileLocation" value="0 0 2 1"/>
+      <SaveView
+          file="split/split0_%09d.png"
+          resolution="8192 2160">
+        <SpatialPlanarView
+            distance="7.4"
+            clipAngles="d58.865 d58.865 d-7.701 d70.238">
+          <LinearAnaglyphsMultiplexer/>
+        </SpatialPlanarView>
+      </SaveView>
+
+      <!--FOV left="58.865" right="58.865" up="70.238" down="-7.701" -->
+      <!--Orientation heading="-45.0" pitch="0.0" roll="0.0" -->
+      <param name="tileLocation" value="0 1 1 1"/>
+      <SaveView
+          file="split/split1_%09d.png"
+          resolution="8192 2160">
+        <SpatialPlanarView
+            distance="7.4"
+            clipAngles="d58.865 d58.865 d-7.701 d70.238"
+            orientation="ypr d-45.0 d0.0 d0.0">
+          <SideBySideMultiplexer pattern="0"/>
+        </SpatialPlanarView>
+      </SaveView>
+
+      <!--FOV left="58.865" right="58.865" up="70.238" down="-7.701" -->
+      <!--Orientation heading="45.0" pitch="0.0" roll="0.0" -->
+      <param name="tileLocation" value="0 2 1 1"/>
+      <SaveView
+          file="split/split2_%09d.png"
+          resolution="8192 2160">
+        <SpatialPlanarView
+            distance="7.4"
+            clipAngles="d58.865 d58.865 d-7.701 d70.238"
+            orientation="ypr d45.0 d0.0 d0.0">
+            <SideBySideMultiplexer pattern="0"/>
+        </SpatialPlanarView>
+      </SaveView>
+
+      <!--FOV left="58.865" right="58.865" up="70.238" down="-7.701" -->
+      <!--Orientation heading="135.0" pitch="0.0" roll="0.0" -->
+      <param name="tileLocation" value="0 3 1 1"/>
+      <SaveView
+          file="split/split3_%09d.png"
+          resolution="8192 2160">
+        <SpatialPlanarView
+            distance="7.4"
+            clipAngles="d58.865 d58.865 d-7.701 d70.238"
+            orientation="ypr d135.0 d0.0 d0.0">
+            <SideBySideMultiplexer pattern="0"/>
+        </SpatialPlanarView>
+      </SaveView>
+
+      <!--FOV left="58.865" right="58.865" up="70.238" down="-7.701" -->
+      <!--Orientation heading="-135.0" pitch="0.0" roll="0.0" -->
+      <param name="tileLocation" value="1 1 1 1"/>
+      <SaveView
+          file="split/split4_%09d.png"
+          resolution="8192 2160">
+        <SpatialPlanarView
+            distance="7.4"
+            clipAngles="d58.865 d58.865 d-7.701 d70.238"
+            orientation="ypr d-135.0 d0.0 d0.0">
+            <SideBySideMultiplexer pattern="0"/>
+        </SpatialPlanarView>
+      </SaveView>
+
+      <!--FOV left="58.992" right="58.992" up="55.336" down="11.608" -->
+      <!--Orientation heading="57.0" pitch="48.0" roll="0.0" -->
+      <param name="tileLocation" value="1 2 1 1"/>
+      <SaveView
+          file="split/split5_%09d.png"
+          resolution="8192 2160">
+        <SpatialPlanarView
+            distance="7.4"
+            clipAngles="d58.992 d58.992 d11.608 d55.336"
+            orientation="ypr d57.0 d48.0 d0.0">
+            <SideBySideMultiplexer pattern="0"/>
+        </SpatialPlanarView>
+      </SaveView>
+
+      <!--FOV left="58.992" right="58.992" up="55.336" down="11.608" -->
+      <!--Orientation heading="-123.0" pitch="48.0" roll="0.0" -->
+      <param name="tileLocation" value="1 3 1 1"/>
+      <SaveView
+          file="split/split6_%09d.png"
+          resolution="8192 2160">
+        <SpatialPlanarView
+            distance="7.4"
+            clipAngles="d58.992 d58.992 d11.608 d55.336"
+            orientation="ypr d-123.0 d48.0 d0.0">
+            <SideBySideMultiplexer pattern="0"/>
+        </SpatialPlanarView>
+      </SaveView>
+
+    </TiledView>
+  </SdlWindow>
+</config>

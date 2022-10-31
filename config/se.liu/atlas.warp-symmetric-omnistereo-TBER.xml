@@ -4,7 +4,7 @@
 
     Configuration file to warp a single image for the LiU dome. This
     file assumes that the input file 'omnistereo.jpg' is encoding
-    symmetrical omni-directional stereo with 180° top-below
+    symmetrical omni-directional stereo with 180° top-bottom
     equirectangular and will output 8k side-by-side equirectangular.
 
   ]]>
@@ -34,7 +34,8 @@
 
         <SphereRenderer
             eye="LEFT"
-            orientation="ypr -0.00439186365423591377 0 0">
+            orientation="ypr -0.004 0 0">
+          <!-- rotating atan(eye offset / dome radius) -->
 
           <EquirectangularCoordinatesMapper/>
 
@@ -46,7 +47,8 @@
 
         <SphereRenderer
             eye="RIGHT"
-            orientation="ypr 0.00439186365423591377 0 0">
+            orientation="ypr 0.004 0 0">
+          <!-- rotating atan(eye offset / dome radius) -->
 
           <EquirectangularCoordinatesMapper/>
 
