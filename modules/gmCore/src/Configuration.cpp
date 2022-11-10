@@ -442,13 +442,13 @@ Configuration::propagateOverrides(const overrides_list &list,
   }
 
   if (!newlist.empty()) {
-    GM_WRN("Configuration",
-           "Propagating (" << stringify(newlist) << ") to ("
-                           << stringify(alias) << ")");
+    GM_DBG2("Configuration",
+            "Propagating (" << stringify(newlist) << ") to ("
+                            << stringify(alias) << ")");
   } else {
-    GM_WRN("Configuration",
-           "Not propagating (" << stringify(list) << ") to ("
-                               << stringify(alias) << ")");
+    GM_DBG2("Configuration",
+            "Not propagating (" << stringify(list) << ") to ("
+                                << stringify(alias) << ")");
   }
 
   return newlist;
