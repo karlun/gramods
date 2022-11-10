@@ -67,6 +67,13 @@ public:
   */
   void setSuffix(std::string str);
 
+  /**
+     Set a string to append to the library name, before the file
+     suffix. Default is "-d" for debug build and an empty string for
+     release.
+  */
+  void setDbgSuffix(std::string str);
+
   GM_OFI_DECLARE;
 
 private:

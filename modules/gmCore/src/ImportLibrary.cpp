@@ -10,6 +10,7 @@ GM_OFI_PARAM2(ImportLibrary, libraryFile, std::filesystem::path, setLibraryFile)
 GM_OFI_PARAM2(ImportLibrary, library, std::string, setLibrary);
 GM_OFI_PARAM2(ImportLibrary, prefix, std::string, setPrefix);
 GM_OFI_PARAM2(ImportLibrary, suffix, std::string, setSuffix);
+GM_OFI_PARAM2(ImportLibrary, dbgSuffix, std::string, setDbgSuffix);
 
 struct ImportLibrary::Impl {
 
@@ -20,6 +21,12 @@ struct ImportLibrary::Impl {
   bool library_loaded;
   std::filesystem::path library_file;
   std::string library;
+
+#ifdef NDEBUG
+  std::string dbg_suffix = "";
+#else
+  std::string dbg_suffix = "-d";
+#endif
 
 #ifdef WIN32
 
@@ -82,7 +89,7 @@ void ImportLibrary::Impl::initialize() {
 
   if (library_file.empty()) {
     if (!library.empty()) {
-      library_file = prefix + library + suffix;
+      library_file = prefix + library + dbg_suffix + suffix;
     } else {
       GM_ERR("ImportLibrary", "Cannot load library - no library specified");
       return;
@@ -124,6 +131,10 @@ void ImportLibrary::setPrefix(std::string str) {
 
 void ImportLibrary::setSuffix(std::string str) {
   _impl->suffix = str;
+}
+
+void ImportLibrary::setDbgSuffix(std::string str) {
+  _impl->dbg_suffix = str;
 }
 
 END_NAMESPACE_GMCORE;
