@@ -7,4 +7,4 @@ then
 fi
 
 mkdir -p raw
-ffmpeg -r 1 -i $1 -r 1 "raw/out_%09d.png"
+ffmpeg -r 1 -i $1 -r 1 -map 0:a audio.wav -map 0:v raw/out_%09d.png
