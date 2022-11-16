@@ -70,7 +70,7 @@ Depending on your local platform and its configuration you might want to also se
 Gramods is primarily a library for implementing your own applications, however there are also some apps included in the package. The simplest to use for testing Gramods functionality is `gm-load`. When the package has been fully built and installed, use the following command-line to run test configurations:
 
 ~~~~~~~~~~~~~{.sh}
-gm-load --config urn:gramods:config/debug-output-console.xml --config urn:gramods:gmGraphics/config/test-TileViewOfCubeSet.xml
+gm-load --config urn:gramods:config/output-normal-to-console.xml --config urn:gramods:gmGraphics/config/test-TileViewOfCubeSet.xml
 ~~~~~~~~~~~~~
 
 
