@@ -48,6 +48,7 @@ BuildMaxi:
     - make package
   artifacts:
     paths: ['build/*gramods*.deb']
+    expire_in: 2 hrs
 
 TestInstall:
   image: $CI_REGISTRY/karlu20/gramods:20.04-mini
