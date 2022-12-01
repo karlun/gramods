@@ -9,6 +9,7 @@
 
 #include <map>
 #include <string>
+#include <filesystem>
 #include <iomanip>
 #include <typeinfo>
 #include <iostream>
@@ -365,6 +366,21 @@ public:
   };
 
   /**
+     Specialization parameter setter for std::filesystem::path type,
+     to avoid tokenization of paths with white space.
+  */
+  template<class Node>
+  struct ParamSetter<Node, std::filesystem::path> : ParamSetterBase {
+
+    ParamSetter(void (Node::*m)(std::filesystem::path val))
+      : method(m) {}
+
+    void setValueFromString(Object *n, std::string s);
+
+    void (Node::*method)(std::filesystem::path val);
+  };
+
+  /**
      Specialization parameter setter for bool type, to allow named
      states, such as "on" and "true".
   */
@@ -440,6 +456,15 @@ void OFactory::ParamSetter<Node, T>::setValueFromString
 
 template<class Node>
 void OFactory::ParamSetter<Node, std::string>::setValueFromString
+(Object *n, std::string s) {
+  assert(dynamic_cast<Node*>(n) != nullptr);
+  Node *node = static_cast<Node*>(n);
+
+  (node->*method)(s);
+}
+
+template<class Node>
+void OFactory::ParamSetter<Node, std::filesystem::path>::setValueFromString
 (Object *n, std::string s) {
   assert(dynamic_cast<Node*>(n) != nullptr);
   Node *node = static_cast<Node*>(n);
