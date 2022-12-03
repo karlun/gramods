@@ -60,22 +60,32 @@ public:
      Computes and returns a projection matrix for the current camera
      and the provided near and far distances.
   */
-  Eigen::Matrix4f getProjectionMatrix(float near, float far);
+  Eigen::Matrix4f getProjectionMatrix(float near, float far) const;
 
   /**
      Computes and returns a view matrix for the current camera.
   */
-  Eigen::Affine3f getViewMatrix();
+  Eigen::Affine3f getViewMatrix() const;
 
   /**
      Get the position of the camera.
   */
-  Eigen::Vector3f getPosition();
+  Eigen::Vector3f getPosition() const { return position; }
+
+  /**
+     Set the position of the camera.
+  */
+  void setPosition(Eigen::Vector3f p) { position = p; }
 
   /**
      Get the orientation of the camera.
   */
-  Eigen::Quaternionf getOrientation();
+  Eigen::Quaternionf getOrientation() const { return orientation; }
+
+  /**
+     Set the orientation of the camera.
+  */
+  void setOrientation(Eigen::Quaternionf q) { orientation = q; }
 
   /**
      Explicitly sets the frustum clip planes at a distance of 1. Near
@@ -92,7 +102,7 @@ public:
   /**
      Gets the frustum clip planes at a distance of 1.
   */
-  void getClipPlanes(float &l, float &r, float &b, float &t) {
+  void getClipPlanes(float &l, float &r, float &b, float &t) const {
     l = left;
     r = right;
     t = top;
@@ -128,7 +138,9 @@ public:
      from this point.
   */
   bool setLookAtPoints(Eigen::Vector3f p,
-                       const std::vector<Eigen::Vector3f> &pts);
+                       const std::vector<Eigen::Vector3f> &pts,
+                       bool symmetric = true,
+                       Eigen::Vector3f up = Eigen::Vector3f::Zero());
 
   /**
      Sets which eye the camera is supposed to render.
@@ -139,7 +151,7 @@ public:
      Sets which eye the camera is supposed to render. Use this for
      example to select between left or right eye textures.
   */
-  Eye getEye() { return eye; }
+  Eye getEye() const { return eye; }
 
   /**
      The frame currently being rendered.

@@ -70,8 +70,12 @@ public:
      The dimensions of the input must match the dimensionality of the
      object or exception will be thrown.
   */
-  std::vector<double>
-  getPolynomialPosition(const std::vector<double> &inval);
+  std::vector<double> getValue(const std::vector<double> &inval);
+
+  /**
+     Resets the contents of this object.
+  */
+  void clear();
 
 private:
 

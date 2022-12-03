@@ -11,6 +11,28 @@ SET (INTERNAL_LIBS CACHE INTERNAL "Internal targets and dependencies with full p
 LIST (APPEND PUBLIC_LIBS gmCore)
 LIST (APPEND INTERNAL_LIBS gmCore_internal_deps)
 
+IF (NOT gramods_ENABLE_Eigen3)
+  MESSAGE (WARNING "Many feature in gmMisc missing since they require Eigen3")
+ENDIF()
+
+FIND_PATH (LEHDARI_DELAUNAY_INCLUDE "Lehdari/Delaunay.hpp"
+  DOC "Path to include folder containing Lehdari Delaunay header.")
+IF (LEHDARI_DELAUNAY_INCLUDE)
+  SET (HAVE_Lehdari_Delaunay 1)
+  LIST(APPEND gramods_DOCS_DEFINES HAVE_Lehdari_Delaunay)
+  OPTION(gramods_ENABLE_Lehdari_Delaunay "Enable functionality that requires Lehdari Delaunay" ON)
+  IF (gramods_ENABLE_Lehdari_Delaunay)
+    ADD_LIBRARY(lehdari::delaunay INTERFACE IMPORTED)
+    SET_TARGET_PROPERTIES(lehdari::delaunay PROPERTIES
+      INTERFACE_INCLUDE_DIRECTORIES ${LEHDARI_DELAUNAY_INCLUDE})
+    LIST (APPEND PUBLIC_LIBS lehdari::delaunay)
+  ENDIF()
+ENDIF()
+
+
+SET(gramods_DOCS_DEFINES ${gramods_DOCS_DEFINES} PARENT_SCOPE)
+
+
 CONFIGURE_FILE(
   ${CMAKE_CURRENT_SOURCE_DIR}/src/config_cmake.hh
   ${CMAKE_CURRENT_BINARY_DIR}/include/gmMisc/config.hh)

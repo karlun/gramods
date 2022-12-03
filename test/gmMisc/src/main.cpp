@@ -4,6 +4,7 @@
 #include "end-fit.cpp"
 #include "polyfit.cpp"
 #include "neldermead.cpp"
+#include "delaunay.cpp"
 
 int main(int argc, char **argv) {
   ::testing::InitGoogleTest(&argc, argv);

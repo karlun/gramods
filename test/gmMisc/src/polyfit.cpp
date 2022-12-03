@@ -30,7 +30,7 @@ TEST(gmMiscPolyFit, Simple) {
   for (double idx_b = 0; idx_b < 3.f; idx_b += 0.00667f) {
     for (double idx_a = 0; idx_a < 3.f; idx_a += 0.00667f) {
 
-      auto res = poly.getPolynomialPosition({idx_a, idx_b});
+      auto res = poly.getValue({idx_a, idx_b});
 
       double x = res[0] - X(idx_a, idx_b);
       double y = res[1] - Y(idx_a, idx_b);

@@ -75,7 +75,7 @@ TEST(gmTrackVrpn, VrpnTracker) {
     EXPECT_TRUE(samples.count(0) == 1);
     if (samples.find(0) != samples.end()) {
       Eigen::Vector3f err = samples[0].position - Eigen::Vector3f(0.1f, 0.2f, 0.3f);
-      EXPECT_LE(err.norm(), std::numeric_limits<float>::epsilon());
+      EXPECT_FLOAT_EQ(err.norm(), 0);
     }
   }
   std::this_thread::sleep_for(std::chrono::milliseconds(10));
