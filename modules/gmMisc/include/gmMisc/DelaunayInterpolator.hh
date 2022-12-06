@@ -7,7 +7,7 @@
 
 #include <gmMisc/config.hh>
 
-#if defined gramods_ENABLE_Eigen3 and defined gramods_ENABLE_Lehdari_Delaunay
+#if defined(gramods_ENABLE_Eigen3) && defined(gramods_ENABLE_Lehdari_Delaunay)
 
 #include <memory>
 #include <vector>
