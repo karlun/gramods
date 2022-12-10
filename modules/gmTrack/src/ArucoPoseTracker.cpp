@@ -234,12 +234,56 @@ bool ArucoPoseTracker::Impl::readCameraParameters
 (std::filesystem::path filename, cv::Mat &camMatrix, cv::Mat &distCoeffs, int &width, int &height) {
 
   cv::FileStorage fs(filename, cv::FileStorage::READ);
-  if(!fs.isOpened()) return false;
+  if(!fs.isOpened()) {
+    GM_ERR("ArucoPoseTracker",
+           "Could not open file '" << filename
+                                   << "' for reading camera parameters!");
+    return false;
+  }
 
-  fs["image_width"] >> width;
-  fs["image_height"] >> height;
-  fs["camera_matrix"] >> camMatrix;
-  fs["distortion_coefficients"] >> distCoeffs;
+  if (!fs["image_width"].empty() && !fs["image_height"].empty()) {
+    fs["image_width"] >> width;
+    fs["image_height"] >> height;
+  } else if (!fs["cameraResolution"].empty()) {
+    cv::Size image_size;
+    fs["cameraResolution"] >> image_size;
+    width = image_size.width;
+    height = image_size.height;
+  } else {
+    GM_ERR("ArucoPoseTracker",
+           "Could not find camera resolution"
+           " (cameraResolution or image_width and image_height)"
+           " in configuration file '"
+               << filename << "'!");
+    return false;
+  }
+
+  if (!fs["camera_matrix"].empty()) {
+    fs["camera_matrix"] >> camMatrix;
+  } else if (!fs["cameraMatrix"].empty()) {
+    fs["cameraMatrix"] >> camMatrix;
+  } else {
+    GM_ERR("ArucoPoseTracker",
+           "Could not find camera matrix"
+           " (camera_matrix or cameraMatrix)"
+           " in configuration file '"
+               << filename << "'!");
+    return false;
+  }
+
+  if (!fs["distortion_coefficients"].empty()) {
+    fs["distortion_coefficients"] >> distCoeffs;
+  } else if (!fs["dist_coeffs"].empty()) {
+    fs["dist_coeffs"] >> distCoeffs;
+  } else {
+    GM_WRN("ArucoPoseTracker",
+           "Could not find distortion coefficients"
+           " (distortion_coefficients or dist_coeffs)"
+           " in configuration file '"
+               << filename << "'!");
+    distCoeffs = cv::Mat();
+  }
+
   GM_DBG1("ArucoPoseTracker", "Read camera matrix: " << camMatrix.total() << " elements.");
   GM_DBG1("ArucoPoseTracker", "Read camera distortion: " << distCoeffs.total() << " elements.");
 
