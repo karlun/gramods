@@ -4,7 +4,7 @@
 
 #include <gmTrack/ArucoBoard.hh>
 
-#ifdef gramods_ENABLE_aruco
+#ifdef gramods_ENABLE_OpenCV_ArUco
 
 #include <gmCore/eigen.hh>
 #include <gmCore/float.hh>

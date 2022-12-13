@@ -22,9 +22,14 @@ namespace gramods {
 #cmakedefine gramods_ENABLE_VRPN
 #endif
 
-#cmakedefine HAVE_aruco
-#ifdef HAVE_aruco
-#cmakedefine gramods_ENABLE_aruco
+#cmakedefine HAVE_OpenCV
+#ifdef HAVE_OpenCV
+#cmakedefine gramods_ENABLE_OpenCV
+#endif
+
+#cmakedefine HAVE_OpenCV_ArUco
+#ifdef HAVE_OpenCV_ArUco
+#cmakedefine gramods_ENABLE_OpenCV_ArUco
 #endif
 
 #endif

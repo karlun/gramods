@@ -1,7 +1,7 @@
 
 #include <gmTrack/ArucoBoardComplex.hh>
 
-#ifdef gramods_ENABLE_aruco
+#ifdef gramods_ENABLE_OpenCV_ArUco
 
 #include <gmCore/Console.hh>
 #include <gmCore/RunOnce.hh>

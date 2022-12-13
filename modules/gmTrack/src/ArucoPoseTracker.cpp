@@ -1,7 +1,7 @@
 
 #include <gmTrack/ArucoPoseTracker.hh>
 
-#ifdef gramods_ENABLE_aruco
+#ifdef gramods_ENABLE_OpenCV_ArUco
 
 #include <gmCore/Console.hh>
 #include <gmCore/RunLimited.hh>
@@ -16,7 +16,7 @@ GM_OFI_PARAM2(ArucoPoseTracker, cameraConfigurationFile, std::filesystem::path, 
 GM_OFI_PARAM2(ArucoPoseTracker, inverted, bool, setInverted);
 GM_OFI_PARAM2(ArucoPoseTracker, refindMarkers, bool, setRefindMarkers);
 GM_OFI_POINTER2(ArucoPoseTracker, arucoBoard, gmTrack::ArucoBoard, addArucoBoard);
-GM_OFI_POINTER2(ArucoPoseTracker, videoSource, gmTrack::OpenCvVideoSource, setVideoSource);
+GM_OFI_POINTER2(ArucoPoseTracker, videoSource, gmTrack::OpenCvVideoCapture, setVideoSource);
 GM_OFI_PARAM2(ArucoPoseTracker, showDebug, bool, setShowDebug);
 
 struct ArucoPoseTracker::Impl {
@@ -29,7 +29,7 @@ struct ArucoPoseTracker::Impl {
                                    int &width, int &height);
 
   std::vector<std::shared_ptr<ArucoBoard>> boards;
-  std::shared_ptr<OpenCvVideoSource> video_source;
+  std::shared_ptr<OpenCvVideoCapture> video_source;
 
   int camera_width;
   int camera_height;
@@ -56,7 +56,7 @@ void ArucoPoseTracker::addArucoBoard(std::shared_ptr<ArucoBoard> board) {
   _impl->boards.push_back(board);
 }
 
-void ArucoPoseTracker::setVideoSource(std::shared_ptr<OpenCvVideoSource> vs) {
+void ArucoPoseTracker::setVideoSource(std::shared_ptr<OpenCvVideoCapture> vs) {
   _impl->video_source = vs;
 }
 

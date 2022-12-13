@@ -4,7 +4,7 @@
 
 #include <gmTrack/config.hh>
 
-#ifdef gramods_ENABLE_aruco
+#ifdef gramods_ENABLE_OpenCV
 
 #include <gmCore/VideoSource.hh>
 

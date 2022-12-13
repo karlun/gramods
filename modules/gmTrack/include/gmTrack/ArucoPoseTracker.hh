@@ -4,7 +4,7 @@
 
 #include <gmTrack/config.hh>
 
-#ifdef gramods_ENABLE_aruco
+#ifdef gramods_ENABLE_OpenCV_ArUco
 
 #include <gmCore/path.hh>
 
@@ -14,7 +14,7 @@
 #include <gmTrack/MultiPoseTracker.hh>
 
 #include <gmTrack/ArucoBoard.hh>
-#include <gmTrack/OpenCvVideoSource.hh>
+#include <gmTrack/OpenCvVideoCapture.hh>
 
 BEGIN_NAMESPACE_GMTRACK;
 
@@ -57,7 +57,7 @@ public:
 
      \gmXmlTag{gmTrack,ArucoPoseTracker,videoSource}
   */
-  void setVideoSource(std::shared_ptr<OpenCvVideoSource> vs);
+  void setVideoSource(std::shared_ptr<OpenCvVideoCapture> vs);
 
   /**
      If set to true the pose tracker will estimate the camera pose
