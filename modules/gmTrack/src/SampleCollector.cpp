@@ -60,6 +60,8 @@ void SampleCollector::Impl::update(clock::time_point now) {
     return;
   }
 
+  if (!controller) return;
+
   gramods::gmTrack::ButtonsTracker::ButtonsSample buttons;
   controller->getButtons(buttons);
 
