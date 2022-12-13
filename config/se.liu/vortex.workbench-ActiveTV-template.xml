@@ -16,12 +16,12 @@
     respectively. Adjust the numbers to match the calibration target.
 
     .\bin\gm-tracker-registration ^
-      --output-template urn:gramods:config/se.liu.vortex.workbench-ActiveTV-template.xml ^
+      --output-template urn:gramods:config/se.liu/vortex.workbench-ActiveTV-template.xml ^
       --output-file se.liu.vortex.workbench-ActiveTV-template-step2.xml ^
-      --config urn:gramods:config/se.liu.mit.vive.calibration-tracker-relative.xml ^
-      --point -0.05,0,0 ^
-      --point +0.05,0,0 ^
-      --point 0,-0.12,0
+      --config urn:gramods:config/se.liu/mit.vive.calibration-tracker-relative.xml ^
+      --a-point -0.05,0,0 ^
+      --a-point +0.05,0,0 ^
+      --a-point 0,-0.12,0
 
 
     ## Tracker to Display Registration
@@ -30,17 +30,17 @@
     marking the monitor corners, in clockwise order, starting at the
     lower left corner. Make sure that the tracker is visible by at
     least one of the base stations, if optical tracking is used. Also,
-    adjust the coordinates of the corners (`--point`) if necessary.
+    adjust the coordinates of the corners (`--a-point`) if necessary.
 
     .\bin\gm-tracker-registration ^
       --output-template se.liu.vortex.workbench-ActiveTV-template-step2.xml ^
       --output-file se.liu.vortex.workbench-ActiveTV.xml ^
       --config urn:gramods:config/output-normal-to-console.xml ^
-      --config urn:gramods:config/se.liu.mit.vive.calibration-tracker.xml ^
-      --point -0.210,+0.148,0 ^
-      --point +0.210,+0.148,0 ^
-      --point -0.210,-0.148,0 ^
-      --point +0.210,-0.148,0
+      --config urn:gramods:config/se.liu/mit.vive.calibration-tracker.xml ^
+      --a-point -0.210,+0.148,0 ^
+      --a-point +0.210,+0.148,0 ^
+      --a-point -0.210,-0.148,0 ^
+      --a-point +0.210,-0.148,0
 
   ]]>
 
