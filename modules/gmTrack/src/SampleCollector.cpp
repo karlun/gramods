@@ -134,6 +134,7 @@ void SampleCollector::Impl::getAverage(std::vector<Eigen::Vector3f> samples,
 
   if (samples.size() == 1) {
     x = samples.front();
+    GM_INF("SampleCollector", "Single sample: " << x.transpose());
     return;
   }
 
@@ -154,12 +155,12 @@ void SampleCollector::Impl::getAverage(std::vector<Eigen::Vector3f> samples,
 
   if (worst_offset > warning_threshold) {
     GM_WRN("SampleCollector",
-           "Estimated mean " << x.transpose() << " (stddev " << stddev
-                             << ") has worst offset " << worst_offset << " in "
-                             << samples.size() << " samples.");
+           "Estimated mean, " << x.transpose() << " (stddev " << stddev
+                              << "), has worst offset " << worst_offset
+                              << " in " << samples.size() << " samples.");
   } else {
-    GM_DBG1("SampleCollector",
-            "Estimated mean " << x.transpose() << " (stddev " << stddev
+    GM_INF("SampleCollector",
+           "Estimated mean: " << x.transpose() << " (stddev " << stddev
                               << ", worst offset " << worst_offset << ") from "
                               << samples.size() << " samples.");
   }

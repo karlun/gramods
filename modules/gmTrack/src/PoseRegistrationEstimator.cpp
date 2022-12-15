@@ -54,13 +54,16 @@ struct PoseRegistrationEstimator::Impl : SampleCollector::Impl {
 
   void checkResult(const std::vector<Eigen::Vector3f> &tracker_data,
                    const std::vector<Eigen::Vector3f> &actual_data,
-                   const Eigen::Matrix4f &M_unit);
+                   const Eigen::Matrix4f &M_unit,
+                   std::string type);
 
   float planar_sphericity = 0.3f;
 
   Eigen::Matrix4f registration_raw;
   Eigen::Matrix4f registration_unit;
   bool successful_registration = false;
+
+  size_t position_to_collect = 0;
 };
 
 PoseRegistrationEstimator::PoseRegistrationEstimator()
@@ -94,7 +97,15 @@ bool PoseRegistrationEstimator::getRegistration(Eigen::Matrix4f * RAW, Eigen::Ma
 void PoseRegistrationEstimator::Impl::update(clock::time_point now) {
 
   SampleCollector::Impl::update(now);
-  if (tracker_positions.size() < actual_positions.size()) return;
+  if (tracker_positions.size() < actual_positions.size()) {
+    if (tracker_positions.size() != position_to_collect) {
+      position_to_collect = tracker_positions.size();
+      GM_INF("PoseRegistrationEstimator",
+             "Next point to collect: "
+                 << actual_positions[position_to_collect].transpose());
+    }
+    return;
+  }
 
   GM_INF("PoseRegistrationEstimator", "have all " << actual_positions.size() << " samples");
   performRegistration();
@@ -116,7 +127,10 @@ void PoseRegistrationEstimator::Impl::performRegistration() {
 
   if (std::min(tracker_data_sph, actual_data_sph) <= planar_sphericity) {
 
-    GM_WRN("PoseRegistrationEstimator", "Samples will be manipulated to compensate for poor sphericity(" << tracker_data_sph << " and " << actual_data_sph << " for tracker data and actual data, respectively)");
+    GM_WRN("PoseRegistrationEstimator",
+           "Samples will be manipulated to compensate for poor sphericity ("
+               << tracker_data_sph << " and " << actual_data_sph
+               << " for tracker data and actual data, respectively)");
 
     int idx0 = -1, idx1;
     expandPlanar(actual_data, idx0, idx1);
@@ -131,14 +145,14 @@ void PoseRegistrationEstimator::Impl::performRegistration() {
   successful_registration = true;
 
   GM_DBG1("PoseRegistrationEstimator", "Raw registration matrix:\n" << M_reg);
+  checkResult(tracker_data, actual_data, M_reg, "perfect");
 
   Eigen::Matrix4f M_unit;
   estimateUnitRegistration(tracker_data, actual_data, M_reg, M_unit);
   registration_unit = M_unit;
 
-  checkResult(tracker_data, actual_data, M_unit);
-
   GM_DBG1("PoseRegistrationEstimator", "Unit registration matrix:\n" << M_unit);
+  checkResult(tracker_data, actual_data, M_unit, "unit");
 
   tracker_positions.clear();
 }
@@ -338,14 +352,16 @@ void PoseRegistrationEstimator::Impl::estimateUnitRegistration
 void PoseRegistrationEstimator::Impl::checkResult(
     const std::vector<Eigen::Vector3f> &tracker_data,
     const std::vector<Eigen::Vector3f> &actual_data,
-    const Eigen::Matrix4f &M_unit) {
+    const Eigen::Matrix4f &M_unit,
+    std::string type) {
 
   float worst_sqr_offset = 0.f;
   for (size_t idx = 0; idx < std::min(tracker_data.size(), actual_data.size());
        ++idx) {
-    Eigen::Vector3f offset =
-        actual_data[idx] -
+    Eigen::Vector3f proj =
         (M_unit * tracker_data[idx].homogeneous()).hnormalized();
+    Eigen::Vector3f offset = actual_data[idx] - proj;
+    std::cerr << actual_data[idx].transpose() << " -> " << proj.transpose() << "\n";
     float sqr_offset = offset.squaredNorm();
     worst_sqr_offset = std::max(worst_sqr_offset, sqr_offset);
   }
@@ -353,12 +369,12 @@ void PoseRegistrationEstimator::Impl::checkResult(
   float worst_offset = std::sqrt(worst_sqr_offset);
   if (worst_offset > warning_threshold) {
     GM_WRN("PoseRegistrationEstimator",
-           "Worst reprojected tracker-point has an offset of " << worst_offset
-                                                               << " m!");
+           "Worst " << type << " reprojected tracker-point has an offset of "
+                    << worst_offset << " m!");
   } else {
     GM_DBG1("PoseRegistrationEstimator",
-            "Worst reprojected tracker-point has an offset of " << worst_offset
-                                                                << " m.");
+            "Worst " << type << " reprojected tracker-point has an offset of "
+                     << worst_offset << " m.");
   }
 }
 
