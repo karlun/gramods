@@ -33,18 +33,19 @@
     adjust the coordinates of the corners (`--a-point`) if necessary.
 
     .\bin\gm-tracker-registration ^
-      --output-template se.liu.vortex.workbench-ActiveTV-template-step2.xml ^
-      --output-file se.liu.vortex.workbench-ActiveTV.xml ^
+      --output-template se.liu.vortex.workbench-3DTV-template-step2.xml ^
+      --output-file se.liu.vortex.workbench-3DTV.xml ^
       --config urn:gramods:config/output-normal-to-console.xml ^
       --config urn:gramods:config/se.liu/mit.vive.calibration-tracker.xml ^
-      --a-point -0.210,+0.148,0 ^
-      --a-point +0.210,+0.148,0 ^
-      --a-point -0.210,-0.148,0 ^
-      --a-point +0.210,-0.148,0
+      --a-point -0.55,-0.325,0 ^
+      --a-point -0.55,+0.325,0 ^
+      --a-point +0.55,+0.325,0 ^
+      --a-point +0.55,-0.325,0
 
   ]]>
 
   <RegisteredSinglePoseTracker
+      DEF="head"
       positionBias="%Mi3x %Mi3y %Mi3z"
       orientationBias="axisangle %Rix %Riy %Riz %Ria"
       registrationMatrix="%%M0x %%M1x %%M2x %%M3x
@@ -70,7 +71,7 @@
         topLeftCorner="-0.55 0.325 0"
         bottomRightCorner="0.55 -0.325 0"
         upDirection="0 1 0">
-      <QuadBufferMultiplexer/>
+      <SideBySideMultiplexer/>
     </SpatialPlanarView>
 
   </SdlWindow>
