@@ -9,6 +9,8 @@
 #include <gmCore/Console.hh>
 #include <gmCore/OStreamMessageSink.hh>
 
+#include <random>
+
 using namespace gramods;
 
 TEST(gmTrackBaseEstimation, FullSamplesByInverse) {
@@ -170,5 +172,75 @@ TEST(gmTrackBaseEstimation, OverDeterminedSamplesByQR) {
 
     EXPECT_LT((Raw - RegA).norm(), 1e-5);
     EXPECT_LT((Unit - RegB).norm(), 1e-5);
+  }
+}
+
+#define LOOP_COUNT 100
+#define MAX_POSITION_COUNT 20
+
+TEST(gmTrackBaseEstimation, RandomTesting) {
+
+  gmCore::Console::removeAllSinks();
+#if 0
+  std::shared_ptr<gmCore::OStreamMessageSink> osms =
+    std::make_shared<gmCore::OStreamMessageSink>();
+  osms->initialize();
+#endif
+
+  std::default_random_engine random_engine;
+  std::uniform_real_distribution<float> real_random =
+      std::uniform_real_distribution<float>(-1.f, 1.f);
+  std::uniform_int_distribution<int> position_count_random =
+      std::uniform_int_distribution<int>(3, MAX_POSITION_COUNT);
+
+  for (size_t idx = 0; idx < LOOP_COUNT; ++idx) {
+
+    Eigen::Matrix4f M_actual = Eigen::Matrix4f::Identity();
+    do {
+
+      Eigen::Vector3f rot_axis(real_random(random_engine),
+                               real_random(random_engine),
+                               real_random(random_engine));
+      if (rot_axis.norm() < 0.1) continue;
+      rot_axis = rot_axis.normalized();
+
+      float scale = real_random(random_engine);
+      if (scale < 0.1) continue;
+
+      Eigen::Affine3f M = Eigen::Affine3f::Identity();
+      M.translate(10.f * Eigen::Vector3f(real_random(random_engine),
+                                         real_random(random_engine),
+                                         real_random(random_engine)))
+          .scale(Eigen::Vector3f(scale, scale, scale))
+          .rotate(Eigen::AngleAxis<float>(3.1416 * real_random(random_engine),
+                                          rot_axis))
+          .translate(10.f * Eigen::Vector3f(real_random(random_engine),
+                                            real_random(random_engine),
+                                            real_random(random_engine)));
+      M_actual = M.matrix();
+    } while (M_actual.norm() < 0.1f);
+
+    int position_count = position_count_random(random_engine);
+
+    std::vector<Eigen::Vector3f> tracker_positions;
+    tracker_positions.reserve(position_count);
+    for (size_t idx = 0; idx < position_count; ++idx)
+      tracker_positions.push_back({real_random(random_engine),
+                                   real_random(random_engine),
+                                   real_random(random_engine)});
+
+    gmTrack::PoseRegistrationEstimator registrator;
+    for (auto &pt : tracker_positions) {
+      registrator.addTrackerPosition(pt);
+      registrator.addActualPosition(
+          (M_actual * pt.homogeneous()).hnormalized());
+    }
+    registrator.performRegistration();
+
+    Eigen::Matrix4f M_raw;
+
+    bool has_reg = registrator.getRegistration(&M_raw, nullptr);
+    EXPECT_TRUE(has_reg);
+    if (has_reg) EXPECT_LT((M_actual - M_raw).norm(), 1e-5);
   }
 }
