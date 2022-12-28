@@ -12,6 +12,7 @@
 
 #include <gmMisc/PolyFit.hh>
 
+#include <gmCore/FreeImage.hh>
 #include <FreeImage.h>
 
 #include <limits>
@@ -215,6 +216,8 @@ void ProjectionTextureGenerator::Impl::saveImage() {
         image_data[IDX(idx_x, idx_y)][idx_D] =
             rescale[idx_D] *
             (image_data[IDX(idx_x, idx_y)][idx_D] - offset[idx_D]);
+
+  std::shared_ptr<gmCore::FreeImage> freeimage = gmCore::FreeImage::get();
 
   FIBITMAP *bitmap =
       FreeImage_AllocateT(FIT_RGBF, resolution[0], resolution[1], 3*32);
