@@ -114,6 +114,10 @@ TEST(gmNetwork, DataSync_singles) {
     std::make_shared<gmCore::LogFileMessageSink>();
   lfms->setLogFilePath("gramods.log");
   lfms->initialize();
+#else
+  std::shared_ptr<gmCore::NullMessageSink> nullsink =
+    std::make_shared<gmCore::NullMessageSink>();
+  nullsink->initialize();
 #endif
 
   size_t peer_count = 10;

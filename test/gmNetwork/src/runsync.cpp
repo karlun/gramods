@@ -4,6 +4,7 @@
 
 #include <gmCore/Console.hh>
 #include <gmCore/OStreamMessageSink.hh>
+#include <gmCore/NullMessageSink.hh>
 #include <gmCore/LogFileMessageSink.hh>
 
 #include <atomic>
@@ -26,6 +27,10 @@ TEST(gmNetwork, SyncNode_createdestroy) {
   osms->setUseAnsiColor(true);
   osms->setLevel(2);
   osms->initialize();
+#else
+  std::shared_ptr<gmCore::NullMessageSink> nullsink =
+    std::make_shared<gmCore::NullMessageSink>();
+  nullsink->initialize();
 #endif
 
   std::shared_ptr<gmNetwork::SyncNode> node =
@@ -102,6 +107,10 @@ TEST(gmNetwork, RunSync_wait) {
     std::make_shared<gmCore::LogFileMessageSink>();
   lfms->setLogFilePath("gramods.log");
   lfms->initialize();
+#else
+  std::shared_ptr<gmCore::NullMessageSink> nullsink =
+    std::make_shared<gmCore::NullMessageSink>();
+  nullsink->initialize();
 #endif
 
   size_t peer_count = 2;
@@ -187,6 +196,10 @@ TEST(gmNetwork, SyncNode_pingpong) {
   osms->setUseAnsiColor(true);
   osms->setLevel(3);
   osms->initialize();
+#else
+  std::shared_ptr<gmCore::NullMessageSink> nullsink =
+    std::make_shared<gmCore::NullMessageSink>();
+  nullsink->initialize();
 #endif
 
   std::stringstream ss;

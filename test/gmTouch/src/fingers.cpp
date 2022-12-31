@@ -2,6 +2,8 @@
 #include <gmCore/Console.hh>
 
 #include <gmTouch/TouchState.hh>
+#include <gmCore/OStreamMessageSink.hh>
+#include <gmCore/NullMessageSink.hh>
 
 #include <thread>
 
@@ -28,6 +30,10 @@ TEST(gmTouchFingers, SimpleFingers) {
   std::shared_ptr<gmCore::OStreamMessageSink> osms =
     std::make_shared<gmCore::OStreamMessageSink>();
   osms->initialize();
+#else
+  std::shared_ptr<gmCore::NullMessageSink> nullsink =
+    std::make_shared<gmCore::NullMessageSink>();
+  nullsink->initialize();
 #endif
 
   gmTouch::TouchState state;
@@ -73,6 +79,10 @@ TEST(gmTouchFingers, Association) {
   std::shared_ptr<gmCore::OStreamMessageSink> osms =
     std::make_shared<gmCore::OStreamMessageSink>();
   osms->initialize();
+#else
+  std::shared_ptr<gmCore::NullMessageSink> nullsink =
+    std::make_shared<gmCore::NullMessageSink>();
+  nullsink->initialize();
 #endif
 
   gmTouch::TouchState state;

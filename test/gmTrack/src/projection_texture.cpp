@@ -21,6 +21,10 @@ TEST(gmTrackProjectionTexture, SimpleFlat) {
   std::shared_ptr<gmCore::OStreamMessageSink> osms =
     std::make_shared<gmCore::OStreamMessageSink>();
   osms->initialize();
+#else
+  std::shared_ptr<gmCore::NullMessageSink> nullsink =
+    std::make_shared<gmCore::NullMessageSink>();
+  nullsink->initialize();
 #endif
 
   auto ts_buttons_tracker =
@@ -74,6 +78,10 @@ TEST(gmTrackProjectionTexture, CurvatureWRegions) {
   std::shared_ptr<gmCore::OStreamMessageSink> osms =
     std::make_shared<gmCore::OStreamMessageSink>();
   osms->initialize();
+#else
+  std::shared_ptr<gmCore::NullMessageSink> nullsink =
+    std::make_shared<gmCore::NullMessageSink>();
+  nullsink->initialize();
 #endif
 
   auto file = std::filesystem::temp_directory_path() /

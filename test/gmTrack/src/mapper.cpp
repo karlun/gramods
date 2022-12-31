@@ -20,6 +20,10 @@ TEST(gmTrackMapper, Buttons) {
   std::shared_ptr<gmCore::OStreamMessageSink> osms =
     std::make_shared<gmCore::OStreamMessageSink>();
   osms->initialize();
+#else
+  std::shared_ptr<gmCore::NullMessageSink> nullsink =
+    std::make_shared<gmCore::NullMessageSink>();
+  nullsink->initialize();
 #endif
 
   {
@@ -104,6 +108,10 @@ TEST(gmTrackMapper, Buttons2) {
   std::shared_ptr<gmCore::OStreamMessageSink> osms =
     std::make_shared<gmCore::OStreamMessageSink>();
   osms->initialize();
+#else
+  std::shared_ptr<gmCore::NullMessageSink> nullsink =
+    std::make_shared<gmCore::NullMessageSink>();
+  nullsink->initialize();
 #endif
 
   {
@@ -188,6 +196,10 @@ TEST(gmTrackMapper, Analogs) {
   std::shared_ptr<gmCore::OStreamMessageSink> osms =
     std::make_shared<gmCore::OStreamMessageSink>();
   osms->initialize();
+#else
+  std::shared_ptr<gmCore::NullMessageSink> nullsink =
+    std::make_shared<gmCore::NullMessageSink>();
+  nullsink->initialize();
 #endif
 
   {
@@ -249,6 +261,10 @@ TEST(gmTrackMapper, Analogs2) {
   std::shared_ptr<gmCore::OStreamMessageSink> osms =
     std::make_shared<gmCore::OStreamMessageSink>();
   osms->initialize();
+#else
+  std::shared_ptr<gmCore::NullMessageSink> nullsink =
+    std::make_shared<gmCore::NullMessageSink>();
+  nullsink->initialize();
 #endif
 
   {
