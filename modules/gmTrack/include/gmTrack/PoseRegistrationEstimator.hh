@@ -31,6 +31,12 @@ public:
   void addActualPosition(Eigen::Vector3f p);
 
   /**
+     Force registration estimation. This is needed only if the
+     component is used non-interactively.
+  */
+  void performRegistration();
+
+  /**
      Extract registration matrix, either raw or without
      scaling. Returns true if there is a registration, false
      otherwise.

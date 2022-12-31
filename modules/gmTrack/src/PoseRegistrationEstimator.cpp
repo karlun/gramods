@@ -63,7 +63,7 @@ struct PoseRegistrationEstimator::Impl : SampleCollector::Impl {
   Eigen::Matrix4f registration_unit;
   bool successful_registration = false;
 
-  size_t position_to_collect = 0;
+  size_t position_to_collect = std::numeric_limits<size_t>::max();
 };
 
 PoseRegistrationEstimator::PoseRegistrationEstimator()
@@ -73,9 +73,6 @@ PoseRegistrationEstimator::~PoseRegistrationEstimator() {}
 
 void PoseRegistrationEstimator::addActualPosition(Eigen::Vector3f p) {
   auto _impl = static_cast<PoseRegistrationEstimator::Impl *>(this->_impl.get());
-  if (_impl->actual_positions.empty())
-    GM_INF("PoseRegistrationEstimator",
-           "First point to collect: " << p.transpose());
   _impl->actual_positions.push_back(p);
 }
 
@@ -96,12 +93,16 @@ bool PoseRegistrationEstimator::getRegistration(Eigen::Matrix4f * RAW, Eigen::Ma
 
 void PoseRegistrationEstimator::Impl::update(clock::time_point now) {
 
+  if (actual_positions.empty())
+    return;
+
   SampleCollector::Impl::update(now);
+
   if (tracker_positions.size() < actual_positions.size()) {
     if (tracker_positions.size() != position_to_collect) {
       position_to_collect = tracker_positions.size();
       GM_INF("PoseRegistrationEstimator",
-             "Next point to collect: "
+             "Point to collect: "
                  << actual_positions[position_to_collect].transpose());
     }
     return;
@@ -111,7 +112,21 @@ void PoseRegistrationEstimator::Impl::update(clock::time_point now) {
   performRegistration();
 }
 
+void PoseRegistrationEstimator::performRegistration() {
+  auto _impl = static_cast<PoseRegistrationEstimator::Impl *>(this->_impl.get());
+  _impl->performRegistration();
+}
+
 void PoseRegistrationEstimator::Impl::performRegistration() {
+
+  if (actual_positions.size() < 3 ||
+      tracker_positions.size() != actual_positions.size()) {
+    GM_ERR("PoseRegistrationEstimator",
+           "Registration triggered with incorrect number of samples available: "
+               << actual_positions.size() << " and " << tracker_positions.size()
+               << " actual and tracker positions, respectively");
+    return;
+  }
 
   float tracker_data_sph = estimateSphericity(tracker_positions);
   float actual_data_sph = estimateSphericity(actual_positions);
@@ -361,7 +376,6 @@ void PoseRegistrationEstimator::Impl::checkResult(
     Eigen::Vector3f proj =
         (M_unit * tracker_data[idx].homogeneous()).hnormalized();
     Eigen::Vector3f offset = actual_data[idx] - proj;
-    std::cerr << actual_data[idx].transpose() << " -> " << proj.transpose() << "\n";
     float sqr_offset = offset.squaredNorm();
     worst_sqr_offset = std::max(worst_sqr_offset, sqr_offset);
   }
