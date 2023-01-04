@@ -57,6 +57,20 @@ public:
   */
   void setCoverageAngle(gmCore::angle2 a);
 
+  /**
+     Set the horizontal and vertical coverage ranges, respectively,
+     that the 2D coordinates (y=[-1, 1]) should have in the 3D sphere,
+     as angle expressed as a value in radians typically between -π and
+     π for horizontal and between -π/2 and π/2 for vertical. The
+     typical equirectangular format uses a coverage range of -π - π
+     and -π/2 - π/2, which is also the default.
+
+     \gmXmlTag{gmGraphics,EquirectangularCoordinatesMapper,coverageRange}
+
+     \sa operator>>(std::istream &, gmCore::angle &)
+  */
+  void setCoverageRange(gmCore::angle4 a);
+
   GM_OFI_DECLARE;
 
 private:

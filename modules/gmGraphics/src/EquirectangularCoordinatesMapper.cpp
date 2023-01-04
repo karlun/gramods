@@ -5,11 +5,15 @@ BEGIN_NAMESPACE_GMGRAPHICS;
 
 GM_OFI_DEFINE(EquirectangularCoordinatesMapper);
 GM_OFI_PARAM2(EquirectangularCoordinatesMapper, coverageAngle, gmCore::angle2, setCoverageAngle);
+GM_OFI_PARAM2(EquirectangularCoordinatesMapper, coverageRange, gmCore::angle4, setCoverageRange);
 
 struct EquirectangularCoordinatesMapper::Impl {
-  GLint h_loc = 0;
-  GLint v_loc = 0;
-  gmCore::angle2 coverage_angle = {float(GM_2_PI), float(GM_PI)};
+  GLint h0_loc = 0;
+  GLint h1_loc = 0;
+  GLint v0_loc = 0;
+  GLint v1_loc = 0;
+  gmCore::angle4 coverage_range = {
+      float(-GM_PI), float(GM_PI), float(-GM_PI_2), float(GM_PI_2)};
 };
 
 EquirectangularCoordinatesMapper::EquirectangularCoordinatesMapper()
@@ -18,8 +22,10 @@ EquirectangularCoordinatesMapper::~EquirectangularCoordinatesMapper() {}
 
 std::string EquirectangularCoordinatesMapper::getCommonCode() {
   return withVarId(R"lang=glsl(
-uniform float ID_h_coverageAngle;
-uniform float ID_v_coverageAngle;
+uniform float ID_h_angle0;
+uniform float ID_h_angle1;
+uniform float ID_v_angle0;
+uniform float ID_v_angle1;
 )lang=glsl");
 }
 
@@ -32,7 +38,8 @@ bool mapTo2D(vec3 pos3, out vec2 pos2) {
   float phi = atan(pos3.y, r);
   float theta = atan(pos3.x, -pos3.z);
 
-  pos2 = vec2(theta / ID_h_coverageAngle, phi / ID_v_coverageAngle);
+  pos2 = vec2(2.0 * (theta - ID_h_angle0) / (ID_h_angle1 - ID_h_angle0) - 1.0,
+              2.0 * (phi   - ID_v_angle0) / (ID_v_angle1 - ID_v_angle0) - 1.0);
   return true;
 }
 )lang=glsl");
@@ -42,8 +49,10 @@ std::string EquirectangularCoordinatesMapper::getTo3DCode() {
   return withVarId(R"lang=glsl(
 bool mapTo3D(vec2 pos2, out vec3 pos3) {
 
-  float ax = pos2.x * ID_h_coverageAngle;
-  float ay = pos2.y * ID_v_coverageAngle;
+  float ax = 0.5 * (pos2.x + 1.0) * (ID_h_angle1 - ID_h_angle0) + ID_h_angle0;
+  //float ax = pos2.x * (ID_h_angle1 - ID_h_angle0) + ID_h_angle0 + 1.57079632679489661923;
+  float ay = 0.5 * (pos2.y + 1.0) * (ID_v_angle1 - ID_v_angle0) + ID_v_angle0;
+  //float ay = pos2.y * (ID_v_angle1 - ID_v_angle0) + ID_v_angle0 + 0.78539816339744830962;
 
   pos3 = vec3(cos(ay) * sin(ax), sin(ay), -cos(ay) * cos(ax));
   return true;
@@ -57,14 +66,19 @@ bool mapTo3D(vec2 pos2, out vec3 pos3) {
        : (VAR = glGetUniformLocation(program_id, withVarId(NAME).c_str())))
 
 void EquirectangularCoordinatesMapper::setCommonUniforms(GLuint program_id) {
-  glUniform1f(LOC(_impl->h_loc, "ID_h_coverageAngle"),
-              0.5f * _impl->coverage_angle[0]);
-  glUniform1f(LOC(_impl->v_loc, "ID_v_coverageAngle"),
-              0.5f * _impl->coverage_angle[1]);
+  glUniform1f(LOC(_impl->h0_loc, "ID_h_angle0"), _impl->coverage_range[0]);
+  glUniform1f(LOC(_impl->h1_loc, "ID_h_angle1"), _impl->coverage_range[1]);
+  glUniform1f(LOC(_impl->v0_loc, "ID_v_angle0"), _impl->coverage_range[2]);
+  glUniform1f(LOC(_impl->v1_loc, "ID_v_angle1"), _impl->coverage_range[3]);
 }
 
 void EquirectangularCoordinatesMapper::setCoverageAngle(gmCore::angle2 a) {
-  _impl->coverage_angle = a;
+  _impl->coverage_range = {
+      -0.5f * a[0], 0.5f * a[1], -0.5f * a[2], 0.5f * a[3]};
+}
+
+void EquirectangularCoordinatesMapper::setCoverageRange(gmCore::angle4 a) {
+  _impl->coverage_range = a;
 }
 
 END_NAMESPACE_GMGRAPHICS;
