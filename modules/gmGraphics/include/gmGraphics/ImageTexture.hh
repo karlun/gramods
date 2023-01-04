@@ -7,7 +7,6 @@
 #ifdef gramods_ENABLE_FreeImage
 
 #include <gmCore/size.hh>
-#include <gmCore/path.hh>
 
 #include <gmCore/OFactory.hh>
 #include <gmCore/Updateable.hh>

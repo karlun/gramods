@@ -2,7 +2,6 @@
 #ifndef GRAMODS_CORE_LOGFILEMESSAGESINK
 #define GRAMODS_CORE_LOGFILEMESSAGESINK
 
-#include <gmCore/path.hh>
 #include <gmCore/MessageSink.hh>
 
 #include <mutex>

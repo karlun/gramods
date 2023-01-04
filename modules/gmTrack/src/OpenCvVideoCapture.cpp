@@ -4,6 +4,7 @@
 #ifdef gramods_ENABLE_OpenCV
 
 #include <gmCore/Console.hh>
+#include <gmCore/FileResolver.hh>
 
 BEGIN_NAMESPACE_GMTRACK;
 
@@ -50,7 +51,8 @@ OpenCvVideoCapture::OpenCvVideoCapture()
 
 void OpenCvVideoCapture::setVideoFile(std::filesystem::path file) {
   _impl->use_camera = false;
-  _impl->video_file = file;
+  _impl->video_file = gmCore::FileResolver::getDefault()->resolve(
+      file, gmCore::FileResolver::Check::ReadableFile);
   _impl->initialized = false;
 }
 

@@ -6,6 +6,7 @@
 #include <gmCore/Console.hh>
 #include <gmCore/RunLimited.hh>
 #include <gmCore/RunOnce.hh>
+#include <gmCore/FileResolver.hh>
 
 #include <opencv2/aruco.hpp>
 
@@ -222,6 +223,8 @@ bool ArucoPoseTracker::Impl::getPose(std::map<int, PoseSample> &p) {
 }
 
 void ArucoPoseTracker::setCameraConfigurationFile(std::filesystem::path file) {
+  file = gmCore::FileResolver::getDefault()->resolve(
+      file, gmCore::FileResolver::Check::ReadableFile);
   if (!Impl::readCameraParameters(file,
                                   _impl->camMatrix, _impl->distCoeffs,
                                   _impl->camera_width, _impl->camera_height))

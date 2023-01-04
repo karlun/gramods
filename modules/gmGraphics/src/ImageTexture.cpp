@@ -6,6 +6,7 @@
 #include <gmCore/Console.hh>
 #include <gmCore/FreeImage.hh>
 #include <gmCore/ExitException.hh>
+#include <gmCore/FileResolver.hh>
 
 #include <FreeImage.h>
 
@@ -304,6 +305,15 @@ std::string ImageTexture::Impl::getFrameFilename(std::string file,
 }
 
 FIBITMAP *ImageTexture::Impl::loadImage(std::string filename) {
+  try {
+    filename =
+        gmCore::FileResolver::getDefault()
+            ->resolve(filename, gmCore::FileResolver::Check::ReadableFile)
+            .u8string();
+  } catch (gmCore::InvalidArgument &err) {
+    GM_ERR("ImageTexture", err.what);
+    return nullptr;
+  }
 
 	FREE_IMAGE_FORMAT image_format = FreeImage_GetFileType(filename.c_str(), 0);
 	if(image_format == FIF_UNKNOWN)

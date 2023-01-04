@@ -6,6 +6,7 @@
 #include <gmCore/FreeImage.hh>
 #include <gmCore/RunOnce.hh>
 #include <gmCore/Stringify.hh>
+#include <gmCore/FileResolver.hh>
 
 #include <gmGraphics/OffscreenRenderTargets.hh>
 #include <gmGraphics/RasterProcessor.hh>
@@ -399,6 +400,16 @@ void SaveView::Impl::save_process() {
     save_condition.wait_for(guard, std::chrono::seconds(1));
 
     if (!save_image) continue;
+
+    try {
+      auto path = gmCore::FileResolver::getDefault()->resolve(
+          save_image->filename, gmCore::FileResolver::Check::WritableFile);
+      save_image->filename = path.u8string();
+    } catch (gmCore::InvalidArgument &err) {
+      GM_ERR("SaveView", err.what);
+      save_image.reset();
+      continue;
+    }
 
     auto t0 = std::chrono::steady_clock::now();
 

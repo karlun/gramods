@@ -6,8 +6,6 @@
 
 #ifdef gramods_ENABLE_OpenCV_ArUco
 
-#include <gmCore/path.hh>
-
 #include <gmCore/OFactory.hh>
 #include <gmCore/Updateable.hh>
 

@@ -2,6 +2,7 @@
 #include <gmCore/ImportLibrary.hh>
 
 #include <gmCore/Console.hh>
+#include <gmCore/FileResolver.hh>
 
 BEGIN_NAMESPACE_GMCORE;
 
@@ -69,7 +70,7 @@ ImportLibrary::Impl::~Impl() {
 }
 
 void ImportLibrary::setLibraryFile(std::filesystem::path path) {
-  _impl->library_file = path;
+  _impl->library_file = gmCore::FileResolver::getDefault()->resolve(path);
 }
 
 void ImportLibrary::setLibrary(std::string lib) {

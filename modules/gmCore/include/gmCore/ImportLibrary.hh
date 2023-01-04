@@ -3,7 +3,6 @@
 #define GRAMODS_CORE_IMPORTLIBRARY
 
 #include <gmCore/config.hh>
-#include <gmCore/path.hh>
 #include <gmCore/OFactory.hh>
 #include <gmCore/Object.hh>
 

@@ -90,8 +90,8 @@ Configuration::Configuration(int &argc, char *argv[],
 
   for (auto config : configs) {
 
-    std::filesystem::path file =
-      FileResolver::getDefault()->resolve(config);
+    std::filesystem::path file = FileResolver::getDefault()->resolve(
+        config, FileResolver::Check::ReadableFile);
 
     tinyxml2::XMLDocument doc;
 

@@ -2,6 +2,7 @@
 #include <gmCore/LogFileMessageSink.hh>
 
 #include <gmCore/Console.hh>
+#include <gmCore/FileResolver.hh>
 
 BEGIN_NAMESPACE_GMCORE;
 
@@ -14,7 +15,8 @@ LogFileMessageSink::LogFileMessageSink()
 
 void LogFileMessageSink::setLogFilePath(std::filesystem::path path) {
   std::lock_guard<std::mutex> guard(lock);
-  logfile_path = path;
+  logfile_path = gmCore::FileResolver::getDefault()->resolve(
+      path, gmCore::FileResolver::Check::WritableFile);
   logfile.close();
 }
 

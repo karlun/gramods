@@ -32,6 +32,15 @@ private:
 
 public:
   /**
+     Flag for checking path after resolving pattern.
+  */
+  enum struct Check {
+    None,         //< Perform no check
+    ReadableFile, //< Check if file and readable
+    WritableFile  //< Check if file and writable
+  };
+
+  /**
      Reads in mappings from the specified URN file.
   */
   bool readUrnFile(std::filesystem::path urn_file);
@@ -40,7 +49,15 @@ public:
      Resolves the specified string as a path using the currently
      loaded rules.
   */
-  std::filesystem::path resolve(std::string);
+  std::filesystem::path resolve(std::string, Check check = Check::None);
+
+  /**
+     Resolves the specified path using the currently loaded rules.
+  */
+  std::filesystem::path resolve(std::filesystem::path path,
+                                Check check = Check::None) {
+    return resolve(path.u8string());
+  }
 
   /**
      Returns the default resolver.

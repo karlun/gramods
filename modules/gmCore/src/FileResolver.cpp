@@ -202,8 +202,37 @@ bool FileResolver::readUrnFile(std::filesystem::path urn_file) {
   return true;
 }
 
-std::filesystem::path FileResolver::resolve(std::string str_path) {
-  return _impl->resolve(str_path, 0);
+std::filesystem::path FileResolver::resolve(std::string str_path, Check check) {
+
+  auto path = _impl->resolve(str_path, 0);
+
+  switch (check) {
+  case Check::ReadableFile: {
+    std::ifstream fin(path);
+    if (!fin) {
+      if (str_path == path)
+        throw gmCore::InvalidArgument(
+            GM_STR("Path " << path << " is not readable"));
+      else
+        throw gmCore::InvalidArgument(
+            GM_STR("Path " << path << " (" << str_path << ") is not readable"));
+    }
+  } break;
+
+  case Check::WritableFile: {
+    std::ofstream fout(path, std::ofstream::app);
+    if (!fout) {
+      if (str_path == path)
+        throw gmCore::InvalidArgument(
+            GM_STR("Path " << path << " is not writable"));
+      else
+        throw gmCore::InvalidArgument(
+            GM_STR("Path " << path << " (" << str_path << ") is not writable"));
+    }
+  }
+  }
+
+  return path;
 }
 
 std::filesystem::path FileResolver::Impl::resolve(std::string str_path, size_t recursion) {
