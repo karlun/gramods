@@ -8,26 +8,31 @@ BuildMini:
   stage: build
   script:
     - apt-get update
-    - DEBIAN_FRONTEND="noninteractive" apt-get -y install cmake build-essential libgtest-dev
+    - DEBIAN_FRONTEND="noninteractive" apt-get -y install cmake build-essential ninja-build libgtest-dev
     - mkdir build
     - cd build
-    - cmake -D gramods_TEST_gmGraphics=OFF ..
-    - make
-    - make test
+    - cmake ..
+      -D gramods_TEST_gmGraphics=OFF
+      -G Ninja
+      -D CMAKE_BUILD_TYPE=Release
+    - ninja -j 1
+    - ninja test
 
 BuildMaxi:
   image: $CI_REGISTRY/karlu20/gramods:20.04-maxi
   stage: build
   script:
     - apt-get update
-    - DEBIAN_FRONTEND="noninteractive" apt-get -y install cmake git build-essential libgtest-dev libtinyxml2-dev libsdl2-dev libsdl2-ttf-dev libeigen3-dev libglew-dev libasio-dev libopenscenegraph-dev libuvc-dev libfreeimage-dev inkscape pipenv
+    - DEBIAN_FRONTEND="noninteractive" apt-get -y install cmake git build-essential ninja-build libgtest-dev libtinyxml2-dev libsdl2-dev libsdl2-ttf-dev libeigen3-dev libglew-dev libasio-dev libopenscenegraph-dev libuvc-dev libfreeimage-dev inkscape pipenv
     - git clone https://github.com/vrpn/vrpn.git -b v07.35
     - mkdir vrpn/build
     - cd vrpn/build; cmake ..
       -D CMAKE_BUILD_TYPE=Release
-      -D CMAKE_INSTALL_PREFIX=$(pwd)/../../vrpn-install;
+      -D CMAKE_INSTALL_PREFIX=$(pwd)/../../vrpn-install
+      -G Ninja
+      -D CMAKE_BUILD_TYPE=Release;
       cd ../..
-    - make -C vrpn/build install
+    - ninja -C vrpn/build -j 1 install
     - mkdir build
     - cd build; cmake ..
       -D gramods_TEST_gmGraphics=OFF
@@ -37,15 +42,17 @@ BuildMaxi:
       -D SDL2_DIR:PATH=$(pwd)/../cmake_modules/sdl2-shared/
       -D CMAKE_PREFIX_PATH:PATH=$(pwd)/../vrpn-install/
       -D CPACK_DEBIAN_PACKAGE_DEPENDS="libtinyxml2-6a, libsdl2-2.0-0, libsdl2-ttf-2.0-0, libglew2.1, libopenscenegraph160, libuvc0, libfreeimage3"
+      -G Ninja
+      -D CMAKE_BUILD_TYPE=Release
     - mkdir -p modules/gmGraphics/resources/
-    - make
+    - ninja -j 1
     - ./test/gmCore/test_gmCore
     - ./test/gmMisc/test_gmMisc
     - ./test/gmNetwork/test_gmNetwork
     - ./test/gmTouch/test_gmTouch
     - ./test/gmTrack/test_gmTrack
-    - make test
-    - make package
+    - ninja test
+    - ninja package
   artifacts:
     paths: ['build/*gramods*.deb']
     expire_in: 2 hrs
