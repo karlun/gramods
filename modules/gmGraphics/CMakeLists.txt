@@ -88,6 +88,7 @@ IF(Inkscape_FOUND)
       "${CMAKE_CURRENT_SOURCE_DIR}/(.*)\\.svg$"
       "${CMAKE_CURRENT_BINARY_DIR}/\\1.png"
       SVGPNG_RESOURCE ${RESOURCE})
+    MESSAGE(STATUS "Found SVG resource ${RESOURCE} -> ${SVGPNG_RESOURCE}")
     convert_svg_to_png(${RESOURCE} ${SVGPNG_RESOURCE})
     LIST (APPEND SVGPNG_RESOURCE_TARGETS ${SVGPNG_RESOURCE})
   ENDFOREACH()
@@ -116,7 +117,7 @@ IF(PythonResources_FOUND)
       "${CMAKE_CURRENT_SOURCE_DIR}/resources/(.*)\\.py\$"
       "${CMAKE_CURRENT_BINARY_DIR}/resources/\\1.png"
       PNG_RESOURCE ${RESOURCE})
-    MESSAGE("${RESOURCE} -> ${PNG_RESOURCE}")
+    MESSAGE(STATUS "Found Python resource ${RESOURCE} -> ${PNG_RESOURCE}")
     python_build_image(${RESOURCE} ${PNG_RESOURCE} ${gramods_PNG_RESOURCE_SIZE})
     LIST (APPEND PYPNG_RESOURCE_TARGETS ${PNG_RESOURCE})
   ENDFOREACH()
