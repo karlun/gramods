@@ -3,8 +3,12 @@ function(install_dependencies EXEC_FILES LIB_FILES)
   CMAKE_MINIMUM_REQUIRED(VERSION 3.14)
   CMAKE_POLICY(VERSION 3.14)
 
-  # Path to search for third-party dependencies. This should include
-  # vcpkg if correctly configured
+  # Path to search for third-party dependencies.
+
+  IF (VCPKG_INSTALLED_DIR})
+    INSTALL(CODE "LIST(APPEND DEP_FOLDERS \"${VCPKG_INSTALLED_DIR}/${VCPKG_TARGET_TRIPLET}\$<\$<CONFIG:Debug>:/debug>/bin\")")
+  ENDIF()
+
   INSTALL(CODE "LIST(APPEND DEP_FOLDERS \"${CMAKE_PREFIX_PATH}\")")
   INSTALL(CODE "LIST(APPEND DEP_FOLDERS \"${CMAKE_LIBRARY_PATH}\")")
   INSTALL(CODE "LIST(APPEND DEP_FOLDERS \"${CMAKE_CURRENT_SOURCE_DIR}\")")
