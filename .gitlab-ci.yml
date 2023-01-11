@@ -38,6 +38,7 @@ BuildMaxi:
       -D gramods_TEST_gmGraphics=OFF
       -D CPACK_BINARY_DEB=ON
       -D TinyXML2_DIR:PATH=$(pwd)/../cmake_modules/tinyxml2-shared/
+      -D FreeImage_DIR:PATH=$(pwd)/../cmake_modules/freeimage-shared/
       -D VRPN_DIR:PATH=$(pwd)/../cmake_modules/vrpn-static/
       -D SDL2_DIR:PATH=$(pwd)/../cmake_modules/sdl2-shared/
       -D CMAKE_PREFIX_PATH:PATH=$(pwd)/../vrpn-install/
