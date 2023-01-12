@@ -20,6 +20,7 @@ GM_OFI_PARAM2(SphereRenderer, position, Eigen::Vector3f, setPosition);
 GM_OFI_PARAM2(SphereRenderer, orientation, Eigen::Quaternionf, setOrientation);
 GM_OFI_POINTER2(SphereRenderer, texture, gmGraphics::TextureInterface, setTexture);
 GM_OFI_POINTER2(SphereRenderer, coordinatesMapper, gmGraphics::CoordinatesMapper, setCoordinatesMapper);
+GM_OFI_POINTER2(SphereRenderer, singlePoseTracker, gmTrack::SinglePoseTracker, setSinglePoseTracker);
 
 struct SphereRenderer::Impl {
 
@@ -46,6 +47,10 @@ struct SphereRenderer::Impl {
   float radius = 10;
   Eigen::Vector3f position = Eigen::Vector3f::Zero();
   Eigen::Quaternionf orientation = Eigen::Quaternionf::Identity();
+
+  std::shared_ptr<gmTrack::SinglePoseTracker> tracker;
+  bool tracker_control_position = false;
+  bool tracker_control_orientation = true;
 
   std::shared_ptr<TextureInterface> texture;
   std::shared_ptr<CoordinatesMapper> mapper;
@@ -259,6 +264,9 @@ void SphereRenderer::Impl::render(Camera camera, float near, float far) {
     tex_id = texture->updateTexture(camera.frame_number, camera.getEye());
   }
 
+  gmTrack::PoseTracker::PoseSample pose;
+  if (tracker && tracker->getPose(pose)) orientation = pose.orientation;
+
   GM_DBG2("SphereRenderer", "rendering");
 
   if (far < 0) {
@@ -337,6 +345,18 @@ void SphereRenderer::setTexture(std::shared_ptr<TextureInterface> tex) {
 
 void SphereRenderer::setCoordinatesMapper(std::shared_ptr<CoordinatesMapper> mapper) {
   _impl->mapper = mapper;
+}
+
+void SphereRenderer::setSinglePoseTracker(std::shared_ptr<gmTrack::SinglePoseTracker> t) {
+  _impl->tracker = t;
+}
+
+void SphereRenderer::setTrackerControlOrientation(bool on) {
+  _impl->tracker_control_orientation = on;
+}
+
+void SphereRenderer::setTrackerControlPosition(bool on) {
+  _impl->tracker_control_position = on;
 }
 
 END_NAMESPACE_GMGRAPHICS;
