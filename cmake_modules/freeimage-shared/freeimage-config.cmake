@@ -13,13 +13,13 @@ endif()
 FIND_PATH(FreeImage_INCLUDE_DIR NAMES FreeImage.h PATH_SUFFIXES "FreeImage" ${FreeImage_INCLUDE_PATH})
 FIND_LIBRARY(FreeImage_LIBRARY NAMES freeimage PATH_SUFFIXES "FreeImage" ${FreeImage_LIBRARY_PATH})
 
-ADD_LIBRARY(FreeImage::FreeImage SHARED IMPORTED)
+ADD_LIBRARY(freeimage::FreeImage SHARED IMPORTED)
 IF(FreeImage_INCLUDE_DIR AND FreeImage_LIBRARY)
-  SET_TARGET_PROPERTIES(FreeImage::FreeImage PROPERTIES
+  SET_TARGET_PROPERTIES(freeimage::FreeImage PROPERTIES
     INTERFACE_INCLUDE_DIRECTORIES ${FreeImage_INCLUDE_DIR}
     IMPORTED_LOCATION ${FreeImage_LIBRARY}
     INTERFACE_LINK_LIBRARIES freeimage
     )
 ELSE()
-  MESSAGE(SEND_ERROR "Could not set properties of target FreeImage::FreeImage - set FreeImage_INCLUDE_DIR and FreeImage_LIBRARY or unset FreeImage_DIR")
+  MESSAGE(SEND_ERROR "Could not set properties of target freeimage::FreeImage - set FreeImage_INCLUDE_DIR and FreeImage_LIBRARY or unset FreeImage_DIR")
 ENDIF()

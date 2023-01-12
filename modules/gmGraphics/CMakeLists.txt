@@ -54,13 +54,6 @@ IF(libuvc_FOUND)
   ENDIF(gramods_ENABLE_libuvc)
 ENDIF(libuvc_FOUND)
 
-IF (gramods_ENABLE_FreeImage)
-  LIST (APPEND PRIVATE_INCLUDE_DIRS ${FreeImage_INCLUDE_DIR})
-  LIST (APPEND PRIVATE_LIBS ${FreeImage_LIBRARIES})
-ELSE()
-  MESSAGE (WARNING "Not including image loading support in gmGraphics - requires FreeImage")
-ENDIF(gramods_ENABLE_FreeImage)
-
 FIND_PACKAGE(OpenSceneGraph COMPONENTS osgViewer)
 IF (OPENSCENEGRAPH_FOUND)
   SET(HAVE_OpenSceneGraph 1)
