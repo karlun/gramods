@@ -42,13 +42,17 @@ The top level CMakeLists.txt file will automatically make recursive inclusion of
 
 The Gramods modules are designed to be weakly dependent on each other and on third party dependencies, even though they makes heavy use of third party dependencies for their functionality. Therefore, some modules will not be built without their core dependencies, while others will be built with limited functionality.
 
+
 ## Dependencies
 
-Use CMake to find dependencies and to set up the build environment. Every modules, app and dependency is activated when found, however dependencies can be individually deactivated through CMake by setting *gramods_ENABLE_* to false in CMake, and modules and apps by setting *gramods_INCLUDE_* to false.
+Use CMake to find dependencies and to set up the build environment. Every modules, app and dependency is activated when found, however dependencies can be individually deactivated through CMake by setting *gramods_ENABLE_* to false in CMake, and modules and apps by setting *gramods_MODULE_* and *gramods_APP_*, respectively, to false.
 
 Observe that CMake cannot automatically deactivate dependent modules when a modules is made unavailable, by a missing dependency or by deactivation, so this will result in a build error.
 
 Most dependencies can be automatically installed and handled, with *vcpkg* through `vcpkg install asio eigen3 freeimage glew sdl2 tclap tinyxml2`, or with *apt* through `apt install libasio-dev libeigen3-dev libfreeimage-dev libglew-dev libsdl2-dev libtclap-dev libtinyxml2-dev`. When using vcpkg, do not forget to set `VCPKG_DEFAULT_TRIPLET=x64-windows` or use command line argument `--triplet x64-windows` (see [vcpkg issue #12357](https://github.com/microsoft/vcpkg/issues/12357)).
+
+If CMake config files are missing in your installation but needed by Gramods, then the *_DIR* can be pointed to a backup CMake config folder in the Gramods/cmake_modules folder. This will expose variables in CMake to manually point at include and lib folders for the library.
+
 
 ## Standard Build Procedure
 
@@ -59,7 +63,7 @@ cmake                                                                   ^
   -S gramods/ -B gramods/build/                                         ^
   -DCMAKE_TOOLCHAIN_FILE=path-to-vcpkg/scripts/buildsystems/vcpkg.cmake ^
   -DCMAKE_INSTALL_PREFIX=gramods/install
-cmake --build gramods/build --target install
+cmake --build gramods/build --target install --config Release
 ~~~~~~~~~~~~~
 
 Depending on your local platform and its configuration you might want to also set `VCPKG_APPLOCAL_DEPS` to `OFF` and/or `gramods_INSTALL_DEPENDENCIES` to `ON`. The first flag controls copying dependencies into the build folder and `gramods_INSTALL_DEPENDENCIES` controls copying dependencies into the install tree.
@@ -78,6 +82,7 @@ gm-load --config urn:gramods:config/output-normal-to-console.xml --config urn:gr
 
 The Gramods package includes a number of apps, for the purpose of testing or demonstrating Gramods functionality, or for running Gramods configurations.
 
+
 ## gm-load
 
 The `gm-load` app loads one or more configuration files and executes them by calling `Updateable::updateAll` and by calling `Window` instances if such are defined in the configuration.
@@ -88,6 +93,7 @@ This app will not be built if these required dependencies are not configured for
  - gmGraphics
  - TinyXML2
  - TCLAP
+
 
 ## gm-tracker-registration
 
@@ -294,6 +300,7 @@ Since shaders are tightly coupled with the C++ code together with which they are
   :hostmode 'poly-c++-hostmode
   :innermodes '(poly-c++-string-literals-lang-code-innermode))
 ~~~~~~~~~~~~~
+
 
 ## gmTouch
 
