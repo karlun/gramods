@@ -31,6 +31,7 @@ RUN \
     -D CMAKE_BUILD_TYPE=Release \
     -D CMAKE_INSTALL_PREFIX:PATH=/gramods \
     -D TinyXML2_DIR:PATH=/gramods.git/cmake_modules/tinyxml2-shared/ \
+    -D FreeImage_DIR:PATH=/gramods.git/cmake_modules/freeimage-shared/ \
     -D VRPN_DIR:PATH=/gramods.git/cmake_modules/vrpn-static/ \
     -D CMAKE_PREFIX_PATH=/vrpn-install \
     .. ; \
