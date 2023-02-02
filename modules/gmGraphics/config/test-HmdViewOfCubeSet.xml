@@ -1,0 +1,47 @@
+<config>
+
+  <ImportLibrary library="gmGraphics"/>
+  <ImportLibrary library="gmTrack"/>
+
+  <SdlWindow
+      size="1920 1080"
+      title="Hmd View of Cube Set"
+      GLMajor="3" GLMinor="3">
+
+    <SdlContext
+        DEF="SDLContext"
+        useVideo="1"/>
+
+    <TiledView>
+
+      <param name="tileLocation" value="0 0 1 1"/>
+      <HmdView DEF="HMD" showEye="0">
+        <OpenVR
+            DEF="OPENVR"
+            useVideo="true"
+            manifestPath="urn:gramods:config/openvr_manifest/standard_actionset.json"
+            actionSet="/actions/std"/>
+        <CubeSceneRenderer
+            cubeSize="0.1"
+            cubeSetSize="2.0"/>
+      </HmdView>
+
+      <param name="tileLocation" value="0 1 1 1"/>
+      <PosedSphericalView>
+        <EquirectangularCoordinatesMapper/>
+        <SphereRenderer>
+          <RectilinearCameraModel focalDistance="0.6 1.0"/>
+          <OpenVRPoseTracker type="HMD">
+            <OpenVR USE="OPENVR"/>
+          </OpenVRPoseTracker>
+          <ViewTexture>
+            <View USE="HMD"/>
+          </ViewTexture>
+        </SphereRenderer>
+      </PosedSphericalView>
+
+    </TiledView>
+
+  </SdlWindow>
+
+</config>

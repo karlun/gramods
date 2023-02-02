@@ -1,0 +1,38 @@
+<config>
+  <![CDATA[
+
+    Vortex configuration for use with head-mounted display system
+    (HMD).
+
+
+  ]]>
+
+  <SdlWindow>
+    <SdlContext useVideo="true"/>
+    <HmdView>
+      <OpenVR
+          DEF="OPENVR"
+          useVideo="true"
+          manifestPath="urn:gramods:config/openvr_manifest/standard_actionset.json"
+          actionSet="/actions/std"/>
+    </HmdView>
+  </SdlWindow>
+
+  <Controller>
+    <OpenVRPoseTracker
+        type="Controller">
+      <OpenVR USE="OPENVR"/>
+    </OpenVRPoseTracker>
+
+    <OpenVRAnalogsTracker action="/actions/std/in/AnalogInput">
+      <OpenVR USE="OPENVR"/>
+    </OpenVRAnalogsTracker>
+
+    <OpenVRButtonsTracker>
+      <OpenVR USE="OPENVR"/>
+      <param name="action" value="/actions/std/in/MainButton"/>
+      <param name="action" value="/actions/std/in/SecondButton"/>
+    </OpenVRButtonsTracker>
+  </Controller>
+
+</config>

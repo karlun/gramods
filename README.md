@@ -252,6 +252,7 @@ Optional dependencies:
  - Gimp (binaries), for generating textures using Python-fu
  - Inkscape (binaries), for generating textures from SVG
  - libuvc, for UVC support, reading image data from video class USB devices.
+ - OpenVR, for HMD and OpenVR tracking support
 
 
 ### Module Program Design Principles
