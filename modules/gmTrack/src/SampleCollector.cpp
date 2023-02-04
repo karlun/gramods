@@ -194,11 +194,12 @@ void SampleCollector::Impl::getAverage(std::vector<Eigen::Quaternionf> samples,
   if (eigenvalues.rows() < 4)
     throw gmCore::RuntimeException("Could not find average orientation from samples");
 
-  float best_value = std::numeric_limits<float>::min();
-  Eigen::Vector4f V;
-  for (int idx = 0; idx < eigenvalues.rows(); ++idx) {
+  Eigen::Vector4f V = eigenvectors.col(0).real();
+  float best_value = eigenvalues(0, 0).real();
+  for (int idx = 1; idx < eigenvalues.rows(); ++idx) {
     if (eigenvalues(idx, 0).real() < best_value) continue;
     V = eigenvectors.col(idx).real();
+    best_value = eigenvalues(idx, 0).real();
   }
 
   x = Eigen::Quaternionf(V[0], V[1], V[2], V[3]);
