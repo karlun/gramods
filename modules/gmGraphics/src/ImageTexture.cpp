@@ -45,7 +45,7 @@ struct ImageTexture::Impl {
   std::filesystem::path file = {};
   gmCore::size2 animation_range = {0, 0};
   bool auto_range = false;
-  long int animation_frame = -1;
+  size_t animation_frame = std::numeric_limits<size_t>::max();
   bool animate = false;
   bool do_loop = false;
   bool do_exit = false;
