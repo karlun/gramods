@@ -75,8 +75,18 @@ void ImageTexture::setFile(std::filesystem::path file) {
 }
 
 void ImageTexture::setRange(gmCore::size2 range) {
+  if (range[0] > range[1])
+    throw gmCore::InvalidArgument(
+        GM_STR("Invalid range: " << range[0] << " - " << range[1]));
+
   _impl->animation_range = range;
-  _impl->animation_frame = range[0] - 1;
+
+  if (_impl->animation_frame + 1 < range[0])
+    _impl->animation_frame = range[0] - 1;
+
+  if (_impl->animation_frame + 1 > range[1])
+    _impl->animation_frame = range[1] - 1;
+
   _impl->animate = true;
 }
 
