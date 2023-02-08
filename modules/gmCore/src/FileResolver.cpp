@@ -217,6 +217,10 @@ std::filesystem::path FileResolver::resolve(std::string str_path, Check check) {
         throw gmCore::InvalidArgument(
             GM_STR("Path " << path << " (" << str_path << ") is not readable"));
     }
+    if (str_path == path)
+      GM_DBG1("FileResolver", "Resolved " << str_path << " as readable file");
+    else
+      GM_DBG1("FileResolver", "Resolved " << str_path << " into " << path << " as readable file");
   } break;
 
   case Check::WritableFile: {
@@ -229,7 +233,17 @@ std::filesystem::path FileResolver::resolve(std::string str_path, Check check) {
         throw gmCore::InvalidArgument(
             GM_STR("Path " << path << " (" << str_path << ") is not writable"));
     }
-  }
+    if (str_path == path)
+      GM_DBG1("FileResolver", "Resolved " << str_path << " as writable file");
+    else
+      GM_DBG1("FileResolver", "Resolved " << str_path << " into " << path << " as writable file");
+  } break;
+
+  case Check::None:
+    if (str_path == path)
+      GM_DBG1("FileResolver", "Resolved " << str_path << " without checks");
+    else
+      GM_DBG1("FileResolver", "Resolved " << str_path << " into " << path << " without checks");
   }
 
   return path;

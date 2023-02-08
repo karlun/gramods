@@ -15,8 +15,8 @@ struct DataSync::Impl {
 
   void update();
 
-  void encode(SyncData * d, std::vector<char> &data, int local_peer_idx);
-  void processMessage(Message m, int local_peer_idx);
+  void encode(SyncData * d, std::vector<char> &data, size_t local_peer_idx);
+  void processMessage(Message m, size_t local_peer_idx);
 
   bool closing = false;
   std::vector<std::shared_ptr<SyncData>> ptr_data;
@@ -79,7 +79,7 @@ void DataSync::processMessage(Message m) {
   _impl->processMessage(m, getLocalPeerIdx());
 }
 
-void DataSync::Impl::processMessage(Message m, int local_peer_idx) {
+void DataSync::Impl::processMessage(Message m, size_t local_peer_idx) {
   assert(m.data.size() > 1);
 
   size_t idx = (size_t)m.data[0];
@@ -94,13 +94,13 @@ void DataSync::Impl::processMessage(Message m, int local_peer_idx) {
     GM_DBG3("DataSync",
              "Incoming data (" << m.from_peer_idx
              << " -> " << local_peer_idx
-             << ") for ptr cell " << int(idx));
+             << ") for ptr cell " << idx);
     ptr_data[idx]->decode(m.data);
   } else {
     GM_DBG3("DataSync",
              "Incoming data (" << m.from_peer_idx
              << " -> " << local_peer_idx
-             << ") for raw cell " << int(idx - ptr_data.size()));
+             << ") for raw cell " << idx - ptr_data.size());
     raw_data[idx - ptr_data.size()]->decode(m.data);
   }
 }
@@ -115,7 +115,7 @@ void DataSync::send(SyncData * d) {
 
 void DataSync::Impl::encode(SyncData * d,
                             std::vector<char> &data,
-                            int local_peer_idx) {
+                            size_t local_peer_idx) {
   d->encode(data);
 
   assert(data.size() > 1);
@@ -127,7 +127,7 @@ void DataSync::Impl::encode(SyncData * d,
 
       GM_DBG3("DataSync",
                "Sending data (" << local_peer_idx
-               << " -> all) for ptr cell " << int(idx));
+               << " -> all) for ptr cell " << idx);
       return;
     }
 
@@ -138,7 +138,7 @@ void DataSync::Impl::encode(SyncData * d,
 
       GM_DBG3("DataSync",
                "Sending data (" << local_peer_idx
-               << " -> all) for raw cell " << int(idx));
+               << " -> all) for raw cell " << idx);
       return;
     }
   assert(0);

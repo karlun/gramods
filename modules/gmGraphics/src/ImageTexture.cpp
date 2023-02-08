@@ -45,7 +45,7 @@ struct ImageTexture::Impl {
   std::filesystem::path file = {};
   gmCore::size2 animation_range = {0, 0};
   bool auto_range = false;
-  long int animation_frame = -1;
+  size_t animation_frame = std::numeric_limits<size_t>::max();
   bool animate = false;
   bool do_loop = false;
   bool do_exit = false;
@@ -75,8 +75,18 @@ void ImageTexture::setFile(std::filesystem::path file) {
 }
 
 void ImageTexture::setRange(gmCore::size2 range) {
+  if (range[0] > range[1])
+    throw gmCore::InvalidArgument(
+        GM_STR("Invalid range: " << range[0] << " - " << range[1]));
+
   _impl->animation_range = range;
-  _impl->animation_frame = range[0] - 1;
+
+  if (_impl->animation_frame + 1 < range[0])
+    _impl->animation_frame = range[0] - 1;
+
+  if (_impl->animation_frame + 1 > range[1])
+    _impl->animation_frame = range[1] - 1;
+
   _impl->animate = true;
 }
 

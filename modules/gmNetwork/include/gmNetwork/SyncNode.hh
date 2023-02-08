@@ -58,12 +58,12 @@ public:
 
      \gmXmlTag{gmNetwork,SyncNode,localPeerIdx}
   */
-  void setLocalPeerIdx(int idx);
+  void setLocalPeerIdx(size_t idx);
 
   /**
      Returns the index of the local peer.
   */
-  int getLocalPeerIdx();
+  size_t getLocalPeerIdx();
 
   /**
      Set whether or not the application should exit when connection to

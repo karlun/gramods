@@ -122,8 +122,11 @@ protected:
 
   /**
      Convenience method for quering the SyncNode for the local peer idx.
+
+     This will throw gmCore::PreConditionViolation exception if there
+     is no SyncNode instance to get local peer idx from.
   */
-  int getLocalPeerIdx();
+  size_t getLocalPeerIdx();
 
   /**
      Convenience method for quering the SyncNode for the currently

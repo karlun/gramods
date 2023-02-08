@@ -19,7 +19,7 @@ BEGIN_NAMESPACE_GMNETWORK;
 
 GM_OFI_DEFINE(SyncNode);
 GM_OFI_PARAM2(SyncNode, peer, std::string, addPeer);
-GM_OFI_PARAM2(SyncNode, localPeerIdx, int, setLocalPeerIdx);
+GM_OFI_PARAM2(SyncNode, localPeerIdx, size_t, setLocalPeerIdx);
 GM_OFI_PARAM2(SyncNode, exitWhenAPeerIsDisconnected, bool, setExitWhenAPeerIsDisconnected);
 GM_OFI_PARAM2(SyncNode, timeoutDelay, float, setTimeoutDelay);
 
@@ -120,8 +120,8 @@ struct SyncNode::Impl : public std::enable_shared_from_this<SyncNode::Impl> {
   bool initialize();
 
   void addPeer(std::string address);
-  void setLocalPeerIdx(int idx);
-  int getLocalPeerIdx();
+  void setLocalPeerIdx(size_t idx);
+  size_t getLocalPeerIdx();
   std::size_t getPeersCount();
   std::set<std::size_t> getConnectedPeers();
   float getTimeoutDelay();
@@ -212,22 +212,22 @@ void SyncNode::Impl::addPeer(std::string address) {
   peer_addresses.push_back(address);
 }
 
-void SyncNode::setLocalPeerIdx(int idx) {
+void SyncNode::setLocalPeerIdx(size_t idx) {
   if (isInitialized())
     throw gmCore::PreConditionViolation("Setting local peer after initialization is not supported");
   _impl->setLocalPeerIdx(idx);
 }
 
-void SyncNode::Impl::setLocalPeerIdx(int idx) {
+void SyncNode::Impl::setLocalPeerIdx(size_t idx) {
   std::lock_guard<std::mutex> guard(impl_lock);
   local_peer_idx = idx;
 }
 
-int SyncNode::getLocalPeerIdx() {
+size_t SyncNode::getLocalPeerIdx() {
   return _impl->getLocalPeerIdx();
 }
 
-int SyncNode::Impl::getLocalPeerIdx() {
+size_t SyncNode::Impl::getLocalPeerIdx() {
   std::lock_guard<std::mutex> guard(impl_lock);
   return local_peer_idx;
 }
@@ -546,7 +546,7 @@ void SyncNode::Impl::sendMessage(Protocol::Message mess) {
   GM_DBG3("SyncNode", local_peer_idx << " Sending message "
            "(from = " << local_peer_idx <<
            ", type = " << (int)mess.protocol <<
-           ", len = " << (int)mess.data.size() << ")");
+           ", len = " << mess.data.size() << ")");
 
 
   std::unique_lock<std::mutex> guard(impl_lock);

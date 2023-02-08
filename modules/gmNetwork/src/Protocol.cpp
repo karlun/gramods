@@ -42,9 +42,9 @@ void Protocol::sendMessage(std::vector<char> data) {
   sync_node->sendMessage(Message(getProtocolFlag(), data));
 }
 
-int Protocol::getLocalPeerIdx() {
+size_t Protocol::getLocalPeerIdx() {
   std::lock_guard<std::mutex> guard(sync_node_lock);
-  if (!sync_node) return -1;
+  if (!sync_node) throw gmCore::PreConditionViolation("Protocol has no live SyncNode");
   return sync_node->getLocalPeerIdx();
 }
 
