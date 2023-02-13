@@ -61,7 +61,7 @@ OFactory::OFactoryInformation::~OFactoryInformation(){
   OFactory::unregisterOFI(name);
 }
 
-Object * OFactory::OFactoryInformation::create() {
+Object * OFactory::OFactoryInformation::create() const {
   if (!creator) return nullptr;
   return creator->create();
 }
@@ -79,7 +79,7 @@ void OFactory::OFactoryInformation::registerPointerSetter
 }
 
 bool OFactory::OFactoryInformation::setParamValueFromString
-(Object *node, std::string name, std::string value) {
+(Object *node, std::string name, std::string value) const {
 
   if (param_setters.count(name) == 0) {
     if (base == nullptr)
@@ -88,13 +88,13 @@ bool OFactory::OFactoryInformation::setParamValueFromString
       return base->setParamValueFromString(node, name, value);
   }
 
-  param_setters[name]->setValueFromString(node, value);
+  param_setters.find(name)->second->setValueFromString(node, value);
 
   return true;
 }
 
 bool OFactory::OFactoryInformation::setPointerValue
-(Object *node, std::string name, std::shared_ptr<Object> ptr) {
+(Object *node, std::string name, std::shared_ptr<Object> ptr) const {
 
   if (pointer_setters.count(name) == 0) {
     if (base == nullptr)
@@ -103,7 +103,7 @@ bool OFactory::OFactoryInformation::setPointerValue
       return base->setPointerValue(node, name, ptr);
   }
 
-  pointer_setters[name]->setPointer(node, ptr);
+  pointer_setters.find(name)->second->setPointer(node, ptr);
 
   return true;
 }

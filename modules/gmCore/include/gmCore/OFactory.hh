@@ -208,7 +208,7 @@ class OFactory {
      method to set the parsed value.
    */
   struct ParamSetterBase {
-    virtual void setValueFromString(Object *n, std::string s) = 0;
+    virtual void setValueFromString(Object *n, std::string s) const = 0;
   };
 
   /**
@@ -217,7 +217,7 @@ class OFactory {
      member method to set the parsed value.
    */
   struct PointerSetterBase {
-    virtual void setPointer(Object *n, std::shared_ptr<Object> o) = 0;
+    virtual void setPointer(Object *n, std::shared_ptr<Object> o) const = 0;
   };
 
   /**
@@ -226,7 +226,7 @@ class OFactory {
   struct ObjectCreatorBase {
     /** Creates and returns an instance of the template argument
         class. */
-    virtual Object * create() = 0;
+    virtual Object * create() const = 0;
   };
 
 public:
@@ -258,7 +258,7 @@ public:
        Instantiates the class associated with this OFI and returns a
        raw pointer to this object.
     */
-    Object * create();
+    Object * create() const;
 
     /**
        Registers a parameter setter with a specific attribute name.
@@ -277,7 +277,7 @@ public:
        false if there is no setter associated with the specified
        attribute name.
     */
-    bool setParamValueFromString(Object *node, std::string name, std::string value);
+    bool setParamValueFromString(Object *node, std::string name, std::string value) const;
 
     /**
        Finds a pointer setter for the specified attribute name and
@@ -285,13 +285,13 @@ public:
        to the specified pointer value. Returns false if there is no
        setter associated with the specified attribute name.
     */
-    bool setPointerValue(Object *node, std::string name, std::shared_ptr<Object> ptr);
+    bool setPointerValue(Object *node, std::string name, std::shared_ptr<Object> ptr) const;
 
   private:
 
     const std::string name;
-    ObjectCreatorBase * const creator;
-    OFactoryInformation * const base;
+    const std::unique_ptr<const ObjectCreatorBase> creator;
+    const OFactoryInformation *const base;
 
     std::map<std::string, std::unique_ptr<ParamSetterBase>> param_setters;
     std::map<std::string, std::unique_ptr<PointerSetterBase>> pointer_setters;
@@ -345,7 +345,7 @@ public:
     ParamSetter(void (Node::*m)(T val))
       : method(m) {}
 
-    void setValueFromString(Object *n, std::string s);
+    void setValueFromString(Object *n, std::string s) const;
 
     void (Node::*method)(T val);
   };
@@ -360,7 +360,7 @@ public:
     ParamSetter(void (Node::*m)(std::string val))
       : method(m) {}
 
-    void setValueFromString(Object *n, std::string s);
+    void setValueFromString(Object *n, std::string s) const;
 
     void (Node::*method)(std::string val);
   };
@@ -375,7 +375,7 @@ public:
     ParamSetter(void (Node::*m)(std::filesystem::path val))
       : method(m) {}
 
-    void setValueFromString(Object *n, std::string s);
+    void setValueFromString(Object *n, std::string s) const;
 
     void (Node::*method)(std::filesystem::path val);
   };
@@ -390,7 +390,7 @@ public:
     ParamSetter(void (Node::*m)(bool val))
       : method(m) {}
 
-    void setValueFromString(Object *n, std::string s);
+    void setValueFromString(Object *n, std::string s) const;
 
     void (Node::*method)(bool val);
   };
@@ -405,7 +405,7 @@ public:
     PointerSetter(void (Node::*m)(std::shared_ptr<T> ptr))
       : method(m) {}
 
-    void setPointer(Object *n, std::shared_ptr<Object> ptr);
+    void setPointer(Object *n, std::shared_ptr<Object> ptr) const;
 
     void (Node::*method)(std::shared_ptr<T> ptr);
   };
@@ -417,7 +417,7 @@ public:
   struct ObjectCreator : ObjectCreatorBase {
     /** Creates and returns an instance of the template argument
         class. */
-    Object * create(){ return new Node; }
+    Object *create() const { return new Node; }
   };
   
   /** Creates and returns an instance of the class associated with the
@@ -441,7 +441,7 @@ private:
 
 template<class Node, class T>
 void OFactory::ParamSetter<Node, T>::setValueFromString
-(Object *n, std::string s) {
+(Object *n, std::string s) const {
   assert(dynamic_cast<Node*>(n) != nullptr);
   Node *node = static_cast<Node*>(n);
   std::stringstream ss(s);
@@ -456,7 +456,7 @@ void OFactory::ParamSetter<Node, T>::setValueFromString
 
 template<class Node>
 void OFactory::ParamSetter<Node, std::string>::setValueFromString
-(Object *n, std::string s) {
+(Object *n, std::string s) const {
   assert(dynamic_cast<Node*>(n) != nullptr);
   Node *node = static_cast<Node*>(n);
 
@@ -465,7 +465,7 @@ void OFactory::ParamSetter<Node, std::string>::setValueFromString
 
 template<class Node>
 void OFactory::ParamSetter<Node, std::filesystem::path>::setValueFromString
-(Object *n, std::string s) {
+(Object *n, std::string s) const {
   assert(dynamic_cast<Node*>(n) != nullptr);
   Node *node = static_cast<Node*>(n);
 
@@ -474,7 +474,7 @@ void OFactory::ParamSetter<Node, std::filesystem::path>::setValueFromString
 
 template<class Node>
 void OFactory::ParamSetter<Node, bool>::setValueFromString
-(Object *n, std::string s) {
+(Object *n, std::string s) const {
   assert(dynamic_cast<Node*>(n) != nullptr);
   Node *node = static_cast<Node*>(n);
 
@@ -503,7 +503,7 @@ void OFactory::ParamSetter<Node, bool>::setValueFromString
 
 template<class Node, class T>
 void OFactory::PointerSetter<Node, T>::setPointer
-(Object *n, std::shared_ptr<Object> ptr) {
+(Object *n, std::shared_ptr<Object> ptr) const {
   assert(dynamic_cast<Node*>(n) != nullptr);
   Node *node = static_cast<Node*>(n);
   std::shared_ptr<T> _ptr = std::dynamic_pointer_cast<T>(ptr);
