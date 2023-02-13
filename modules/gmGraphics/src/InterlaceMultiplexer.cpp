@@ -104,9 +104,15 @@ void InterlaceMultiplexer::Impl::setup() {
   static const char * vertex_shader_code = R"lang=glsl(
 #version 330 core
 
+uniform float dx;
+uniform float dy;
+
 in vec2 a_vertex;
+out vec2 v_uv;
 
 void main() {
+  v_uv = vec2(dx * (a_vertex.x * 0.5 + 0.5),
+              dy * (a_vertex.y * 0.5 + 0.5));
   gl_Position = vec4(a_vertex, 0.0, 1.0);
 }
 )lang=glsl";
@@ -277,6 +283,8 @@ void InterlaceMultiplexer::Impl::finalize() {
   glUseProgram(program_id);
   glUniform1i(glGetUniformLocation(program_id, "texL"), 0);
   glUniform1i(glGetUniformLocation(program_id, "texR"), 1);
+  glUniform1f(glGetUniformLocation(program_id, "dx"), port_width/(float)tex_width);
+  glUniform1f(glGetUniformLocation(program_id, "dy"), port_height/(float)tex_height);
   glUniform1i(glGetUniformLocation(program_id, "pattern"), pattern);
 
   glBindVertexArray(vao_id);
