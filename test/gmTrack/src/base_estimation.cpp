@@ -203,8 +203,8 @@ TEST(gmTrackBaseEstimation, RandomTesting) {
   std::default_random_engine random_engine;
   std::uniform_real_distribution<float> real_random =
       std::uniform_real_distribution<float>(-1.f, 1.f);
-  std::uniform_int_distribution<int> position_count_random =
-      std::uniform_int_distribution<int>(3, MAX_POSITION_COUNT);
+  std::uniform_int_distribution<size_t> position_count_random =
+      std::uniform_int_distribution<size_t>(3, MAX_POSITION_COUNT);
 
   for (size_t idx = 0; idx < LOOP_COUNT; ++idx) {
 
@@ -233,7 +233,7 @@ TEST(gmTrackBaseEstimation, RandomTesting) {
       M_actual = M.matrix();
     } while (M_actual.norm() < 0.1f);
 
-    int position_count = position_count_random(random_engine);
+    size_t position_count = position_count_random(random_engine);
 
     std::vector<Eigen::Vector3f> tracker_positions;
     tracker_positions.reserve(position_count);
