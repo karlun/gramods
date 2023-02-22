@@ -4,6 +4,8 @@
 
 #include <gmCore/OpenVR.hh>
 
+#include <tclap/CmdLine.h>
+
 #include <chrono>
 #include <sstream>
 #include <fstream>
@@ -12,15 +14,80 @@
 
 using namespace gramods;
 
+void print_openvr_data(gmCore::OpenVR *openvr);
+
 int main(int argc, char *argv[]) {
+
+  TCLAP::CmdLine cmd
+    ("This is a simple utility for listing devices connected to OpenVR.");
+
+  TCLAP::ValueArg<size_t> arg_loop_count(
+      "l",
+      "loop",
+      "Query repeatedly this many times. Set to zero to loop infinitely.",
+      false,
+      0,
+      "times");
+  cmd.add(arg_loop_count);
+
+  TCLAP::ValueArg<size_t> arg_delay(
+      "d",
+      "delay",
+      "Delay between each query, or before the first if there is no "
+      "loop. Defaults to 10 seconds",
+      false,
+      10,
+      "secs");
+  cmd.add(arg_delay);
+
+  try {
+    cmd.parse(argc, argv);
+  } catch (const TCLAP::ArgException &e) {
+    std::cerr << "error: " << e.error() << " for arg " << e.argId() << std::endl;
+    return -1;
+  }
 
   std::shared_ptr<gmCore::OpenVR> openvr = std::make_shared<gmCore::OpenVR>();
   openvr->setManifestPath("urn:gramods:config/openvr_manifest/standard_actionset.json");
   openvr->setActionSet("/actions/std");
   openvr->initialize();
 
-  std::this_thread::sleep_for(std::chrono::seconds(2));
+  if (!arg_loop_count.isSet()) {
+    if (arg_delay.isSet())
+      std::this_thread::sleep_for(std::chrono::seconds(arg_delay.getValue()));
 
+	gmCore::Updateable::updateAll();
+    print_openvr_data(openvr.get());
+
+  } else {
+    if (arg_loop_count.getValue() == 0) {
+      while (true) {
+
+		gmCore::Updateable::updateAll();
+        print_openvr_data(openvr.get());
+
+        if (arg_delay.isSet())
+          std::this_thread::sleep_for(
+              std::chrono::seconds(arg_delay.getValue()));
+      }
+    } else {
+
+      for (size_t idx = 0; idx < arg_loop_count.getValue(); idx++) {
+
+		gmCore::Updateable::updateAll();
+        print_openvr_data(openvr.get());
+
+        if (arg_delay.isSet())
+          std::this_thread::sleep_for(
+              std::chrono::seconds(arg_delay.getValue()));
+      }
+    }
+  }
+
+  return 0;
+}
+
+void print_openvr_data(gmCore::OpenVR *openvr) {
   auto pose_list = openvr->getPoseList();
   for (size_t idx = 0; idx < pose_list->size(); ++idx) {
 
@@ -50,6 +117,5 @@ int main(int argc, char *argv[]) {
 
     std::cout << "\n";
   }
-
-  return 0;
+  std::cout << std::endl;
 }

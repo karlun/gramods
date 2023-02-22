@@ -19,6 +19,13 @@ IF (NOT gramods_ENABLE_OpenVR)
   RETURN()
 ENDIF ()
 
+FIND_PACKAGE (TCLAP)
+IF (NOT TCLAP_FOUND)
+  MESSAGE (WARNING "Not including gm-openvr-list-devices - requires TCLAP")
+  RETURN()
+ENDIF ()
+LIST (APPEND APP_INCLUDE_DIRS ${TCLAP_INCLUDE_DIRS})
+
 FIND_PACKAGE(Threads)
 IF (NOT Threads_FOUND)
   MESSAGE (STATUS "Not including gm-openvr-list-devices - requires Threads")
