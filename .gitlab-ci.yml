@@ -47,16 +47,23 @@ BuildMaxi:
       -D CMAKE_BUILD_TYPE=Release
     - mkdir -p modules/gmGraphics/resources/
     - ninja -j 1
-    - ./test/gmCore/test_gmCore
-    - ./test/gmMisc/test_gmMisc
-    - ./test/gmNetwork/test_gmNetwork
-    - ./test/gmTouch/test_gmTouch
-    - ./test/gmTrack/test_gmTrack
+    - ./test/gmCore/test_gmCore --gtest_output=xml:report-gmCore.xml
+    - ./test/gmMisc/test_gmMisc --gtest_output=xml:report-gmMisc.xml
+    - ./test/gmNetwork/test_gmNetwork --gtest_output=xml:report-gmNetwork.xml
+    - ./test/gmTouch/test_gmTouch --gtest_output=xml:report-gmTouch .xml
+    - ./test/gmTrack/test_gmTrack --gtest_output=xml:report-gmTrack.xml
     - ninja test
     - ninja package
   artifacts:
     paths: ['build/*gramods*.deb']
     expire_in: 2 hrs
+    reports:
+      junit:
+        - build/report-gmCore.xml
+        - build/report-gmMisc.xml
+        - build/report-gmNetwork.xml
+        - build/report-gmTouch.xml
+        - build/report-gmTrack.xml
 
 TestInstall:
   image: $CI_REGISTRY/karlu20/gramods:20.04-mini
