@@ -53,6 +53,8 @@ struct UvcTexture::Impl {
   void startAll(int vendor, int product, std::string serial);
   void closeAll();
 
+  bool triggerStill(gmCore::size2 res);
+
   void update();
   GLuint getGLTextureID() { return texture_id; }
 
@@ -378,6 +380,39 @@ void UvcTexture::setFormat(std::string fmt) {
 void UvcTexture::setDecode(bool on) {
   _impl->decode_to_rgb = on;
   _impl->texture_up_to_date = false;
+}
+
+bool UvcTexture::triggerStill(gmCore::size2 res) {
+  return _impl->triggerStill(res);
+}
+
+bool UvcTexture::Impl::triggerStill(gmCore::size2 size) {
+
+  std::lock_guard<std::mutex> guard(data_lock);
+
+  uvc_still_ctrl_t still_control;
+  uvc_error_t res = uvc_get_still_ctrl_format_size(
+      device_handle, &stream_control, &still_control, size[0], size[1]);
+
+  if (res < 0) {
+    GM_ERR("UvcTexture",
+           "Could not find format for still image size "
+               << size[0] << "x" << size[1] << "): " << uvc_strerror(res));
+    return false;
+  }
+
+  res = uvc_trigger_still(device_handle, &still_control);
+
+  if (res < 0) {
+    GM_ERR("UvcTexture",
+           "Could not trigger still image capture: " << uvc_strerror(res));
+    return false;
+  }
+
+  GM_DBG2("UvcTexture",
+          "Triggered still image capture (" << size[0] << "x" << size[1]
+                                            << ")");
+  return true;
 }
 
 uvc_frame_format UvcTexture::Impl::formatFromString(std::string s) {
