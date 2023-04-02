@@ -154,7 +154,7 @@ GLuint ImageTexture::Impl::update(size_t frame_number, Eye eye) {
     if (texture_id) return texture_id;
 
     GM_DBG2("ImageTexture", "Loading image");
-    auto filename = file.u8string();
+    auto filename = file.string();
     FIBITMAP *image = loadImage(filename);
     if (!image) {
       fail = true;
@@ -178,7 +178,7 @@ GLuint ImageTexture::Impl::update(size_t frame_number, Eye eye) {
     GM_DBG2("ImageTexture",
             "Asynchroneous loading not triggered - triggering and waiting.");
     load_frame = animation_frame;
-    load_filename = getFrameFilename(file.u8string(), load_frame);
+    load_filename = getFrameFilename(file.string(), load_frame);
     load_condition.notify_all();
     while (load_image == nullptr) {
       load_condition.wait_for(guard, std::chrono::seconds(1));
@@ -196,13 +196,13 @@ GLuint ImageTexture::Impl::update(size_t frame_number, Eye eye) {
     GM_DBG2("ImageTexture",
             "Triggering asynchroneous pre-loading of frame " << next_frame << ".");
     load_frame = next_frame;
-    load_filename = getFrameFilename(file.u8string(), load_frame);
+    load_filename = getFrameFilename(file.string(), load_frame);
     load_condition.notify_all();
   } else if (do_loop) {
     GM_DBG2("ImageTexture",
             "Triggering asynchroneous pre-loading of frame " << next_frame << ".");
     load_frame = animation_range[0];
-    load_filename = getFrameFilename(file.u8string(), load_frame);
+    load_filename = getFrameFilename(file.string(), load_frame);
     load_condition.notify_all();
   }
 
@@ -263,13 +263,13 @@ void ImageTexture::Impl::findRange() {
   size_t range_min = std::numeric_limits<size_t>::max();
   size_t range_max = std::numeric_limits<size_t>::min();
 
-  const std::string filename = file.filename().u8string();
+  const std::string filename = file.filename().string();
   const auto folder =
       file.has_parent_path() ? file.parent_path() : std::filesystem::path(".");
   if (!std::filesystem::is_directory(folder)) {
     GM_ERR("ImageTexture",
            "Could not autodetect range of current filename '"
-               << filename << "' because folder '" << folder.u8string()
+               << filename << "' because folder '" << folder.string()
                << "' is not a folder.");
     animate = false;
     fail = true;
@@ -281,7 +281,7 @@ void ImageTexture::Impl::findRange() {
   if (!std::regex_match(filename, match1, regex1) || match1.size() != 3) {
     GM_ERR("ImageTexture",
            "Could not autodetect range of current filename '"
-               << filename << "' (in folder '" << folder.u8string() << "')");
+               << filename << "' (in folder '" << folder.string() << "')");
     animate = false;
     fail = true;
     return;
@@ -351,7 +351,7 @@ FIBITMAP *ImageTexture::Impl::loadImage(std::string filename) {
     filename =
         gmCore::FileResolver::getDefault()
             ->resolve(filename, gmCore::FileResolver::Check::ReadableFile)
-            .u8string();
+            .string();
   } catch (gmCore::InvalidArgument &err) {
     GM_ERR("ImageTexture", err.what);
     return nullptr;

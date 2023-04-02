@@ -105,10 +105,10 @@ void ImportLibrary::Impl::initialize() {
 
 #ifdef WIN32
 
-  handle = GetModuleHandle(library_file.u8string().c_str());
+  handle = GetModuleHandle(library_file.string().c_str());
 
   if (!handle)
-    handle = LoadLibrary(library_file.u8string().c_str());
+    handle = LoadLibrary(library_file.string().c_str());
 
   if (!handle) {
     TCHAR buffer[255];

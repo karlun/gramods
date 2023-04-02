@@ -228,7 +228,7 @@ void ProjectionTextureGenerator::Impl::saveImage() {
          image_data.data(),
          resolution[0] * resolution[1] * 3 * 4);
 
-  bool success = FreeImage_Save(FIF_TIFF, bitmap, file.u8string().c_str(), TIFF_LZW);
+  bool success = FreeImage_Save(FIF_TIFF, bitmap, file.string().c_str(), TIFF_LZW);
 
   FreeImage_Unload(bitmap);
 

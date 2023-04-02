@@ -56,7 +56,7 @@ public:
   */
   std::filesystem::path resolve(std::filesystem::path path,
                                 Check check = Check::None) {
-    return resolve(path.u8string(), check);
+    return resolve(path.string(), check);
   }
 
   /**

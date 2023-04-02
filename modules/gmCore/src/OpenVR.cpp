@@ -149,7 +149,7 @@ void OpenVR::Impl::setup_openvr() {
   if (!manifest_path || !action_set) return;
 
   auto err =
-        vr::VRInput()->SetActionManifestPath(manifest_path->u8string().c_str());
+        vr::VRInput()->SetActionManifestPath(manifest_path->string().c_str());
   if (err != vr::VRInputError_None) 
     GM_WRN("OpenVR",
            "Failed to set manifest path to " << *manifest_path << ": "

@@ -44,7 +44,7 @@ ADD_EXECUTABLE(gm-tracker-pivotpoint src/main.cpp)
 TARGET_INCLUDE_DIRECTORIES(gm-tracker-pivotpoint PUBLIC ${APP_INCLUDE_DIRS})
 TARGET_LINK_LIBRARIES(gm-tracker-pivotpoint ${APP_LIBS})
 
-SET_PROPERTY(TARGET gm-tracker-pivotpoint PROPERTY CXX_STANDARD 17)
+SET_PROPERTY(TARGET gm-tracker-pivotpoint PROPERTY CXX_STANDARD 20)
 SET_PROPERTY(TARGET gm-tracker-pivotpoint PROPERTY DEBUG_POSTFIX ${CMAKE_DEBUG_POSTFIX})
 
 INSTALL(TARGETS gm-tracker-pivotpoint
