@@ -36,7 +36,8 @@
 
       <param name="tileLocation" value="0 0 1 2"/>
       <RemapperView>
-        <AngularFisheyeCoordinatesMapper KEY="from"/>
+        <AngularFisheyeCoordinatesMapper
+            coverageAngle="6.283" KEY="from"/>
         <EquirectangularCoordinatesMapper KEY="to"/>
       <SpatialSphericalView
           linearInterpolation="1">
@@ -61,7 +62,8 @@
 
       <param name="tileLocation" value="1 0 1 2"/>
       <RemapperView>
-        <AngularFisheyeCoordinatesMapper KEY="from"/>
+        <AngularFisheyeCoordinatesMapper
+            coverageAngle="6.283" KEY="from"/>
         <EquirectangularCoordinatesMapper KEY="to"/>
       <PosedSphericalView
           linearInterpolation="1">
