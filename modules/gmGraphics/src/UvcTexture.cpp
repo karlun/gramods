@@ -193,6 +193,7 @@ void UvcTexture::Impl::update() {
     texture_up_to_date = true;
 
     uvc_free_frame(frm_cache);
+    frm_cache = nullptr;
     
   } else {
     GM_RUNONCE(GM_ERR("UvcTexture", "Unsupported format " << formatToString(frm_cache->frame_format) << " to make texture of unconverted - consider setting ConvertToRgb to true."));
