@@ -5,6 +5,7 @@
 
 #include <gmCore/RunOnce.hh>
 #include <gmCore/Console.hh>
+#include <gmCore/StringFile.hh>
 
 #include <libuvc/libuvc.h>
 #include <stdio.h>
@@ -276,14 +277,18 @@ bool UvcTexture::Impl::negotiate_format() {
 
   /* Print out a message containing all the information that libuvc
    * knows about the device */
-  uvc_print_diag(device_handle, stderr);
+  gmCore::StringFile string_file;
+  uvc_print_diag(device_handle, string_file.getFilePtr());
+  GM_DBG2("UvcTexture", string_file.finalize());
 
   uvc_error_t res = uvc_get_stream_ctrl_format_size
     (device_handle, &stream_control,
      format, resolution[0], resolution[1], framerate);
 
   /* Print out the result */
-  uvc_print_stream_ctrl(&stream_control, stderr);
+  uvc_print_stream_ctrl(&stream_control, string_file.getFilePtr());
+  GM_DBG2("UvcTexture", string_file.finalize());
+
   if (res < 0) {
     closeAll();
 
