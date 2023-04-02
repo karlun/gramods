@@ -305,9 +305,8 @@ bool UvcTexture::Impl::start_streaming() {
   if (res < 0) {
     closeAll();
 
-    uvc_perror(res, "start_streaming"); /* unable to start stream */
-    throw std::runtime_error(GM_STR("Unable to start stream: "
-                                    << uvc_strerror(res)));
+    GM_ERR("UvcTexture", "Unable to start stream: " << uvc_strerror(res));
+    return false;
   }
   GM_DBG1("UvcTexture", "Started UVC streaming");
   return true;
