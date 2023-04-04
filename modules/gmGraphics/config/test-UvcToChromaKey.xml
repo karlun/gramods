@@ -31,7 +31,7 @@
                 resolution="640 480"
                 framerate="20"
                 format="YUYV"
-                convertToRgb="false"/>
+                decode="false"/>
           </YuvDecodeTexture>
         </ChromaKeyTexture>
       </TextureRenderer>

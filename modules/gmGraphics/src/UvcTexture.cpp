@@ -5,6 +5,7 @@
 
 #include <gmCore/RunOnce.hh>
 #include <gmCore/Console.hh>
+#include <gmCore/StringFile.hh>
 
 #include <libuvc/libuvc.h>
 #include <stdio.h>
@@ -51,6 +52,8 @@ struct UvcTexture::Impl {
 
   void startAll(int vendor, int product, std::string serial);
   void closeAll();
+
+  bool triggerStill(gmCore::size2 res);
 
   void update();
   GLuint getGLTextureID() { return texture_id; }
@@ -192,6 +195,7 @@ void UvcTexture::Impl::update() {
     texture_up_to_date = true;
 
     uvc_free_frame(frm_cache);
+    frm_cache = nullptr;
     
   } else {
     GM_RUNONCE(GM_ERR("UvcTexture", "Unsupported format " << formatToString(frm_cache->frame_format) << " to make texture of unconverted - consider setting ConvertToRgb to true."));
@@ -276,14 +280,18 @@ bool UvcTexture::Impl::negotiate_format() {
 
   /* Print out a message containing all the information that libuvc
    * knows about the device */
-  uvc_print_diag(device_handle, stderr);
+  gmCore::StringFile string_file;
+  uvc_print_diag(device_handle, string_file.getFilePtr());
+  GM_DBG2("UvcTexture", string_file.finalize());
 
   uvc_error_t res = uvc_get_stream_ctrl_format_size
     (device_handle, &stream_control,
      format, resolution[0], resolution[1], framerate);
 
   /* Print out the result */
-  uvc_print_stream_ctrl(&stream_control, stderr);
+  uvc_print_stream_ctrl(&stream_control, string_file.getFilePtr());
+  GM_DBG2("UvcTexture", string_file.finalize());
+
   if (res < 0) {
     closeAll();
 
@@ -300,9 +308,8 @@ bool UvcTexture::Impl::start_streaming() {
   if (res < 0) {
     closeAll();
 
-    uvc_perror(res, "start_streaming"); /* unable to start stream */
-    throw std::runtime_error(GM_STR("Unable to start stream: "
-                                    << uvc_strerror(res)));
+    GM_ERR("UvcTexture", "Unable to start stream: " << uvc_strerror(res));
+    return false;
   }
   GM_DBG1("UvcTexture", "Started UVC streaming");
   return true;
@@ -373,6 +380,39 @@ void UvcTexture::setFormat(std::string fmt) {
 void UvcTexture::setDecode(bool on) {
   _impl->decode_to_rgb = on;
   _impl->texture_up_to_date = false;
+}
+
+bool UvcTexture::triggerStill(gmCore::size2 res) {
+  return _impl->triggerStill(res);
+}
+
+bool UvcTexture::Impl::triggerStill(gmCore::size2 size) {
+
+  std::lock_guard<std::mutex> guard(data_lock);
+
+  uvc_still_ctrl_t still_control;
+  uvc_error_t res = uvc_get_still_ctrl_format_size(
+      device_handle, &stream_control, &still_control, size[0], size[1]);
+
+  if (res < 0) {
+    GM_ERR("UvcTexture",
+           "Could not find format for still image size "
+               << size[0] << "x" << size[1] << "): " << uvc_strerror(res));
+    return false;
+  }
+
+  res = uvc_trigger_still(device_handle, &still_control);
+
+  if (res < 0) {
+    GM_ERR("UvcTexture",
+           "Could not trigger still image capture: " << uvc_strerror(res));
+    return false;
+  }
+
+  GM_DBG2("UvcTexture",
+          "Triggered still image capture (" << size[0] << "x" << size[1]
+                                            << ")");
+  return true;
 }
 
 uvc_frame_format UvcTexture::Impl::formatFromString(std::string s) {

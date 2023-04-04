@@ -23,7 +23,7 @@
               resolution="640 480"
               framerate="20"
               format="YUYV"
-              convertToRgb="false"/>
+              decode="false"/>
         </TextureRenderer>
       </View>
 

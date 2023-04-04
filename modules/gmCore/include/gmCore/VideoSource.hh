@@ -6,8 +6,7 @@
 
 #ifdef gramods_ENABLE_OpenCV
 
-#include <gmCore/Object.hh>
-#include <gmCore/OFactory.hh>
+#include <gmCore/size.hh>
 
 #include <opencv2/opencv.hpp>
 
@@ -20,6 +19,12 @@ BEGIN_NAMESPACE_GMCORE;
 class VideoSource {
 
 public:
+
+  /**
+     Trigger a still image capture. Returns false iff still image
+     capture could not be triggered.
+  */
+  virtual bool triggerStill(gmCore::size2 res) = 0;
 
   /**
      Retrieve the latest read image in the video source in OpenCV
