@@ -114,11 +114,13 @@ public:
   */
   void setDecode(bool on);
 
+#ifdef gramods_ENABLE_libuvc_007
   /**
      Trigger a still image capture (UVC STILL_IMAGE_FRAME). Returns
      false iff still image capture could not be triggered.
   */
   bool triggerStill(gmCore::size2 res) override;
+#endif
 
 #ifdef gramods_ENABLE_OpenCV
 

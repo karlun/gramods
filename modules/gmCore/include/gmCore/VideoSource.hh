@@ -21,12 +21,6 @@ class VideoSource {
 public:
 
   /**
-     Trigger a still image capture. Returns false iff still image
-     capture could not be triggered.
-  */
-  virtual bool triggerStill(gmCore::size2 res) = 0;
-
-  /**
      Retrieve the latest read image in the video source in OpenCV
      format.
 

@@ -131,12 +131,6 @@ public:
   void update(gmCore::Updateable::clock::time_point);
 
   /**
-     Trigger a still image capture. Returns false iff still image
-     capture could not be triggered.
-  */
-  bool triggerStill(gmCore::size2 res) override { return false; }
-
-  /**
      Retrieve the latest read image captured.
 
      @param[out] image The latest image in the video source.

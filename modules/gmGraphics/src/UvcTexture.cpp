@@ -53,7 +53,9 @@ struct UvcTexture::Impl {
   void startAll(int vendor, int product, std::string serial);
   void closeAll();
 
+#ifdef gramods_ENABLE_libuvc_007
   bool triggerStill(gmCore::size2 res);
+#endif
 
   void update();
   GLuint getGLTextureID() { return texture_id; }
@@ -382,6 +384,7 @@ void UvcTexture::setDecode(bool on) {
   _impl->texture_up_to_date = false;
 }
 
+#ifdef gramods_ENABLE_libuvc_007
 bool UvcTexture::triggerStill(gmCore::size2 res) {
   return _impl->triggerStill(res);
 }
@@ -414,6 +417,7 @@ bool UvcTexture::Impl::triggerStill(gmCore::size2 size) {
                                             << ")");
   return true;
 }
+#endif
 
 uvc_frame_format UvcTexture::Impl::formatFromString(std::string s) {
 

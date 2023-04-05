@@ -52,6 +52,7 @@ IF(libuvc_FOUND)
     LIST (APPEND PRIVATE_INCLUDE_DIRS ${libuvc_INCLUDE_DIR})
     LIST (APPEND PRIVATE_LIBS ${libuvc_LIBRARIES})
   ENDIF(gramods_ENABLE_libuvc)
+  OPTION(gramods_ENABLE_libuvc_007 "Enable functionality that requires libuvc 0.0.7" OFF)
 ENDIF(libuvc_FOUND)
 
 FIND_PACKAGE(OpenSceneGraph COMPONENTS osgViewer)
