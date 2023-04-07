@@ -37,10 +37,10 @@
       --output-file se.liu.vortex.workbench-3DTV.xml ^
       --config urn:gramods:config/output-normal-to-console.xml ^
       --config urn:gramods:config/se.liu/mit.vive.calibration-tracker.xml ^
-      --a-point -0.55,-0.325,0 ^
-      --a-point -0.55,+0.325,0 ^
-      --a-point +0.55,+0.325,0 ^
-      --a-point +0.55,-0.325,0
+      --a-point -0.555,-0.312,0 ^
+      --a-point -0.555,+0.312,0 ^
+      --a-point +0.555,+0.312,0 ^
+      --a-point +0.555,-0.312,0
 
   ]]>
 
@@ -68,8 +68,8 @@
     </TrackedViewpoint>
 
     <SpatialPlanarView
-        topLeftCorner="-0.55 0.325 0"
-        bottomRightCorner="0.55 -0.325 0"
+        topLeftCorner="-0.555 0.312 0"
+        bottomRightCorner="0.555 -0.312 0"
         upDirection="0 1 0">
       <SideBySideMultiplexer/>
     </SpatialPlanarView>
