@@ -17,9 +17,19 @@ function(install_dependencies EXEC_FILES LIB_FILES)
 
   INSTALL(CODE [[
 
+    SET (NEW_DEP_FOLDERS "")
+    FOREACH (path ${DEP_FOLDERS})
+	    LIST(APPEND NEW_DEP_FOLDERS ${path})
+	    LIST(APPEND NEW_DEP_FOLDERS ${path}/bin)
+	    LIST(APPEND NEW_DEP_FOLDERS ${path}/lib)
+    ENDFOREACH()
+    SET (DEP_FOLDERS ${NEW_DEP_FOLDERS})
+
     LIST(APPEND pre_exclude_regexes "api-ms-.*") # windows API
     LIST(APPEND pre_exclude_regexes "ext-ms-.*") # windows API
     LIST(APPEND post_exclude_regexes ".*WINDOWS[\\/]system32.*") # windows system dlls
+
+    MESSAGE("Searching for dependencies in ${DEP_FOLDERS}")
 
     FILE(GET_RUNTIME_DEPENDENCIES
       EXECUTABLES ${EXEC_FILES}

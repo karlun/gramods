@@ -1,28 +1,38 @@
 # Final resort if no "real" tinyxml2-config.cmake file is available
 
-if(NOT TinyXML2_ROOT_DIR AND DEFINED ENV{TinyXML2_ROOT_DIR})
-  SET(TinyXML2_ROOT_DIR "$ENV{TinyXML2_ROOT_DIR}" CACHE PATH
-    "TinyXML2 base directory location (optional, used for nonstandard installation paths)")
-endif()
+IF (NOT WIN32)
 
-if(TinyXML2_ROOT_DIR)
-  SET(TinyXML2_INCLUDE_PATH PATHS "${TinyXML2_ROOT_DIR}/include" NO_DEFAULT_PATH)
-  SET(TinyXML2_LIBRARY_PATH PATHS "${TinyXML2_ROOT_DIR}/lib"     NO_DEFAULT_PATH)
-endif()
+  FIND_PATH(TinyXML2_INCLUDE_DIR NAMES tinyxml2.h
+    DOC "Path to TinyXML2 include folder")
+  FIND_LIBRARY(TinyXML2_LIBRARY NAMES tinyxml2
+    DOC "Path to shared library for TinyXML2")
 
-FIND_PATH(TinyXML2_INCLUDE_DIR NAMES tinyxml2.h PATH_SUFFIXES "tinyxml2" ${TinyXML2_INCLUDE_PATH})
-FIND_LIBRARY(TinyXML2_LIBRARY_RELEASE NAMES tinyxml2 PATH_SUFFIXES "tinyxml2" ${TinyXML2_LIBRARY_PATH})
-FIND_LIBRARY(TinyXML2_LIBRARY_DEBUG NAMES tinyxml2_d PATH_SUFFIXES "tinyxml2" ${TinyXML2_LIBRARY_PATH})
+  ADD_LIBRARY(tinyxml2::tinyxml2 SHARED IMPORTED)
+  IF(TinyXML2_INCLUDE_DIR AND TinyXML2_LIBRARY)
+    SET_TARGET_PROPERTIES(tinyxml2::tinyxml2 PROPERTIES
+      INTERFACE_INCLUDE_DIRECTORIES ${TinyXML2_INCLUDE_DIR}
+      IMPORTED_LOCATION ${TinyXML2_LIBRARY})
+  ELSE()
+    MESSAGE(SEND_ERROR "Could not set properties of target tinyxml2::tinyxml2 - set TinyXML2_* or unset TinyXML2_DIR")
+  ENDIF()
 
-ADD_LIBRARY(tinyxml2::tinyxml2 SHARED IMPORTED)
-IF(TinyXML2_INCLUDE_DIR AND (TinyXML2_LIBRARY_RELEASE OR TinyXML2_LIBRARY_DEBUG))
-  SET_TARGET_PROPERTIES(tinyxml2::tinyxml2 PROPERTIES
-    INTERFACE_INCLUDE_DIRECTORIES ${TinyXML2_INCLUDE_DIR}
-    IMPORTED_LOCATION_RELEASE ${TinyXML2_LIBRARY_RELEASE}
-    IMPORTED_LOCATION_DEBUG ${TinyXML2_LIBRARY_DEBUG}
-    IMPORTED_LOCATION_RELWITHDEBINFO ${TinyXML2_LIBRARY_RELEASE}
-    INTERFACE_LINK_LIBRARIES tinyxml2
-    )
 ELSE()
-  MESSAGE(SEND_ERROR "Could not set properties of target tinyxml2::tinyxml2 - set TinyXML2_INCLUDE_DIR and TinyXML2_LIBRARY or unset TinyXML2_DIR")
+
+  FIND_PATH(TinyXML2_INCLUDE_DIR NAMES tinyxml2.h PATH_SUFFIXES "tinyxml2"
+    DOC "Path to TinyXML2 include folder")
+  FIND_FILE(TinyXML2_LIBRARY NAMES tinyxml2.dll PATH_SUFFIXES "bin"
+    DOC "Path to shared library for TinyXML2 (DLL on Windows)")
+  FIND_LIBRARY(TinyXML2_IMPLIB NAMES tinyxml2 PATH_SUFFIXES "lib"
+    DOC "Path to library file for TinyXML2 (.lib file)")
+
+  ADD_LIBRARY(tinyxml2::tinyxml2 SHARED IMPORTED)
+  IF(TinyXML2_INCLUDE_DIR AND TinyXML2_LIBRARY AND TinyXML2_IMPLIB)
+    SET_TARGET_PROPERTIES(tinyxml2::tinyxml2 PROPERTIES
+      INTERFACE_INCLUDE_DIRECTORIES ${TinyXML2_INCLUDE_DIR}
+      IMPORTED_LOCATION ${TinyXML2_LIBRARY}
+      IMPORTED_IMPLIB ${TinyXML2_IMPLIB})
+  ELSE()
+    MESSAGE(SEND_ERROR "Could not set properties of target tinyxml2::tinyxml2 - set TinyXML2_* or unset TinyXML2_DIR")
+  ENDIF()
+
 ENDIF()
