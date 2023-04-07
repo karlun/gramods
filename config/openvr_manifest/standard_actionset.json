@@ -1,0 +1,30 @@
+{
+      "default_bindings": [
+         {
+            "controller_type" : "generic",
+            "binding_url" : "standard_bindings.json"
+         }
+      ], 
+  "actions": [
+    {
+      "name": "/actions/std/in/MainButton",
+      "type": "boolean"
+    },
+    {
+      "name": "/actions/std/in/SecondButton",
+      "type": "boolean"
+    },
+    {
+      "name": "/actions/std/in/AnalogInput",
+      "type": "vector2"
+    }
+  ],
+    "localization" : [
+        {
+            "language_tag": "en_US",
+            "/actions/std/in/MainButton" : "Main Button",
+            "/actions/std/in/SecondButton" : "Second Button",
+            "/actions/std/in/AnalogInput" : "Analog Input"
+        }
+    ]
+}

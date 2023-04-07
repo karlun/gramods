@@ -56,4 +56,9 @@ namespace gramods {
 #cmakedefine gramods_ENABLE_SDL2
 #endif
 
+#cmakedefine OpenVR_FOUND
+#ifdef OpenVR_FOUND
+#cmakedefine gramods_ENABLE_OpenVR
+#endif
+
 #endif

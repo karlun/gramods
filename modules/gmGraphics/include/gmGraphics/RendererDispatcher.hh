@@ -38,7 +38,9 @@ public:
     ViewSettings(size_t frame_number, std::shared_ptr<Viewpoint> vp)
       : frame_number(frame_number), viewpoint(vp) {}
 
-    /// The frame currently being rendered.
+    /// The frame currently being rendered. This value is increased by
+    /// one for every time the rendering loop is executed and can thus
+    /// be used to track e.g. caching.
     size_t frame_number;
 
     /// The renderers to render in the view.
