@@ -17,6 +17,7 @@ BEGIN_NAMESPACE_GMTRACK;
 GM_OFI_DEFINE(SampleCollector);
 GM_OFI_PARAM(SampleCollector, samplesPerSecond, float, SampleCollector::setSamplesPerSecond);
 GM_OFI_PARAM(SampleCollector, warningThreshold, float, SampleCollector::setWarningThreshold);
+GM_OFI_PARAM(SampleCollector, orientationWarningThreshold, float, SampleCollector::setOrientationWarningThreshold);
 GM_OFI_PARAM(SampleCollector, trackerPosition, Eigen::Vector3f, SampleCollector::addTrackerPosition);
 GM_OFI_PARAM(SampleCollector, trackerOrientation, Eigen::Quaternionf, SampleCollector::addTrackerOrientation);
 GM_OFI_POINTER(SampleCollector, controller, Controller, SampleCollector::setController);
@@ -51,6 +52,10 @@ void SampleCollector::setSamplesPerSecond(float n) {
 
 void SampleCollector::setWarningThreshold(float d) {
   _impl->warning_threshold = d;
+}
+
+void SampleCollector::setOrientationWarningThreshold(float d) {
+  _impl->orientation_warning_threshold = d;
 }
 
 void SampleCollector::Impl::update(clock::time_point now) {
@@ -115,66 +120,84 @@ void SampleCollector::Impl::update(clock::time_point now) {
     return;
   }
 
-  Eigen::Vector3f pos;
-  getAverage(sample_positions, pos);
+  float stddev, maxdev;
+  Eigen::Vector3f pos = getAverage(sample_positions, &stddev, &maxdev);
   tracker_positions.push_back(pos);
+
+  if (maxdev > warning_threshold) {
+    GM_WRN("SampleCollector",
+           "Estimated mean, " << pos.transpose() << " (stddev " << stddev
+                              << "), has worst offset " << maxdev << " in "
+                              << sample_positions.size() << " samples.");
+  } else {
+    GM_INF("SampleCollector",
+           "Estimated mean: " << pos.transpose() << " (stddev " << stddev
+                              << ", worst offset " << maxdev << ") from "
+                              << sample_positions.size() << " samples.");
+  }
   sample_positions.clear();
 
-  Eigen::Quaternionf ori;
-  getAverage(sample_orientations, ori);
+  Eigen::Quaternionf ori = getAverage(sample_orientations, &stddev, &maxdev);
   tracker_orientations.push_back(ori);
+
+  if (maxdev > orientation_warning_threshold) {
+    GM_WRN("SampleCollector",
+           "Estimated orientation (stddev "
+               << stddev << "), has worst offset " << maxdev << " in "
+               << sample_orientations.size() << " samples.");
+  } else {
+    GM_INF("SampleCollector",
+           "Estimated orientation (stddev "
+               << stddev << ", worst offset " << maxdev << ") from "
+               << sample_orientations.size() << " samples.");
+  }
   sample_orientations.clear();
 }
 
-void SampleCollector::Impl::getAverage(std::vector<Eigen::Vector3f> samples,
-                                       Eigen::Vector3f &x) {
+Eigen::Vector3f SampleCollector::getAverage(
+    std::vector<Eigen::Vector3f> samples, float *stddev, float *maxdev) {
 
   if (samples.empty())
     throw gmCore::InvalidArgument("Cannot average empty vector");
 
   if (samples.size() == 1) {
-    x = samples.front();
-    GM_INF("SampleCollector", "Single sample: " << x.transpose());
-    return;
+    if (stddev) *stddev = 0.f;
+    if (maxdev) *maxdev = 0.f;
+    return samples.front();
   }
 
-  Eigen::Vector3f sum = Eigen::Vector3f::Zero();
-  for (auto p : samples) sum += p;
-  x = (1.0 / samples.size()) * sum;
+  Eigen::Vector3f x = Eigen::Vector3f::Zero();
+  for (auto p : samples) x += p;
+  x *= (1.0 / samples.size());
 
-  float stddev = 0.f;
-  for (auto p : samples) stddev += (p - x).squaredNorm();
-  stddev = std::sqrt(stddev);
-
-  float worst_sqr_offset = 0.f;
-  for (size_t idx = 0; idx < samples.size(); ++idx) {
-    float sqr_offset = (samples[idx] - x).squaredNorm();
-    worst_sqr_offset = std::max(worst_sqr_offset, sqr_offset);
+  if (stddev) {
+    float dev = 0.f;
+    for (auto p : samples) dev += (p - x).squaredNorm();
+    *stddev = std::sqrt(dev);
   }
-  float worst_offset = std::sqrt(worst_sqr_offset);
 
-  if (worst_offset > warning_threshold) {
-    GM_WRN("SampleCollector",
-           "Estimated mean, " << x.transpose() << " (stddev " << stddev
-                              << "), has worst offset " << worst_offset
-                              << " in " << samples.size() << " samples.");
-  } else {
-    GM_INF("SampleCollector",
-           "Estimated mean: " << x.transpose() << " (stddev " << stddev
-                              << ", worst offset " << worst_offset << ") from "
-                              << samples.size() << " samples.");
+  if (maxdev) {
+    float dev = 0.f;
+    for (size_t idx = 0; idx < samples.size(); ++idx) {
+      float sqr_offset = (samples[idx] - x).squaredNorm();
+      dev = std::max(dev, sqr_offset);
+    }
+    *maxdev = dev;
   }
+
+  return x;
 }
 
-void SampleCollector::Impl::getAverage(std::vector<Eigen::Quaternionf> samples,
-                                       Eigen::Quaternionf &x) {
+Eigen::Quaternionf SampleCollector::getAverage(
+    std::vector<Eigen::Quaternionf> samples, float *stddev, float *maxdev) {
 
   if (samples.empty())
     throw gmCore::InvalidArgument("Cannot average empty vector");
 
   if (samples.size() == 1) {
-    x = samples.front();
-    return;
+    if (stddev) *stddev = 0.f;
+    if (maxdev) *maxdev = 0.f;
+    return samples.front();
   }
 
   float s = 1.f / samples.size();
@@ -202,7 +225,27 @@ void SampleCollector::Impl::getAverage(std::vector<Eigen::Quaternionf> samples,
     best_value = eigenvalues(idx, 0).real();
   }
 
-  x = Eigen::Quaternionf(V[0], V[1], V[2], V[3]);
+  auto x = Eigen::Quaternionf(V[0], V[1], V[2], V[3]);
+
+  if (stddev) {
+    float dev = 0.f;
+    for (const auto sample : samples) {
+      float a = Eigen::AngleAxisf(sample.conjugate() * x).angle();
+      dev += a * a;
+    }
+    *stddev = std::sqrt(dev);
+  }
+
+  if (maxdev) {
+    float dev = 0.f;
+    for (const auto sample : samples) {
+      float a = Eigen::AngleAxisf(sample.conjugate() * x).angle();
+      dev = std::max(dev, std::abs(a));
+    }
+    *maxdev = dev;
+  }
+
+  return x;
 }
 
 const std::vector<Eigen::Vector3f> &
