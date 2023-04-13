@@ -1,0 +1,30 @@
+<config>
+  <![CDATA[
+
+    Controller configuration for use on LiU MIT Vortex computer to
+    read tracker data directly from the head-mounted display system
+    (HMD).
+
+  ]]>
+
+  <Controller>
+    <OpenVRPoseTracker
+        type="Controller">
+      <OpenVR
+          DEF="OPENVR"
+          manifestPath="urn:gramods:config/openvr_manifest/standard_actionset.json"
+          actionSet="/actions/std"/>
+    </OpenVRPoseTracker>
+
+    <OpenVRAnalogsTracker action="/actions/std/in/AnalogInput">
+      <OpenVR USE="OPENVR"/>
+    </OpenVRAnalogsTracker>
+
+    <OpenVRButtonsTracker>
+      <OpenVR USE="OPENVR"/>
+      <param name="action" value="/actions/std/in/MainButton"/>
+      <param name="action" value="/actions/std/in/SecondButton"/>
+    </OpenVRButtonsTracker>
+  </Controller>
+
+</config>
