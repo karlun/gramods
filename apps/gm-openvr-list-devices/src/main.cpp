@@ -40,6 +40,22 @@ int main(int argc, char *argv[]) {
       "secs");
   cmd.add(arg_delay);
 
+  TCLAP::ValueArg<std::string> arg_manifest(
+      "m", "manifest",
+      "The manifest file to read action set data from. Defaults to"
+      "'urn:gramods:config/openvr_manifest/standard_actionset.json'.",
+      false,
+      "urn:gramods:config/openvr_manifest/standard_actionset.json",
+      "path");
+  cmd.add(arg_manifest);
+
+  TCLAP::ValueArg<std::string> arg_actionset(
+      "a", "actionset",
+      "The actionset to use in the specified manifest. Defaults to"
+      "'/actions/std'.",
+      false, "/actions/std", "id");
+  cmd.add(arg_actionset);
+
   try {
     cmd.parse(argc, argv);
   } catch (const TCLAP::ArgException &e) {
@@ -48,8 +64,8 @@ int main(int argc, char *argv[]) {
   }
 
   std::shared_ptr<gmCore::OpenVR> openvr = std::make_shared<gmCore::OpenVR>();
-  openvr->setManifestPath("urn:gramods:config/openvr_manifest/standard_actionset.json");
-  openvr->setActionSet("/actions/std");
+  openvr->setManifestPath(arg_manifest.getValue());
+  openvr->setActionSet(arg_actionset.getValue());
   openvr->initialize();
 
   if (!arg_loop_count.isSet()) {
