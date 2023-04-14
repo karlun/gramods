@@ -1,4 +1,6 @@
 
+#include <gmCore/MathConstants.hh>
+
 BEGIN_NAMESPACE_GMTRACK;
 
 struct SampleCollector::Impl {
@@ -14,12 +16,10 @@ struct SampleCollector::Impl {
   clock::time_point last_sample_time = clock::time_point::min();
   float samples_per_second = 1;
   float warning_threshold = 0.01f;
+  float orientation_warning_threshold = GM_PI_4;
   bool collecting = false;
 
   virtual void update(clock::time_point t);
-
-  void getAverage(std::vector<Eigen::Vector3f> samples, Eigen::Vector3f &x);
-  void getAverage(std::vector<Eigen::Quaternionf> samples, Eigen::Quaternionf &x);
 
   std::shared_ptr<gramods::gmTrack::Controller> controller;
 };

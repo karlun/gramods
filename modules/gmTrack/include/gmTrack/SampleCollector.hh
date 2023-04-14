@@ -71,6 +71,14 @@ public:
   void setWarningThreshold(float d);
 
   /**
+     Sets the data offset required to trigger a warning. Default is
+     π/4 radians.
+
+     \gmXmlTag{gmTrack,SampleCollector,orientationWarningThreshold}
+  */
+  void setOrientationWarningThreshold(float d);
+
+  /**
      Returns the current list of tracker positions.
   */
   const std::vector<Eigen::Vector3f> &getTrackerPositions() const;
@@ -79,6 +87,23 @@ public:
      Returns the current list of tracker orientations.
   */
   const std::vector<Eigen::Quaternionf> &getTrackerOrientations() const;
+
+  /**
+     Calculates and returns the average point of a set of
+     samples. Optionally also standard deviation and maximum deviation
+     can be estimated.
+  */
+  static Eigen::Vector3f getAverage(std::vector<Eigen::Vector3f> samples,
+                                    float *stddev = nullptr,
+                                    float *maxdev = nullptr);
+  /**
+     Calculates and returns the average point of a set of
+     samples. Optionally also standard deviation and maximum deviation
+     can be estimated (expressed in radians).
+  */
+  static Eigen::Quaternionf getAverage(std::vector<Eigen::Quaternionf> samples,
+                                       float *stddev = nullptr,
+                                       float *maxdev = nullptr);
 
   GM_OFI_DECLARE;
 
