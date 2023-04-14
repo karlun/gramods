@@ -178,11 +178,8 @@ Eigen::Vector3f SampleCollector::getAverage(
 
   if (maxdev) {
     float dev = 0.f;
-    for (size_t idx = 0; idx < samples.size(); ++idx) {
-      float sqr_offset = (samples[idx] - x).squaredNorm();
-      dev = std::max(dev, sqr_offset);
-    }
-    *maxdev = dev;
+    for (auto p : samples) dev = std::max(dev, (p - x).squaredNorm());
+    *maxdev = std::sqrt(dev);
   }
 
   return x;
