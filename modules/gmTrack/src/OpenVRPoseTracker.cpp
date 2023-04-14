@@ -14,7 +14,6 @@ GM_OFI_DEFINE(OpenVRPoseTracker);
 GM_OFI_PARAM2(OpenVRPoseTracker, type, std::string, setType);
 GM_OFI_PARAM2(OpenVRPoseTracker, role, std::string, setRole);
 GM_OFI_PARAM2(OpenVRPoseTracker, serial, std::string, setSerial);
-GM_OFI_PARAM2(OpenVRPoseTracker, forceLocalBaseTo, std::string, setForceLocalBaseTo);
 GM_OFI_POINTER2(OpenVRPoseTracker, openVR, gmCore::OpenVR, setOpenVR);
 
 struct OpenVRPoseTracker::Impl {
@@ -27,7 +26,6 @@ struct OpenVRPoseTracker::Impl {
   std::optional<vr::ETrackedDeviceClass> type;
   std::optional<vr::ETrackedControllerRole> role;
   std::optional<std::string> serial;
-  std::optional<std::string> force_base_to;
 
   std::optional<size_t> tracker_idx;
 };
@@ -87,13 +85,6 @@ void OpenVRPoseTracker::setSerial(std::string s) {
     _impl->serial = std::nullopt;
   else
     _impl->serial = s;
-}
-
-void OpenVRPoseTracker::setForceLocalBaseTo(std::string s) {
-  if (s.empty())
-    _impl->force_base_to = std::nullopt;
-  else
-    _impl->force_base_to = s;
 }
 
 bool OpenVRPoseTracker::getPose(PoseSample &p) {

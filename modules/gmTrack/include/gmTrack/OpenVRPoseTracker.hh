@@ -49,18 +49,6 @@ public:
   void setSerial(std::string);
 
   /**
-     Set a base standard to force the tracked pose into. Since OpenVR
-     changes the type (class) of a device depending on the number of
-     other devices connected, this can also result in a change in
-     orientation for the local base of the device. To avoid this you
-     may set this parameter to the base standard the pose should be
-     converted to, regardless of its current type (class).
-
-     \gmXmlTag{gmTrack,OpenVRPoseTracker,forceLocalBaseTo}
-  */
-  void setForceLocalBaseTo(std::string);
-
-  /**
      Replaces the contents of p with pose data from the specified
      OpenVR pose source. Returns true if data could be read, false
      otherwise. Use sample time to check that the data are fresh.
