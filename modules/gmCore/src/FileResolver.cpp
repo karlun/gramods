@@ -283,7 +283,7 @@ std::filesystem::path FileResolver::Impl::resolve(std::string str_path, size_t r
     return resolve(str_path, recursion + 1);
   }
 
-  return str_path;
+  return std::filesystem::path(str_path).make_preferred();
 }
 
 END_NAMESPACE_GMCORE;
