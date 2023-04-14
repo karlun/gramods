@@ -56,14 +56,14 @@ int main(int argc, char *argv[]) {
     if (arg_delay.isSet())
       std::this_thread::sleep_for(std::chrono::seconds(arg_delay.getValue()));
 
-	gmCore::Updateable::updateAll();
+    gmCore::Updateable::updateAll();
     print_openvr_data(openvr.get());
 
   } else {
     if (arg_loop_count.getValue() == 0) {
       while (true) {
 
-		gmCore::Updateable::updateAll();
+        gmCore::Updateable::updateAll();
         print_openvr_data(openvr.get());
 
         if (arg_delay.isSet())
@@ -74,7 +74,7 @@ int main(int argc, char *argv[]) {
 
       for (size_t idx = 0; idx < arg_loop_count.getValue(); idx++) {
 
-		gmCore::Updateable::updateAll();
+        gmCore::Updateable::updateAll();
         print_openvr_data(openvr.get());
 
         if (arg_delay.isSet())
