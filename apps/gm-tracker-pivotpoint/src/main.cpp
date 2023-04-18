@@ -122,10 +122,9 @@ int main(int argc, char *argv[]) {
   Eigen::MatrixXf D(3 * diffs.size() + 1, 4);
   for (size_t idx = 0; idx < diffs.size(); ++idx)
     D.block<3, 4>(3 * idx, 0) = diffs[idx].topRows(3);
-  D.block<1, 4>(diffs.size(), 0) =
-      Eigen::Vector3f::Zero().homogeneous().transpose();
-  Eigen::MatrixXf zero = Eigen::MatrixXf::Zero(3 * diffs.size() + 1, 1);
-  zero(transforms.size(), 0) = 1.f;
+  D.bottomRows(1) = Eigen::Vector3f::Zero().homogeneous().transpose();
+  Eigen::VectorXf zero = Eigen::VectorXf::Zero(3 * diffs.size() + 1);
+  zero.bottomRows(1)[0] = 1.f;
 
   Eigen::JacobiSVD<Eigen::MatrixXf> svd(D, Eigen::ComputeThinU | Eigen::ComputeThinV);
   Eigen::Vector4f x = svd.solve(zero);
