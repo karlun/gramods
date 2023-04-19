@@ -30,31 +30,6 @@ inline std::string trim(const std::string &s) {
                 }).base();
   return (wsback <= wsfront ? std::string() : std::string(wsfront, wsback));
 }
-
-std::filesystem::path getExecPath() {
-
-#ifdef _WIN32
-
-  constexpr int PATH_MAX = 32768;
-  wchar_t exe_path[PATH_MAX] = {0};
-
-  DWORD num_chars = GetModuleFileNameW(NULL, exe_path, PATH_MAX);
-
-  if (num_chars == 0) {
-    GM_WRN("FileResolver", "Failed getting Executable path: " << GetLastError());
-    return {};
-  }
-
-  return std::filesystem::path(exe_path).parent_path();
-
-#else
-
-  std::filesystem::path exe_link("/proc/self/exe");
-  std::filesystem::path exe_path = std::filesystem::read_symlink(exe_link);
-  return std::filesystem::path(exe_path).parent_path();
-
-#endif
-}
 }
 
 BEGIN_NAMESPACE_GMCORE;
@@ -108,25 +83,31 @@ FileResolver::FileResolver() : _impl(std::make_unique<Impl>()) {
     }
   }
 
-  std::filesystem::path exec_path = getExecPath();
-  if (std::filesystem::is_directory(exec_path)) {
-
-    std::filesystem::path urn_file = exec_path / "gramods.urn";
-
-    if (!std::filesystem::exists(urn_file)) {
-      GM_WRN("FileResolver",
-             "Exec folder does not contain a gramods.urn file: '" << urn_file
-                                                                  << "'");
-    } else if (std::filesystem::is_directory(urn_file)) {
-      GM_WRN("FileResolver",
-             "File gramods.urn in exec folder is not a valid file: '"
-                 << urn_file << "'");
-    } else if (readUrnFile(urn_file)) {
-      return;
-    }
+  std::filesystem::path exec_folder = getPathToExecutable().parent_path();
+  if (!std::filesystem::is_directory(exec_folder)) {
+    GM_WRN(
+        "FileResolver",
+        "Could not find 'gramods.urn' file (tried $GM_URN_FILE, $GM_HOME and exec folder)");
+    return;
   }
 
-  GM_WRN("FileResolver", "Could not find 'gramods.urn' file (tried $GM_URN_FILE, $GM_HOME and exec folder)");
+  std::filesystem::path urn_file = exec_folder / "gramods.urn";
+
+  if (!std::filesystem::exists(urn_file)) {
+    GM_WRN("FileResolver",
+           "Exec folder does not contain a gramods.urn file: '" << urn_file
+                                                                << "'");
+  } else if (std::filesystem::is_directory(urn_file)) {
+    GM_WRN("FileResolver",
+           "File gramods.urn in exec folder is not a valid file: '" << urn_file
+                                                                    << "'");
+  } else if (readUrnFile(urn_file)) {
+    return;
+  }
+
+  GM_WRN(
+      "FileResolver",
+      "Could not find a readable 'gramods.urn' file (tried $GM_URN_FILE, $GM_HOME and exec folder)");
 }
 
 FileResolver::~FileResolver() {}
@@ -284,6 +265,31 @@ std::filesystem::path FileResolver::Impl::resolve(std::string str_path, size_t r
   }
 
   return std::filesystem::path(str_path).make_preferred();
+}
+
+std::filesystem::path FileResolver::getPathToExecutable() {
+
+#ifdef _WIN32
+
+  constexpr int PATH_MAX = 32768;
+  wchar_t exe_path[PATH_MAX] = {0};
+
+  DWORD num_chars = GetModuleFileNameW(NULL, exe_path, PATH_MAX);
+
+  if (num_chars == 0) {
+    GM_WRN("FileResolver", "Failed getting Executable path: " << GetLastError());
+    return {};
+  }
+
+  return std::filesystem::path(exe_path);
+
+#else
+
+  std::filesystem::path exe_link("/proc/self/exe");
+  std::filesystem::path exe_path = std::filesystem::read_symlink(exe_link);
+  return std::filesystem::path(exe_path);
+
+#endif
 }
 
 END_NAMESPACE_GMCORE;

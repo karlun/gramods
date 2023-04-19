@@ -60,6 +60,11 @@ public:
   }
 
   /**
+     Returns the path to the running executable.
+  */
+  static std::filesystem::path getPathToExecutable();
+
+  /**
      Returns the default resolver.
   */
   static FileResolver * getDefault() {
