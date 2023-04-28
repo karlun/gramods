@@ -7,14 +7,18 @@
 
   ]]>
 
+  <OpenVR
+      DEF="OPENVR"
+      manifestPath="urn:gramods:config/openvr_manifest/standard_actionset.json"
+      actionSet="/actions/std"/>
+
   <Controller>
-    <OpenVRPoseTracker
-        type="Controller">
-      <OpenVR
-          DEF="OPENVR"
-          manifestPath="urn:gramods:config/openvr_manifest/standard_actionset.json"
-          actionSet="/actions/std"/>
-    </OpenVRPoseTracker>
+    <OffsetSinglePoseTracker
+        positionOffset="-0.0005 -0.001 0.1002">
+      <OpenVRPoseTracker type="Controller">
+        <OpenVR USE="OPENVR"/>
+      </OpenVRPoseTracker>
+    </OffsetSinglePoseTracker>
 
     <OpenVRAnalogsTracker action="/actions/std/in/AnalogInput">
       <OpenVR USE="OPENVR"/>
