@@ -87,7 +87,7 @@ int main(int argc, char *argv[]) {
   collector->setController(controller);
 
   size_t n_collected = 0;
-  while (collector->getTrackerPositions().size() < 3)
+  while (collector->getTrackerPositions().size() < arg_count.getValue())
     gmCore::Updateable::updateAll();
 
   auto & positions = collector->getTrackerPositions();
