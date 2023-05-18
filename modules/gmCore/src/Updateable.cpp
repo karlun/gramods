@@ -13,7 +13,7 @@ struct Updateable::Impl {
 
   Updateable * _this;
 
-  static void updateAll(clock::time_point t);
+  static void updateAll(clock::time_point time, size_t frame);
 
   static std::multimap<int, Updateable*>& getList();
 
@@ -41,8 +41,13 @@ Updateable::Impl::~Impl() {
       ++it;
 }
 
-void Updateable::updateAll(clock::time_point t) {
-  Impl::updateAll(t);
+void Updateable::updateAll(clock::time_point time,
+                           std::optional<size_t> frame) {
+  if (!frame) {
+    static size_t updateable_frame = 0;
+    frame = updateable_frame++;
+  }
+  Impl::updateAll(time, *frame);
 }
 
 std::multimap<int, Updateable*>& Updateable::Impl::getList() {
@@ -50,9 +55,9 @@ std::multimap<int, Updateable*>& Updateable::Impl::getList() {
   return list;
 }
 
-void Updateable::Impl::updateAll(clock::time_point t) {
+void Updateable::Impl::updateAll(clock::time_point time, size_t frame) {
   for (auto it : getList())
-    it.second->update(t);
+    it.second->update(time, frame);
 }
 
 END_NAMESPACE_GMCORE;

@@ -35,7 +35,7 @@ VrpnAnalogsTracker::~VrpnAnalogsTracker() {
   _impl->tracker = nullptr;
 }
 
-void VrpnAnalogsTracker::update(gmCore::Updateable::clock::time_point) {
+void VrpnAnalogsTracker::update(gmCore::Updateable::clock::time_point, size_t) {
   _impl->update();
 }
 

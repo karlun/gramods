@@ -20,14 +20,13 @@ struct OsgRenderer::Impl {
 
   void setSceneData(osg::Node *node);
 
-  void update(Updateable::clock::time_point t);
+  void update(Updateable::clock::time_point t, size_t f);
 
   bool is_initialized = false;
   osg::ref_ptr<osgViewer::Viewer> viewer;
   osg::ref_ptr<osg::Node> tmp_scene_data;
 
-  unsigned int frame_number = 0;
-  bool external_frame_count = false;
+  std::optional<unsigned int> frame_number;
 };
 
 OsgRenderer::OsgRenderer() : Updateable(0), _impl(std::make_unique<Impl>()) {}
@@ -39,7 +38,6 @@ void OsgRenderer::setFrameNumber(unsigned int n) {
 }
 
 void OsgRenderer::Impl::setFrameNumber(unsigned int n) {
-  if (!external_frame_count) external_frame_count = true;
   frame_number = n;
 }
 
@@ -57,8 +55,8 @@ void OsgRenderer::setSceneData(osg::Node *node) {
   _impl->setSceneData(node);
 }
 
-void OsgRenderer::update(clock::time_point t) {
-  _impl->update(t);
+void OsgRenderer::update(clock::time_point time, size_t frame) {
+  _impl->update(time, frame);
 }
 
 /// ----- Impl -----
@@ -118,11 +116,11 @@ void OsgRenderer::Impl::setSceneData(osg::Node *node) {
     tmp_scene_data = node;
 }
 
-void OsgRenderer::Impl::update(clock::time_point t) {
+void OsgRenderer::Impl::update(clock::time_point t, size_t f) {
   if (!viewer) return;
 
   double time = gmCore::TimeTools::timePointToSeconds(t);
-  unsigned int frame = external_frame_count ? frame_number : frame_number++;
+  unsigned int frame = frame_number ? *frame_number : f;
 
   if (!viewer->getFrameStamp()) viewer->setFrameStamp(new osg::FrameStamp);
   viewer->getFrameStamp()->setFrameNumber(frame);

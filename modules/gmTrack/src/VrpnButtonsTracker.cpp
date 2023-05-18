@@ -35,7 +35,7 @@ VrpnButtonsTracker::~VrpnButtonsTracker() {
   _impl->tracker = nullptr;
 }
 
-void VrpnButtonsTracker::update(gmCore::Updateable::clock::time_point) {
+void VrpnButtonsTracker::update(gmCore::Updateable::clock::time_point, size_t) {
   _impl->update();
 }
 

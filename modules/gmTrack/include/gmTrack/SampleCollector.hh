@@ -30,7 +30,7 @@ public:
      Updates the internal states. Automatically called via
      gmCore::Updateable::updateAll().
   */
-  void update(clock::time_point t);
+  void update(clock::time_point time, size_t frame);
 
   /**
      Sets the controller to use for reading tracker samples.

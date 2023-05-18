@@ -30,8 +30,8 @@ SampleCollector::SampleCollector(Impl *_impl)
 
 SampleCollector::~SampleCollector() {}
 
-void SampleCollector::update(clock::time_point t) {
-  _impl->update(t);
+void SampleCollector::update(clock::time_point time, size_t frame) {
+  _impl->update(time);
 }
 
 void SampleCollector::setController(std::shared_ptr<gramods::gmTrack::Controller> controller) {

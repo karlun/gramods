@@ -128,7 +128,7 @@ public:
   /**
      Updates the video capture to read off the next frame.
   */
-  void update(gmCore::Updateable::clock::time_point);
+  void update(gmCore::Updateable::clock::time_point, size_t);
 
   /**
      Retrieve the latest read image captured.

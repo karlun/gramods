@@ -34,7 +34,7 @@ public:
   /**
      Updates the animation.
   */
-  void update(gmCore::Updateable::clock::time_point t);
+  void update(gmCore::Updateable::clock::time_point time, size_t frame);
 
   //void setCornerRefineMethod(std::string m);
   //void setCornerRefineMethod(cv::aruco::CornerRefineMethod m);

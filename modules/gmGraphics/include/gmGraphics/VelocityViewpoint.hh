@@ -43,7 +43,7 @@ public:
   /**
      Updates the animation.
   */
-  void update(clock::time_point t) override;
+  void update(clock::time_point time, size_t frame) override;
 
   GM_OFI_DECLARE;
 

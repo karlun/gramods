@@ -39,7 +39,8 @@ public:
      Reads off analogs, buttons and pose data, and send these through
      the VRPN server.
   */
-  void update(gmCore::Updateable::clock::time_point t);
+  void update(gmCore::Updateable::clock::time_point time,
+              size_t frame) override;
 
   /**
      Sets up the server. This should be called once only!

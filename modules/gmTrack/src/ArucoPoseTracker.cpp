@@ -49,8 +49,9 @@ struct ArucoPoseTracker::Impl {
 ArucoPoseTracker::ArucoPoseTracker()
   : _impl(std::make_unique<Impl>()) {}
 
-void ArucoPoseTracker::update(gmCore::Updateable::clock::time_point t) {
-  _impl->update(t);
+void ArucoPoseTracker::update(gmCore::Updateable::clock::time_point time,
+                              size_t frame) {
+  _impl->update(time);
 }
 
 void ArucoPoseTracker::addArucoBoard(std::shared_ptr<ArucoBoard> board) {

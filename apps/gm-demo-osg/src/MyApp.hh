@@ -34,7 +34,7 @@ public:
    * From gmCore::Updateable. Automatically called from main() via
    * gmCore::Updateable::updateAll();
    */
-  void update(clock::time_point t) override;
+  void update(clock::time_point time, size_t frame) override;
 
   /**
    * We set up our own internal gmGraphics::OsgRenderer to render the

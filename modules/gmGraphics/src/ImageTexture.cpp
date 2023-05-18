@@ -32,7 +32,7 @@ struct ImageTexture::Impl {
   ~Impl();
 
   GLuint update(size_t frame_number, Eye eye);
-  void update(clock::time_point t);
+  void update();
   void findRange();
   static std::string getFrameFilename(std::string file, long int frame);
   static FIBITMAP *loadImage(std::string filename);
@@ -197,11 +197,11 @@ GLuint ImageTexture::Impl::update(size_t frame_number, Eye eye) {
   return texture_id;
 }
 
-void ImageTexture::update(clock::time_point t) {
-  _impl->update(t);
+void ImageTexture::update(clock::time_point, size_t) {
+  _impl->update();
 }
 
-void ImageTexture::Impl::update(clock::time_point) {
+void ImageTexture::Impl::update() {
 
   if (!animate) return;
 
