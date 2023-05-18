@@ -16,13 +16,17 @@ struct RectilinearCameraModel::Impl {
   gmCore::float2 focal = { 1.f, 1.f };
   gmCore::float2 offset = {0.5f, 0.5f };
 
-  GLint k_loc = 0;
-  GLint p_loc = 0;
+  struct uniforms {
+    GLint k = 0;
+    GLint p = 0;
 
-  GLint fx_loc = 0;
-  GLint fy_loc = 0;
-  GLint cx_loc = 0;
-  GLint cy_loc = 0;
+    GLint fx = 0;
+    GLint fy = 0;
+    GLint cx = 0;
+    GLint cy = 0;
+  };
+
+  std::unordered_map<GLint, uniforms> loc;
 };
 
 RectilinearCameraModel::RectilinearCameraModel()
@@ -78,20 +82,21 @@ bool mapTo2D(vec3 pos3, out vec2 pos2) {
 }
 
 #define LOC(VAR, NAME)                                                         \
-  (VAR > 0                                                                     \
-       ? VAR                                                                   \
-       : (VAR = glGetUniformLocation(program_id, withVarId(NAME).c_str())))
+  (_impl->loc[program_id].VAR > 0                                              \
+       ? _impl->loc[program_id].VAR                                            \
+       : (_impl->loc[program_id].VAR =                                         \
+              glGetUniformLocation(program_id, withVarId(NAME).c_str())))
 
 void RectilinearCameraModel::setTo2DUniforms(GLuint program_id) {
-  glUniform3f(LOC(_impl->k_loc, "ID_k"),
+  glUniform3f(LOC(k, "ID_k"),
               _impl->k_dist[0],
               _impl->k_dist[1],
               _impl->k_dist[2]);
-  glUniform2f(LOC(_impl->p_loc, "ID_p"), _impl->p_dist[0], _impl->p_dist[1]);
-  glUniform1f(LOC(_impl->fx_loc, "ID_fx"), _impl->focal[0]);
-  glUniform1f(LOC(_impl->fy_loc, "ID_fy"), _impl->focal[1]);
-  glUniform1f(LOC(_impl->cx_loc, "ID_cx"), _impl->offset[0]);
-  glUniform1f(LOC(_impl->cy_loc, "ID_cy"), _impl->offset[1]);
+  glUniform2f(LOC(p, "ID_p"), _impl->p_dist[0], _impl->p_dist[1]);
+  glUniform1f(LOC(fx, "ID_fx"), _impl->focal[0]);
+  glUniform1f(LOC(fy, "ID_fy"), _impl->focal[1]);
+  glUniform1f(LOC(cx, "ID_cx"), _impl->offset[0]);
+  glUniform1f(LOC(cy, "ID_cy"), _impl->offset[1]);
 }
 
 void RectilinearCameraModel::setKDistortion(gmCore::float3 k) {

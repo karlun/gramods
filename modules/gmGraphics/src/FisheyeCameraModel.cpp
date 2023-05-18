@@ -14,12 +14,16 @@ struct FisheyeCameraModel::Impl {
   gmCore::float2 focal = { 1.f, 1.f };
   gmCore::float2 offset = { 0.5f, 0.5f };
 
-  GLint k_loc = 0;
+  struct uniforms {
+    GLint k = 0;
 
-  GLint fx_loc = 0;
-  GLint fy_loc = 0;
-  GLint cx_loc = 0;
-  GLint cy_loc = 0;
+    GLint fx = 0;
+    GLint fy = 0;
+    GLint cx = 0;
+    GLint cy = 0;
+  };
+
+  std::unordered_map<GLint, uniforms> loc;
 };
 
 FisheyeCameraModel::FisheyeCameraModel()
@@ -72,16 +76,17 @@ bool mapTo2D(vec3 pos3, out vec2 pos2) {
 }
 
 #define LOC(VAR, NAME)                                                         \
-  (VAR > 0                                                                     \
-       ? VAR                                                                   \
-       : (VAR = glGetUniformLocation(program_id, withVarId(NAME).c_str())))
+  (_impl->loc[program_id].VAR > 0                                              \
+       ? _impl->loc[program_id].VAR                                            \
+       : (_impl->loc[program_id].VAR =                                         \
+              glGetUniformLocation(program_id, withVarId(NAME).c_str())))
 
 void FisheyeCameraModel::setTo2DUniforms(GLuint program_id) {
-  glUniform4fv(LOC(_impl->k_loc, "ID_k"), 1, _impl->k_dist.data());
-  glUniform1f(LOC(_impl->fx_loc, "ID_fx"), _impl->focal[0]);
-  glUniform1f(LOC(_impl->fy_loc, "ID_fy"), _impl->focal[1]);
-  glUniform1f(LOC(_impl->cx_loc, "ID_cx"), _impl->offset[0]);
-  glUniform1f(LOC(_impl->cy_loc, "ID_cy"), _impl->offset[1]);
+  glUniform4fv(LOC(k, "ID_k"), 1, _impl->k_dist.data());
+  glUniform1f(LOC(fx, "ID_fx"), _impl->focal[0]);
+  glUniform1f(LOC(fy, "ID_fy"), _impl->focal[1]);
+  glUniform1f(LOC(cx, "ID_cx"), _impl->offset[0]);
+  glUniform1f(LOC(cy, "ID_cy"), _impl->offset[1]);
 }
 
 void FisheyeCameraModel::setDistortion(gmCore::float4 k) {

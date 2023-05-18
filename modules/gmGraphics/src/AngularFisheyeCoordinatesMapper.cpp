@@ -9,7 +9,12 @@ GM_OFI_DEFINE(AngularFisheyeCoordinatesMapper);
 GM_OFI_PARAM2(AngularFisheyeCoordinatesMapper, coverageAngle, gmCore::angle, setCoverageAngle);
 
 struct AngularFisheyeCoordinatesMapper::Impl {
-  GLint ca_loc = 0;
+  struct uniforms {
+    GLint ca = 0;
+  };
+
+  std::unordered_map<GLint, uniforms> loc;
+
   gmCore::angle coverage_angle = float(GM_PI);
 };
 
@@ -60,12 +65,13 @@ bool mapTo3D(vec2 pos2, out vec3 pos3) {
 }
 
 #define LOC(VAR, NAME)                                                         \
-  ((VAR) > 0                                                                   \
-       ? (VAR)                                                                 \
-       : ((VAR) = glGetUniformLocation(program_id, withVarId(NAME).c_str())))
+  (_impl->loc[program_id].VAR > 0                                              \
+       ? _impl->loc[program_id].VAR                                            \
+       : (_impl->loc[program_id].VAR =                                         \
+              glGetUniformLocation(program_id, withVarId(NAME).c_str())))
 
 void AngularFisheyeCoordinatesMapper::setCommonUniforms(GLuint program_id) {
-  glUniform1f(LOC(_impl->ca_loc, "ID_coverageAngle"), _impl->coverage_angle);
+  glUniform1f(LOC(ca, "ID_coverageAngle"), _impl->coverage_angle);
 }
 
 void AngularFisheyeCoordinatesMapper::setCoverageAngle(gmCore::angle a) {

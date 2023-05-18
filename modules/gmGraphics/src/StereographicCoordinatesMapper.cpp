@@ -16,9 +16,11 @@ struct StereographicCoordinatesMapper::Impl {
   gmCore::angle phi0 = float(GM_PI_2);
   gmCore::angle theta0 = 0;
 
-  GLint R_loc = 0;
-  GLint theta0_loc = 0;
-  GLint phi0_loc = 0;
+  struct uniforms {
+    GLint R = 0, theta0 = 0, phi0 = 0;
+  };
+
+  std::unordered_map<GLint, uniforms> loc;
 };
 
 StereographicCoordinatesMapper::StereographicCoordinatesMapper()
@@ -78,14 +80,15 @@ bool mapTo3D(vec2 pos2, out vec3 pos3) {
 }
 
 #define LOC(VAR, NAME)                                                         \
-  (VAR > 0                                                                     \
-       ? VAR                                                                   \
-       : (VAR = glGetUniformLocation(program_id, withVarId(NAME).c_str())))
+  (_impl->loc[program_id].VAR > 0                                              \
+       ? _impl->loc[program_id].VAR                                            \
+       : (_impl->loc[program_id].VAR =                                         \
+              glGetUniformLocation(program_id, withVarId(NAME).c_str())))
 
 void StereographicCoordinatesMapper::setCommonUniforms(GLuint program_id) {
-  glUniform1f(LOC(_impl->R_loc, "ID_R"), _impl->radius);
-  glUniform1f(LOC(_impl->theta0_loc, "ID_theta0"), _impl->theta0);
-  glUniform1f(LOC(_impl->phi0_loc, "ID_phi0"), _impl->phi0);
+  glUniform1f(LOC(R, "ID_R"), _impl->radius);
+  glUniform1f(LOC(theta0, "ID_theta0"), _impl->theta0);
+  glUniform1f(LOC(phi0, "ID_phi0"), _impl->phi0);
 }
 
 void StereographicCoordinatesMapper::setRadius(float R) {
