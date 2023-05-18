@@ -1,6 +1,9 @@
 
 #include <gmGraphics/RectilinearCameraModel.hh>
 
+#include <gmCore/RunOnce.hh>
+
+
 BEGIN_NAMESPACE_GMGRAPHICS;
 
 GM_OFI_DEFINE(RectilinearCameraModel);
@@ -33,15 +36,43 @@ RectilinearCameraModel::RectilinearCameraModel()
   : _impl(std::make_unique<Impl>()) {}
 RectilinearCameraModel::~RectilinearCameraModel() {}
 
-std::string RectilinearCameraModel::getTo2DCode() {
+std::string RectilinearCameraModel::getCommonCode() {
   return withVarId(R"lang=glsl(
-uniform vec3 ID_k;
-uniform vec2 ID_p;
-
 uniform float ID_fx;
 uniform float ID_fy;
 uniform float ID_cx;
 uniform float ID_cy;
+)lang=glsl");
+}
+
+std::string RectilinearCameraModel::getTo3DCode() {
+  GM_RUNONCE_BEGIN;
+  if (_impl->k_dist[0] != 0.f || _impl->k_dist[1] != 0.f ||
+      _impl->k_dist[2] != 0.f || _impl->p_dist[0] != 0.f ||
+      _impl->p_dist[1] != 0.f)
+    GM_WRN("RectilinearCameraModel",
+           "Reverse mapping does not support distortion");
+  GM_RUNONCE_END;
+
+  return withVarId(R"lang=glsl(
+bool mapTo3D(vec2 pos2, out vec3 pos3) {
+
+  vec2 uv = 0.5 * (pos2 + 1);
+  float x = (uv.x - ID_cx) / ID_fx;
+  float y = (uv.y - ID_cy) / ID_fy;
+
+  // Go from OpenCV to OpenGL coordinates
+  pos3 = normalize(vec3(x, y, -1));
+
+  return true;
+}
+)lang=glsl");
+}
+
+std::string RectilinearCameraModel::getTo2DCode() {
+  return withVarId(R"lang=glsl(
+uniform vec3 ID_k;
+uniform vec2 ID_p;
 
 bool mapTo2D(vec3 pos3, out vec2 pos2) {
   vec3 k = ID_k;
@@ -87,16 +118,17 @@ bool mapTo2D(vec3 pos3, out vec2 pos2) {
        : (_impl->loc[program_id].VAR =                                         \
               glGetUniformLocation(program_id, withVarId(NAME).c_str())))
 
-void RectilinearCameraModel::setTo2DUniforms(GLuint program_id) {
-  glUniform3f(LOC(k, "ID_k"),
-              _impl->k_dist[0],
-              _impl->k_dist[1],
-              _impl->k_dist[2]);
-  glUniform2f(LOC(p, "ID_p"), _impl->p_dist[0], _impl->p_dist[1]);
+void RectilinearCameraModel::setCommonUniforms(GLuint program_id) {
   glUniform1f(LOC(fx, "ID_fx"), _impl->focal[0]);
   glUniform1f(LOC(fy, "ID_fy"), _impl->focal[1]);
   glUniform1f(LOC(cx, "ID_cx"), _impl->offset[0]);
   glUniform1f(LOC(cy, "ID_cy"), _impl->offset[1]);
+}
+
+void RectilinearCameraModel::setTo2DUniforms(GLuint program_id) {
+  glUniform3f(
+      LOC(k, "ID_k"), _impl->k_dist[0], _impl->k_dist[1], _impl->k_dist[2]);
+  glUniform2f(LOC(p, "ID_p"), _impl->p_dist[0], _impl->p_dist[1]);
 }
 
 void RectilinearCameraModel::setKDistortion(gmCore::float3 k) {
