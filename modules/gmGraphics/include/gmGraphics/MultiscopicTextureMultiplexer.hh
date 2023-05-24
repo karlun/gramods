@@ -14,7 +14,8 @@
 BEGIN_NAMESPACE_GMGRAPHICS;
 
 /**
-   Decoder of Yuv encoded texture into a new texture.
+   Texture that returns one other texture at a time that encodes
+   multiple textures, typically for stereoscopic transcoding.
 */
 class MultiscopicTextureMultiplexer
   : public gmGraphics::Texture {
