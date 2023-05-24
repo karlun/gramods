@@ -39,7 +39,7 @@ public:
 
      @returns OpenGL texture ID of the updated texture
   */
-  GLuint updateTexture(size_t frame_number, Eye eye);
+  GLuint updateTexture(size_t frame_number, Eye eye) override;
 
   /**
      Set the texture to split.
