@@ -37,8 +37,9 @@ std::istream& operator>> (std::istream &in, Eigen::Vector3f &v);
 
    - ypr ay ap ar, e.g. "ypr 0.1 0 0": Using Euler angles for
      yaw-pitch-roll rotation, i.e. around axis Y, X and Z counter
-     clockwise (right-handed), where every angle per default is
-     expressed in radians.
+     clockwise (right-handed), but by airplane convention with
+     negative Y and Z, where every angle per default is expressed in
+     radians.
 
    - axisangle x y z a, e.g. "axisangle 0 1 0 0.1": Using axis for
      rotation and angle of rotation around this axis, where the angle
