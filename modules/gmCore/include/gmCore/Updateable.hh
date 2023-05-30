@@ -6,6 +6,7 @@
 
 #include <chrono>
 #include <memory>
+#include <optional>
 
 BEGIN_NAMESPACE_GMCORE;
 
@@ -34,12 +35,13 @@ public:
   /**
      Updates all currently instanciated updateable objects.
   */
-  static void updateAll(clock::time_point t = clock::now());
+  static void updateAll(clock::time_point t = clock::now(),
+                        std::optional<size_t> frame = std::nullopt);
 
   /**
      Called by updateAll to make the object up-to-date.
   */
-  virtual void update(clock::time_point t) = 0;
+  virtual void update(clock::time_point t, size_t frame) = 0;
 
 private:
 

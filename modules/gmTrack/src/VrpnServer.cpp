@@ -117,7 +117,7 @@ void VrpnServer::Impl::initialize() {
   }
 }
 
-void VrpnServer::update(gmCore::Updateable::clock::time_point) {
+void VrpnServer::update(gmCore::Updateable::clock::time_point, size_t) {
 
   if (!isInitialized())
     return;
@@ -131,7 +131,10 @@ void VrpnServer::update(gmCore::Updateable::clock::time_point) {
     conn.second->mainloop();
 }
 
-#define TP_TO_MS(X) (std::chrono::duration_cast<std::chrono::milliseconds>((X).time_since_epoch()).count())
+#  define TP_TO_MS(X)                                                          \
+    (std::chrono::duration_cast<std::chrono::milliseconds>(                    \
+         (X).time_since_epoch())                                               \
+         .count())
 
 void VrpnServer::Impl::updateAnalogs() {
 

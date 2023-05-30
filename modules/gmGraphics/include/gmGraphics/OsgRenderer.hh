@@ -51,7 +51,7 @@ public:
   /**
      Called to make the object up-to-date.
   */
-  void update(clock::time_point t) override;
+  void update(clock::time_point time, size_t frame) override;
 
 private:
   struct Impl;

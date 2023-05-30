@@ -29,20 +29,21 @@ struct VelocityViewpoint::Impl {
 VelocityViewpoint::VelocityViewpoint()
   : _impl(std::make_unique<Impl>()) {}
 
-void VelocityViewpoint::update(clock::time_point t) {
-  _impl->update(position, orientation, t);
+void VelocityViewpoint::update(clock::time_point time, size_t frame) {
+  _impl->update(position, orientation, time);
 }
 
 void VelocityViewpoint::Impl::update(Eigen::Vector3f &position,
                                      Eigen::Quaternionf &orientation,
-                                     clock::time_point t) {
+                                     clock::time_point time) {
 
-  float dt = float(std::chrono::duration_cast<d_seconds>(t - last_time).count());
+  float dt =
+      float(std::chrono::duration_cast<d_seconds>(time - last_time).count());
 
   position += dt * linear_velocity;
   orientation *= Eigen::Quaternionf::Identity().slerp(dt, angular_velocity);
 
-  last_time = t;
+  last_time = time;
 }
 
 void VelocityViewpoint::setVelocity(Eigen::Vector3f vel) {

@@ -19,7 +19,7 @@ GM_OFI_PARAM2(OpenCvVideoCapture, backend, std::string, setBackend);
 
 struct OpenCvVideoCapture::Impl {
 
-  void update(gmCore::Updateable::clock::time_point t);
+  void update();
   bool retrieve(cv::Mat &image);
 
   void openCamera(int id);
@@ -192,11 +192,11 @@ void OpenCvVideoCapture::Impl::openCamera(int id) {
   }
 }
 
-void OpenCvVideoCapture::update(gmCore::Updateable::clock::time_point t) {
-  _impl->update(t);
+void OpenCvVideoCapture::update(gmCore::Updateable::clock::time_point, size_t) {
+  _impl->update();
 }
 
-void OpenCvVideoCapture::Impl::update(gmCore::Updateable::clock::time_point) {
+void OpenCvVideoCapture::Impl::update() {
 
   if (!initialized) {
 

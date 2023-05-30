@@ -30,7 +30,8 @@ public:
   /**
      Updates the animation.
   */
-  void update(gmCore::Updateable::clock::time_point t);
+  void update(gmCore::Updateable::clock::time_point time,
+              size_t frame) override;
 
   /**
      The address to the button tracker at the VRPN server, such as

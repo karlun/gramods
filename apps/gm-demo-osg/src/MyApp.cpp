@@ -118,7 +118,9 @@ MyApp::MyApp(std::vector<std::shared_ptr<gmNetwork::SyncNode>> sync_nodes,
 
 MyApp::~MyApp() {}
 
-void MyApp::update(clock::time_point time) { _impl->update(time); }
+void MyApp::update(clock::time_point time, size_t frame) {
+  _impl->update(time);
+}
 
 std::shared_ptr<gmGraphics::OsgRenderer> MyApp::getRenderer() {
   return _impl->getRenderer();

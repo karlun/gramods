@@ -34,7 +34,7 @@ public:
   /**
      Called by Updateable::updateAll to increment the frame counter.
   */
-  void update(clock::time_point t) override;
+  void update(clock::time_point t, size_t) override;
 
   /**
      Updates the texture and returns the ID of the associated GL

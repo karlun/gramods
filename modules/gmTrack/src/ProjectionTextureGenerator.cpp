@@ -39,7 +39,7 @@ struct ProjectionTextureGenerator::Impl : SampleCollector::Impl {
   Eigen::Vector3f scale = Eigen::Vector3f::Ones();
   Eigen::Vector3f offset = Eigen::Vector3f::Zero();
 
-  void update(clock::time_point t) override;
+  void update(clock::time_point) override;
   void addRegion(size_t order);
   void saveImage();
   void checkPreconditions();

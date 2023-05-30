@@ -24,7 +24,7 @@ struct OpenVR::Impl : gmCore::Updateable {
   Impl();
   ~Impl();
 
-  void update(clock::time_point t);
+  void update(clock::time_point time, size_t frame) override;
   void initialize();
   void setup_openvr();
 
@@ -261,7 +261,7 @@ OpenVR::Impl::getHandle(std::string action) {
   return handle;
 }
 
-void OpenVR::Impl::update(clock::time_point t) {
+void OpenVR::Impl::update(clock::time_point time, size_t frame) {
   cache_poses = std::nullopt;
   cache_serial.clear();
 

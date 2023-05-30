@@ -35,7 +35,7 @@ VrpnPoseTracker::~VrpnPoseTracker() {
   _impl->tracker = nullptr;
 }
 
-void VrpnPoseTracker::update(gmCore::Updateable::clock::time_point) {
+void VrpnPoseTracker::update(gmCore::Updateable::clock::time_point, size_t) {
   _impl->update();
 }
 

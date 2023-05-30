@@ -23,14 +23,18 @@ struct EacCoordinatesMapper::Impl {
   size_t rows;
   size_t cols;
 
-  GLint rows_loc = 0;
-  GLint cols_loc = 0;
+  struct uniforms {
+    GLint rows = 0;
+    GLint cols = 0;
 
-  GLint M_to2D_loc = 0;
-  GLint pos_row_loc = 0;
-  GLint pos_col_loc = 0;
+    GLint M_to2D = 0;
+    GLint pos_row = 0;
+    GLint pos_col = 0;
 
-  GLint M_to3D_loc = 0;
+    GLint M_to3D = 0;
+  };
+
+  std::unordered_map<GLint, uniforms> loc;
 };
 
 EacCoordinatesMapper::EacCoordinatesMapper()
@@ -131,30 +135,31 @@ bool mapTo3D(vec2 pos2, out vec3 pos3) {
 }
 
 #define LOC(VAR, NAME)                                                         \
-  (VAR > 0                                                                     \
-       ? VAR                                                                   \
-       : (VAR = glGetUniformLocation(program_id, withVarId(NAME).c_str())))
+  (_impl->loc[program_id].VAR > 0                                              \
+       ? _impl->loc[program_id].VAR                                            \
+       : (_impl->loc[program_id].VAR =                                         \
+              glGetUniformLocation(program_id, withVarId(NAME).c_str())))
 
 void EacCoordinatesMapper::setCommonUniforms(GLuint program_id) {
-  glUniform1i(LOC(_impl->rows_loc, "ID_rows"), GLint(_impl->rows));
-  glUniform1i(LOC(_impl->cols_loc, "ID_cols"), GLint(_impl->cols));
+  glUniform1i(LOC(rows, "ID_rows"), GLint(_impl->rows));
+  glUniform1i(LOC(cols, "ID_cols"), GLint(_impl->cols));
 }
 
 void EacCoordinatesMapper::setTo2DUniforms(GLuint program_id) {
-  glUniformMatrix3fv(LOC(_impl->M_to2D_loc, "ID_M_to2D"),
+  glUniformMatrix3fv(LOC(M_to2D, "ID_M_to2D"),
                      _impl->data_M_to2D.size() / 9,
                      false,
                      _impl->data_M_to2D.data());
-  glUniform1iv(LOC(_impl->pos_row_loc, "ID_pos_row"),
+  glUniform1iv(LOC(pos_row, "ID_pos_row"),
                _impl->pos_row.size(),
                _impl->pos_row.data());
-  glUniform1iv(LOC(_impl->pos_col_loc, "ID_pos_col"),
+  glUniform1iv(LOC(pos_col, "ID_pos_col"),
                _impl->pos_col.size(),
                _impl->pos_col.data());
 }
 
 void EacCoordinatesMapper::setTo3DUniforms(GLuint program_id) {
-  glUniformMatrix3fv(LOC(_impl->M_to2D_loc, "ID_M_to3D"),
+  glUniformMatrix3fv(LOC(M_to2D, "ID_M_to3D"),
                      _impl->data_M_to3D.size() / 9,
                      false,
                      _impl->data_M_to3D.data());

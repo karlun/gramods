@@ -122,7 +122,7 @@ int main(int argc, char *argv[]) {
       for (auto window : windows) {
         window->processEvents();
       }
-      gmCore::Updateable::updateAll();
+      gmCore::Updateable::updateAll(clock::now(), frame_number);
 
       times.push_back(clock::now());
 

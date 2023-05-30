@@ -8,10 +8,13 @@ GM_OFI_PARAM2(EquirectangularCoordinatesMapper, coverageAngle, gmCore::angle2, s
 GM_OFI_PARAM2(EquirectangularCoordinatesMapper, coverageRange, gmCore::angle4, setCoverageRange);
 
 struct EquirectangularCoordinatesMapper::Impl {
-  GLint h0_loc = 0;
-  GLint h1_loc = 0;
-  GLint v0_loc = 0;
-  GLint v1_loc = 0;
+
+  struct uniforms {
+    GLint h0 = 0, h1 = 0, v0 = 0, v1 = 0;
+  };
+
+  std::unordered_map<GLint, uniforms> loc;
+
   gmCore::angle4 coverage_range = {
       float(-GM_PI), float(GM_PI), float(-GM_PI_2), float(GM_PI_2)};
 };
@@ -61,15 +64,16 @@ bool mapTo3D(vec2 pos2, out vec3 pos3) {
 }
 
 #define LOC(VAR, NAME)                                                         \
-  (VAR > 0                                                                     \
-       ? VAR                                                                   \
-       : (VAR = glGetUniformLocation(program_id, withVarId(NAME).c_str())))
+  (_impl->loc[program_id].VAR > 0                                              \
+       ? _impl->loc[program_id].VAR                                            \
+       : (_impl->loc[program_id].VAR =                                         \
+              glGetUniformLocation(program_id, withVarId(NAME).c_str())))
 
 void EquirectangularCoordinatesMapper::setCommonUniforms(GLuint program_id) {
-  glUniform1f(LOC(_impl->h0_loc, "ID_h_angle0"), _impl->coverage_range[0]);
-  glUniform1f(LOC(_impl->h1_loc, "ID_h_angle1"), _impl->coverage_range[1]);
-  glUniform1f(LOC(_impl->v0_loc, "ID_v_angle0"), _impl->coverage_range[2]);
-  glUniform1f(LOC(_impl->v1_loc, "ID_v_angle1"), _impl->coverage_range[3]);
+  glUniform1f(LOC(h0, "ID_h_angle0"), _impl->coverage_range[0]);
+  glUniform1f(LOC(h1, "ID_h_angle1"), _impl->coverage_range[1]);
+  glUniform1f(LOC(v0, "ID_v_angle0"), _impl->coverage_range[2]);
+  glUniform1f(LOC(v1, "ID_v_angle1"), _impl->coverage_range[3]);
 }
 
 void EquirectangularCoordinatesMapper::setCoverageAngle(gmCore::angle2 a) {
