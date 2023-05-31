@@ -4,6 +4,7 @@
 #include <gmCore/RunLimited.hh>
 
 #include <limits>
+#include <optional>
 
 BEGIN_NAMESPACE_GMGRAPHICS;
 
@@ -22,22 +23,15 @@ struct SpatialPlanarView::Impl {
 
   void calculateCorners();
 
-  Eigen::Vector3f upDirection;
-  Eigen::Vector3f topLeftCorner;
-  Eigen::Vector3f bottomRightCorner;
-
-  bool have_corner_tl = false;
-  bool have_corner_br = false;
-  bool have_up = false;
+  std::optional<Eigen::Vector3f> upDirection;
+  std::optional<Eigen::Vector3f> topLeftCorner;
+  std::optional<Eigen::Vector3f> bottomRightCorner;
 
   Eigen::Quaternionf orientation = Eigen::Quaternionf::Identity();
   Eigen::Vector3f position = Eigen::Vector3f::Zero();
 
-  gmCore::angle4 shape_angles;
-  double distance;
-
-  bool have_shape_angles = false;
-  bool have_distance = false;
+  std::optional<gmCore::angle4> shape_angles;
+  std::optional<float> distance;
 };
 
 SpatialPlanarView::SpatialPlanarView()
@@ -61,12 +55,16 @@ void SpatialPlanarView::Impl::renderFullPipeline(ViewSettings settings, Eye eye)
     GM_RUNONCE(GM_WRN("SpatialPlanarView", "No viewpoint available - using zero position and rotation"));
   }
 
-  if (!have_corner_tl || !have_corner_br || !have_up) {
+  if (!topLeftCorner || !bottomRightCorner || !upDirection) {
     GM_RUNONCE(GM_ERR("SpatialPlanarView",
                       "Missing parameters for estimating projection"
                       " - need corners and up, or angles and distance"));
     return;
   }
+
+  auto upDirection = *this->upDirection;
+  auto topLeftCorner = *this->topLeftCorner;
+  auto bottomRightCorner = *this->bottomRightCorner;
 
   auto up = upDirection.normalized();
 
@@ -109,8 +107,10 @@ void SpatialPlanarView::Impl::renderFullPipeline(ViewSettings settings, Eye eye)
 
 void SpatialPlanarView::Impl::calculateCorners() {
 
-  if (!have_shape_angles || !have_distance)
-    return;
+  if (!shape_angles || !distance) return;
+
+  auto distance = *this->distance;
+  auto shape_angles = *this->shape_angles;
 
   topLeftCorner = orientation *
     (distance * Eigen::Vector3f(-std::tan(shape_angles[0]),
@@ -121,26 +121,19 @@ void SpatialPlanarView::Impl::calculateCorners() {
                                 -std::tan(shape_angles[2]), -1));
 
   upDirection = orientation * Eigen::Vector3f::UnitY();
-
-  have_corner_tl = true;
-  have_corner_br = true;
-  have_up = true;
 }
 
 
 void SpatialPlanarView::setTopLeftCorner(Eigen::Vector3f tlc) {
   _impl->topLeftCorner = tlc;
-  _impl->have_corner_tl = true;
 }
 
 void SpatialPlanarView::setBottomRightCorner(Eigen::Vector3f brc) {
   _impl->bottomRightCorner = brc;
-  _impl->have_corner_br = true;
 }
 
 void SpatialPlanarView::setUpDirection(Eigen::Vector3f up) {
   _impl->upDirection = up;
-  _impl->have_up = true;
   _impl->calculateCorners();
 }
 
@@ -151,7 +144,6 @@ void SpatialPlanarView::setPosition(Eigen::Vector3f p) {
 
 void SpatialPlanarView::setClipAngles(gmCore::angle4 a) {
   _impl->shape_angles = a;
-  _impl->have_shape_angles = true;
   _impl->calculateCorners();
 }
 
@@ -162,7 +154,6 @@ void SpatialPlanarView::setOrientation(Eigen::Quaternionf q) {
 
 void SpatialPlanarView::setDistance(float d) {
   _impl->distance = d;
-  _impl->have_distance = true;
   _impl->calculateCorners();
 }
 
