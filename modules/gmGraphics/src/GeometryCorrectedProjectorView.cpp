@@ -9,6 +9,8 @@
 
 #include <Eigen/Eigen>
 
+#include <optional>
+
 BEGIN_NAMESPACE_GMGRAPHICS;
 
 GM_OFI_DEFINE_SUB(GeometryCorrectedProjectorView, MultiscopicView);
@@ -47,15 +49,10 @@ struct GeometryCorrectedProjectorView::Impl {
   size_t buffer_width = 2048;
   size_t buffer_height = 2048;
 
-  Eigen::Vector3f shape_corner_tl;
-  Eigen::Vector3f shape_corner_br;
-  gmCore::float4 shape_intrinsics;
-  gmCore::angle4 shape_angles;
-
-  bool have_shape_corner_tl = false;
-  bool have_shape_corner_br = false;
-  bool have_shape_intrinsics = false;
-  bool have_shape_angles = false;
+  std::optional<Eigen::Vector3f> shape_corner_tl;
+  std::optional<Eigen::Vector3f> shape_corner_br;
+  std::optional<gmCore::float4> shape_intrinsics;
+  std::optional<gmCore::angle4> shape_angles;
 
   Eigen::Quaternionf orientation = Eigen::Quaternionf::Identity();
   Eigen::Vector3f position = Eigen::Vector3f::Zero();
@@ -132,12 +129,10 @@ void GeometryCorrectedProjectorView::setLinearInterpolation(bool on) {
 
 void GeometryCorrectedProjectorView::setTopLeftCorner(Eigen::Vector3f tlc) {
   _impl->shape_corner_tl = tlc;
-  _impl->have_shape_corner_tl = true;
 }
 
 void GeometryCorrectedProjectorView::setBottomRightCorner(Eigen::Vector3f brc) {
   _impl->shape_corner_br = brc;
-  _impl->have_shape_corner_br = true;
 }
 
 void GeometryCorrectedProjectorView::setPosition(Eigen::Vector3f p) {
@@ -156,12 +151,10 @@ void GeometryCorrectedProjectorView::setExtrinsics(gmCore::float12 M) {
 
 void GeometryCorrectedProjectorView::setIntrinsics(gmCore::float4 m) {
   _impl->shape_intrinsics = m;
-  _impl->have_shape_intrinsics = true;
 }
 
 void GeometryCorrectedProjectorView::setClipAngles(gmCore::angle4 a) {
   _impl->shape_angles = a;
-  _impl->have_shape_angles = true;
 }
 
 void GeometryCorrectedProjectorView::setOrientation(Eigen::Quaternionf q) {
@@ -180,28 +173,28 @@ bool GeometryCorrectedProjectorView::Impl::setCamera(Camera &c) {
 
   c.setPose(position, orientation);
 
-  if (have_shape_intrinsics) {
+  if (shape_intrinsics) {
 
-    if (have_shape_corner_tl ||
-        have_shape_corner_br ||
-        have_shape_angles)
+    if (shape_corner_tl ||
+        shape_corner_br ||
+        shape_angles)
       GM_RUNONCE(GM_WRN("GeometryCorrectedProjectorView", "Projection shape set in multiple ways - either intrinsics, angles or corners required. Using intrinsics."));
 
     return setCameraShapeFromIntrinsics(c);
   }
-  else if (have_shape_angles) {
+  else if (shape_angles) {
 
-    if (have_shape_corner_tl ||
-        have_shape_corner_br)
+    if (shape_corner_tl ||
+        shape_corner_br)
       GM_RUNONCE(GM_WRN("GeometryCorrectedProjectorView", "Projection shape set in multiple ways - either intrinsics, angles or corners required. Using angles."));
 
     return setCameraShapeFromAngles(c);
   }
-  else if (have_shape_corner_tl ||
-           have_shape_corner_br) {
+  else if (shape_corner_tl ||
+           shape_corner_br) {
 
-    if (!(have_shape_corner_tl &&
-          have_shape_corner_br)) {
+    if (!(shape_corner_tl &&
+          shape_corner_br)) {
       GM_RUNONCE(GM_ERR("GeometryCorrectedProjectorView", "Projection shape by corners incorrectly set - missing parameter."));
       return false;
     }
@@ -214,6 +207,7 @@ bool GeometryCorrectedProjectorView::Impl::setCamera(Camera &c) {
 }
 
 bool GeometryCorrectedProjectorView::Impl::setCameraShapeFromIntrinsics(Camera &c) {
+  auto &shape_intrinsics = *this->shape_intrinsics;
   c.setClipPlanes((    - shape_intrinsics[2]) / shape_intrinsics[0],
                   (1.f - shape_intrinsics[2]) / shape_intrinsics[0],
                   (    - shape_intrinsics[3]) / shape_intrinsics[1],
@@ -222,6 +216,7 @@ bool GeometryCorrectedProjectorView::Impl::setCameraShapeFromIntrinsics(Camera &
 }
 
 bool GeometryCorrectedProjectorView::Impl::setCameraShapeFromAngles(Camera &c) {
+  auto &shape_angles = *this->shape_angles;
   c.setClipAngles(shape_angles[0],
                   shape_angles[1],
                   shape_angles[2],
@@ -231,8 +226,8 @@ bool GeometryCorrectedProjectorView::Impl::setCameraShapeFromAngles(Camera &c) {
 
 bool GeometryCorrectedProjectorView::Impl::setCameraShapeFromCorners(Camera &c) {
 
-  Eigen::Vector3f tl = orientation.conjugate() * (shape_corner_tl - position);
-  Eigen::Vector3f br = orientation.conjugate() * (shape_corner_br - position);
+  Eigen::Vector3f tl = orientation.conjugate() * (*shape_corner_tl - position);
+  Eigen::Vector3f br = orientation.conjugate() * (*shape_corner_br - position);
 
   c.setClipPlanes(tl[0] / tl[2],
                   br[0] / br[2],

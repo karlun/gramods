@@ -23,9 +23,8 @@ struct VrpnButtonsTracker::Impl {
 
   std::unique_ptr<vrpn_Button_Remote> tracker;
 
-  ButtonsSample latest_sample;
+  std::optional<ButtonsSample> latest_sample;
   bool got_data;
-  bool have_data = false;
 };
 
 VrpnButtonsTracker::VrpnButtonsTracker()
@@ -49,7 +48,7 @@ void VrpnButtonsTracker::Impl::update() {
   if (!tracker->connectionPtr()->doing_okay()) {
     GM_WRN("VrpnButtonsTracker", "Defunct connection - closing vrpn connection");
     tracker = nullptr;
-    have_data = false;
+    latest_sample = std::nullopt;
     return;
   }
 
@@ -74,10 +73,9 @@ bool VrpnButtonsTracker::getButtons(ButtonsSample &p) {
 
 bool VrpnButtonsTracker::Impl::getButtons(ButtonsSample &p) {
 
-  if (!have_data)
-    return false;
+  if (!latest_sample) return false;
 
-  p = latest_sample;
+  p = *latest_sample;
 
   return true;
 }
@@ -97,14 +95,15 @@ void VrpnButtonsTracker::Impl::handler(const vrpn_BUTTONCB info) {
     (std::chrono::microseconds(info.msg_time.tv_usec));
   auto time = clock::time_point(secs + usecs);
 
-  latest_sample.time = time;
+  ButtonsSample sample;
+  sample.time = time;
   if (info.state)
-    latest_sample.buttons[info.button] = true;
+    sample.buttons[info.button] = true;
   else
-    latest_sample.buttons[info.button] = false;
+    sample.buttons[info.button] = false;
 
+  latest_sample = sample;
   got_data = true;
-  have_data = true;
 
   GM_DBG3("VrpnButtonsTracker", "Got vrpn button data for button " << info.button << " (" << info.state << ")");
 }

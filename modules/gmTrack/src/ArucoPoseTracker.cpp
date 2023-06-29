@@ -37,7 +37,6 @@ struct ArucoPoseTracker::Impl {
   cv::Mat camMatrix;
   cv::Mat distCoeffs;
 
-  bool have_pose = false;
   std::map<int, PoseSample> samples;
 
   bool inverted = false;
@@ -82,26 +81,26 @@ void ArucoPoseTracker::Impl::update(gmCore::Updateable::clock::time_point time_n
 
   if (boards.empty()) {
     GM_RUNONCE(GM_ERR("ArucoPoseTracker", "No board to track."));
-    have_pose = false;
+    samples.clear();
     return;
   }
 
   if (!video_source) {
     GM_RUNONCE(GM_ERR("ArucoPoseTracker", "No video source."));
-    have_pose = false;
+    samples.clear();
     return;
   }
 
   if (!camMatrix.total()) {
     GM_RUNONCE(GM_ERR("ArucoPoseTracker", "Camera parameters not set."));
-    have_pose = false;
+    samples.clear();
     return;
   }
 
   cv::Mat image;
   if (!video_source->retrieve(image)) {
     GM_RUNLIMITED(GM_WRN("ArucoPoseTracker", "Video source did not provide image."), 1);
-    have_pose = false;
+    samples.clear();
     return;
   }
 
@@ -133,8 +132,6 @@ void ArucoPoseTracker::Impl::update(gmCore::Updateable::clock::time_point time_n
 
   cv::Ptr<cv::aruco::DetectorParameters> detectorParams =
     cv::aruco::DetectorParameters::create();
-
-  have_pose = false;
 
   for (size_t idx = 0; idx < boards.size(); ++idx) {
 
@@ -173,19 +170,20 @@ void ArucoPoseTracker::Impl::update(gmCore::Updateable::clock::time_point time_n
       Eigen::Map<Eigen::Matrix3d> R(cv::Mat(rotm).ptr<double>());
       Eigen::Quaterniond Q(R);
 
+      PoseSample sample;
       if (inverted) {
-        samples[idx].orientation = Eigen::Quaternionf(Q.conjugate());
-        samples[idx].position =
+        sample.orientation = Eigen::Quaternionf(Q.conjugate());
+        sample.position =
             (samples[idx].orientation *
              Eigen::Vector3d(-tvec[0], -tvec[1], -tvec[2]).cast<float>());
       } else {
-        samples[idx].orientation = Eigen::Quaternionf(Q);
-        samples[idx].position =
+        sample.orientation = Eigen::Quaternionf(Q);
+        sample.position =
             Eigen::Vector3d(tvec[0], tvec[1], tvec[2]).cast<float>();
       }
-      samples[idx].time = time_now;
+      sample.time = time_now;
 
-      have_pose = true;
+      samples[idx] = sample;
     }
 
     if (show_debug_output) {
@@ -217,7 +215,7 @@ void ArucoPoseTracker::Impl::update(gmCore::Updateable::clock::time_point time_n
 }
 
 bool ArucoPoseTracker::Impl::getPose(std::map<int, PoseSample> &p) {
-  if (!have_pose) return false;
+  if (samples.empty()) return false;
 
   p = samples;
   return true;

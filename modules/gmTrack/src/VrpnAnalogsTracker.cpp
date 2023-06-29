@@ -23,9 +23,8 @@ struct VrpnAnalogsTracker::Impl {
 
   std::unique_ptr<vrpn_Analog_Remote> tracker;
 
-  AnalogsSample latest_sample;
+  std::optional<AnalogsSample> latest_sample;
   bool got_data;
-  bool have_data = false;
 };
 
 VrpnAnalogsTracker::VrpnAnalogsTracker()
@@ -49,7 +48,7 @@ void VrpnAnalogsTracker::Impl::update() {
   if (!tracker->connectionPtr()->doing_okay()) {
     GM_WRN("VrpnAnalogsTracker", "Defunct connection - closing vrpn connection");
     tracker = nullptr;
-    have_data = false;
+    latest_sample = std::nullopt;
     return;
   }
 
@@ -74,10 +73,9 @@ bool VrpnAnalogsTracker::getAnalogs(AnalogsSample &b) {
 
 bool VrpnAnalogsTracker::Impl::getAnalogs(AnalogsSample &b) {
 
-  if (!have_data)
-    return false;
+  if (!latest_sample) return false;
 
-  b = latest_sample;
+  b = *latest_sample;
 
   return true;
 }
@@ -97,17 +95,18 @@ void VRPN_CALLBACK VrpnAnalogsTracker::Impl::handler(const vrpn_ANALOGCB info) {
     (std::chrono::microseconds(info.msg_time.tv_usec));
   auto time = clock::time_point(secs + usecs);
 
-  latest_sample.time = time;
-  latest_sample.analogs.resize(info.num_channel, 0);
+  AnalogsSample sample;
+  sample.time = time;
+  sample.analogs.resize(info.num_channel, 0);
 
   std::stringstream analogs_log;
   for (size_t idx = 0; idx < (size_t)info.num_channel; ++idx) {
-    latest_sample.analogs[idx] = float(info.channel[idx]);
+    sample.analogs[idx] = float(info.channel[idx]);
     analogs_log << info.channel[idx] << " ";
   }
+  latest_sample = sample;
 
   got_data = true;
-  have_data = true;
   GM_DBG3("VrpnAnalogsTracker", "Got vrpn analog data: " << analogs_log.str());
 }
 

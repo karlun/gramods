@@ -25,7 +25,6 @@ struct VrpnPoseTracker::Impl {
 
   std::map<int, PoseSample> latest_samples;
   bool got_data;
-  bool have_data = false;
 };
 
 VrpnPoseTracker::VrpnPoseTracker()
@@ -49,7 +48,7 @@ void VrpnPoseTracker::Impl::update() {
   if (!tracker->connectionPtr()->doing_okay()) {
     GM_WRN("VrpnPoseTracker", "Defunct connection - closing vrpn connection");
     tracker = nullptr;
-    have_data = false;
+    latest_samples.clear();
     return;
   }
 
@@ -74,8 +73,7 @@ bool VrpnPoseTracker::getPose(std::map<int, PoseSample> &p) {
 
 bool VrpnPoseTracker::Impl::getPose(std::map<int, PoseSample> &p) {
 
-  if (!have_data)
-    return false;
+  if (latest_samples.empty()) return false;
 
   p = latest_samples;
 
@@ -104,7 +102,6 @@ void VrpnPoseTracker::Impl::handler(const vrpn_TRACKERCB info) {
           .cast<float>();
 
   got_data = true;
-  have_data = true;
   GM_DBG2("VrpnPoseTracker", "Got vrpn tracker data for sensor " << info.sensor);
 }
 
