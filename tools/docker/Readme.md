@@ -15,6 +15,26 @@ Run (interactively) to copy the resulting files:
 docker run -v $(pwd .):/host -it [IMAGE ID]
 ```
 
+## Build and Push Docker Image to Gitlab Registry
+
+To build:
+
+```{bash}
+docker build -t gitlab.liu.se:5000/karlu20/gramods/22.04-maxi .
+```
+
+To login:
+
+```{bash}
+docker login gitlab.liu.se
+```
+
+To push:
+
+```{bash}
+docker push gitlab.liu.se:5000/karlu20/gramods/22.04-maxi
+```
+
 ## Other Commands
 
 | Use              | Command                      |
