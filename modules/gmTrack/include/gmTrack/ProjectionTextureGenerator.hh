@@ -2,6 +2,10 @@
 #ifndef GM_TRACK_PROJECTIONTEXTUREGENERATOR
 #define GM_TRACK_PROJECTIONTEXTUREGENERATOR
 
+#include <gmTrack/config.hh>
+
+#ifdef gramods_ENABLE_FreeImage
+
 #include <gmTrack/SampleCollector.hh>
 
 #include <gmCore/size.hh>
@@ -111,4 +115,5 @@ private:
 
 END_NAMESPACE_GMTRACK;
 
+#endif
 #endif

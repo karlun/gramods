@@ -1,5 +1,8 @@
 
 #include <gmTrack/ProjectionTextureGenerator.hh>
+
+#ifdef gramods_ENABLE_FreeImage
+
 #include <gmTrack/SampleCollector.impl.hh>
 
 #include <gmTrack/ButtonsMapper.hh>
@@ -343,3 +346,5 @@ size_t ProjectionTextureGenerator::Impl::getRegionIdx(Eigen::Vector2f ptq) {
 }
 
 END_NAMESPACE_GMTRACK;
+
+#endif
