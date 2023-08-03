@@ -217,7 +217,7 @@ int main(int argc, char *argv[]) {
   TCLAP::MultiArg<std::string> arg_apoint
     ("p", "a-point",
      "Specification of a point in the registered coordinate system.",
-     true, "x,y,z");
+     false, "x,y,z");
   cmd.add(arg_apoint);
 
   TCLAP::MultiArg<std::string> arg_tpoint
