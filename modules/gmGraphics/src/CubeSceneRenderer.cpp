@@ -92,10 +92,11 @@ in vec3 local_light2;
 out vec4 fragColor;
 
 void main() {
-  float diffuse = 0.2 +
-    max(0, dot(normal, local_light1)) +
-    max(0, dot(normal, local_light2));
-  fragColor = vec4(diffuse * color.rgb, 1);
+  float diffuse = 0.5 +
+    max(0, 3.0 * dot(normal, local_light1)) +
+    max(0, 1.0 * dot(normal, local_light2));
+  vec3 rgb = min(vec3(1,1,1), diffuse * color.rgb);
+  fragColor = vec4(rgb, 1);
 }
 )lang=glsl";
 }
