@@ -26,6 +26,7 @@ struct OffscreenRenderTargets::Impl {
 
   std::stack<std::array<GLint, 4>> viewport_stack;
   std::stack<GLint> target_framebuffer_stack;
+  std::stack<GLint> target_renderbuffer_stack;
 
   bool init(size_t count);
 
@@ -57,6 +58,11 @@ bool OffscreenRenderTargets::Impl::init(size_t count) {
     return false;
 
   GM_DBG2("OffscreenRenderTargets", "Creating buffers and textures");
+
+  GLint old_framebuffer, old_renderbuffer;
+  glGetIntegerv(GL_FRAMEBUFFER_BINDING, &old_framebuffer);
+  glGetIntegerv(GL_RENDERBUFFER_BINDING, &old_renderbuffer);
+
   fb_id.resize(count, 0);
   tex_id.resize(count, 0);
   tex_size.resize(count, { 0, 0 });
@@ -84,6 +90,8 @@ bool OffscreenRenderTargets::Impl::init(size_t count) {
     glFramebufferTexture2D(GL_DRAW_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, tex_id[idx], 0);
     glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, rb_depth_id);
   }
+  glBindRenderbuffer(GL_RENDERBUFFER, old_renderbuffer);
+  glBindFramebuffer(GL_FRAMEBUFFER, old_framebuffer);
 
   if (!GLUtils::check_framebuffer())
     return false;
@@ -155,9 +163,12 @@ void OffscreenRenderTargets::push() {
 
 void OffscreenRenderTargets::Impl::push() {
 
-  GLint target_framebuffer;
-  glGetIntegerv(GL_FRAMEBUFFER_BINDING, &target_framebuffer);
-  target_framebuffer_stack.push(target_framebuffer);
+  GLint param;
+  glGetIntegerv(GL_FRAMEBUFFER_BINDING, &param);
+  target_framebuffer_stack.push(param);
+
+  glGetIntegerv(GL_RENDERBUFFER_BINDING, &param);
+  target_renderbuffer_stack.push(param);
 
   std::array<GLint, 4> viewport;
   glGetIntegerv(GL_VIEWPORT, viewport.data());
@@ -175,6 +186,10 @@ void OffscreenRenderTargets::Impl::pop() {
   auto target_framebuffer = target_framebuffer_stack.top();
   glBindFramebuffer(GL_FRAMEBUFFER, target_framebuffer);
   target_framebuffer_stack.pop();
+
+  auto target_renderbuffer = target_renderbuffer_stack.top();
+  glBindRenderbuffer(GL_RENDERBUFFER, target_renderbuffer);
+  target_renderbuffer_stack.pop();
 
   auto viewport = viewport_stack.top();
   glViewport(viewport[0], viewport[1], viewport[2], viewport[3]);
