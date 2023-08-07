@@ -1,0 +1,39 @@
+<config>
+  <![CDATA[
+
+    Quad buffers testing configuration configured for a 50"
+    screen. Observe that this configuration will result in errors if
+    quad buffers are not supported on the current display.
+
+  ]]>
+
+  <ImportLibrary library="gmGraphics"/>
+
+  <SdlWindow
+      fullscreen="true"
+      display="0"
+      title="Quad buffer stereo"
+      useQuadBuffers="true"
+      backgroundColor="0 0 0 1"
+      GLMajor="3" GLMinor="3">
+
+    <SdlContext
+        DEF="SDLContext"
+        useVideo="1"/>
+
+    <CubeSceneRenderer
+        cubeSize="0.025"
+        cubeSetSize="0.5"/>
+
+    <![CDATA[ 1100 x 620 ]]>
+    <SpatialPlanarView
+        topLeftCorner="-0.55 0.31 0.0"
+        bottomRightCorner="0.55 -0.31 0.0"
+        upDirection="0.0 1.0 0.0">
+      <Viewpoint
+          position="0.0 0.0 1.0"/>
+      <QuadBufferMultiplexer/>
+    </SpatialPlanarView>
+  </SdlWindow>
+
+</config>

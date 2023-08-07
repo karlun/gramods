@@ -155,12 +155,6 @@ void RasterProcessor::Impl::run() {
 
   glUseProgram(0);
   glDisableVertexAttribArray(0);
-
-  glActiveTexture(GL_TEXTURE0);
-  glBindTexture( GL_TEXTURE_2D, 0);
-
-  glActiveTexture(GL_TEXTURE1);
-  glBindTexture( GL_TEXTURE_2D, 0);
 }
 
 
