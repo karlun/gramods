@@ -46,7 +46,7 @@
   <PythonScript url="urn:candy:python/AutoLoadSO.py"/>
   <PythonScript url="urn:candy:python/CorrectViewpoint.py"/>
   <StereoInfo
-      interocularDistance="0.06"/>
+      interocularDistance="0.0"/>
   <SMViewpoint
       DEF="VIEWPOINT"
       useHeadOrientation="true"
