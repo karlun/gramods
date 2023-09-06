@@ -78,7 +78,7 @@ void EquirectangularCoordinatesMapper::setCommonUniforms(GLuint program_id) {
 
 void EquirectangularCoordinatesMapper::setCoverageAngle(gmCore::angle2 a) {
   _impl->coverage_range = {
-      -0.5f * a[0], 0.5f * a[1], -0.5f * a[2], 0.5f * a[3]};
+      -0.5f * a[0], 0.5f * a[0], -0.5f * a[1], 0.5f * a[1]};
 }
 
 void EquirectangularCoordinatesMapper::setCoverageRange(gmCore::angle4 a) {
