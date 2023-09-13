@@ -6,6 +6,7 @@
 #include <gmCore/FreeImage.hh>
 #include <gmCore/RunOnce.hh>
 #include <gmCore/Stringify.hh>
+#include <gmCore/ExitException.hh>
 #include <gmCore/FileResolver.hh>
 
 #include <gmGraphics/OffscreenRenderTargets.hh>
@@ -27,6 +28,7 @@ GM_OFI_PARAM2(SaveView, file, std::filesystem::path, setFile);
 GM_OFI_PARAM2(SaveView, resolution, gmCore::size2, setResolution);
 GM_OFI_PARAM2(SaveView, useAlpha, bool, setUseAlpha);
 GM_OFI_PARAM2(SaveView, useFloat, bool, setUseFloat);
+GM_OFI_PARAM2(SaveView, exit, bool, setExit);
 GM_OFI_POINTER2(SaveView, view, gmGraphics::View, addView);
 
 struct SaveView::Impl {
@@ -38,6 +40,7 @@ struct SaveView::Impl {
   bool float_support = false;
   bool use_alpha = false;
   bool use_float = false;
+  bool do_exit = false;
   std::filesystem::path file_template = "SaveView.png";
   FREE_IMAGE_FORMAT fi_format = FIF_PNG;
   int fi_options = PNG_Z_BEST_SPEED;
@@ -283,6 +286,8 @@ void SaveView::Impl::renderFullPipeline(ViewSettings settings) {
 
   glActiveTexture(GL_TEXTURE0);
   glBindTexture(GL_TEXTURE_2D, 0);
+
+  if (do_exit) throw gmCore::ExitException(0);
 }
 
 void SaveView::setFile(std::filesystem::path file) {
@@ -374,6 +379,10 @@ void SaveView::setUseAlpha(bool on) {
 
 bool SaveView::getUseAlpha() {
   return _impl->use_alpha;
+}
+
+void SaveView::setExit(bool on) {
+  _impl->do_exit = on;
 }
 
 void SaveView::addView(std::shared_ptr<View> view) {

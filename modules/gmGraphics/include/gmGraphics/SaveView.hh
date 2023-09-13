@@ -79,6 +79,15 @@ public:
   bool getUseAlpha();
 
   /**
+     Activates or deactivates automatic exit when the view has been
+     saved. When converting animation, consider using automatic exit
+     in the ImageTexture. Default is false.
+
+     \gmXmlTag{gmGraphics,SaveView,exit}
+  */
+  void setExit(bool on);
+
+  /**
      Adds a view that should be saved to file.
 
      \gmXmlTag{gmGraphics,SaveView,view}
