@@ -53,9 +53,7 @@ struct UvcTexture::Impl {
   void startAll(int vendor, int product, std::string serial);
   void closeAll();
 
-#ifdef gramods_ENABLE_libuvc_007
   bool triggerStill(gmCore::size2 res);
-#endif
 
   void update();
   GLuint getGLTextureID() { return texture_id; }
@@ -384,12 +382,17 @@ void UvcTexture::setDecode(bool on) {
   _impl->texture_up_to_date = false;
 }
 
-#ifdef gramods_ENABLE_libuvc_007
 bool UvcTexture::triggerStill(gmCore::size2 res) {
   return _impl->triggerStill(res);
 }
 
 bool UvcTexture::Impl::triggerStill(gmCore::size2 size) {
+#ifndef gramods_ENABLE_libuvc_007
+  GM_RUNONCE(GM_WRN("UvcTexture",
+                    "Gramods built without support for UVC still image frame;"
+                    " could not accomodate request!"));
+  return false;
+#else
 
   std::lock_guard<std::mutex> guard(data_lock);
 
@@ -416,8 +419,8 @@ bool UvcTexture::Impl::triggerStill(gmCore::size2 size) {
           "Triggered still image capture (" << size[0] << "x" << size[1]
                                             << ")");
   return true;
-}
 #endif
+}
 
 uvc_frame_format UvcTexture::Impl::formatFromString(std::string s) {
 
