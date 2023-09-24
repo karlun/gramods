@@ -1,14 +1,14 @@
 
 #include <gmTrack/ArucoPoseTracker.hh>
 
-#ifdef gramods_ENABLE_OpenCV_ArUco
+#ifdef gramods_ENABLE_OpenCV_objdetect
 
 #include <gmCore/Console.hh>
 #include <gmCore/RunLimited.hh>
 #include <gmCore/RunOnce.hh>
 #include <gmCore/FileResolver.hh>
 
-#include <opencv2/aruco.hpp>
+#include <opencv2/objdetect.hpp>
 
 BEGIN_NAMESPACE_GMTRACK;
 
@@ -130,8 +130,8 @@ void ArucoPoseTracker::Impl::update(gmCore::Updateable::clock::time_point time_n
     camera_height = new_height;
   }
 
-  cv::Ptr<cv::aruco::DetectorParameters> detectorParams =
-    cv::aruco::DetectorParameters::create();
+  cv::aruco::DetectorParameters detectorParams;
+  cv::aruco::RefineParameters refineParams;
 
   for (size_t idx = 0; idx < boards.size(); ++idx) {
 
@@ -147,20 +147,25 @@ void ArucoPoseTracker::Impl::update(gmCore::Updateable::clock::time_point time_n
     cv::Vec3d rvec, tvec;
 
     // detect markers
-    cv::aruco::detectMarkers(image, board->dictionary, corners, ids, detectorParams, rejected);
+    cv::aruco::ArucoDetector detector(
+        board->getDictionary(), detectorParams, refineParams);
+    detector.detectMarkers(image, corners, ids, rejected);
 
     // refind strategy to detect more markers
     if(refind_markers)
-      cv::aruco::refineDetectedMarkers(image, board, corners, ids, rejected,
-                                       camMatrix, distCoeffs);
+      detector.refineDetectedMarkers(
+          image, *board, corners, ids, rejected, camMatrix, distCoeffs);
 
     // estimate board pose
     int markersOfBoardDetected = 0;
     if(ids.size() > 0) {
-      markersOfBoardDetected =
-        cv::aruco::estimatePoseBoard(corners, ids, board,
-                                     camMatrix, distCoeffs,
-                                     rvec, tvec);
+      cv::Mat objPoints, imgPoints;
+      board->matchImagePoints(corners, ids, objPoints, imgPoints);
+
+      // Find pose
+      cv::solvePnP(objPoints, imgPoints, camMatrix, distCoeffs, rvec, tvec);
+
+      markersOfBoardDetected = (int)objPoints.total() / 4;
     }
 
     if (markersOfBoardDetected) {
@@ -195,10 +200,10 @@ void ArucoPoseTracker::Impl::update(gmCore::Updateable::clock::time_point time_n
         cv::aruco::drawDetectedMarkers(debug_image, rejected, cv::noArray(), cv::Scalar(0, 0, 100));
 
       if(markersOfBoardDetected > 0) {
-        cv::aruco::drawAxis(debug_image, camMatrix, distCoeffs, rvec, tvec, 0.1f);
+        cv::drawFrameAxes(debug_image, camMatrix, distCoeffs, rvec, tvec, 0.1f);
 
         std::vector<std::vector<cv::Point2f>> imagePoints;
-        for (auto mpts : board->objPoints) {
+        for (auto mpts : board->getObjPoints()) {
           std::vector<cv::Point2f> imgpts;
           cv::projectPoints(mpts, rvec, tvec, camMatrix, distCoeffs, imgpts);
           imagePoints.push_back(imgpts);

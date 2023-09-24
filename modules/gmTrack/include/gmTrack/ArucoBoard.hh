@@ -4,11 +4,11 @@
 
 #include <gmTrack/config.hh>
 
-#ifdef gramods_ENABLE_OpenCV_ArUco
+#ifdef gramods_ENABLE_OpenCV_objdetect
 
 #include <gmCore/Object.hh>
 
-#include <opencv2/aruco.hpp>
+#include <opencv2/objdetect.hpp>
 
 BEGIN_NAMESPACE_GMTRACK;
 

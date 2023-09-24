@@ -1,7 +1,7 @@
 
 #include <gmTrack/ArucoBoardComplex.hh>
 
-#ifdef gramods_ENABLE_OpenCV_ArUco
+#ifdef gramods_ENABLE_OpenCV_objdetect
 
 #include <gmCore/Console.hh>
 #include <gmCore/RunOnce.hh>
@@ -77,11 +77,12 @@ cv::Ptr<cv::aruco::Board> ArucoBoardComplex::Impl::getBoard() {
   for (auto b : boards)
     aboards.push_back(b->getBoard());
   
-  auto dictionary = aboards[0]->dictionary;
+  auto dictionary = aboards[0]->getDictionary();
   for (auto b : aboards)
-    if (cv::countNonZero(b->dictionary->bytesList != dictionary->bytesList) != 0 ||
-        b->dictionary->markerSize != dictionary->markerSize ||
-        b->dictionary->maxCorrectionBits != dictionary->maxCorrectionBits) {
+    if (cv::countNonZero(b->getDictionary().bytesList !=
+                         dictionary.bytesList) != 0 ||
+        b->getDictionary().markerSize != dictionary.markerSize ||
+        b->getDictionary().maxCorrectionBits != dictionary.maxCorrectionBits) {
       GM_RUNONCE(GM_ERR("ArucoBoardComplex", "Incorrect data - cannot create complex of boards that use different dictionaries."));
       return nullptr;
     }
@@ -100,7 +101,7 @@ cv::Ptr<cv::aruco::Board> ArucoBoardComplex::Impl::getBoard() {
       Eigen::Quaternionf::Identity() :
       orientations[idx];
 
-    for (auto opt : aboard->objPoints) {
+    for (auto opt : aboard->getObjPoints()) {
       std::vector<cv::Point3f> pts;
       for (auto pt : opt) {
         Eigen::Vector3f ept(pt.x, pt.y, pt.z);
@@ -109,10 +110,10 @@ cv::Ptr<cv::aruco::Board> ArucoBoardComplex::Impl::getBoard() {
       }
       objPoints.push_back(pts);
     }
-    ids.insert(ids.end(), aboard->ids.begin(), aboard->ids.end());
+    ids.insert(ids.end(), aboard->getIds().begin(), aboard->getIds().end());
   }
 
-  cache_board = cv::aruco::Board::create(objPoints, dictionary, ids);
+  cache_board = new cv::aruco::Board(objPoints, dictionary, ids);
   return cache_board;
 }
 

@@ -1,10 +1,12 @@
 
 #include <gmTrack/ArucoGridBoard.hh>
 
-#ifdef gramods_ENABLE_OpenCV_ArUco
+#ifdef gramods_ENABLE_OpenCV_objdetect
 
 #include <gmCore/Console.hh>
 #include <gmCore/RunOnce.hh>
+
+#include <optional>
 
 BEGIN_NAMESPACE_GMTRACK;
 
@@ -26,14 +28,14 @@ struct ArucoGridBoard::Impl {
   cv::Ptr<cv::aruco::Board> cache_board;
   bool cache_up_to_date = false;
 
-  static cv::Ptr<cv::aruco::Dictionary> getDictionary(std::string name);
+  static std::optional<cv::aruco::Dictionary> getDictionary(std::string name);
 
   size_t columns = 1;
   size_t rows = 1;
   float size = -1;
   float sep = -1;
   size_t id_0 = 0;
-  cv::Ptr<cv::aruco::Dictionary> dict = getDictionary("ARUCO_ORIGINAL");
+  cv::aruco::Dictionary dict = cv::aruco::getPredefinedDictionary(0);
 
   Eigen::Vector3f position = Eigen::Vector3f::Zero();
   Eigen::Quaternionf orientation = Eigen::Quaternionf::Identity();
@@ -72,15 +74,16 @@ void ArucoGridBoard::setDictionary(std::string dict) {
   _impl->cache_up_to_date = false;
   auto newdict = Impl::getDictionary(dict);
   if (newdict)
-    _impl->dict = newdict;
+    _impl->dict = *newdict;
   else
     GM_WRN("ArucoGridBoard", "Could not set dictionary to unrecognized value '" << dict << "'.");
 }
 
-cv::Ptr<cv::aruco::Dictionary> ArucoGridBoard::Impl::getDictionary(std::string name) {
+std::optional<cv::aruco::Dictionary>
+ArucoGridBoard::Impl::getDictionary(std::string name) {
 
-#define DICT(CODE)                                                    \
-  if (name == #CODE)                                                  \
+#  define DICT(CODE)                                                           \
+    if (name == #CODE)                                                  \
     return cv::aruco::getPredefinedDictionary(cv::aruco::DICT_##CODE)
 
   DICT(4X4_50);
@@ -105,10 +108,9 @@ cv::Ptr<cv::aruco::Dictionary> ArucoGridBoard::Impl::getDictionary(std::string n
   DICT(APRILTAG_36h10);
   DICT(APRILTAG_36h11);
 
-  return nullptr;
+  return std::nullopt;
 
 #undef DICT
-
 }
 
 void ArucoGridBoard::setPosition(Eigen::Vector3f p) {
@@ -143,19 +145,24 @@ cv::Ptr<cv::aruco::Board> ArucoGridBoard::Impl::getBoard() {
     sep = 0.5f * size;
   }
 
-  auto aboard = cv::aruco::GridBoard::create(columns, rows, size, sep, dict, id_0);
+  std::vector<int> all_ids; all_ids.reserve(columns * rows);
+  for (int idx = 0; idx < columns * rows; ++idx) all_ids.push_back(idx + id_0);
+
+  auto aboard =
+      cv::aruco::GridBoard({int(columns), int(rows)}, size, sep, dict, all_ids);
 
   std::vector<std::vector<cv::Point3f>> objPoints;
   std::vector<int> ids;
 
-  auto &p0 = aboard->objPoints[0][0];
-  auto &p1 = aboard->objPoints[columns - 1][1];
-  auto &p2 = aboard->objPoints[columns * rows - 1][2];
-  auto &p3 = aboard->objPoints[columns *(rows - 1)][3];
+  auto &aboard_objPoints = aboard.getObjPoints();
+  auto &p0 = aboard_objPoints[0][0];
+  auto &p1 = aboard_objPoints[columns - 1][1];
+  auto &p2 = aboard_objPoints[columns * rows - 1][2];
+  auto &p3 = aboard_objPoints[columns *(rows - 1)][3];
 
   cv::Point3f cp = 0.25 * (p0 + p1 + p2 + p3);
 
-  for (auto opt : aboard->objPoints) {
+  for (auto opt : aboard_objPoints) {
     std::vector<cv::Point3f> pts;
     for (auto pt : opt) {
       pt -= cp;
@@ -165,9 +172,9 @@ cv::Ptr<cv::aruco::Board> ArucoGridBoard::Impl::getBoard() {
     }
     objPoints.push_back(pts);
   }
-  ids.insert(ids.end(), aboard->ids.begin(), aboard->ids.end());
+  ids.insert(ids.end(), aboard.getIds().begin(), aboard.getIds().end());
 
-  cache_board = cv::aruco::Board::create(objPoints, dict, ids);
+  cache_board = new cv::aruco::Board(objPoints, dict, ids);
   return cache_board;
 }
 
