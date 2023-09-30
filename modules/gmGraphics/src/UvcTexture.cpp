@@ -226,6 +226,13 @@ bool UvcTexture::Impl::update_rgb_cache() {
     return false;
   }
 
+  if (rgb_cache->width == 0 || rgb_cache->height == 0) {
+    GM_ERR("UvcTexture", "Ignoring empty frame");
+    uvc_free_frame(rgb_cache);
+    rgb_cache = nullptr;
+    return false;
+  }
+
   if (rgb_cache->data_bytes > rgb_cache->width * rgb_cache->height * 3) {
     GM_WRN("UvcTexture", "Too much data in frame");
   }
