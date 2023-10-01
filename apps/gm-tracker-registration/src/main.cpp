@@ -217,7 +217,7 @@ int main(int argc, char *argv[]) {
   TCLAP::MultiArg<std::string> arg_apoint
     ("p", "a-point",
      "Specification of a point in the registered coordinate system.",
-     true, "x,y,z");
+     false, "x,y,z");
   cmd.add(arg_apoint);
 
   TCLAP::MultiArg<std::string> arg_tpoint
@@ -226,20 +226,20 @@ int main(int argc, char *argv[]) {
      false, "x,y,z");
   cmd.add(arg_tpoint);
 
-  TCLAP::ValueArg<std::string> arg_outputfile
+  TCLAP::MultiArg<std::string> arg_outputfile
     ("o", "output-file",
-     "The file to write the results to.",
-     false, "output.xml", "file");
+     "The file(s) to write the results to.",
+     false, "file");
   cmd.add(arg_outputfile);
 
-  TCLAP::ValueArg<std::string> arg_outputtemplate
+  TCLAP::MultiArg<std::string> arg_outputtemplate
     ("t", "output-template",
-     "A template file that is filled with the resulting values and written to the specified output file. In the template file the following keys are replaced with their corresponding values:\n"
+     "Template file(s) that will be filled with the resulting values and written to the specified output file(s). If multiple templates are specified, then an equal number of output files must also be specified.\nIn the template file the following keys are replaced with their corresponding values:\n"
      "%M0x..%M3z   the corresponding cell of the resulting 4x4 matrix.\n"
      "%Rx..%Ra     the rotation part expressed as axis angle rotation with %Ra expressed in radians and %Rd in degrees.\n"
      "%Qx..%Qw     the rotation part expressed in quaternion format.\n"
      "%M, %R and %Q can also be replaced with %Mi, %Ri and %Qi, respectively, for use of the inverse transform instead of the forward registration transform.",
-     false, "", "file");
+     false, "file");
   cmd.add(arg_outputtemplate);
 
   TCLAP::SwitchArg arg_normalize
@@ -314,7 +314,7 @@ int main(int argc, char *argv[]) {
         std::cerr << "Warning: could not parse '" << str_point << "' as a 3D point." << std::endl;
     }
 
-  } else {
+  } else if (!arg_test_output.getValue()) {
     std::cerr << std::endl
               << "Error: No points available for registering coordinate systems. Add 'point' parameters to the configuration or use the 'point' command line argument." << std::endl
               << std::endl;
@@ -364,20 +364,43 @@ int main(int argc, char *argv[]) {
   Eigen::Matrix4f Mat = arg_normalize.getValue() ?
     Unit : Raw;
 
-  std::string output_file = arg_outputfile.getValue();
-  std::ofstream fout(output_file);
+  auto output_files = arg_outputfile.getValue();
+  auto input_files = arg_outputtemplate.getValue();
 
-  if (!fout) {
-    std::cerr << std::endl
-              << "Error: could not write to file '" << output_file << "'" << std::endl
-              << std::endl;
+  if (output_files.empty()) {
+    std::cerr << "Error: no output file specified" << std::endl;
     return 5;
   }
 
-  std::string input_file = arg_outputtemplate.getValue();
-  if (input_file.empty()) {
+  if (output_files.size() < input_files.size()) {
+    std::cerr << "Warning: too few output files (" << output_files.size()
+              << ") compared to template files (" << input_files.size()
+              << "); will ignore " << (input_files.size() - output_files.size())
+              << " templates!" << std::endl
+              << std::endl;
+  } else if (output_files.size() > input_files.size()) {
+    std::cerr << "Warning: too few template files (" << input_files.size()
+              << ") compared to output files (" << output_files.size()
+              << "); will use standard template!" << std::endl
+              << std::endl;
+  }
 
-    static std::string default_template = R"lang=xml(
+  for (size_t file_idx = 0; file_idx < output_files.size(); ++file_idx) {
+    auto output_file = output_files[file_idx];
+    std::filesystem::path output_file_path =
+        gmCore::FileResolver::getDefault()->resolve(
+            output_file, gmCore::FileResolver::Check::WritableFile);
+    std::ofstream fout(output_file_path);
+
+    if (!fout) {
+      std::cerr << "Warning: skipping '" << output_file
+                << "' because file could not be open for writing." << std::endl
+                << std::endl;
+      continue;
+    }
+
+    if (file_idx >= input_files.size()) {
+      static std::string default_template = R"lang=xml(
 <data
     matrixForward="%M0x %M1x %M2x %M3x
                    %M0y %M1y %M2y %M3y
@@ -394,34 +417,42 @@ int main(int argc, char *argv[]) {
 </data>
 )lang=xml";
 
-    std::stringstream fin(default_template);
+      std::stringstream fin(default_template);
 
-    int res = process(fin, fout, Mat, Unit);
+      int res = process(fin, fout, Mat, Unit);
 
-    if (res)
-      std::cerr << "Could not write data" << std::endl;
-    else
-      std::cout << "Results written to " << output_file << std::endl;
+      if (res) {
+        std::cerr << "Could not write data" << std::endl;
+        return res;
+      }
+      else {
+        std::cout << "Results written to " << output_file << std::endl;
+      }
+    } else {
+      auto input_file = input_files[file_idx];
+      std::filesystem::path input_file_path =
+          gmCore::FileResolver::getDefault()->resolve(
+              input_file, gmCore::FileResolver::Check::ReadableFile);
+      std::ifstream fin(input_file_path);
 
-    return res;
+      if (!fin) {
+        std::cerr << std::endl
+                  << "Warning: could not open template file '" << input_file_path
+                  << "' (" << input_file << ")" << std::endl
+                  << std::endl;
+        continue;
+      }
+
+      int res = process(fin, fout, Mat, Unit);
+
+      if (res) {
+        std::cerr << "Could not write data" << std::endl;
+        return res;
+      } else {
+        std::cout << "Results written to " << output_file << std::endl;
+      }
+    }
   }
 
-  std::filesystem::path input_file_path = gmCore::FileResolver::getDefault()->resolve(input_file);
-  std::ifstream fin(input_file_path);
-
-  if (!fin) {
-    std::cerr << std::endl
-              << "Error: could not open template file '" << input_file_path << "' (" << input_file << ")" << std::endl
-              << std::endl;
-    return 5;
-  }
-
-  int res = process(fin, fout, Mat, Unit);
-
-  if (res)
-    std::cerr << "Could not write data" << std::endl;
-  else
-    std::cout << "Results written to " << output_file << std::endl;
-
-  return res;
+  return 0;
 }
