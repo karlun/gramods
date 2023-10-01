@@ -133,6 +133,13 @@ void ArucoPoseTracker::Impl::update(gmCore::Updateable::clock::time_point time_n
   cv::aruco::DetectorParameters detectorParams;
   cv::aruco::RefineParameters refineParams;
 
+  struct DetectionCache {
+    cv::aruco::Dictionary dictionary;
+    std::vector<int> ids;
+    std::vector<std::vector<cv::Point2f>> corners, rejected;
+  };
+  std::vector<DetectionCache> detection_cache;
+
   for (size_t idx = 0; idx < boards.size(); ++idx) {
 
     auto board = this->boards[idx]->getBoard();
@@ -144,72 +151,96 @@ void ArucoPoseTracker::Impl::update(gmCore::Updateable::clock::time_point time_n
 
     std::vector<int> ids;
     std::vector<std::vector<cv::Point2f>> corners, rejected;
-    cv::Vec3d rvec, tvec;
 
-    // detect markers
+    auto dictionary = board->getDictionary();
     cv::aruco::ArucoDetector detector(
-        board->getDictionary(), detectorParams, refineParams);
-    detector.detectMarkers(image, corners, ids, rejected);
+        dictionary, detectorParams, refineParams);
+
+    auto find_cache = [dictionary](const DetectionCache &dc) {
+      return std::equal(dictionary.bytesList.begin<uchar>(),
+                        dictionary.bytesList.end<uchar>(),
+                        dc.dictionary.bytesList.begin<uchar>(),
+                        dc.dictionary.bytesList.end<uchar>()) &&
+             (dictionary.markerSize == dc.dictionary.markerSize) &&
+             (dictionary.maxCorrectionBits == dc.dictionary.maxCorrectionBits);
+    };
+
+    auto cache = std::find_if(
+        detection_cache.begin(), detection_cache.end(), find_cache);
+    if (cache != detection_cache.end()) {
+      ids = cache->ids;
+      corners = cache->corners;
+      rejected = cache->rejected;
+    } else {
+      // detect markers
+      detector.detectMarkers(image, corners, ids, rejected);
+
+      if (ids.empty()) continue;
+
+      detection_cache.push_back({dictionary, ids, corners, rejected});
+
+      if (show_debug_output) {
+        if (ids.size() > 0)
+          cv::aruco::drawDetectedMarkers(debug_image, corners, ids);
+
+        if (rejected.size() > 0)
+          cv::aruco::drawDetectedMarkers(debug_image, rejected, cv::noArray(), cv::Scalar(0, 0, 100));
+      }
+    }
 
     // refind strategy to detect more markers
-    if(refind_markers)
+    if (refind_markers)
       detector.refineDetectedMarkers(
           image, *board, corners, ids, rejected, camMatrix, distCoeffs);
 
-    // estimate board pose
-    int markersOfBoardDetected = 0;
-    if(ids.size() > 0) {
-      cv::Mat objPoints, imgPoints;
-      board->matchImagePoints(corners, ids, objPoints, imgPoints);
+    cv::Mat objPoints, imgPoints;
+    board->matchImagePoints(corners, ids, objPoints, imgPoints);
 
-      // Find pose
+    if (objPoints.total() == 0) continue;
+
+    // Find pose
+    cv::Vec3d rvec, tvec;
+    try {
       cv::solvePnP(objPoints, imgPoints, camMatrix, distCoeffs, rvec, tvec);
-
-      markersOfBoardDetected = (int)objPoints.total() / 4;
+    } catch (const std::exception &e) {
+      GM_ERR("ArucoPoseTracker", "solvePnP failed: " << e.what());
+      continue;
+    } catch (...) {
+      GM_ERR("ArucoPoseTracker", "solvePnP failed of unknown reason");
+      continue;
     }
 
-    if (markersOfBoardDetected) {
+    cv::Matx33d rotm;
+    cv::Rodrigues(rvec, rotm);
+    Eigen::Map<Eigen::Matrix3d> R(cv::Mat(rotm).ptr<double>());
+    Eigen::Quaterniond Q(R);
 
-      cv::Matx33d rotm;
-      cv::Rodrigues(rvec, rotm);
-      Eigen::Map<Eigen::Matrix3d> R(cv::Mat(rotm).ptr<double>());
-      Eigen::Quaterniond Q(R);
-
-      PoseSample sample;
-      if (inverted) {
-        sample.orientation = Eigen::Quaternionf(Q.conjugate());
-        sample.position =
-            (samples[idx].orientation *
-             Eigen::Vector3d(-tvec[0], -tvec[1], -tvec[2]).cast<float>());
-      } else {
-        sample.orientation = Eigen::Quaternionf(Q);
-        sample.position =
-            Eigen::Vector3d(tvec[0], tvec[1], tvec[2]).cast<float>();
-      }
-      sample.time = time_now;
-
-      samples[idx] = sample;
+    PoseSample sample;
+    if (inverted) {
+      sample.orientation = Eigen::Quaternionf(Q.conjugate());
+      sample.position =
+          (samples[idx].orientation *
+           Eigen::Vector3d(-tvec[0], -tvec[1], -tvec[2]).cast<float>());
+    } else {
+      sample.orientation = Eigen::Quaternionf(Q);
+      sample.position =
+          Eigen::Vector3d(tvec[0], tvec[1], tvec[2]).cast<float>();
     }
+    sample.time = time_now;
+
+    samples[idx] = sample;
 
     if (show_debug_output) {
+      cv::drawFrameAxes(debug_image, camMatrix, distCoeffs, rvec, tvec, 0.1f);
 
-      if(ids.size() > 0)
-        cv::aruco::drawDetectedMarkers(debug_image, corners, ids);
-
-      if(rejected.size() > 0)
-        cv::aruco::drawDetectedMarkers(debug_image, rejected, cv::noArray(), cv::Scalar(0, 0, 100));
-
-      if(markersOfBoardDetected > 0) {
-        cv::drawFrameAxes(debug_image, camMatrix, distCoeffs, rvec, tvec, 0.1f);
-
-        std::vector<std::vector<cv::Point2f>> imagePoints;
-        for (auto mpts : board->getObjPoints()) {
-          std::vector<cv::Point2f> imgpts;
-          cv::projectPoints(mpts, rvec, tvec, camMatrix, distCoeffs, imgpts);
-          imagePoints.push_back(imgpts);
-        }
-        cv::aruco::drawDetectedMarkers(debug_image, imagePoints, cv::noArray(), cv::Scalar(255, 0, 0));
+      std::vector<std::vector<cv::Point2f>> imagePoints;
+      for (auto mpts : board->getObjPoints()) {
+        std::vector<cv::Point2f> imgpts;
+        cv::projectPoints(mpts, rvec, tvec, camMatrix, distCoeffs, imgpts);
+        imagePoints.push_back(imgpts);
       }
+      cv::aruco::drawDetectedMarkers(
+          debug_image, imagePoints, cv::noArray(), cv::Scalar(255, 0, 0));
     }
   }
 
