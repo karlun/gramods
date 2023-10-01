@@ -120,10 +120,10 @@ void ArucoPoseTracker::Impl::update(gmCore::Updateable::clock::time_point time_n
     int new_height = image.rows;
 
     GM_DBG1("ArucoPoseTracker", "Provided camera matrix: " << camMatrix);
-    camMatrix.at<double>(0,0) *= new_width / camera_width;
-    camMatrix.at<double>(1,1) *= new_height / camera_height;
-    camMatrix.at<double>(0,2) *= new_width / camera_width;
-    camMatrix.at<double>(1,2) *= new_height / camera_height;
+    camMatrix.at<double>(0, 0) *= double(new_width) / double(camera_width);
+    camMatrix.at<double>(1, 1) *= double(new_height) / double(camera_height);
+    camMatrix.at<double>(0, 2) *= double(new_width) / double(camera_width);
+    camMatrix.at<double>(1, 2) *= double(new_height) / double(camera_height);
     GM_DBG1("ArucoPoseTracker", "New estimate of camera matrix: " << camMatrix);
 
     camera_width = new_width;
