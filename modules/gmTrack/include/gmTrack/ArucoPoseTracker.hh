@@ -4,7 +4,7 @@
 
 #include <gmTrack/config.hh>
 
-#ifdef gramods_ENABLE_OpenCV_ArUco
+#ifdef gramods_ENABLE_OpenCV_objdetect
 
 #include <gmCore/OFactory.hh>
 #include <gmCore/Updateable.hh>

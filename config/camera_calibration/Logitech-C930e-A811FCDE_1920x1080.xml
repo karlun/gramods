@@ -1,0 +1,22 @@
+<?xml version="1.0"?>
+<opencv_storage>
+<calibration_time>"ons  1 mar 2023 14:54:04"</calibration_time>
+<image_width>1920</image_width>
+<image_height>1080</image_height>
+<flags>0</flags>
+<camera_matrix type_id="opencv-matrix">
+  <rows>3</rows>
+  <cols>3</cols>
+  <dt>d</dt>
+  <data>
+    1.1449262531197576e+03 0. 9.5601023124537664e+02 0.
+    1.1446493835304263e+03 5.7504846963151567e+02 0. 0. 1.</data></camera_matrix>
+<distortion_coefficients type_id="opencv-matrix">
+  <rows>1</rows>
+  <cols>5</cols>
+  <dt>d</dt>
+  <data>
+    9.6962118139640355e-02 -2.4423765379506238e-01
+    9.6807102889667459e-05 1.0515224036691952e-04 1.1488912684025346e-01</data></distortion_coefficients>
+<avg_reprojection_error>1.9447237239675819e-01</avg_reprojection_error>
+</opencv_storage>

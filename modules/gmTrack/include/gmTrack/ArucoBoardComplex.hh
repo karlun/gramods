@@ -4,7 +4,7 @@
 
 #include <gmTrack/ArucoBoard.hh>
 
-#ifdef gramods_ENABLE_OpenCV_ArUco
+#ifdef gramods_ENABLE_OpenCV_objdetect
 
 #include <gmCore/eigen.hh>
 #include <gmCore/OFactory.hh>

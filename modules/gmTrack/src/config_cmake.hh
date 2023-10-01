@@ -27,9 +27,9 @@ namespace gramods {
 #cmakedefine gramods_ENABLE_OpenCV
 #endif
 
-#cmakedefine HAVE_OpenCV_ArUco
-#ifdef HAVE_OpenCV_ArUco
-#cmakedefine gramods_ENABLE_OpenCV_ArUco
+#cmakedefine HAVE_OpenCV_objdetect
+#ifdef HAVE_OpenCV_objdetect
+#cmakedefine gramods_ENABLE_OpenCV_objdetect
 #endif
 
 #endif
