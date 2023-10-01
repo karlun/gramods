@@ -1,6 +1,6 @@
 <config>
 
-  <ImportLibrary lib="gmTrack"/>
+  <ImportLibrary library="gmTrack"/>
 
   <ArucoPoseTracker
       showDebug="true"
