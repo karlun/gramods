@@ -4,6 +4,7 @@
 #ifdef gramods_ENABLE_VRPN
 
 #include <gmCore/Console.hh>
+#include <gmCore/RunOnce.hh>
 
 #include <vrpn_Analog.h>
 
@@ -41,12 +42,12 @@ void VrpnAnalogsTracker::update(gmCore::Updateable::clock::time_point, size_t) {
 void VrpnAnalogsTracker::Impl::update() {
 
   if (!tracker) {
-    GM_WRN("VrpnAnalogsTracker", "Cannot get buttons - no vrpn connection");
+    GM_RUNONCE(GM_WRN("VrpnAnalogsTracker", "Cannot get buttons - no vrpn connection"));
     return;
   }
 
   if (!tracker->connectionPtr()->doing_okay()) {
-    GM_WRN("VrpnAnalogsTracker", "Defunct connection - closing vrpn connection");
+    GM_ERR("VrpnAnalogsTracker", "Defunct connection - closing vrpn connection");
     tracker = nullptr;
     latest_sample = std::nullopt;
     return;
