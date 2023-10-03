@@ -43,9 +43,25 @@ int main(int argc, char *argv[]) {
   TCLAP::ValueArg<size_t> arg_count(
       "n", "count",
       "Number of samples to wait for before estimating the pivot"
-      "point. Default is the minimum, 3.",
+      " point. Default is the minimum, 3.",
       false, 3, "N");
   cmd.add(arg_count);
+
+  TCLAP::ValueArg<float> arg_pos_inlier(
+      "", "position-inlier-distance",
+      "Set the maximum positional distance from the average allowed for a"
+      " sample to be included in the average. Default is to include all"
+      " samples.",
+      false, -1, "D");
+  cmd.add(arg_pos_inlier);
+
+  TCLAP::ValueArg<float> arg_ori_inlier(
+      "", "orientation-inlier-distance",
+      "Set the maximum orientational distance (in radians) from the average"
+      " allowed for a sample to be included in the average. Default is to"
+      " include all samples.",
+      false, -1, "D");
+  cmd.add(arg_ori_inlier);
 
   try {
     cmd.parse(argc, argv);
@@ -85,6 +101,8 @@ int main(int argc, char *argv[]) {
   std::shared_ptr<gmTrack::SampleCollector> collector =
       std::make_shared<gmTrack::SampleCollector>();
   collector->setController(controller);
+  collector->setInlierThreshold(arg_pos_inlier.getValue());
+  collector->setOrientationInlierThreshold(arg_ori_inlier.getValue());
 
   size_t n_collected = 0;
   while (collector->getTrackerPositions().size() < arg_count.getValue())
@@ -139,12 +157,14 @@ int main(int argc, char *argv[]) {
     rel_pts.push_back((transform * x).hnormalized());
 
   float stddev, maxdev;
-  Eigen::Vector3f pt =
-      gmTrack::SampleCollector::getAverage(rel_pts, &stddev, &maxdev);
+  size_t inlier_count;
+  Eigen::Vector3f pt = gmTrack::SampleCollector::getAverage(
+      rel_pts, &stddev, &maxdev, arg_pos_inlier.getValue(), &inlier_count);
 
   std::cout << "Estimated absolute pivot point: " << pt.transpose()
             << " (stddev: " << stddev << ", maxdev: " << maxdev << ")"
-            << std::endl;
+            << " using " << inlier_count << " of " << rel_pts.size()
+            << " samples" << std::endl;
 
   return 0;
 }

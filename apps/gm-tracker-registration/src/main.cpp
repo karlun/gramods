@@ -252,6 +252,22 @@ int main(int argc, char *argv[]) {
      "Do not perform registration, but write unit transform to the output file using the specified template.",
      cmd, false);
 
+  TCLAP::ValueArg<float> arg_pos_inlier(
+      "", "position-inlier-threshold",
+      "Set the maximum positional distance from the average allowed for a"
+      " sample to be included in the average. Default is to include all"
+      " samples.",
+      false, -1, "D");
+  cmd.add(arg_pos_inlier);
+
+  TCLAP::ValueArg<float> arg_ori_inlier(
+      "", "orientation-inlier-threshold",
+      "Set the maximum orientational distance (in radians) from the average"
+      " allowed for a sample to be included in the average. Default is to"
+      " include all samples.",
+      false, -1, "D");
+  cmd.add(arg_ori_inlier);
+
   try {
     cmd.parse(argc, argv);
   } catch (const TCLAP::ArgException &e) {
@@ -281,6 +297,8 @@ int main(int argc, char *argv[]) {
 
   std::shared_ptr<gmTrack::PoseRegistrationEstimator> registrator =
     std::make_shared<gmTrack::PoseRegistrationEstimator>();
+  registrator->setInlierThreshold(arg_pos_inlier.getValue());
+  registrator->setOrientationInlierThreshold(arg_ori_inlier.getValue());
 
   std::shared_ptr<gmTrack::Controller> controller;
   if (config && config->getObject(controller))

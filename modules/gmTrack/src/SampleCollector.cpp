@@ -54,8 +54,16 @@ void SampleCollector::setWarningThreshold(float d) {
   _impl->warning_threshold = d;
 }
 
+void SampleCollector::setInlierThreshold(float d) {
+  _impl->inlier_threshold = d;
+}
+
 void SampleCollector::setOrientationWarningThreshold(float d) {
   _impl->orientation_warning_threshold = d;
+}
+
+void SampleCollector::setOrientationInlierThreshold(float d) {
+  _impl->orientation_inlier_threshold = d;
 }
 
 void SampleCollector::Impl::update(clock::time_point now) {
@@ -121,41 +129,55 @@ void SampleCollector::Impl::update(clock::time_point now) {
   }
 
   float stddev, maxdev;
-  Eigen::Vector3f pos = getAverage(sample_positions, &stddev, &maxdev);
+  size_t inlier_count;
+  Eigen::Vector3f pos = getAverage(
+      sample_positions, &stddev, &maxdev, inlier_threshold, &inlier_count);
   tracker_positions.push_back(pos);
 
   if (maxdev > warning_threshold) {
     GM_WRN("SampleCollector",
            "Estimated mean, " << pos.transpose() << " (stddev " << stddev
                               << "), has worst offset " << maxdev << " in "
+                              << inlier_count << " of "
                               << sample_positions.size() << " samples.");
   } else {
     GM_INF("SampleCollector",
            "Estimated mean: " << pos.transpose() << " (stddev " << stddev
                               << ", worst offset " << maxdev << ") from "
+                              << inlier_count << " of "
                               << sample_positions.size() << " samples.");
   }
   sample_positions.clear();
 
-  Eigen::Quaternionf ori = getAverage(sample_orientations, &stddev, &maxdev);
+  Eigen::Quaternionf ori = getAverage(sample_orientations,
+                                      &stddev,
+                                      &maxdev,
+                                      orientation_inlier_threshold,
+                                      &inlier_count);
   tracker_orientations.push_back(ori);
 
   if (maxdev > orientation_warning_threshold) {
     GM_WRN("SampleCollector",
            "Estimated orientation (stddev "
                << stddev << "), has worst offset " << maxdev << " in "
-               << sample_orientations.size() << " samples.");
+               << inlier_count << " of " << sample_orientations.size()
+               << " samples.");
   } else {
     GM_INF("SampleCollector",
            "Estimated orientation (stddev "
                << stddev << ", worst offset " << maxdev << ") from "
-               << sample_orientations.size() << " samples.");
+               << inlier_count << " of " << sample_orientations.size()
+               << " samples.");
   }
   sample_orientations.clear();
 }
 
-Eigen::Vector3f SampleCollector::getAverage(
-    std::vector<Eigen::Vector3f> samples, float *stddev, float *maxdev) {
+Eigen::Vector3f
+SampleCollector::getAverage(std::vector<Eigen::Vector3f> samples,
+                            float *stddev,
+                            float *maxdev,
+                            float inlier_dist,
+                            size_t *inlier_count) {
 
   if (samples.empty())
     throw gmCore::InvalidArgument("Cannot average empty vector");
@@ -163,12 +185,45 @@ Eigen::Vector3f SampleCollector::getAverage(
   if (samples.size() == 1) {
     if (stddev) *stddev = 0.f;
     if (maxdev) *maxdev = 0.f;
+    if (inlier_count) *inlier_count = samples.size();
     return samples.front();
   }
 
-  Eigen::Vector3f x = Eigen::Vector3f::Zero();
-  for (auto p : samples) x += p;
-  x *= (1.0 / samples.size());
+  Eigen::Vector3f x;
+
+  if (inlier_dist == std::numeric_limits<float>::max()) {
+    x = Eigen::Vector3f::Zero();
+    for (auto p : samples) x += p;
+    x *= (1.0 / samples.size());
+  } else {
+
+    float inl_d2 = inlier_dist * inlier_dist;
+    while (true) {
+      x = Eigen::Vector3f::Zero();
+      for (auto p : samples) x += p;
+      x *= (1.0 / samples.size());
+
+      if (samples.size() == 1) break;
+
+      size_t worst_idx = 0;
+      float worst_distance = (samples[worst_idx] - x).squaredNorm();
+      for (size_t idx = 1; idx < samples.size(); ++idx) {
+        float distance = (samples[idx] - x).squaredNorm();
+        if (distance < worst_distance) continue;
+
+        worst_idx = idx;
+        worst_distance = distance;
+      }
+
+      if (worst_distance < inl_d2) break;
+
+      GM_DBG2("SampleCollector",
+              "dropped positional outlier for position average ("
+                  << std::sqrt(worst_distance) << " > " << inlier_dist << " @ "
+                  << samples[worst_idx].transpose() << ")");
+      samples.erase(samples.begin() + worst_idx);
+    }
+  }
 
   if (stddev) {
     float dev = 0.f;
@@ -182,11 +237,17 @@ Eigen::Vector3f SampleCollector::getAverage(
     *maxdev = std::sqrt(dev);
   }
 
+  if (inlier_count) *inlier_count = samples.size();
+
   return x;
 }
 
-Eigen::Quaternionf SampleCollector::getAverage(
-    std::vector<Eigen::Quaternionf> samples, float *stddev, float *maxdev) {
+Eigen::Quaternionf
+SampleCollector::getAverage(std::vector<Eigen::Quaternionf> samples,
+                            float *stddev,
+                            float *maxdev,
+                            float inlier_dist,
+                            size_t *inlier_count) {
 
   if (samples.empty())
     throw gmCore::InvalidArgument("Cannot average empty vector");
@@ -194,35 +255,65 @@ Eigen::Quaternionf SampleCollector::getAverage(
   if (samples.size() == 1) {
     if (stddev) *stddev = 0.f;
     if (maxdev) *maxdev = 0.f;
+    if (inlier_count) *inlier_count = samples.size();
     return samples.front();
   }
 
-  float s = 1.f / samples.size();
+  Eigen::Quaternionf x;
+  while (true) {
+    float s = 1.f / samples.size();
 
-  Eigen::MatrixXf Qm(4, samples.size());
-  for (size_t idx = 0; idx < samples.size(); ++idx) {
-    Eigen::MatrixXf Q(4,1);
-    Q << samples[idx].w(), samples[idx].x(), samples[idx].y(), samples[idx].z();
-    Qm.col(idx) = s * Q;
+    Eigen::MatrixXf Qm(4, samples.size());
+    for (size_t idx = 0; idx < samples.size(); ++idx) {
+      Eigen::MatrixXf Q(4, 1);
+      Q << samples[idx].w(), samples[idx].x(), samples[idx].y(),
+          samples[idx].z();
+      Qm.col(idx) = s * Q;
+    }
+
+    Eigen::EigenSolver<Eigen::MatrixXf> solver(Qm * Qm.transpose());
+
+    auto eigenvectors = solver.eigenvectors();
+    auto eigenvalues = solver.eigenvalues();
+
+    if (eigenvalues.rows() < 4)
+      throw gmCore::RuntimeException(
+          "Could not find average orientation from samples");
+
+    Eigen::Vector4f V = eigenvectors.col(0).real();
+    float best_value = eigenvalues(0, 0).real();
+    for (int idx = 1; idx < eigenvalues.rows(); ++idx) {
+      if (eigenvalues(idx, 0).real() < best_value) continue;
+      V = eigenvectors.col(idx).real();
+      best_value = eigenvalues(idx, 0).real();
+    }
+
+    x = Eigen::Quaternionf(V[0], V[1], V[2], V[3]);
+
+    if (inlier_dist <= 0.f) break;
+    if (samples.size() == 1) break;
+
+    size_t worst_idx = 0;
+    float worst_angle =
+        Eigen::AngleAxisf(samples[worst_idx].conjugate() * x).angle();
+    for (size_t idx = 1; idx < samples.size(); ++idx) {
+      float angle = Eigen::AngleAxisf(samples[idx].conjugate() * x).angle();
+      if (angle < worst_angle) continue;
+
+      worst_idx = idx;
+      worst_angle = angle;
+    }
+
+    if (worst_angle < inlier_dist) break;
+
+    GM_DBG2("SampleCollector",
+            "dropped orientational outlier for position average ("
+                << worst_angle << " > " << inlier_dist << " @ "
+                << Eigen::AngleAxisf(samples[worst_idx]).axis().transpose()
+                << ", " << Eigen::AngleAxisf(samples[worst_idx]).angle()
+                << ")");
+    samples.erase(samples.begin() + worst_idx);
   }
-
-  Eigen::EigenSolver<Eigen::MatrixXf> solver(Qm * Qm.transpose());
-
-  auto eigenvectors = solver.eigenvectors();
-  auto eigenvalues = solver.eigenvalues();
-
-  if (eigenvalues.rows() < 4)
-    throw gmCore::RuntimeException("Could not find average orientation from samples");
-
-  Eigen::Vector4f V = eigenvectors.col(0).real();
-  float best_value = eigenvalues(0, 0).real();
-  for (int idx = 1; idx < eigenvalues.rows(); ++idx) {
-    if (eigenvalues(idx, 0).real() < best_value) continue;
-    V = eigenvectors.col(idx).real();
-    best_value = eigenvalues(idx, 0).real();
-  }
-
-  auto x = Eigen::Quaternionf(V[0], V[1], V[2], V[3]);
 
   if (stddev) {
     float dev = 0.f;
@@ -241,6 +332,8 @@ Eigen::Quaternionf SampleCollector::getAverage(
     }
     *maxdev = dev;
   }
+
+  if (inlier_count) *inlier_count = samples.size();
 
   return x;
 }

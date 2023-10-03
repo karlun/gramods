@@ -46,6 +46,22 @@ int main(int argc, char *argv[]) {
      false, "output.csv", "file");
   cmd.add(arg_outputfile);
 
+  TCLAP::ValueArg<float> arg_pos_inlier(
+      "", "position-inlier-threshold",
+      "Set the maximum positional distance from the average allowed for a"
+      " sample to be included in the average. Default is to include all"
+      " samples.",
+      false, -1, "D");
+  cmd.add(arg_pos_inlier);
+
+  TCLAP::ValueArg<float> arg_ori_inlier(
+      "", "orientation-inlier-threshold",
+      "Set the maximum orientational distance (in radians) from the average"
+      " allowed for a sample to be included in the average. Default is to"
+      " include all samples.",
+      false, -1, "D");
+  cmd.add(arg_ori_inlier);
+
   try {
     cmd.parse(argc, argv);
   } catch (const TCLAP::ArgException &e) {
@@ -78,6 +94,8 @@ int main(int argc, char *argv[]) {
   std::shared_ptr<gmTrack::SampleCollector> collector =
       std::make_shared<gmTrack::SampleCollector>();
   collector->setController(controller);
+  collector->setInlierThreshold(arg_pos_inlier.getValue());
+  collector->setOrientationInlierThreshold(arg_ori_inlier.getValue());
 
   std::string output_file = arg_outputfile.getValue();
   std::ofstream fout(output_file);

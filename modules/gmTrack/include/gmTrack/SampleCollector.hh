@@ -71,12 +71,26 @@ public:
   void setWarningThreshold(float d);
 
   /**
+     Set the maximum positional distance from the average allowed for
+     a sample to be included in the average. Default is -1 meaning
+     that all samples are included.
+  */
+  void setInlierThreshold(float r);
+
+  /**
      Sets the data offset required to trigger a warning. Default is
      π/4 radians.
 
      \gmXmlTag{gmTrack,SampleCollector,orientationWarningThreshold}
   */
   void setOrientationWarningThreshold(float d);
+
+  /**
+     Set the maximum orientational distance (in radians) from the
+     average allowed for a sample to be included in the
+     average. Default is -1 meaning that all samples are included.
+  */
+  void setOrientationInlierThreshold(float r);
 
   /**
      Returns the current list of tracker positions.
@@ -92,18 +106,34 @@ public:
      Calculates and returns the average point of a set of
      samples. Optionally also standard deviation and maximum deviation
      can be estimated.
+
+     @param[in] samples The samples to estimate average of
+     @param[out] stddev Optional pointer to variable to write standard deviation to
+     @param[out] maxdev Optional pointer to variable to write maximum deviation to
+     @param[in] inlier_dist Optional threshold for counting as inlier
+     @param[out] inlier_count Optional pointer to variable to write inlier count to
   */
   static Eigen::Vector3f getAverage(std::vector<Eigen::Vector3f> samples,
                                     float *stddev = nullptr,
-                                    float *maxdev = nullptr);
+                                    float *maxdev = nullptr,
+                                    float inlier_dist = -1.f,
+                                    size_t *inlier_count = nullptr);
   /**
      Calculates and returns the average point of a set of
      samples. Optionally also standard deviation and maximum deviation
      can be estimated (expressed in radians).
+
+     @param[in] samples The samples to estimate average of
+     @param[out] stddev Optional pointer to variable to write standard deviation to
+     @param[out] maxdev Optional pointer to variable to write maximum deviation to
+     @param[in] inlier_dist Optional threshold (in radians) for counting as inlier
+     @param[out] inlier_count Optional pointer to variable to write inlier count to
   */
   static Eigen::Quaternionf getAverage(std::vector<Eigen::Quaternionf> samples,
                                        float *stddev = nullptr,
-                                       float *maxdev = nullptr);
+                                       float *maxdev = nullptr,
+                                       float inlier_dist = -1.f,
+                                       size_t *inlier_count = nullptr);
 
   GM_OFI_DECLARE;
 

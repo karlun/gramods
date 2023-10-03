@@ -19,6 +19,9 @@ struct SampleCollector::Impl {
   float orientation_warning_threshold = GM_PI_4;
   bool collecting = false;
 
+  float inlier_threshold = -1.f;
+  float orientation_inlier_threshold = -1.f;
+
   virtual void update(clock::time_point time);
 
   std::shared_ptr<gramods::gmTrack::Controller> controller;

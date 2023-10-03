@@ -63,6 +63,22 @@ int main(int argc, char *argv[]) {
       "file");
   cmd.add(arg_outputfile);
 
+  TCLAP::ValueArg<float> arg_pos_inlier(
+      "", "position-inlier-threshold",
+      "Set the maximum positional distance from the average allowed for a"
+      " sample to be included in the average. Default is to include all"
+      " samples.",
+      false, -1, "D");
+  cmd.add(arg_pos_inlier);
+
+  TCLAP::ValueArg<float> arg_ori_inlier(
+      "", "orientation-inlier-threshold",
+      "Set the maximum orientational distance (in radians) from the average"
+      " allowed for a sample to be included in the average. Default is to"
+      " include all samples.",
+      false, -1, "D");
+  cmd.add(arg_ori_inlier);
+
   try {
     cmd.parse(argc, argv);
   } catch (const TCLAP::ArgException &e) {
@@ -96,6 +112,8 @@ int main(int argc, char *argv[]) {
   std::shared_ptr<gmTrack::ProjectionTextureGenerator> generator =
       std::make_shared<gmTrack::ProjectionTextureGenerator>();
   generator->setController(controller);
+  generator->setInlierThreshold(arg_pos_inlier.getValue());
+  generator->setOrientationInlierThreshold(arg_ori_inlier.getValue());
 
   if (!arg_bpoint.getValue().empty()) {
 
