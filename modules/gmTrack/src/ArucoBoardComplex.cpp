@@ -78,14 +78,18 @@ cv::Ptr<cv::aruco::Board> ArucoBoardComplex::Impl::getBoard() {
     aboards.push_back(b->getBoard());
   
   auto dictionary = aboards[0]->getDictionary();
-  for (auto b : aboards)
-    if (cv::countNonZero(b->getDictionary().bytesList !=
-                         dictionary.bytesList) != 0 ||
-        b->getDictionary().markerSize != dictionary.markerSize ||
-        b->getDictionary().maxCorrectionBits != dictionary.maxCorrectionBits) {
-      GM_RUNONCE(GM_ERR("ArucoBoardComplex", "Incorrect data - cannot create complex of boards that use different dictionaries."));
-      return nullptr;
-    }
+  for (auto b : aboards) {
+    const auto &b_dictionary = b->getDictionary();
+    if (std::equal(dictionary.bytesList.begin<uchar>(),
+                   dictionary.bytesList.end<uchar>(),
+                   b_dictionary.bytesList.begin<uchar>(),
+                   b_dictionary.bytesList.end<uchar>()) &&
+        (dictionary.markerSize == b_dictionary.markerSize) &&
+        (dictionary.maxCorrectionBits == b_dictionary.maxCorrectionBits))
+      continue;
+    GM_RUNONCE(GM_ERR("ArucoBoardComplex", "Incorrect data - cannot create complex of boards that use different dictionaries."));
+    return nullptr;
+  }
 
   std::vector<std::vector<cv::Point3f>> objPoints;
   std::vector<int> ids;
