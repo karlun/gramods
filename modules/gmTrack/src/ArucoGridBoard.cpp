@@ -166,9 +166,10 @@ cv::Ptr<cv::aruco::Board> ArucoGridBoard::Impl::getBoard() {
     std::vector<cv::Point3f> pts;
     for (auto pt : opt) {
       pt -= cp;
-      Eigen::Vector3f ept(pt.x, pt.y, pt.z);
+      // Move and rotate in OpenGL axes convention
+      Eigen::Vector3f ept(pt.x, -pt.y, -pt.z);
       ept = orientation * ept + position;
-      pts.push_back(cv::Point3f(ept.x(), ept.y(), ept.z()));
+      pts.push_back(cv::Point3f(ept.x(), -ept.y(), -ept.z()));
     }
     objPoints.push_back(pts);
   }

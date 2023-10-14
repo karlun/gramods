@@ -231,8 +231,6 @@ void ArucoPoseTracker::Impl::update(gmCore::Updateable::clock::time_point time_n
     samples[idx] = sample;
 
     if (show_debug_output) {
-      cv::drawFrameAxes(debug_image, camMatrix, distCoeffs, rvec, tvec, 0.1f);
-
       std::vector<std::vector<cv::Point2f>> imagePoints;
       for (auto mpts : board->getObjPoints()) {
         std::vector<cv::Point2f> imgpts;
@@ -241,6 +239,11 @@ void ArucoPoseTracker::Impl::update(gmCore::Updateable::clock::time_point time_n
       }
       cv::aruco::drawDetectedMarkers(
           debug_image, imagePoints, cv::noArray(), cv::Scalar(255, 0, 0));
+
+      // Draw frame axes with OpenGL axes convention
+      rotm = rotm * cv::Matx33d(1, 0, 0, 0, -1, 0, 0, 0, -1);
+      cv::Rodrigues(rotm, rvec);
+      cv::drawFrameAxes(debug_image, camMatrix, distCoeffs, rvec, tvec, 0.1f);
     }
   }
 
