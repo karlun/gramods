@@ -46,7 +46,8 @@ public:
      Either only boards and no pose specifications are provided, and
      the specified boards have different positions and/or
      orientations, or an equal amount of boards and pose
-     specifications must be provided.
+     specifications must be provided. The offset follows OpenGL
+     convention: x left, y up and z back (out of the board).
      
      \gmXmlTag{gmTrack,ArucoBoardComplex,position}
   */
