@@ -16,8 +16,8 @@
     respectively. Adjust the numbers to match the calibration target.
 
     ./bin/gm-tracker-registration \
-      --output-template urn:gramods:config/se.liu/workbench.Sony-3DTV-template.xml \
-      --output-file se.liu.workbench.Sony-3DTV-template-step2.xml \
+      --output-template urn:gramods:config/se.liu/workbench.3DTV-Sony50-template.xml \
+      --output-file se.liu.workbench.3DTV-Sony50-template-step2.xml \
       --config urn:gramods:config/output-normal-to-console.xml \
       --config urn:gramods:config/se.liu/workbench.calibration-tracker-vrpn-relative.xml \
       --a-point -0.05,0,0 \
@@ -34,8 +34,8 @@
     adjust the coordinates of the corners (`--a-point`) if necessary.
 
     ./bin/gm-tracker-registration \
-      --output-template se.liu.workbench.Sony-3DTV-template-step2.xml \
-      --output-file se.liu.workbench.Sony-3DTV.xml \
+      --output-template se.liu.workbench.3DTV-Sony50-template-step2.xml \
+      --output-file se.liu.workbench.3DTV-Sony50.xml \
       --config urn:gramods:config/output-normal-to-console.xml \
       --config urn:gramods:config/se.liu/workbench.calibration-tracker-vrpn.xml \
       --a-point -0.555,-0.312,0 \
