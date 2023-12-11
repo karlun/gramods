@@ -51,8 +51,10 @@ void OpenVRPoseTracker::setType(std::string type) {
   TYPE(TrackingReference);
   TYPE(DisplayRedirect);
 
-  throw gmCore::InvalidArgument(
-      GM_STR("Unknown device type (class): " << type));
+  throw gmCore::InvalidArgument(GM_STR(
+      "Unknown device type (class): "
+      << type << "! "
+      << "Must be one of HMD, Controller, GenericTracker, TrackingReference, DisplayRedirect"));
 
 #undef TYPE
 }
@@ -75,7 +77,10 @@ void OpenVRPoseTracker::setRole(std::string role) {
   ROLE(Treadmill);
   ROLE(Stylus);
 
-  throw gmCore::InvalidArgument(GM_STR("Unknown device role: " << role));
+  throw gmCore::InvalidArgument(GM_STR(
+      "Unknown device role: "
+      << role << "! "
+      << "Must be one of LeftHand, RightHand, OptOut, Treadmill, Stylus"));
 
 #undef ROLE
 }
