@@ -1,11 +1,4 @@
 <config>
-  <![CDATA[
-
-    Controller configuration for use on LiU MIT Vortex computer to
-    read tracker data directly from the head-mounted display system
-    (HMD).
-
-  ]]>
 
   <OpenVR
       DEF="OPENVR"
@@ -13,17 +6,18 @@
       actionSet="/actions/std"/>
 
   <Controller>
-    <OffsetSinglePoseTracker
-        positionOffset="-0.0005 -0.001 0.1002">
-      <OpenVRPoseTracker serial="LHR-0FC1EC83">
+    <RelativeSinglePoseTracker>
+      <OffsetSinglePoseTracker
+          KEY="targetTracker"
+          positionOffset="-0.0005 -0.001 0.1002">
+        <OpenVRPoseTracker serial="LHR-0FC1EC83">
+          <OpenVR USE="OPENVR"/>
+        </OpenVRPoseTracker>
+      </OffsetSinglePoseTracker>
+      <OpenVRPoseTracker KEY="originTracker" serial="LHR-1FDECF81">
         <OpenVR USE="OPENVR"/>
       </OpenVRPoseTracker>
-    </OffsetSinglePoseTracker>
-
-    <OpenVRAnalogsTracker action="/actions/std/in/AnalogInput">
-      <OpenVR USE="OPENVR"/>
-    </OpenVRAnalogsTracker>
-
+    </RelativeSinglePoseTracker>
     <OpenVRButtonsTracker>
       <OpenVR USE="OPENVR"/>
       <param name="action" value="/actions/std/in/MainButton"/>

@@ -16,10 +16,10 @@
     respectively. Adjust the numbers to match the calibration target.
 
     ./bin/gm-tracker-registration \
-      --output-template urn:gramods:config/se.liu/workbench.3DTV-Sony50-template.xml \
-      --output-file se.liu.workbench.3DTV-Sony50-template-step2.xml \
+      --output-template urn:gramods:config/se.liu/workbench.3DTV-Sony50-openvr-template.xml \
+      --output-file se.liu.workbench.3DTV-Sony50-openvr-template-step2.xml \
       --config urn:gramods:config/output-normal-to-console.xml \
-      --config urn:gramods:config/se.liu/workbench.calibration-tracker-vrpn-relative.xml \
+      --config urn:gramods:config/se.liu/workbench.calibration-tracker-openvr-relative.xml \
       --a-point -0.05,0,0 \
       --a-point +0.05,0,0 \
       --a-point 0,-0.12,0
@@ -34,16 +34,21 @@
     adjust the coordinates of the corners (`--a-point`) if necessary.
 
     ./bin/gm-tracker-registration \
-      --output-template se.liu.workbench.3DTV-Sony50-template-step2.xml \
-      --output-file se.liu.workbench.3DTV-Sony50.xml \
+      --output-template se.liu.workbench.3DTV-Sony50-openvr-template-step2.xml \
+      --output-file se.liu.workbench.3DTV-Sony50-openvr.xml \
       --config urn:gramods:config/output-normal-to-console.xml \
-      --config urn:gramods:config/se.liu/workbench.calibration-tracker-vrpn.xml \
+      --config urn:gramods:config/se.liu/workbench.calibration-tracker-openvr.xml \
       --a-point -0.555,-0.312,0 \
       --a-point -0.555,+0.312,0 \
       --a-point +0.555,+0.312,0 \
       --a-point +0.555,-0.312,0
 
   ]]>
+
+  <OpenVR
+      DEF="OPENVR"
+      manifestPath="urn:gramods:config/openvr_manifest/standard_actionset.json"
+      actionSet="/actions/std"/>
 
   <RegisteredSinglePoseTracker
       DEF="head"
@@ -53,10 +58,9 @@
       registrationMatrix="%%M0x %%M1x %%M2x %%M3x
                           %%M0y %%M1y %%M2y %%M3y
                           %%M0z %%M1z %%M2z %%M3z">
-    <MultiToSinglePoseTracker sensor="0">
-      <VrpnPoseTracker
-          connectionString="openvr/device/LHR-1BDC55AF@tcp://win04681.ad.liu.se"/>
-    </MultiToSinglePoseTracker>
+    <OpenVRPoseTracker serial="LHR-1FDECF81">
+      <OpenVR USE="OPENVR"/>
+    </OpenVRPoseTracker>
   </RegisteredSinglePoseTracker>
 
   <SdlWindow
@@ -83,25 +87,18 @@
         registrationMatrix="%%M0x %%M1x %%M2x %%M3x
                             %%M0y %%M1y %%M2y %%M3y
                             %%M0z %%M1z %%M2z %%M3z">
-      <MultiToSinglePoseTracker
-          sensor="0">
-        <VrpnPoseTracker
-            connectionString="openvr/device/LHR-FFAF7B46@tcp://win04681.ad.liu.se"/>
-      </MultiToSinglePoseTracker>
+      <OpenVRPoseTracker serial="LHR-FFAF7B46">
+        <OpenVR USE="OPENVR"/>
+      </OpenVRPoseTracker>
     </RegisteredSinglePoseTracker>
-    <AnalogsMapper
-        verticalAnalog="1"
-        horizontalAnalog="2"
-        triggerAnalog="2">
-      <VrpnAnalogsTracker
-          connectionString="openvr/device/LHR-FFAF7B46@tcp://win04681.ad.liu.se"/>
-    </AnalogsMapper>
-    <ButtonsMapper
-        mainButton="33"
-        secondaryButton="32">
-      <VrpnButtonsTracker
-          connectionString="openvr/device/LHR-FFAF7B46@tcp://win04681.ad.liu.se"/>
-    </ButtonsMapper>
+    <OpenVRAnalogsTracker action="/actions/std/in/AnalogInput">
+      <OpenVR USE="OPENVR"/>
+    </OpenVRAnalogsTracker>
+    <OpenVRButtonsTracker>
+      <OpenVR USE="OPENVR"/>
+      <param name="action" value="/actions/std/in/MainButton"/>
+      <param name="action" value="/actions/std/in/SecondButton"/>
+    </OpenVRButtonsTracker>
   </Controller>
 
 </config>

@@ -1,0 +1,110 @@
+<config>
+  <![CDATA[
+
+    HMD configuration for TNM086 but with tracked monoscopic TV view
+    in the background.
+
+     1. camera mount calibration, and
+     2. display registration
+
+
+    ## Calibration of Camera Mount
+
+    The points in the first calibration step represent left lateral
+    wall of orbit, right lateral wall of orbit and chin of the wearer,
+    respectively. Adjust the numbers to match the calibration target.
+
+    ./bin/gm-tracker-registration \
+      --output-template urn:gramods:config/se.liu/workbench.Hmd-w-TV-template.xml \
+      --output-file se.liu.workbench.Hmd-w-TV.xml \
+      --config urn:gramods:config/output-normal-to-console.xml \
+      --config urn:gramods:config/se.liu/workbench.calibration-tracker-vrpn-relative.xml \
+      --a-point -0.05,0,0 \
+      --a-point +0.05,0,0 \
+      --a-point 0,-0.05,0 \
+      --a-point 0,+0.05,0
+
+    Galaxy S21 Pro: 160x70 mm  +x: 11 / 27.0 / 44.0, +y: 11.5, +z: -4
+
+    |       |   X |  Y | Z |  X0 |  Y0 |  X1 | Y1 |  X2 | Y2 |  X3 |  Y3 |
+    |:------|----:|---:|--:|----:|----:|----:|---:|----:|---:|----:|----:|
+    | Size  | 160 | 70 |   |     |     |     |    |     |    |     |     |
+    | Cam 0 |  11 | 11 | 4 | -11 | -59 | -11 | 11 | 149 | 11 | 149 | -59 |
+    | Cam 1 |  27 | 11 | 4 | -27 | -59 | -27 | 11 | 133 | 11 | 133 | -59 |
+    | Cam 2 |  44 | 11 | 4 | -44 | -59 | -44 | 11 | 116 | 11 | 116 | -59 |
+
+
+    ## Display Registration
+
+    The registration of the display is done by sampling top left and
+    bottom right corners of the surface, and entering the correct
+    values into the spatial planar view.
+
+    ./bin/gm-tracker-sampler \
+      --config urn:gramods:config/output-normal-to-console.xml \
+      --config urn:gramods:config/se.liu/workbench.calibration-tracker-vrpn.xml
+
+  ]]>
+
+  <SdlWindow>
+
+    <SdlContext
+        DEF="SDL"
+        useVideo="true"/>
+
+    <HmdView>
+      <OpenVR
+          DEF="OPENVR"
+          useVideo="true"
+          manifestPath="urn:gramods:config/openvr_manifest/standard_actionset.json"
+          actionSet="/actions/std"/>
+    </HmdView>
+  </SdlWindow>
+
+  <Controller>
+    <OpenVRPoseTracker
+        type="Controller">
+      <OpenVR USE="OPENVR"/>
+    </OpenVRPoseTracker>
+
+    <OpenVRAnalogsTracker action="/actions/std/in/AnalogInput">
+      <OpenVR USE="OPENVR"/>
+    </OpenVRAnalogsTracker>
+
+    <OpenVRButtonsTracker>
+      <OpenVR USE="OPENVR"/>
+      <param name="action" value="/actions/std/in/MainButton"/>
+      <param name="action" value="/actions/std/in/SecondButton"/>
+    </OpenVRButtonsTracker>
+  </Controller>
+
+  <RegisteredSinglePoseTracker
+      DEF="head"
+      positionBias="%Mi3x %Mi3y %Mi3z"
+      orientationBias="axisangle %Rix %Riy %Riz %Ria">
+
+    <OpenVRPoseTracker
+        type="GenericTracker">
+      <OpenVR USE="OPENVR"/>
+    </OpenVRPoseTracker>
+  </RegisteredSinglePoseTracker>
+
+  <SdlWindow
+      fullscreen="true"
+      display="1">
+
+    <SdlContext USE="SDL"/>
+
+    <TrackedViewpoint>
+      <RegisteredSinglePoseTracker USE="head"/>
+    </TrackedViewpoint>
+
+    <SpatialPlanarView
+        topLeftCorner="%%p0x %%p0y %%p0z"
+        bottomRightCorner="%%p1x %%p1y %%p1z"
+        upDirection="0 1 0">
+    </SpatialPlanarView>
+
+  </SdlWindow>
+
+</config>
