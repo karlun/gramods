@@ -9,6 +9,7 @@ BEGIN_NAMESPACE_GMCORE;
 GM_OFI_DEFINE_SUB(LogFileMessageSink, MessageSink);
 GM_OFI_PARAM2(LogFileMessageSink, logFilePath, std::filesystem::path, setLogFilePath);
 GM_OFI_PARAM2(LogFileMessageSink, append, bool, setAppend);
+GM_OFI_PARAM2(LogFileMessageSink, level, int, setLevel);
 
 LogFileMessageSink::LogFileMessageSink()
   : append(false) {}
@@ -26,6 +27,7 @@ void LogFileMessageSink::setAppend(bool on) {
 }
 
 void LogFileMessageSink::output(Message msg) {
+  if (msg.level > gramods::gmCore::ConsoleLevel(level)) return;
   std::lock_guard<std::mutex> guard(lock);
   if (logfile_path.empty())
     return;

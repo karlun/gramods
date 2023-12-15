@@ -35,6 +35,14 @@ public:
   */
   void setAppend(bool on);
 
+  /**
+     Set the level of messages to output. This is an integer typically
+     following the level of importance in ConsoleLevel, inclusive.
+
+     \gmXmlTag{gmCore,OStreamMessageSink,level}
+  */
+  void setLevel(int l) { level = l; }
+
   void output(Message msg);
 
   GM_OFI_DECLARE;
@@ -44,6 +52,7 @@ private:
   bool append;
   std::filesystem::path logfile_path;
   std::ofstream logfile;
+  int level = 2;
 
   std::mutex lock;
 };
