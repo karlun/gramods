@@ -17,12 +17,13 @@ class RegisteredMultiPoseTracker
 
 public:
 
+  RegisteredMultiPoseTracker();
+  ~RegisteredMultiPoseTracker();
+
   /**
      Sets the MultiPoseTracker to register data from.
   */
-  void setMultiPoseTracker(std::shared_ptr<MultiPoseTracker> tracker) {
-    this->tracker = tracker;
-  }
+  void setMultiPoseTracker(std::shared_ptr<MultiPoseTracker> tracker);
 
   /**
      Sets the matrix that describes the transform from the tracker
@@ -32,9 +33,17 @@ public:
 
      \sa gramods::operator>>(std::istream &, Eigen::Matrix4f &)
   */
-  void setRegistrationMatrix(Eigen::Matrix4f m) {
-    registration = m;
-  }
+  void setRegistrationMatrix(Eigen::Matrix4f m);
+
+  /**
+     Sets the matrix that describes the transform from the tracker
+     space to the registered space.
+
+     \gmXmlTag{gmTrack,RegisteredMultiPoseTracker,registrationMatrix}
+
+     \sa gramods::operator>>(std::istream &, Eigen::Matrix4f &)
+  */
+  void setBiasMatrix(Eigen::Matrix4f m);
 
   /**
      Sets a position bias to the registration. This is typically not
@@ -44,9 +53,7 @@ public:
 
      \sa gramods::operator>>(std::istream &, Eigen::Vector3f &)
   */
-  void setPositionBias(Eigen::Vector3f p) {
-    position_bias = p;
-  }
+  void setPositionBias(Eigen::Vector3f p);
 
   /**
      Sets an orientation bias to the registration. This is typically
@@ -56,9 +63,7 @@ public:
 
      \sa gramods::operator>>(std::istream &, Eigen::Quaternionf &)
   */
-  void setOrientationBias(Eigen::Quaternionf q) {
-    orientation_bias = q;
-  }
+  void setOrientationBias(Eigen::Quaternionf q);
 
   /**
      Replaces the contents of p with pose data. Returns true if data
@@ -70,13 +75,8 @@ public:
   GM_OFI_DECLARE;
 
 private:
-
-  std::shared_ptr<MultiPoseTracker> tracker;
-
-  Eigen::Matrix4f registration = Eigen::Matrix4f::Identity();
-  Eigen::Vector3f position_bias = Eigen::Vector3f::Zero();
-  Eigen::Quaternionf orientation_bias = Eigen::Quaternionf::Identity();
-
+  struct Impl;
+  std::unique_ptr<Impl> _impl;
 };
 
 END_NAMESPACE_GMTRACK;

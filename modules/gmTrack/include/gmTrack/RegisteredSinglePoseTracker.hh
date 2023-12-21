@@ -17,12 +17,13 @@ class RegisteredSinglePoseTracker
 
 public:
 
+  RegisteredSinglePoseTracker();
+  ~RegisteredSinglePoseTracker();
+
   /**
      Sets the SinglePoseTracker to register data from.
   */
-  void setSinglePoseTracker(std::shared_ptr<SinglePoseTracker> tracker) {
-    this->tracker = tracker;
-  }
+  void setSinglePoseTracker(std::shared_ptr<SinglePoseTracker> tracker);
 
   /**
      Sets the matrix that describes the transform from the tracker
@@ -32,9 +33,16 @@ public:
 
      \sa gramods::operator>>(std::istream &, Eigen::Matrix4f &)
   */
-  void setRegistrationMatrix(Eigen::Matrix4f m) {
-    registration = m;
-  }
+  void setRegistrationMatrix(Eigen::Matrix4f m);
+
+  /**
+     Sets a bias to the registration. This is typically not needed.
+
+     \gmXmlTag{gmTrack,RegisteredSinglePoseTracker,biasMatrix}
+
+     \sa gramods::operator>>(std::istream &, Eigen::Matrix4f &)
+  */
+  void setBiasMatrix(Eigen::Matrix4f m);
 
   /**
      Sets a position bias to the registration. This is typically not
@@ -43,10 +51,9 @@ public:
      \gmXmlTag{gmTrack,RegisteredSinglePoseTracker,positionBias}
 
      \sa gramods::operator>>(std::istream &, Eigen::Vector3f &)
+     \sa setBiasMatrix
   */
-  void setPositionBias(Eigen::Vector3f p) {
-    position_bias = p;
-  }
+  void setPositionBias(Eigen::Vector3f p);
 
   /**
      Sets an orientation bias to the registration. This is typically
@@ -55,10 +62,9 @@ public:
      \gmXmlTag{gmTrack,RegisteredSinglePoseTracker,orientationBias}
 
      \sa gramods::operator>>(std::istream &, Eigen::Quaternionf &)
+     \sa setBiasMatrix
   */
-  void setOrientationBias(Eigen::Quaternionf q) {
-    orientation_bias = q;
-  }
+  void setOrientationBias(Eigen::Quaternionf q);
 
   /**
      Replaces the contents of p with pose data.
@@ -68,13 +74,8 @@ public:
   GM_OFI_DECLARE;
 
 private:
-
-  std::shared_ptr<SinglePoseTracker> tracker;
-
-  Eigen::Matrix4f registration = Eigen::Matrix4f::Identity();
-  Eigen::Vector3f position_bias = Eigen::Vector3f::Zero();
-  Eigen::Quaternionf orientation_bias = Eigen::Quaternionf::Identity();
-
+  struct Impl;
+  std::unique_ptr<Impl> _impl;
 };
 
 END_NAMESPACE_GMTRACK;
