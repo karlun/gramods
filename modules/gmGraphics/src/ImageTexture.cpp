@@ -25,6 +25,7 @@ GM_OFI_PARAM2(ImageTexture, range, gmCore::size2, setRange);
 GM_OFI_PARAM2(ImageTexture, autoRange, bool, setAutoRange);
 GM_OFI_PARAM2(ImageTexture, loop, bool, setLoop);
 GM_OFI_PARAM2(ImageTexture, exit, bool, setExit);
+GM_OFI_PARAM2(ImageTexture, logProgress, bool, setLogProgress);
 
 struct ImageTexture::Impl {
 
@@ -49,6 +50,11 @@ struct ImageTexture::Impl {
   bool animate = false;
   bool do_loop = false;
   bool do_exit = false;
+
+  typedef std::chrono::steady_clock clock;
+  typedef std::chrono::duration<double, std::ratio<1>> d_seconds;
+  bool do_log_progress = false;
+  clock::time_point last_print_time = clock::now();
 
   std::shared_ptr<gmCore::FreeImage> free_image;
 
@@ -101,6 +107,10 @@ void ImageTexture::setLoop(bool on) {
 
 void ImageTexture::setExit(bool on) {
   _impl->do_exit = on;
+}
+
+void ImageTexture::setLogProgress(bool on) {
+  _impl->do_log_progress = on;
 }
 
 ImageTexture::Impl::Impl() {
@@ -208,6 +218,25 @@ void ImageTexture::Impl::update() {
   if (auto_range) {
     findRange();
     auto_range = false;
+  }
+
+  if (do_log_progress) {
+    auto current_time = clock::now();
+    auto dt = std::chrono::duration_cast<d_seconds>(current_time - last_print_time);
+
+    if (dt.count() > 2) {
+
+      GM_INF("gm-load",
+             "ImageTexture frame "
+                 << (animation_frame - animation_range[0]) << " of "
+                 << (animation_range[1] - animation_range[0]) << " ("
+                 << animation_range[0] << " < " << animation_frame << " < "
+                 << animation_range[1] << ") ≈ "
+                 << int((100 * (animation_frame - animation_range[0])) /
+                        (animation_range[1] - animation_range[0])));
+
+      last_print_time = current_time;
+    }
   }
 
   if ((size_t)++animation_frame <= animation_range[1]) return;

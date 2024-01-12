@@ -87,6 +87,13 @@ public:
   void setLoop(bool on);
 
   /**
+     Activates or deactivates logging progress information. Default is false.
+
+     \gmXmlTag{gmGraphics,ImageTexture,logProgress}
+  */
+  void setLogProgress(bool on);
+
+  /**
      Activates or deactivates automatic exit when the specified range
      has been covered. Default is false. Loop has to be false for this
      to work.
