@@ -40,7 +40,12 @@ int main(int argc, char *argv[]) {
      false, "identifier=value");
   cmd.add(arg_param_dummy);
 
-	TCLAP::SwitchArg sync_start("s","sync-start","Wait for the other nodes specified in the configuration, to start at the same time.", cmd, false);
+  TCLAP::SwitchArg output_time(
+      "t", "show-time",
+      "Log timing information every second second.",
+      cmd, false);
+
+  TCLAP::SwitchArg sync_start("s","sync-start","Wait for the other nodes specified in the configuration, to start at the same time.", cmd, false);
 	TCLAP::SwitchArg sync_swap("w","sync-swap","Synchronize swap buffers with the other nodes specified in the configuration.", cmd, false);
 
   try {
@@ -172,7 +177,7 @@ int main(int argc, char *argv[]) {
       auto current_time = clock::now();
       auto dt = std::chrono::duration_cast<d_seconds>(current_time - last_print_time);
 
-      if (dt.count() > 2) {
+      if (output_time.getValue() && dt.count() > 2) {
 
         float to_us = 1e6f / (float)frame_count;
 
