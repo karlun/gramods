@@ -150,9 +150,9 @@ bool OpenVRPoseTracker::Impl::getPose(PoseSample &p) {
   }
 
   for (size_t idx = 0; idx < pose_list->size(); ++idx) {
-    if (!checkParamFit(idx)) continue;
     if (!(*pose_list)[idx].bDeviceIsConnected) continue;
     if (!(*pose_list)[idx].bPoseIsValid) continue;
+    if (!checkParamFit(idx)) continue;
 
     tracker_idx = idx;
     p = extractPose((*pose_list)[idx]);
