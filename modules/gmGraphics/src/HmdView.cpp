@@ -94,9 +94,13 @@ void HmdView::Impl::processEye(ViewSettings settings,
   camera.setClipPlanes(left, right, bottom, top);
 
   auto pose_list = openvr->getPoseList();
-  if (settings.viewpoint) {
-    camera.setPosition(settings.viewpoint->getPosition());
-    camera.setOrientation(settings.viewpoint->getOrientation());
+  if (!settings.viewpoints.empty()) {
+    camera.setPosition(settings.viewpoints[0]->getPosition());
+    camera.setOrientation(settings.viewpoints[0]->getOrientation());
+    if (settings.viewpoints.size() > 1)
+      GM_RUNONCE(GM_WRN("HmdView",
+                        "No support for multiple viewpoints (using 1 of "
+                            << settings.viewpoints.size() << ")"));
   } else if (pose_list) {
     Eigen::Matrix4f M =
 	  gmCore::OpenVR::convert(

@@ -27,6 +27,7 @@ struct PosedSphericalView::Impl {
 
   std::string createFragmentCode();
   void renderFullPipeline(ViewSettings settings);
+  void renderFullPipeline(ViewSettings settings, Viewpoint *vp);
 
   bool make_square = false;
 
@@ -117,13 +118,15 @@ void PosedSphericalView::Impl::renderFullPipeline(ViewSettings settings) {
     return;
   }
 
-  Eigen::Vector3f eye_pos = Eigen::Vector3f::Zero();
-  Eigen::Quaternionf head_rot = Eigen::Quaternionf::Identity();
+  for (auto viewpoint : settings.viewpoints)
+    renderFullPipeline(settings, viewpoint.get());
+}
 
-  if (settings.viewpoint) {
-    eye_pos = settings.viewpoint->getPosition();
-    head_rot = settings.viewpoint->getOrientation();
-  }
+void PosedSphericalView::Impl::renderFullPipeline(ViewSettings settings,
+                                                  Viewpoint *viewpoint) {
+
+  Eigen::Vector3f eye_pos = viewpoint->getPosition();
+  Eigen::Quaternionf head_rot = viewpoint->getOrientation();
 
   GLint program_id = cubemap->getProgram();
   if (!program_id) {

@@ -30,16 +30,14 @@ public:
 
      \sa operator>>(std::istream &, gmCore::angle &)
   */
-  void setFieldOfView(gmCore::angle2 fov) {
-    field_of_view = fov;
-  }
+  void setFieldOfView(gmCore::angle2 fov);
 
   GM_OFI_DECLARE;
 
 private:
 
-  gmCore::angle2 field_of_view = { 1, -1 };
-
+  struct Impl;
+  std::unique_ptr<Impl> _impl;
 };
 
 END_NAMESPACE_GMGRAPHICS;

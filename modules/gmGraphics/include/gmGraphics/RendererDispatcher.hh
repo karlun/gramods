@@ -31,12 +31,16 @@ public:
     ViewSettings() = delete;
 
     ViewSettings(size_t frame_number)
-      : frame_number(frame_number),
-        viewpoint(std::make_shared<Viewpoint>()) {}
+      : frame_number(frame_number) {}
 
     /// Creates settings associated with the specified viewpoint.
     ViewSettings(size_t frame_number, std::shared_ptr<Viewpoint> vp)
-      : frame_number(frame_number), viewpoint(vp) {}
+      : frame_number(frame_number), viewpoints({vp}) {}
+
+    /// Creates settings associated with the specified viewpoints.
+    ViewSettings(size_t frame_number,
+                 std::vector<std::shared_ptr<Viewpoint>> vps)
+      : frame_number(frame_number), viewpoints(vps) {}
 
     /// The frame currently being rendered. This value is increased by
     /// one for every time the rendering loop is executed and can thus
@@ -47,7 +51,7 @@ public:
     Renderer::list renderers;
 
     /// The viewpoint currently being rendered.
-    std::shared_ptr<Viewpoint> viewpoint;
+    std::vector<std::shared_ptr<Viewpoint>> viewpoints;
 
     /// The preferred pixel format for buffers.
     GLenum pixel_format = GL_RGBA8;
@@ -93,7 +97,17 @@ public:
      RendererDispatcher.
   */
   void setViewpoint(std::shared_ptr<Viewpoint> viewpoint) {
-    this->viewpoint = viewpoint;
+    viewpoints = {viewpoint};
+  }
+
+  /**
+     Adds a viewpoint to use in the views rendered by this
+     RendererDispatcher.
+
+     \gmXmlTag{gmGraphics,RendererDispatcher,viewpoint}
+  */
+  void addViewpoint(std::shared_ptr<Viewpoint> viewpoint) {
+    viewpoints.push_back(viewpoint);
   }
 
   GM_OFI_DECLARE;
@@ -109,7 +123,7 @@ protected:
   void populateViewSettings(ViewSettings &settings);
 
   Renderer::list renderers;
-  std::shared_ptr<Viewpoint> viewpoint;
+  std::vector<std::shared_ptr<Viewpoint>> viewpoints;
 
 };
 

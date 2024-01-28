@@ -13,27 +13,24 @@ void FovPlanarView::renderFullPipeline(ViewSettings settings) {
 
   populateViewSettings(settings);
 
-  Eigen::Vector3f x_VP = Eigen::Vector3f::Zero();
-  Eigen::Quaternionf q_VP = Eigen::Quaternionf::Identity();
-
-  if (settings.viewpoint) {
-    x_VP = settings.viewpoint->getPosition();
-    q_VP = settings.viewpoint->getOrientation();
-  }
-
-  Camera camera(settings);
-  camera.setClipPlanes(planes[0], planes[1], planes[2], planes[3]);
-  camera.setPose(x_VP, orientation);
-
-  float near, far;
-  Renderer::getNearFar(settings.renderers, camera, near, far);
-
   glEnable(GL_DEPTH_TEST);
   glEnable(GL_BLEND);
   glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-  for (auto renderer : settings.renderers)
-    renderer->render(camera, near, far);
+  for (auto viewpoint : settings.viewpoints) {
+    Eigen::Vector3f x_VP = viewpoint->getPosition();
+    Eigen::Quaternionf q_VP = viewpoint->getOrientation();
+
+    Camera camera(settings);
+    camera.setClipPlanes(planes[0], planes[1], planes[2], planes[3]);
+    camera.setPose(x_VP, orientation);
+
+    float near, far;
+    Renderer::getNearFar(settings.renderers, camera, near, far);
+
+    for (auto renderer : settings.renderers)
+      renderer->render(camera, near, far);
+  }
 }
 
 END_NAMESPACE_GMGRAPHICS;

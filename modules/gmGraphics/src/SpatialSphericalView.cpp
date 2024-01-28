@@ -39,7 +39,7 @@ struct SpatialSphericalView::Impl {
 
   std::string createFragmentCode();
   void renderFullPipeline(ViewSettings settings, Eye eye);
-
+  void renderFullPipeline(ViewSettings settings, Eye eye, Viewpoint *viewpoint);
 };
 
 const std::string SpatialSphericalView::Impl::mapper_pattern = "MAPPER;";
@@ -149,15 +149,16 @@ void SpatialSphericalView::Impl::renderFullPipeline(ViewSettings settings, Eye e
     return;
   }
 
-  Eigen::Vector3f eye_pos = Eigen::Vector3f::Zero();
-  Eigen::Quaternionf head_rot = Eigen::Quaternionf::Identity();
+  for (auto viewpoint : settings.viewpoints)
+    renderFullPipeline(settings, eye, viewpoint.get());
+}
 
-  if (settings.viewpoint) {
-    eye_pos = settings.viewpoint->getPosition(eye);
-    head_rot = settings.viewpoint->getOrientation(eye);
-  } else {
-    GM_RUNONCE(GM_WRN("SpatialSphericalView", "No viewpoint available - using zero position and rotation"));
-  }
+void SpatialSphericalView::Impl::renderFullPipeline(ViewSettings settings,
+                                                    Eye eye,
+                                                    Viewpoint *viewpoint) {
+
+  Eigen::Vector3f eye_pos = viewpoint->getPosition(eye);
+  Eigen::Quaternionf head_rot = viewpoint->getOrientation(eye);
 
   GLint program_id = cubemap->getProgram();
   if (!program_id) {

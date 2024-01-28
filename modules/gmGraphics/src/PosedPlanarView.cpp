@@ -10,27 +10,51 @@ BEGIN_NAMESPACE_GMGRAPHICS;
 GM_OFI_DEFINE_SUB(PosedPlanarView, View);
 GM_OFI_PARAM2(PosedPlanarView, fieldOfView, gmCore::angle2, setFieldOfView);
 
-void PosedPlanarView::renderFullPipeline(ViewSettings settings) {
+struct PosedPlanarView::Impl {
 
-  float fov_h = field_of_view[0];
-  float fov_v = field_of_view[1];
+  void renderFullPipeline(ViewSettings settings);
+  void renderFullPipeline(ViewSettings settings, Viewpoint *viewpoint);
+
+  gmCore::angle2 field_of_view = { 1, -1 };
+};
+
+PosedPlanarView::PosedPlanarView() : _impl(std::make_unique<Impl>()) {}
+
+void PosedPlanarView::setFieldOfView(gmCore::angle2 fov) {
+  _impl->field_of_view = fov;
+}
+
+void PosedPlanarView::renderFullPipeline(ViewSettings settings) {
+  populateViewSettings(settings);
+  _impl->renderFullPipeline(settings);
+}
+
+void PosedPlanarView::Impl::renderFullPipeline(ViewSettings settings) {
+
+  const float fov_h = field_of_view[0];
+  const float fov_v = field_of_view[1];
 
   if (fov_h < 0 && fov_v < 0) {
     GM_RUNONCE(GM_ERR("PosedPlanarView", "Both horizontal and vertical field of view is set to be controlled by the other."));
     return;
   }
 
-  populateViewSettings(settings);
+  glEnable(GL_DEPTH_TEST);
+  glEnable(GL_BLEND);
+  glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-  Eigen::Vector3f x_VP = Eigen::Vector3f::Zero();
-  Eigen::Quaternionf q_VP = Eigen::Quaternionf::Identity();
+  for (auto viewpoint : settings.viewpoints)
+    renderFullPipeline(settings, viewpoint.get());
+}
 
-  if (settings.viewpoint) {
-    x_VP = settings.viewpoint->getPosition();
-    q_VP = settings.viewpoint->getOrientation();
-  } else {
-    GM_RUNONCE(GM_WRN("PosedPlanarView", "No viewpoint available - using zero position and rotation"));
-  }
+void PosedPlanarView::Impl::renderFullPipeline(ViewSettings settings,
+                                               Viewpoint *viewpoint) {
+
+  const float fov_h = field_of_view[0];
+  const float fov_v = field_of_view[1];
+
+  Eigen::Vector3f x_VP = viewpoint->getPosition();
+  Eigen::Quaternionf q_VP = viewpoint->getOrientation();
 
   GLint cvp[4] = { 0, 0, 0, 0 };
   glGetIntegerv(GL_VIEWPORT, cvp);
@@ -67,10 +91,6 @@ void PosedPlanarView::renderFullPipeline(ViewSettings settings) {
 
   float near, far;
   Renderer::getNearFar(settings.renderers, camera, near, far);
-
-  glEnable(GL_DEPTH_TEST);
-  glEnable(GL_BLEND);
-  glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
   for (auto renderer : settings.renderers)
     renderer->render(camera, near, far);

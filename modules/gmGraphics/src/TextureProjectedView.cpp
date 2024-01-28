@@ -29,6 +29,7 @@ struct TextureProjectedView::Impl {
   bool is_functional = false;
 
   void renderFullPipeline(ViewSettings settings, Eye eye);
+  void renderFullPipeline(ViewSettings settings, Eye eye, Viewpoint *viewpoint);
 
   gmCore::size2 buffer_res = {2048, 2048};
 
@@ -106,15 +107,15 @@ void TextureProjectedView::Impl::renderFullPipeline(ViewSettings settings,
     return;
   }
 
-  Eigen::Vector3f x_VP = Eigen::Vector3f::Zero();
+  for (auto viewpoint : settings.viewpoints)
+    renderFullPipeline(settings, eye, viewpoint.get());
+}
 
-  if (settings.viewpoint) {
-    x_VP = settings.viewpoint->getPosition(eye);
-  } else {
-    GM_RUNONCE(
-        GM_WRN("TextureProjectedView",
-               "No viewpoint available - using zero position."));
-  }
+void TextureProjectedView::Impl::renderFullPipeline(ViewSettings settings,
+                                                    Eye eye,
+                                                    Viewpoint *viewpoint) {
+
+  Eigen::Vector3f x_VP = viewpoint->getPosition(eye);
 
   if (hull_points.empty()) {
     // No hull points specified, so we use the hull of the *reach* of

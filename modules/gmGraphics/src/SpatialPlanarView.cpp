@@ -20,6 +20,7 @@ GM_OFI_PARAM2(SpatialPlanarView, clipAngles, gmCore::angle4, setClipAngles);
 struct SpatialPlanarView::Impl {
 
   void renderFullPipeline(ViewSettings settings, Eye eye);
+  void renderFullPipeline(ViewSettings settings, Eye eye, Viewpoint *viewpoint);
 
   void calculateCorners();
 
@@ -45,15 +46,20 @@ void SpatialPlanarView::renderFullPipeline(ViewSettings settings, Eye eye) {
 
 void SpatialPlanarView::Impl::renderFullPipeline(ViewSettings settings, Eye eye) {
 
-  Eigen::Vector3f x_VP = Eigen::Vector3f::Zero();
-  Eigen::Quaternionf q_VP = Eigen::Quaternionf::Identity();
+  glEnable(GL_DEPTH_TEST);
+  glEnable(GL_BLEND);
+  glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-  if (settings.viewpoint) {
-    x_VP = settings.viewpoint->getPosition(eye);
-    q_VP = settings.viewpoint->getOrientation(eye);
-  } else {
-    GM_RUNONCE(GM_WRN("SpatialPlanarView", "No viewpoint available - using zero position and rotation"));
-  }
+  for (auto viewpoint : settings.viewpoints)
+    renderFullPipeline(settings, eye, viewpoint.get());
+}
+
+void SpatialPlanarView::Impl::renderFullPipeline(ViewSettings settings,
+                                                 Eye eye,
+                                                 Viewpoint *viewpoint) {
+
+  Eigen::Vector3f x_VP = viewpoint->getPosition(eye);
+  Eigen::Quaternionf q_VP = viewpoint->getOrientation(eye);
 
   if (!topLeftCorner || !bottomRightCorner || !upDirection) {
     GM_RUNONCE(GM_ERR("SpatialPlanarView",
@@ -100,10 +106,6 @@ void SpatialPlanarView::Impl::renderFullPipeline(ViewSettings settings, Eye eye)
 
   float near, far;
   Renderer::getNearFar(settings.renderers, camera, near, far);
-
-  glEnable(GL_DEPTH_TEST);
-  glEnable(GL_BLEND);
-  glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
   for (auto renderer : settings.renderers)
     renderer->render(camera, near, far);

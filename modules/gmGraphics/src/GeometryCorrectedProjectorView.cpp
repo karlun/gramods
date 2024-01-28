@@ -38,6 +38,10 @@ struct GeometryCorrectedProjectorView::Impl {
   bool is_functional = false;
 
   void renderFullPipeline(ViewSettings settings, Eye eye);
+  void renderFullPipeline(ViewSettings settings,
+                          Eye eye,
+                          Camera *projector_camera,
+                          Viewpoint *viewpoint);
 
   bool setCamera(Camera &c);
   bool setCameraShapeFromIntrinsics(Camera &c);
@@ -263,22 +267,22 @@ void GeometryCorrectedProjectorView::Impl::renderFullPipeline(ViewSettings setti
   if (!setCamera(projector_camera))
     return;
 
-  Eigen::Vector3f x_VP = Eigen::Vector3f::Zero();
-  Eigen::Quaternionf q_VP = Eigen::Quaternionf::Identity();
+  for (auto viewpoint : settings.viewpoints)
+    renderFullPipeline(settings, eye, &projector_camera, viewpoint.get());
+}
 
-  if (settings.viewpoint) {
-    x_VP = settings.viewpoint->getPosition(eye);
-    q_VP = settings.viewpoint->getOrientation(eye);
-  } else {
-    GM_RUNONCE(GM_WRN("GeometryCorrectedProjectorView",
-                      "No viewpoint available - using zero position and rotation"));
-  }
+void GeometryCorrectedProjectorView::Impl::renderFullPipeline(
+    ViewSettings settings,
+    Eye eye,
+    Camera *projector_camera,
+    Viewpoint *viewpoint) {
+
+  Eigen::Vector3f x_VP = viewpoint->getPosition(eye);
+  Eigen::Quaternionf q_VP = viewpoint->getOrientation(eye);
 
   Camera render_camera(settings);
   bool camera_good =
-    geometry->getCameraFromPosition(projector_camera,
-                                    x_VP,
-                                    render_camera);
+      geometry->getCameraFromPosition(*projector_camera, x_VP, render_camera);
   if (!camera_good) return;
 
   render_camera.setEye(eye);
@@ -325,9 +329,8 @@ void GeometryCorrectedProjectorView::Impl::renderFullPipeline(ViewSettings setti
   geometry->setMapperUniforms(program_id);
 
   glUniform1i(glGetUniformLocation(program_id, "tex"), 0);
-  Eigen::Matrix4f pPV =
-    projector_camera.getProjectionMatrix(1, 2) *
-    projector_camera.getViewMatrix().matrix();
+  Eigen::Matrix4f pPV = projector_camera->getProjectionMatrix(1, 2) *
+                        projector_camera->getViewMatrix().matrix();
   Eigen::Matrix4f pPV_inv = pPV.inverse();
   glUniformMatrix4fv(glGetUniformLocation(program_id, "pPV_inv"), 1, false, pPV_inv.data());
 

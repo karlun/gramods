@@ -175,7 +175,7 @@ GLuint ViewTexture::updateTexture(size_t frame_number, Eye eye) {
   if (_impl->cache_frame == frame_number)
     return _impl->render_target.getTexId();
 
-  ViewSettings settings(frame_number, viewpoint);
+  ViewSettings settings(frame_number, viewpoints);
   populateViewSettings(settings);
   _impl->update(settings);
 

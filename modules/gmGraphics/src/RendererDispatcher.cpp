@@ -5,7 +5,7 @@ BEGIN_NAMESPACE_GMGRAPHICS;
 
 GM_OFI_DEFINE(RendererDispatcher);
 GM_OFI_POINTER2(RendererDispatcher, renderer, gmGraphics::Renderer, addRenderer);
-GM_OFI_POINTER2(RendererDispatcher, viewpoint, gmGraphics::Viewpoint, setViewpoint);
+GM_OFI_POINTER2(RendererDispatcher, viewpoint, gmGraphics::Viewpoint, addViewpoint);
 
 void RendererDispatcher::renderFullPipeline(ViewSettings settings) {
 
@@ -26,8 +26,9 @@ void RendererDispatcher::renderFullPipeline(ViewSettings settings) {
 void RendererDispatcher::populateViewSettings(ViewSettings &settings) {
   settings.renderers.insert(settings.renderers.end(),
                             renderers.begin(), renderers.end());
-  if (viewpoint)
-    settings.viewpoint = viewpoint;
+  if (!viewpoints.empty())
+    settings.viewpoints.insert(
+        settings.viewpoints.end(), viewpoints.begin(), viewpoints.end());
 }
 
 void RendererDispatcher::clearRenderers(bool) {
