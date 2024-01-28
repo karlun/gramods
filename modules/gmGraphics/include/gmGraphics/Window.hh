@@ -40,14 +40,7 @@ public:
      Dispatches specified renders, both method argument and class
      members, to the views in this window.
   */
-  void renderFullPipeline(ViewSettings settings);
-
-  /**
-     Dispatches specified class members renders.
-  */
-  void renderFullPipeline(size_t frame_number) {
-    renderFullPipeline(ViewSettings(frame_number, viewpoint));
-  }
+  void renderFullPipeline(ViewSettings settings) override;
 
   /**
      Adds a view to the window. A window without views will render

@@ -23,7 +23,7 @@ public:
      Appends local renderers to the view settings, forwards rendering
      to the sub views and mixes the results.
   */
-  void renderFullPipeline(ViewSettings settings);
+  void renderFullPipeline(ViewSettings settings) override;
 
   /**
      Set type of mixing. Default is average. Valid values are

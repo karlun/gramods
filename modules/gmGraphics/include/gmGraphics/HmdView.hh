@@ -23,7 +23,7 @@ class HmdView
 public:
   HmdView();
 
-  void renderFullPipeline(ViewSettings settings);
+  void renderFullPipeline(ViewSettings settings) override;
 
   /**
      Sets if left eye (0, default), right eye (1) or both eyes (2)

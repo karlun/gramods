@@ -25,7 +25,7 @@ public:
   /**
      Dispatches renderers.
   */
-  void renderFullPipeline(ViewSettings settings);
+  void renderFullPipeline(ViewSettings settings) override;
 
   /**
      Sets the resolution of the intermediate cube map, in

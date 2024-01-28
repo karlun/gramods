@@ -140,7 +140,7 @@ protected:
   /**
      Renders one eye at a time, or just a mono eye.
   */
-  void renderFullPipeline(ViewSettings settings, Eye eye);
+  void renderFullPipeline(ViewSettings settings, Eye eye) override;
 
 private:
 

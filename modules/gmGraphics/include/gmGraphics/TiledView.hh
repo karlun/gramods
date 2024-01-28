@@ -37,7 +37,7 @@ public:
      Appends local renderers to the view settings and forwards
      rendering to the sub views of this tiled view.
   */
-  void renderFullPipeline(ViewSettings settings);
+  void renderFullPipeline(ViewSettings settings) override;
 
   /**
      Adds a location and span that is used when adding views. Format

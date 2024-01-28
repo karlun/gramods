@@ -16,7 +16,9 @@ class PosedPlanarView
 
 public:
 
-  void renderFullPipeline(ViewSettings settings);
+  PosedPlanarView();
+
+  void renderFullPipeline(ViewSettings settings) override;
 
   /**
      Sets the horizontal and vertical field of view, in radians. If

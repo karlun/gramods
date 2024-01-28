@@ -22,7 +22,7 @@ public:
   /**
      Forwards rendering to the sub view and saves the result.
   */
-  void renderFullPipeline(ViewSettings settings);
+  void renderFullPipeline(ViewSettings settings) override;
 
   /**
      Sets the file path to save the view to.

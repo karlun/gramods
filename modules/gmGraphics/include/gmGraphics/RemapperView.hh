@@ -25,7 +25,7 @@ public:
      Appends local renderers to the view settings, forwards rendering
      to the sub views and mixes the results.
   */
-  void renderFullPipeline(ViewSettings settings);
+  void renderFullPipeline(ViewSettings settings) override;
 
   /**
      Adds a view to mask with chroma key.

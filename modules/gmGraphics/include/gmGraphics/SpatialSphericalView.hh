@@ -30,7 +30,7 @@ public:
   /**
      Dispatches renderers.
   */
-  void renderFullPipeline(ViewSettings settings, Eye eye);
+  void renderFullPipeline(ViewSettings settings, Eye eye) override;
 
   /**
      Sets the resolution of the intermediate cube map, in

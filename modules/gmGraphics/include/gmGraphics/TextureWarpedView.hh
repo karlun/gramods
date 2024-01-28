@@ -25,7 +25,7 @@ public:
      Appends local renderers to the view settings, renders the views
      and warps the result using the specified texture.
   */
-  void renderFullPipeline(ViewSettings settings);
+  void renderFullPipeline(ViewSettings settings) override;
 
   /**
      Adds a view to warp.

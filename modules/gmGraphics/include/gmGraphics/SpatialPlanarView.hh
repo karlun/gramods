@@ -106,7 +106,7 @@ public:
 
 private:
 
-  void renderFullPipeline(ViewSettings settings, Eye eye);
+  void renderFullPipeline(ViewSettings settings, Eye eye) override;
 
   struct Impl;
   std::unique_ptr<Impl> _impl;

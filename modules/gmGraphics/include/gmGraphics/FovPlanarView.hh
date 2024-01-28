@@ -17,7 +17,7 @@ class FovPlanarView
 
 public:
 
-  void renderFullPipeline(ViewSettings settings);
+  void renderFullPipeline(ViewSettings settings) override;
 
   /**
      Sets the clip planes, left, right, bottom, top, in x, y
