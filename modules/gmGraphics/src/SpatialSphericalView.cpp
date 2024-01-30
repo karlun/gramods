@@ -139,7 +139,6 @@ SpatialSphericalView::SpatialSphericalView()
   : _impl(std::make_unique<Impl>()) {}
 
 void SpatialSphericalView::renderFullPipeline(ViewSettings settings, Eye eye) {
-  populateViewSettings(settings);
   _impl->renderFullPipeline(settings, eye);
 }
 
