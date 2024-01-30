@@ -83,8 +83,6 @@ void TextureRenderer::Impl::render(size_t frame_number, TextureInterface *textur
   if (!tex_id) return;
 
   glDisable(GL_DEPTH_TEST);
-  glEnable(GL_BLEND);
-  glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
   glActiveTexture(GL_TEXTURE0 + TEXTURE_IDX);
   glBindTexture(GL_TEXTURE_2D, tex_id);
@@ -100,6 +98,8 @@ void TextureRenderer::Impl::render(size_t frame_number, TextureInterface *textur
   glDisableVertexAttribArray(0);
   glBindTexture( GL_TEXTURE_2D, 0);
   GM_DBG3("TextureRenderer", "Done rendering");
+
+  glEnable(GL_DEPTH_TEST);
 }
 
 void TextureRenderer::Impl::setup() {

@@ -23,6 +23,9 @@ public:
 
   /**
      Performs rendering of 3D objects in the scene.
+
+     It is assumed that depth test and blending is enabled upon
+     calling this method.
   */
   virtual void render(Camera camera, float near = -1, float far = -1) = 0;
 

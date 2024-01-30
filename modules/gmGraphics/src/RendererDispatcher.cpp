@@ -14,6 +14,11 @@ void RendererDispatcher::renderFullPipeline(ViewSettings settings) {
   Camera camera(settings);
   float near, far;
   Renderer::getNearFar(settings.renderers, camera, near, far);
+
+  glEnable(GL_DEPTH_TEST);
+  glEnable(GL_BLEND);
+  glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
   for (auto renderer : settings.renderers)
     renderer->render(camera, near, far);
 }

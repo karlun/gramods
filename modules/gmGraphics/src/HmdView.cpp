@@ -153,6 +153,10 @@ void HmdView::Impl::renderFullPipeline(ViewSettings settings) {
   if (cache_frame_number != settings.frame_number) {
     settings.pixel_format = GL_RGBA8;
 
+    glEnable(GL_DEPTH_TEST);
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
     render_target.push();
     processEye(settings, compositor, vr::Eye_Left);
     processEye(settings, compositor, vr::Eye_Right);
@@ -160,6 +164,8 @@ void HmdView::Impl::renderFullPipeline(ViewSettings settings) {
 
     glFlush();
   }
+
+  glDisable(GL_DEPTH_TEST);
 
   // Render offscreen buffers to active render target
 

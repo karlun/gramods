@@ -310,8 +310,6 @@ void SphereSceneRenderer::Impl::render(Camera camera, float near, float far) {
   Eigen::Affine3f Mv = camera.getViewMatrix();
   Eigen::Matrix4f Mp = camera.getProjectionMatrix(near, far);
 
-  glEnable(GL_DEPTH_TEST);
-
   glUseProgram(program_id);
   glUniformMatrix4fv(glGetUniformLocation(program_id, "Mp"),  1, false, Mp.data());
   glUniformMatrix4fv(glGetUniformLocation(program_id, "Mv"),  1, false, Mv.matrix().data());

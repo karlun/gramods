@@ -39,6 +39,10 @@ void Window::renderFullPipeline(ViewSettings settings) {
 
   } else {
 
+    glEnable(GL_DEPTH_TEST);
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
     Camera c(settings);
     for (auto renderer : settings.renderers)
       renderer->render(c);

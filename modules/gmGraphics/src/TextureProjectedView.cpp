@@ -168,6 +168,8 @@ void TextureProjectedView::Impl::renderFullPipeline(ViewSettings settings,
   float near, far;
   Renderer::getNearFar(settings.renderers, camera, near, far);
 
+  glEnable(GL_DEPTH_TEST);
+
   for (auto renderer : settings.renderers)
     renderer->render(camera, near, far);
 

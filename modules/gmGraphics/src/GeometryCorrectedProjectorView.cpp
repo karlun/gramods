@@ -304,10 +304,14 @@ void GeometryCorrectedProjectorView::Impl::renderFullPipeline(ViewSettings setti
   float near, far;
   Renderer::getNearFar(settings.renderers, render_camera, near, far);
 
+  glEnable(GL_DEPTH_TEST);
+
   for (auto renderer : settings.renderers)
     renderer->render(render_camera, near, far);
 
   render_target.pop();
+
+  glDisable(GL_DEPTH_TEST);
 
   // Render offscreen buffer to active render target
   GM_DBG2("GeometryCorrectedProjectorView", "Render offscreen buffer to active render target");

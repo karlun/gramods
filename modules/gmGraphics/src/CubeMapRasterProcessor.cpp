@@ -243,7 +243,9 @@ void CubeMapRasterProcessor::Impl::renderFullPipeline
   if (renderers.empty())
     return;
 
+  glEnable(GL_DEPTH_TEST);
   glEnable(GL_BLEND);
+  glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
   for (size_t idx = 0; idx < SIDE_COUNT; ++idx)
     renderSide(frame_number, renderers, pos, rot, eye, idx);
@@ -286,6 +288,8 @@ void CubeMapRasterProcessor::Impl::renderFullPipeline
     glUniform1i(glGetUniformLocation(program_id, "texBack"),   texture_idx++);
     glUniform1i(glGetUniformLocation(program_id, "texFront"),  texture_idx++);
   }
+
+  glDisable(GL_DEPTH_TEST);
 
   glBindVertexArray(vertexarray_id);
   glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);

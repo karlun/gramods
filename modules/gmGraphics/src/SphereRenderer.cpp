@@ -279,10 +279,6 @@ void SphereRenderer::Impl::render(Camera camera, float near, float far) {
   Eigen::Affine3f Mv = camera.getViewMatrix();
   Eigen::Matrix4f Mp = camera.getProjectionMatrix(near, far);
 
-  glDisable(GL_DEPTH_TEST);
-  glEnable(GL_BLEND);
-  glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-
   glActiveTexture(GL_TEXTURE0);
   glBindTexture(GL_TEXTURE_2D, tex_id);
 

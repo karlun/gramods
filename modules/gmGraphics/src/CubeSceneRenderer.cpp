@@ -231,8 +231,6 @@ void CubeSceneRenderer::Impl::render(Camera camera, float near, float far) {
   float pD = N > 1 ? cube_set_size / (N - 1) : 0.f;
   float p0 = -0.5f * cube_set_size;
 
-  glEnable(GL_DEPTH_TEST);
-
   glUseProgram(program_id);
   glUniformMatrix4fv(glGetUniformLocation(program_id, "Mp"),  1, false, Mp.data());
   glUniformMatrix4fv(glGetUniformLocation(program_id, "Mv"),  1, false, Mv.matrix().data());
