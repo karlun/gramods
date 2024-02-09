@@ -1,0 +1,6 @@
+<config>
+  <SyncNode localPeerIdx="0">
+    <param name="peer" value="127.0.0.1:5007"/>
+    <param name="peer" value="127.0.0.1:5008"/>
+  </SyncNode>
+</config>
