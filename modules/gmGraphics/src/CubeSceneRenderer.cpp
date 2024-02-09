@@ -3,6 +3,7 @@
 
 #include <gmGraphics/GLUtils.hh>
 #include <gmCore/MathConstants.hh>
+#include <gmCore/Updateable.hh>
 
 #include <GL/glew.h>
 #include <GL/gl.h>
@@ -20,7 +21,7 @@ GM_OFI_PARAM2(CubeSceneRenderer, animate, bool, setAnimate);
 
 #define N_VERTICES 108
 
-struct CubeSceneRenderer::Impl {
+struct CubeSceneRenderer::Impl : gmCore::Updateable {
 
   ~Impl();
 
@@ -28,6 +29,8 @@ struct CubeSceneRenderer::Impl {
   void render(Camera camera, float near, float far);
   void getNearFar(Camera camera, float &near, float &far);
   void teardown();
+
+  void update(clock::time_point time, size_t frame) override;
 
   GLuint vertex_shader_id = 0;
   GLuint fragment_shader_id = 0;
@@ -38,7 +41,9 @@ struct CubeSceneRenderer::Impl {
   float cube_size = 0.1f;
   float cube_set_size = 1.f;
   Eigen::Vector3f position = Eigen::Vector3f::Zero();
+
   bool animate = true;
+  double animation_secs = 0.0;
 
   bool is_setup = false;
   bool is_functional = false;
@@ -239,16 +244,8 @@ void CubeSceneRenderer::Impl::render(Camera camera, float near, float far) {
 
   glBindVertexArray(vao_id);
 
-  typedef std::chrono::steady_clock clock;
-  typedef std::chrono::duration<double, std::ratio<1>> d_seconds;
-
   static const clock::time_point start_time = clock::now();
   static const double rate = GM_PI;
-  double secs;
-  if (animate)
-    secs = std::chrono::duration_cast<d_seconds>(clock::now() - start_time).count();
-  else
-    secs = 0.0;
 
   float step = (1.f/N);
   for (size_t idx_z = 0; idx_z < N; ++idx_z)
@@ -269,7 +266,7 @@ void CubeSceneRenderer::Impl::render(Camera camera, float near, float far) {
           (1.0f * step * idx_x +
            0.4f * step * idx_y +
            0.7f * step * idx_z +
-           (float)(rate * secs),
+           (float)(rate * animation_secs),
            Eigen::Vector3f(idx_z + 1, idx_y, idx_x).normalized());
         glUniformMatrix4fv(Mm_id, 1, false, Mm.data());
 
@@ -307,6 +304,16 @@ void CubeSceneRenderer::Impl::teardown() {
   vbo_id[0] = 0;
 
   is_setup = false;
+}
+
+void CubeSceneRenderer::Impl::update(clock::time_point time, size_t frame) {
+  if (!animate) return;
+
+  typedef std::chrono::duration<double, std::ratio<1>> d_seconds;
+
+  static auto start_time = time;
+  animation_secs =
+      std::chrono::duration_cast<d_seconds>(time - start_time).count();
 }
 
 void CubeSceneRenderer::setCubeSize(float d) {
