@@ -86,7 +86,9 @@ void DataSync::Impl::processMessage(Message m, size_t local_peer_idx) {
 
   if (idx >= (ptr_data.size() + raw_data.size())) {
     GM_ERR("DataSync",
-           "Wrong data index - peers may not agree on data to synchronize");
+           "Wrong data index ("
+               << idx << " >= " << (ptr_data.size() + raw_data.size())
+               << ") - peers may not agree on data to synchronize");
     return;
   }
 
