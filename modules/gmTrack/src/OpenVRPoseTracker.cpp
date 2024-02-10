@@ -99,9 +99,24 @@ bool OpenVRPoseTracker::getPose(PoseSample &p) {
 bool OpenVRPoseTracker::Impl::checkParamFit(size_t idx) {
 
   if (!openvr) return false;
-  if (serial && openvr->getSerial(idx) != *serial) return false;
-  if (type && openvr->getType(idx) != *type) return false;
-  if (role && openvr->getRole(idx) != *role) return false;
+
+  auto dev_serial = openvr->getSerial(idx);
+  auto dev_type = openvr->getType(idx);
+  auto dev_role = openvr->getRole(idx);
+
+  if (serial && dev_serial != *serial) {
+    GM_DBG2("OpenVRPoseTracker", "checkParamFit fail for device " << idx << " against serial " << dev_serial << " != " << *serial);
+    return false;
+  }
+  if (type && dev_type != *type) {
+    GM_DBG2("OpenVRPoseTracker", "checkParamFit fail for device " << idx << " against type " << gmCore::OpenVR::typeToString(dev_type) << " != " << gmCore::OpenVR::typeToString(*type));
+    return false;
+  }
+  if (role && dev_role != *role) {
+    GM_DBG2("OpenVRPoseTracker", "checkParamFit fail for device " << idx << " against role " << gmCore::OpenVR::roleToString(dev_role) << " != " << gmCore::OpenVR::roleToString(*role));
+    return false;
+  }
+  GM_DBG2("OpenVRPoseTracker", "checkParamFit match for device " << idx << ": " << dev_serial << ", " << gmCore::OpenVR::typeToString(dev_type) << ", " << gmCore::OpenVR::roleToString(dev_role));
 
   return true;
 }
@@ -135,9 +150,9 @@ bool OpenVRPoseTracker::Impl::getPose(PoseSample &p) {
   }
 
   for (size_t idx = 0; idx < pose_list->size(); ++idx) {
-    if (!checkParamFit(idx)) continue;
     if (!(*pose_list)[idx].bDeviceIsConnected) continue;
     if (!(*pose_list)[idx].bPoseIsValid) continue;
+    if (!checkParamFit(idx)) continue;
 
     tracker_idx = idx;
     p = extractPose((*pose_list)[idx]);

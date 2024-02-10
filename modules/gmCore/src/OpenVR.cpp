@@ -336,7 +336,9 @@ std::string OpenVR::Impl::getSerial(size_t idx) {
     return "";
   }
 
-  std::string serial(serial_buffer.begin(), serial_buffer.begin() + len);
+  if (len == 0) return "";
+
+  std::string serial(serial_buffer.begin(), serial_buffer.begin() + len - 1);
 
   cache_serial[idx] = serial;
   return serial;
