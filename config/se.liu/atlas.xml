@@ -1,0 +1,216 @@
+<config>
+
+  <if variable="COMPUTERNAME" value="ATLAS-00">
+    <SyncNode
+        exitWhenAPeerIsDisconnected="false"
+        localPeerIdx="0">
+      <param name="peer" value="172.19.2.10:20400"/>
+      <param name="peer" value="172.19.2.11:20401"/>
+      <param name="peer" value="172.19.2.12:20402"/>
+      <param name="peer" value="172.19.2.13:20403"/>
+      <param name="peer" value="172.19.2.14:20404"/>
+      <param name="peer" value="172.19.2.15:20405"/>
+      <param name="peer" value="172.19.2.16:20406"/>
+    </SyncNode>
+  </if>
+  <if variable="COMPUTERNAME" value="ALTAS-01">
+    <SyncNode
+        exitWhenAPeerIsDisconnected="true"
+        localPeerIdx="1">
+      <param name="peer" value="172.19.2.10:20400"/>
+      <param name="peer" value="172.19.2.11:20401"/>
+      <param name="peer" value="172.19.2.12:20402"/>
+      <param name="peer" value="172.19.2.13:20403"/>
+      <param name="peer" value="172.19.2.14:20404"/>
+      <param name="peer" value="172.19.2.15:20405"/>
+      <param name="peer" value="172.19.2.16:20406"/>
+    </SyncNode>
+  </if>
+  <if variable="COMPUTERNAME" value="ALTAS-02">
+    <SyncNode
+        exitWhenAPeerIsDisconnected="true"
+        localPeerIdx="2">
+      <param name="peer" value="172.19.2.10:20400"/>
+      <param name="peer" value="172.19.2.11:20401"/>
+      <param name="peer" value="172.19.2.12:20402"/>
+      <param name="peer" value="172.19.2.13:20403"/>
+      <param name="peer" value="172.19.2.14:20404"/>
+      <param name="peer" value="172.19.2.15:20405"/>
+      <param name="peer" value="172.19.2.16:20406"/>
+    </SyncNode>
+  </if>
+  <if variable="COMPUTERNAME" value="ALTAS-03">
+    <SyncNode
+        exitWhenAPeerIsDisconnected="true"
+        localPeerIdx="3">
+      <param name="peer" value="172.19.2.10:20400"/>
+      <param name="peer" value="172.19.2.11:20401"/>
+      <param name="peer" value="172.19.2.12:20402"/>
+      <param name="peer" value="172.19.2.13:20403"/>
+      <param name="peer" value="172.19.2.14:20404"/>
+      <param name="peer" value="172.19.2.15:20405"/>
+      <param name="peer" value="172.19.2.16:20406"/>
+    </SyncNode>
+  </if>
+  <if variable="COMPUTERNAME" value="ALTAS-04">
+    <SyncNode
+        exitWhenAPeerIsDisconnected="true"
+        localPeerIdx="4">
+      <param name="peer" value="172.19.2.10:20400"/>
+      <param name="peer" value="172.19.2.11:20401"/>
+      <param name="peer" value="172.19.2.12:20402"/>
+      <param name="peer" value="172.19.2.13:20403"/>
+      <param name="peer" value="172.19.2.14:20404"/>
+      <param name="peer" value="172.19.2.15:20405"/>
+      <param name="peer" value="172.19.2.16:20406"/>
+    </SyncNode>
+  </if>
+  <if variable="COMPUTERNAME" value="ALTAS-05">
+    <SyncNode
+        exitWhenAPeerIsDisconnected="true"
+        localPeerIdx="5">
+      <param name="peer" value="172.19.2.10:20400"/>
+      <param name="peer" value="172.19.2.11:20401"/>
+      <param name="peer" value="172.19.2.12:20402"/>
+      <param name="peer" value="172.19.2.13:20403"/>
+      <param name="peer" value="172.19.2.14:20404"/>
+      <param name="peer" value="172.19.2.15:20405"/>
+      <param name="peer" value="172.19.2.16:20406"/>
+    </SyncNode>
+  </if>
+  <if variable="COMPUTERNAME" value="ALTAS-06">
+    <SyncNode
+        exitWhenAPeerIsDisconnected="true"
+        localPeerIdx="6">
+      <param name="peer" value="172.19.2.10:20400"/>
+      <param name="peer" value="172.19.2.11:20401"/>
+      <param name="peer" value="172.19.2.12:20402"/>
+      <param name="peer" value="172.19.2.13:20403"/>
+      <param name="peer" value="172.19.2.14:20404"/>
+      <param name="peer" value="172.19.2.15:20405"/>
+      <param name="peer" value="172.19.2.16:20406"/>
+    </SyncNode>
+  </if>
+
+  <SphereGeometry
+      DEF="GEOMETRY"
+      radius="7.4"
+      frustumSizeRatio="1.1"
+      inside="true"/>
+  <QuadBufferMultiplexer
+      DEF="MUX"/>
+
+  <SdlWindow
+      fullscreen="true"
+      useQuadBuffers="true"
+      GLMajor="3" GLMinor="3">
+
+    <SdlContext
+        useVideo="true"/>
+
+    <SphereRenderer
+        radius="10">
+      <AngularFisheyeCoordinatesMapper
+          coverageAngle="3.1416"/>
+      <ImageTexture
+          file="urn:gramods:gmGraphics/resources/fulldome180-coordinates.png"/>
+    </SphereRenderer>
+
+    <Viewpoint
+        position="0 0 0"/>
+
+    <if variable="COMPUTERNAME" value="ATLAS-00">
+      <!-- Primary: Wide forward view, planar projection, anaglyphs stereo -->
+      <SpatialPlanarView
+          distance="7.4"
+          clipAngles="d58.865 d58.865 d-7.701 d70.238">
+        <LinearAnaglyphsMultiplexer/>
+      </SpatialPlanarView>
+    </if>
+
+    <if variable="COMPUTERNAME" value="ALTAS-01">
+      <!--FOV left="55.82" right="55.82" up="74.10" down="-7.70" /-->
+      <!--Orientation heading="-45.0" pitch="0.0" roll="0.0" /-->
+      <GeometryCorrectedProjectorView
+          bufferWidth="4096"
+          bufferHeight="2160"
+          clipAngles="d58.865 d58.865 d-7.701 d70.238"
+          orientation="ypr d-45.0 d0.0 d0.0"
+          linearInterpolation="on">
+        <Multiplexer USE="MUX"/>
+        <Geometry USE="GEOMETRY"/>
+      </GeometryCorrectedProjectorView>
+    </if>
+
+    <if variable="COMPUTERNAME" value="ALTAS-02">
+      <!--FOV left="55.82" right="55.82" up="74.10" down="-7.70" /-->
+      <!--Orientation heading="45.0" pitch="0.0" roll="0.0" /-->
+      <GeometryCorrectedProjectorView
+          bufferWidth="4096"
+          bufferHeight="2160"
+          clipAngles="d58.865 d58.865 d-7.701 d70.238"
+          orientation="ypr d45.0 d0.0 d0.0"
+          linearInterpolation="on">
+        <Multiplexer USE="MUX"/>
+        <Geometry USE="GEOMETRY"/>
+      </GeometryCorrectedProjectorView>
+    </if>
+
+    <if variable="COMPUTERNAME" value="ALTAS-03">
+      <!--FOV left="55.82" right="55.82" up="74.10" down="-7.70" /-->
+      <!--Orientation heading="135.0" pitch="0.0" roll="0.0" /-->
+      <GeometryCorrectedProjectorView
+          bufferWidth="4096"
+          bufferHeight="2160"
+          clipAngles="d58.865 d58.865 d-7.701 d70.238"
+          orientation="ypr d135.0 d0.0 d0.0"
+          linearInterpolation="on">
+        <Multiplexer USE="MUX"/>
+        <Geometry USE="GEOMETRY"/>
+      </GeometryCorrectedProjectorView>
+    </if>
+
+    <if variable="COMPUTERNAME" value="ALTAS-04">
+      <!--FOV left="55.82" right="55.82" up="74.10" down="-7.70" /-->
+      <!--Orientation heading="-135.0" pitch="0.0" roll="0.0" /-->
+      <GeometryCorrectedProjectorView
+          bufferWidth="4096"
+          bufferHeight="2160"
+          clipAngles="d58.865 d58.865 d-7.701 d70.238"
+          orientation="ypr d-135.0 d0.0 d0.0"
+          linearInterpolation="on">
+        <Multiplexer USE="MUX"/>
+        <Geometry USE="GEOMETRY"/>
+      </GeometryCorrectedProjectorView>
+    </if>
+
+    <if variable="COMPUTERNAME" value="ALTAS-05">
+      <!--FOV left="57.05" right="57.05" up="65.31" down="6.50" /-->
+      <!--Orientation heading="57.0" pitch="49.5" roll="0.0" /-->
+      <GeometryCorrectedProjectorView
+          bufferWidth="4096"
+          bufferHeight="2160"
+          clipAngles="d58.992 d58.992 d11.608 d55.336"
+          orientation="ypr d57.0 d48.0 d0.0"
+          linearInterpolation="on">
+        <Multiplexer USE="MUX"/>
+        <Geometry USE="GEOMETRY"/>
+      </GeometryCorrectedProjectorView>
+    </if>
+
+    <if variable="COMPUTERNAME" value="ALTAS-06">
+      <!--FOV left="57.05" right="57.05" up="65.31" down="6.50" /-->
+      <!--Orientation heading="-123.0" pitch="49.5" roll="0.0" /-->
+      <GeometryCorrectedProjectorView
+          bufferWidth="4096"
+          bufferHeight="2160"
+          clipAngles="d58.992 d58.992 d11.608 d55.336"
+          orientation="ypr d-123.0 d48.0 d0.0"
+          linearInterpolation="on">
+        <Multiplexer USE="MUX"/>
+        <Geometry USE="GEOMETRY"/>
+      </GeometryCorrectedProjectorView>
+    </if>
+
+  </SdlWindow>
+</config>
