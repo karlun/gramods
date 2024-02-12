@@ -90,12 +90,12 @@ def extract_tags(path, filename, attrs, type_base, defines):
         if len(defines_stack) > 0 and defines_stack[-1] == False:
           continue
 
-      re_par = re.search('^GM_OFI_(PARAM|POINTER)2?\(\s*([a-zA-Z0-9]+)([^a-zA-Z0-9]*)([a-zA-Z0-9]+)([^a-zA-Z0-9]*)([a-zA-Z0-9:]+)([^a-zA-Z0-9]*)([a-zA-Z0-9:]+)\)', line)
+      re_par = re.search(r'^GM_OFI_(PARAM|POINTER)2?\(\s*([a-zA-Z0-9]+)([^a-zA-Z0-9]*)([a-zA-Z0-9]+)([^a-zA-Z0-9]*)([a-zA-Z0-9:]+)([^a-zA-Z0-9]*)([a-zA-Z0-9:]+)\)', line)
       if re_par is not None:
         add_param(re_par, mod_name, attrs)
         continue
 
-      re_par = re.search('^GM_OFI_DEFINE_SUB\(\s*([a-zA-Z0-9]+)([^a-zA-Z0-9]*)([a-zA-Z0-9]+)\)', line)
+      re_par = re.search(r'^GM_OFI_DEFINE_SUB\(\s*([a-zA-Z0-9]+)([^a-zA-Z0-9]*)([a-zA-Z0-9]+)\)', line)
       if re_par is not None:
         add_type_base(re_par, mod_name, type_base)
 
