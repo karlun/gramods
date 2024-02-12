@@ -9,6 +9,7 @@
 #include <gmCore/Console.hh>
 #include <gmCore/OStreamMessageSink.hh>
 #include <gmCore/MathConstants.hh>
+#include <gmCore/NullMessageSink.hh>
 
 using namespace gramods;
 
