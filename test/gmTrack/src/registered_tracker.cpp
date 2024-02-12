@@ -8,6 +8,7 @@
 
 #include <gmCore/Console.hh>
 #include <gmCore/OStreamMessageSink.hh>
+#include <gmCore/MathConstants.hh>
 
 using namespace gramods;
 
@@ -41,10 +42,10 @@ TEST(gmTrackRegisteredPose, SinglePose) {
       Eigen::Quaternionf(Eigen::AngleAxisf(0, Eigen::Vector3f::UnitX())));
   pose_tracker->addPosition(Eigen::Vector3f(3, 0, 0));
   pose_tracker->addOrientation(
-      Eigen::Quaternionf(Eigen::AngleAxisf(M_PI_2, Eigen::Vector3f::UnitX())));
+      Eigen::Quaternionf(Eigen::AngleAxisf(GM_PI_2, Eigen::Vector3f::UnitX())));
   pose_tracker->addPosition(Eigen::Vector3f(0, 3, 0));
   pose_tracker->addOrientation(
-      Eigen::Quaternionf(Eigen::AngleAxisf(M_PI_2, Eigen::Vector3f::UnitX())));
+      Eigen::Quaternionf(Eigen::AngleAxisf(GM_PI_2, Eigen::Vector3f::UnitX())));
   pose_tracker->initialize();
 
   auto reg_tracker = std::make_shared<gmTrack::RegisteredSinglePoseTracker>();
@@ -60,11 +61,11 @@ TEST(gmTrackRegisteredPose, SinglePose) {
   EXPECT_TRUE(reg_tracker->getPose(pose));
   EXPECT_EQ_EIGEN_VECTOR(pose.position, Eigen::Vector3f(3, 0, 0));
   EXPECT_EQ_EIGEN_ORIENT(pose.orientation,
-                         Eigen::AngleAxisf(M_PI_2, Eigen::Vector3f::UnitX()));
+                         Eigen::AngleAxisf(GM_PI_2, Eigen::Vector3f::UnitX()));
   EXPECT_TRUE(reg_tracker->getPose(pose));
   EXPECT_EQ_EIGEN_VECTOR(pose.position, Eigen::Vector3f(0, 3, 0));
   EXPECT_EQ_EIGEN_ORIENT(pose.orientation,
-                         Eigen::AngleAxisf(M_PI_2, Eigen::Vector3f::UnitX()));
+                         Eigen::AngleAxisf(GM_PI_2, Eigen::Vector3f::UnitX()));
 
   reg_tracker->setPositionBias(Eigen::Vector3f(0, 1, 2));
 
@@ -75,28 +76,28 @@ TEST(gmTrackRegisteredPose, SinglePose) {
   EXPECT_TRUE(reg_tracker->getPose(pose));
   EXPECT_EQ_EIGEN_VECTOR(pose.position, Eigen::Vector3f(3, -2, 1));
   EXPECT_EQ_EIGEN_ORIENT(pose.orientation,
-                         Eigen::AngleAxisf(M_PI_2, Eigen::Vector3f::UnitX()));
+                         Eigen::AngleAxisf(GM_PI_2, Eigen::Vector3f::UnitX()));
   EXPECT_TRUE(reg_tracker->getPose(pose));
   EXPECT_EQ_EIGEN_VECTOR(pose.position, Eigen::Vector3f(0, 1, 1));
   EXPECT_EQ_EIGEN_ORIENT(pose.orientation,
-                         Eigen::AngleAxisf(M_PI_2, Eigen::Vector3f::UnitX()));
+                         Eigen::AngleAxisf(GM_PI_2, Eigen::Vector3f::UnitX()));
 
   reg_tracker->setPositionBias(Eigen::Vector3f(1, 2, 3));
   reg_tracker->setOrientationBias(
-      Eigen::Quaternionf(Eigen::AngleAxisf(M_PI_2, Eigen::Vector3f::UnitX())));
+      Eigen::Quaternionf(Eigen::AngleAxisf(GM_PI_2, Eigen::Vector3f::UnitX())));
 
   EXPECT_TRUE(reg_tracker->getPose(pose));
   EXPECT_EQ_EIGEN_VECTOR(pose.position, Eigen::Vector3f(1, 2, 3));
   EXPECT_EQ_EIGEN_ORIENT(pose.orientation,
-                         Eigen::AngleAxisf(M_PI_2, Eigen::Vector3f::UnitX()));
+                         Eigen::AngleAxisf(GM_PI_2, Eigen::Vector3f::UnitX()));
   EXPECT_TRUE(reg_tracker->getPose(pose));
   EXPECT_EQ_EIGEN_VECTOR(pose.position, Eigen::Vector3f(4, -3, 2));
   EXPECT_EQ_EIGEN_ORIENT(pose.orientation,
-                         Eigen::AngleAxisf(M_PI, Eigen::Vector3f::UnitX()));
+                         Eigen::AngleAxisf(GM_PI, Eigen::Vector3f::UnitX()));
   EXPECT_TRUE(reg_tracker->getPose(pose));
   EXPECT_EQ_EIGEN_VECTOR(pose.position, Eigen::Vector3f(1, 0, 2));
   EXPECT_EQ_EIGEN_ORIENT(pose.orientation,
-                         Eigen::AngleAxisf(M_PI, Eigen::Vector3f::UnitX()));
+                         Eigen::AngleAxisf(GM_PI, Eigen::Vector3f::UnitX()));
 }
 
 TEST(gmTrackRegisteredPose, MultiPose) {
@@ -118,10 +119,10 @@ TEST(gmTrackRegisteredPose, MultiPose) {
       Eigen::Quaternionf(Eigen::AngleAxisf(0, Eigen::Vector3f::UnitX())));
   pose_tracker->addPosition(Eigen::Vector3f(3, 0, 0));
   pose_tracker->addOrientation(
-      Eigen::Quaternionf(Eigen::AngleAxisf(M_PI_2, Eigen::Vector3f::UnitX())));
+      Eigen::Quaternionf(Eigen::AngleAxisf(GM_PI_2, Eigen::Vector3f::UnitX())));
   pose_tracker->addPosition(Eigen::Vector3f(0, 3, 0));
   pose_tracker->addOrientation(
-      Eigen::Quaternionf(Eigen::AngleAxisf(M_PI_2, Eigen::Vector3f::UnitX())));
+      Eigen::Quaternionf(Eigen::AngleAxisf(GM_PI_2, Eigen::Vector3f::UnitX())));
   pose_tracker->initialize();
 
   auto multi_tracker = std::make_shared<gmTrack::SingleToMultiPoseTracker>();
@@ -147,11 +148,11 @@ TEST(gmTrackRegisteredPose, MultiPose) {
   GET_POSE;
   EXPECT_EQ_EIGEN_VECTOR(pose.position, Eigen::Vector3f(3, 0, 0));
   EXPECT_EQ_EIGEN_ORIENT(pose.orientation,
-                         Eigen::AngleAxisf(M_PI_2, Eigen::Vector3f::UnitX()));
+                         Eigen::AngleAxisf(GM_PI_2, Eigen::Vector3f::UnitX()));
   GET_POSE;
   EXPECT_EQ_EIGEN_VECTOR(pose.position, Eigen::Vector3f(0, 3, 0));
   EXPECT_EQ_EIGEN_ORIENT(pose.orientation,
-                         Eigen::AngleAxisf(M_PI_2, Eigen::Vector3f::UnitX()));
+                         Eigen::AngleAxisf(GM_PI_2, Eigen::Vector3f::UnitX()));
 
   reg_tracker->setPositionBias(Eigen::Vector3f(0, 1, 2));
 
@@ -162,26 +163,26 @@ TEST(gmTrackRegisteredPose, MultiPose) {
   GET_POSE;
   EXPECT_EQ_EIGEN_VECTOR(pose.position, Eigen::Vector3f(3, -2, 1));
   EXPECT_EQ_EIGEN_ORIENT(pose.orientation,
-                         Eigen::AngleAxisf(M_PI_2, Eigen::Vector3f::UnitX()));
+                         Eigen::AngleAxisf(GM_PI_2, Eigen::Vector3f::UnitX()));
   GET_POSE;
   EXPECT_EQ_EIGEN_VECTOR(pose.position, Eigen::Vector3f(0, 1, 1));
   EXPECT_EQ_EIGEN_ORIENT(pose.orientation,
-                         Eigen::AngleAxisf(M_PI_2, Eigen::Vector3f::UnitX()));
+                         Eigen::AngleAxisf(GM_PI_2, Eigen::Vector3f::UnitX()));
 
   reg_tracker->setPositionBias(Eigen::Vector3f(1, 2, 3));
   reg_tracker->setOrientationBias(
-      Eigen::Quaternionf(Eigen::AngleAxisf(M_PI_2, Eigen::Vector3f::UnitX())));
+      Eigen::Quaternionf(Eigen::AngleAxisf(GM_PI_2, Eigen::Vector3f::UnitX())));
 
   GET_POSE;
   EXPECT_EQ_EIGEN_VECTOR(pose.position, Eigen::Vector3f(1, 2, 3));
   EXPECT_EQ_EIGEN_ORIENT(pose.orientation,
-                         Eigen::AngleAxisf(M_PI_2, Eigen::Vector3f::UnitX()));
+                         Eigen::AngleAxisf(GM_PI_2, Eigen::Vector3f::UnitX()));
   GET_POSE;
   EXPECT_EQ_EIGEN_VECTOR(pose.position, Eigen::Vector3f(4, -3, 2));
   EXPECT_EQ_EIGEN_ORIENT(pose.orientation,
-                         Eigen::AngleAxisf(M_PI, Eigen::Vector3f::UnitX()));
+                         Eigen::AngleAxisf(GM_PI, Eigen::Vector3f::UnitX()));
   GET_POSE;
   EXPECT_EQ_EIGEN_VECTOR(pose.position, Eigen::Vector3f(1, 0, 2));
   EXPECT_EQ_EIGEN_ORIENT(pose.orientation,
-                         Eigen::AngleAxisf(M_PI, Eigen::Vector3f::UnitX()));
+                         Eigen::AngleAxisf(GM_PI, Eigen::Vector3f::UnitX()));
 }
