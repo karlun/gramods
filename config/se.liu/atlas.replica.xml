@@ -1,6 +1,6 @@
 <config>
 
-  <if variable="COMPUTERNAME" value="ATLAS-02">
+  <if variable="COMPUTERNAME" value="ALTAS-01">
     <SyncNode
         exitWhenAPeerIsDisconnected="true"
         localPeerIdx="1">
@@ -13,7 +13,7 @@
       <param name="peer" value="172.19.2.16:20406"/>
     </SyncNode>
   </if>
-  <if variable="COMPUTERNAME" value="ATLAS-04">
+  <if variable="COMPUTERNAME" value="ALTAS-02">
     <SyncNode
         exitWhenAPeerIsDisconnected="true"
         localPeerIdx="2">
@@ -26,7 +26,7 @@
       <param name="peer" value="172.19.2.16:20406"/>
     </SyncNode>
   </if>
-  <if variable="COMPUTERNAME" value="ATLAS-06">
+  <if variable="COMPUTERNAME" value="ALTAS-03">
     <SyncNode
         exitWhenAPeerIsDisconnected="true"
         localPeerIdx="3">
@@ -39,7 +39,7 @@
       <param name="peer" value="172.19.2.16:20406"/>
     </SyncNode>
   </if>
-  <if variable="COMPUTERNAME" value="ATLAS-08">
+  <if variable="COMPUTERNAME" value="ALTAS-04">
     <SyncNode
         exitWhenAPeerIsDisconnected="true"
         localPeerIdx="4">
@@ -52,7 +52,7 @@
       <param name="peer" value="172.19.2.16:20406"/>
     </SyncNode>
   </if>
-  <if variable="COMPUTERNAME" value="ATLAS-10">
+  <if variable="COMPUTERNAME" value="ALTAS-05">
     <SyncNode
         exitWhenAPeerIsDisconnected="true"
         localPeerIdx="5">
@@ -65,7 +65,7 @@
       <param name="peer" value="172.19.2.16:20406"/>
     </SyncNode>
   </if>
-  <if variable="COMPUTERNAME" value="ATLAS-12">
+  <if variable="COMPUTERNAME" value="ALTAS-06">
     <SyncNode
         exitWhenAPeerIsDisconnected="true"
         localPeerIdx="6">
@@ -106,7 +106,7 @@
     <Viewpoint
         position="0 0 0"/>
 
-    <if variable="COMPUTERNAME" value="ATLAS-02">
+    <if variable="COMPUTERNAME" value="ALTAS-01">
       <!--FOV left="55.82" right="55.82" up="74.10" down="-7.70" /-->
       <!--Orientation heading="-45.0" pitch="0.0" roll="0.0" /-->
       <GeometryCorrectedProjectorView
@@ -120,7 +120,7 @@
       </GeometryCorrectedProjectorView>
     </if>
 
-    <if variable="COMPUTERNAME" value="ATLAS-04">
+    <if variable="COMPUTERNAME" value="ALTAS-02">
       <!--FOV left="55.82" right="55.82" up="74.10" down="-7.70" /-->
       <!--Orientation heading="45.0" pitch="0.0" roll="0.0" /-->
       <GeometryCorrectedProjectorView
@@ -134,7 +134,7 @@
       </GeometryCorrectedProjectorView>
     </if>
 
-    <if variable="COMPUTERNAME" value="ATLAS-06">
+    <if variable="COMPUTERNAME" value="ALTAS-03">
       <!--FOV left="55.82" right="55.82" up="74.10" down="-7.70" /-->
       <!--Orientation heading="135.0" pitch="0.0" roll="0.0" /-->
       <GeometryCorrectedProjectorView
@@ -148,7 +148,7 @@
       </GeometryCorrectedProjectorView>
     </if>
 
-    <if variable="COMPUTERNAME" value="ATLAS-08">
+    <if variable="COMPUTERNAME" value="ALTAS-04">
       <!--FOV left="55.82" right="55.82" up="74.10" down="-7.70" /-->
       <!--Orientation heading="-135.0" pitch="0.0" roll="0.0" /-->
       <GeometryCorrectedProjectorView
@@ -162,7 +162,7 @@
       </GeometryCorrectedProjectorView>
     </if>
 
-    <if variable="COMPUTERNAME" value="ATLAS-10">
+    <if variable="COMPUTERNAME" value="ALTAS-05">
       <!--FOV left="57.05" right="57.05" up="65.31" down="6.50" /-->
       <!--Orientation heading="57.0" pitch="49.5" roll="0.0" /-->
       <GeometryCorrectedProjectorView
@@ -176,7 +176,7 @@
       </GeometryCorrectedProjectorView>
     </if>
 
-    <if variable="COMPUTERNAME" value="ATLAS-12">
+    <if variable="COMPUTERNAME" value="ALTAS-06">
       <!--FOV left="57.05" right="57.05" up="65.31" down="6.50" /-->
       <!--Orientation heading="-123.0" pitch="49.5" roll="0.0" /-->
       <GeometryCorrectedProjectorView
