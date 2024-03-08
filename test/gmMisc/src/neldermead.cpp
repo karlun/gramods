@@ -49,7 +49,7 @@ TEST(gmMiscNelderMead, Booth) {
       },
       iterations);
 
-  EXPECT_EQ(iterations, 72);
+  EXPECT_EQ(iterations, 57);
   EXPECT_NEAR(res[0], 1, 1e-3);
   EXPECT_NEAR(res[1], 3, 1e-3);
 }
