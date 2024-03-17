@@ -19,6 +19,11 @@ namespace gramods {
 
 #include <gmCore/config.hh>
 
+#cmakedefine HAVE_fftw
+#ifdef HAVE_fftw
+#cmakedefine gramods_ENABLE_fftw
+#endif
+
 #cmakedefine HAVE_Lehdari_Delaunay
 #ifdef HAVE_Lehdari_Delaunay
 #cmakedefine gramods_ENABLE_Lehdari_Delaunay

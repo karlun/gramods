@@ -15,6 +15,16 @@ IF (NOT gramods_ENABLE_Eigen3)
   MESSAGE (WARNING "Many feature in gmMisc missing since they require Eigen3")
 ENDIF()
 
+FIND_PACKAGE(fftw)
+IF (fftw_FOUND)
+  SET (HAVE_fftw 1)
+  LIST(APPEND gramods_DOCS_DEFINES HAVE_fftw)
+  OPTION(gramods_ENABLE_fftw "Enable functionality that requires fftw" ON)
+  IF (gramods_ENABLE_fftw)
+    LIST (APPEND PUBLIC_LIBS fftw::fftw)
+  ENDIF()
+ENDIF ()
+
 FIND_PATH (LEHDARI_DELAUNAY_INCLUDE "Lehdari/Delaunay.hpp"
   DOC "Path to include folder containing Lehdari Delaunay header.")
 IF (LEHDARI_DELAUNAY_INCLUDE)

@@ -2,6 +2,7 @@
 #include <gtest/gtest.h>
 
 #include "end-fit.cpp"
+#include "fftw.cpp"
 #include "polyfit.cpp"
 #include "neldermead.cpp"
 #include "delaunay.cpp"
