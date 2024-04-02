@@ -28,6 +28,7 @@ class ImageTexture
 public:
 
   ImageTexture();
+  virtual ~ImageTexture();
 
   void initialize() override;
 
@@ -63,6 +64,11 @@ public:
      \gmXmlTag{gmGraphics,ImageTexture,file}
   */
   void setFile(std::filesystem::path file);
+
+  /**
+     Returns the currently set file path or pattern.
+  */
+  std::filesystem::path getFile();
 
   /**
      Sets the range (inclusive) of frames to read. This assumes that
