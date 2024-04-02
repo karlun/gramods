@@ -6,8 +6,6 @@
 #include <gmGraphics/TextureInterface.hh>
 #include <gmGraphics/CoordinatesMapper.hh>
 
-#include <gmTrack/SinglePoseTracker.hh>
-
 #include <gmCore/eigen.hh>
 #include <gmCore/OFactory.hh>
 
@@ -74,23 +72,6 @@ public:
      \sa gramods::operator>>(std::istream &, Eigen::Quaternionf &)
   */
   void setOrientation(Eigen::Quaternionf q);
-
-  /**
-     Sets the tracker to read orientation from. Position is not used.
-  */
-  void setSinglePoseTracker(std::shared_ptr<gmTrack::SinglePoseTracker> t);
-
-  /**
-     Sets if the tracker data should be used to control the sphere
-     orientation. Default is True.
-  */
-  void setTrackerControlOrientation(bool on);
-
-  /**
-     Sets if the tracker data should be used to control the sphere
-     position. Default is False.
-  */
-  void setTrackerControlPosition(bool on);
 
   /**
      Sets the Texture to apply on the sphere.
