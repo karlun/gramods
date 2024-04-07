@@ -10,6 +10,8 @@
 #include <gmCore/Object.hh>
 #include <gmCore/OFactory.hh>
 
+#include <optional>
+
 BEGIN_NAMESPACE_GMGRAPHICS;
 
 /**
@@ -89,10 +91,7 @@ public:
   virtual void setUpDirection(Eigen::Vector3f up);
 
   /**
-     Implicitly rotates the viewpoint to look at the specified
-     point. This makes use of the currently set viewpoint position and
-     up direction, so make sure that those are set before this is
-     used.
+     Sets a point that the viewpoint should be rotated towards.
 
      Observe that this affects only the viewpoint orientation -
      camera orientation will not automatically toe-in to this point.
@@ -100,8 +99,15 @@ public:
      \gmXmlTag{gmGraphics,Viewpoint,lookAt}
 
      \sa gramods::operator>>(std::istream &, Eigen::Vector3f &)
+     \sa unsetLookat()
   */
-  virtual void setLookAt(Eigen::Vector3f p);
+  virtual void setLookAt(Eigen::Vector3f p) { look_at = p; }
+
+  /**
+     Unsets the look-at point so that the viewpoint orientation is no
+     longer automatically rotated.
+  */
+  virtual void unsetLookAt() { look_at = std::nullopt; }
 
   /**
      Returns the default key, in Configuration, for the
@@ -117,6 +123,7 @@ protected:
   Eigen::Quaternionf orientation = Eigen::Quaternionf::Identity();
 
   Eigen::Vector3f up_direction = Eigen::Vector3f(0, 1, 0);
+  std::optional<Eigen::Vector3f> look_at;
 
   float eye_separation = 0.06f;
 

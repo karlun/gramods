@@ -25,8 +25,35 @@ Eigen::Vector3f Viewpoint::getPosition(Eye eye) {
   return position + orientation * Eigen::Vector3f(offset, 0.f, 0.f);
 }
 
+namespace {
+Eigen::Quaternionf getLookAtOrientation(Eigen::Vector3f position,
+                                        Eigen::Vector3f target,
+                                        Eigen::Vector3f up_direction) {
+
+  static const Eigen::Vector3f z(0, 0, 1);
+  static const Eigen::Vector3f y(0, 1, 0);
+
+  auto direction = (position - target).normalized();
+
+  GM_DBG2("Viewpoint", "From " << position.transpose()
+          << " look at " << target.transpose());
+
+  Eigen::Quaternionf R0 = Eigen::Quaternionf::FromTwoVectors(z, direction);
+
+  Eigen::Vector3f perp_up = up_direction - direction * up_direction.dot(direction);
+  if (perp_up.norm() <= std::numeric_limits<float>::epsilon())
+    return R0;
+  perp_up = perp_up.normalized();
+
+  auto Rup = Eigen::Quaternionf::FromTwoVectors(R0 * y, perp_up);
+  return Rup * R0;
+}
+}
+
 Eigen::Quaternionf Viewpoint::getOrientation(Eye eye) {
   eye.validate();
+
+  if (look_at) return getLookAtOrientation(position, *look_at, up_direction);
   return orientation;
 }
 
@@ -40,27 +67,6 @@ void Viewpoint::setOrientation(Eigen::Quaternionf q) {
 
 void Viewpoint::setUpDirection(Eigen::Vector3f up) {
   up_direction = up.normalized();
-}
-
-void Viewpoint::setLookAt(Eigen::Vector3f target) {
-
-  static const Eigen::Vector3f z(0, 0, 1);
-  static const Eigen::Vector3f y(0, 1, 0);
-
-  auto direction = (position - target).normalized();
-
-  GM_DBG2("Viewpoint", "From " << position.transpose()
-          << " look at " << target.transpose());
-
-  orientation = Eigen::Quaternionf::FromTwoVectors(z, direction);
-
-  Eigen::Vector3f perp_up = up_direction - direction * up_direction.dot(direction);
-  if (perp_up.norm() <= std::numeric_limits<float>::epsilon())
-    return;
-  perp_up = perp_up.normalized();
-
-  auto Qup = Eigen::Quaternionf::FromTwoVectors(orientation * y, perp_up);
-  orientation = Qup * orientation;
 }
 
 END_NAMESPACE_GMGRAPHICS;
