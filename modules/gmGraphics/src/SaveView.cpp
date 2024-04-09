@@ -18,6 +18,7 @@
 #include <GL/gl.h>
 
 #include <chrono>
+#include <optional>
 #include <thread>
 #include <condition_variable>
 
@@ -46,7 +47,7 @@ struct SaveView::Impl {
   int fi_options = PNG_Z_BEST_SPEED;
 
   static const std::string fragment_code;
-  gmCore::size2 resolution = { 0, 0 };
+  std::optional<gmCore::size2> resolution;
 
   OffscreenRenderTargets render_target;
   RasterProcessor raster_processor;
@@ -156,8 +157,14 @@ void SaveView::Impl::renderFullPipeline(ViewSettings settings) {
     return;
   }
 
-  if (resolution[0] <= 0 || resolution[1] <= 0) {
-    GM_RUNONCE(GM_ERR("SaveView", "Cannot create view of resolution " << resolution[0] << "x" << resolution[1] << "."));
+  if (!resolution) {
+    std::array<GLint, 4> viewport;
+    glGetIntegerv(GL_VIEWPORT, viewport.data());
+    resolution = {size_t(viewport[2]), size_t(viewport[3])};
+  }
+
+  if ((*resolution)[0] == 0 || (*resolution)[1] == 0) {
+    GM_RUNONCE(GM_ERR("SaveView", "Cannot create zero size view (0x0)"));
     return;
   }
 
@@ -188,7 +195,7 @@ void SaveView::Impl::renderFullPipeline(ViewSettings settings) {
   }
 
   render_target.push();
-  render_target.bind(resolution[0], resolution[1]);
+  render_target.bind(*resolution);
 
   settings.pixel_format = pixel_format;
   for (auto view : views)

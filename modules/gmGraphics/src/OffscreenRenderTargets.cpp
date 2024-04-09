@@ -112,6 +112,10 @@ void OffscreenRenderTargets::Impl::teardown() {
   rb_depth_id = 0;
 }
 
+void OffscreenRenderTargets::bind(gmCore::size2 res, size_t idx) {
+  _impl->bind(res[0], res[1], idx);
+}
+
 void OffscreenRenderTargets::bind(size_t width, size_t height, size_t idx) {
   _impl->bind(width, height, idx);
 }

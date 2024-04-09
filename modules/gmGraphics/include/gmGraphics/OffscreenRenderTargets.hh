@@ -3,6 +3,7 @@
 #define GRAMODS_GRAPHICS_OFFSCREENRENDERTARGETS
 
 #include <gmGraphics/config.hh>
+#include <gmCore/size.hh>
 
 #include <GL/glew.h>
 #include <GL/gl.h>
@@ -81,6 +82,12 @@ public:
      interlace calls to push and pop.
   */
   void pop();
+
+  /**
+     Sets the texture resolution and sets this texture as render
+     target.
+  */
+  void bind(gmCore::size2 res, size_t idx = 0);
 
   /**
      Sets the texture resolution and sets this texture as render
