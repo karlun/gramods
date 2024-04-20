@@ -39,7 +39,7 @@ ExperimentalAutoDetectBinPacking: 'true'
 FixNamespaceComments: 'false'
 IncludeBlocks: Preserve
 IndentCaseLabels: 'false'
-IndentPPDirectives: AfterHash
+IndentPPDirectives: None
 IndentWidth: '2'
 IndentWrappedFunctionNames: 'false'
 KeepEmptyLinesAtTheStartOfBlocks: 'true'
