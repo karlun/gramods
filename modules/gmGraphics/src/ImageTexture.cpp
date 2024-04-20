@@ -71,6 +71,7 @@ struct ImageTexture::Impl {
 
 ImageTexture::ImageTexture()
   : _impl(new Impl) {}
+ImageTexture::~ImageTexture() {}
 
 void ImageTexture::initialize() {
   Texture::initialize();
@@ -79,6 +80,8 @@ void ImageTexture::initialize() {
 void ImageTexture::setFile(std::filesystem::path file) {
   _impl->file = file;
 }
+
+std::filesystem::path ImageTexture::getFile() { return _impl->file; }
 
 void ImageTexture::setRange(gmCore::size2 range) {
   if (range[0] > range[1])

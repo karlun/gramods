@@ -14,8 +14,8 @@ struct VelocityViewpoint::Impl {
   typedef gmCore::Updateable::clock clock;
   typedef std::chrono::duration<double, std::ratio<1>> d_seconds;
 
-  Eigen::Vector3f linear_velocity = Eigen::Vector3f::Zero();
-  Eigen::Quaternionf angular_velocity = Eigen::Quaternionf::Identity();
+  std::optional<Eigen::Vector3f> linear_velocity;
+  std::optional<Eigen::Quaternionf> angular_velocity;
 
   clock::time_point last_time = clock::now();
 
@@ -40,8 +40,10 @@ void VelocityViewpoint::Impl::update(Eigen::Vector3f &position,
   float dt =
       float(std::chrono::duration_cast<d_seconds>(time - last_time).count());
 
-  position += dt * linear_velocity;
-  orientation *= Eigen::Quaternionf::Identity().slerp(dt, angular_velocity);
+  if (linear_velocity)
+    position += dt * *linear_velocity;
+  if (angular_velocity)
+    orientation *= Eigen::Quaternionf::Identity().slerp(dt, *angular_velocity);
 
   last_time = time;
 }

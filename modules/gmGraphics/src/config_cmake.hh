@@ -40,6 +40,11 @@ namespace gramods {
 #endif
 #endif
 
+#cmakedefine HAVE_tinyobjloader
+#ifdef HAVE_tinyobjloader
+#cmakedefine gramods_ENABLE_tinyobjloader
+#endif
+
 #cmakedefine HAVE_OpenSceneGraph
 #ifdef HAVE_OpenSceneGraph
 #cmakedefine gramods_ENABLE_OpenSceneGraph

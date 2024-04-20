@@ -1,0 +1,58 @@
+<config>
+
+  <ImportLibrary library="gmGraphics"/>
+
+  <SdlWindow
+      size="900 900"
+      title="Spatial"
+      GLMajor="3" GLMinor="3">
+
+    <SdlContext
+        DEF="SDLContext"
+        useVideo="1"/>
+
+    <ObjRenderer
+        recenter="true"
+        file="model.obj"/>
+
+    <TiledView>
+
+      <param name="tileLocation" value="0 0 1 1"/>
+      <SpatialPlanarView
+          topLeftCorner="-0.100 0.100 0.0"
+          bottomRightCorner="0.100 -0.100 0.0"
+          upDirection="0.0 1.0 0.0">
+        <Viewpoint
+            position="0.0 0.0 30.0"/>
+      </SpatialPlanarView>
+
+      <param name="tileLocation" value="0 1 1 1"/>
+      <SpatialPlanarView
+          topLeftCorner="0.0 0.100 -0.100"
+          bottomRightCorner="0.0 -0.100 0.100"
+          upDirection="0.0 1.0 0.0">
+        <Viewpoint
+            position="-30.0 0.0 0.0"/>
+      </SpatialPlanarView>
+
+      <param name="tileLocation" value="1 0 1 1"/>
+      <SpatialPlanarView
+          topLeftCorner="-0.100 0.0 -0.100"
+          bottomRightCorner="0.100 0.0 0.100"
+          upDirection="0.0 0.0 -1.0">
+        <Viewpoint
+            position="0.0 30.0 0.0"/>
+      </SpatialPlanarView>
+
+      <param name="tileLocation" value="1 1 1 1"/>
+      <PosedPlanarView
+          fieldOfView="1 -1">
+        <VelocityViewpoint
+            velocity="-0.05 -0.02 -0.04"
+            position="0.100 0.100 0.100"
+            lookAt="0.0 0.0 0.0"/>
+      </PosedPlanarView>
+   </TiledView>
+  </SdlWindow>
+
+</config>
