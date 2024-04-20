@@ -63,19 +63,19 @@ public:
   virtual void initialize() { is_initialized = true; }
 
   /**
-     Returns the default key, in Configuration, for the
-     Object. Default is "object", but this should be overriden by sub
-     classes and can also be overridden in XML by using the attribute
-     `KEY`, as in `KEY="view"`.
+     Returns the default key for the Object when automatically
+     instantiated in a Configuration, i.e. where it ends up in a
+     parent Object. Default is "object", but this should be overriden
+     by sub classes and can also be overridden in XML by using the
+     attribute `KEY`, as in `KEY="view"`.
 
-     The key is both the name under which the object will be stored in
-     the Configuration instance, and the pointer in the parent (in the
-     XML file) to which the object will be assigned to:
+     The key can also be used to extract a specific object from a
+     Configuration instance:
      \code
      gmCore::Configuration config(argc, argv);
 
      std::shared_ptr<MyClass> my_object;
-     if (! config.getObject("view", my_object)) {
+     if (! config.getObjectByKey("view", my_object)) {
        GM_ERR("MyCode", "Cannot run without MyClass instance");
        exit(-1);
      }

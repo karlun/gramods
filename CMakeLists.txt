@@ -43,7 +43,7 @@ SET(gramods_EXEC_TARGET_FILES "")
 SET(gramods_LIB_TARGET_FILES "")
 SET(gramods_DOCS_DEFINES "")
 
-FOREACH (MODULE gmCore gmMisc gmTrack gmGraphics gmNetwork gmTouch)
+FOREACH (MODULE gmCore gmMisc gmTrack gmGraphics gmNetwork gmTouch gmSound)
 
   OPTION(gramods_MODULE_${MODULE} "Include the module ${MODULE}" ON)
 
