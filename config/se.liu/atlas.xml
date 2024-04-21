@@ -1,5 +1,18 @@
 <config>
 
+  <if variable="COMPUTERNAME" value="ATLAS-00">
+    <SyncNode
+        exitWhenAPeerIsDisconnected="false"
+        localPeerIdx="0">
+      <param name="peer" value="172.19.2.10:20400"/>
+      <param name="peer" value="172.19.2.11:20401"/>
+      <param name="peer" value="172.19.2.12:20402"/>
+      <param name="peer" value="172.19.2.13:20403"/>
+      <param name="peer" value="172.19.2.14:20404"/>
+      <param name="peer" value="172.19.2.15:20405"/>
+      <param name="peer" value="172.19.2.16:20406"/>
+    </SyncNode>
+  </if>
   <if variable="COMPUTERNAME" value="ALTAS-01">
     <SyncNode
         exitWhenAPeerIsDisconnected="true"
@@ -106,12 +119,21 @@
     <Viewpoint
         position="0 0 0"/>
 
+    <if variable="COMPUTERNAME" value="ATLAS-00">
+      <!-- Primary: Wide forward view, planar projection, anaglyphs stereo -->
+      <SpatialPlanarView
+          distance="7.4"
+          clipAngles="d58.865 d58.865 d-7.701 d70.238">
+        <LinearAnaglyphsMultiplexer/>
+      </SpatialPlanarView>
+    </if>
+
     <if variable="COMPUTERNAME" value="ALTAS-01">
       <!--FOV left="55.82" right="55.82" up="74.10" down="-7.70" /-->
       <!--Orientation heading="-45.0" pitch="0.0" roll="0.0" /-->
       <GeometryCorrectedProjectorView
-          bufferWidth="2048"
-          bufferHeight="2048"
+          bufferWidth="4096"
+          bufferHeight="2160"
           clipAngles="d58.865 d58.865 d-7.701 d70.238"
           orientation="ypr d-45.0 d0.0 d0.0"
           linearInterpolation="on">
@@ -124,8 +146,8 @@
       <!--FOV left="55.82" right="55.82" up="74.10" down="-7.70" /-->
       <!--Orientation heading="45.0" pitch="0.0" roll="0.0" /-->
       <GeometryCorrectedProjectorView
-          bufferWidth="2048"
-          bufferHeight="2048"
+          bufferWidth="4096"
+          bufferHeight="2160"
           clipAngles="d58.865 d58.865 d-7.701 d70.238"
           orientation="ypr d45.0 d0.0 d0.0"
           linearInterpolation="on">
@@ -138,8 +160,8 @@
       <!--FOV left="55.82" right="55.82" up="74.10" down="-7.70" /-->
       <!--Orientation heading="135.0" pitch="0.0" roll="0.0" /-->
       <GeometryCorrectedProjectorView
-          bufferWidth="2048"
-          bufferHeight="2048"
+          bufferWidth="4096"
+          bufferHeight="2160"
           clipAngles="d58.865 d58.865 d-7.701 d70.238"
           orientation="ypr d135.0 d0.0 d0.0"
           linearInterpolation="on">
@@ -152,8 +174,8 @@
       <!--FOV left="55.82" right="55.82" up="74.10" down="-7.70" /-->
       <!--Orientation heading="-135.0" pitch="0.0" roll="0.0" /-->
       <GeometryCorrectedProjectorView
-          bufferWidth="2048"
-          bufferHeight="2048"
+          bufferWidth="4096"
+          bufferHeight="2160"
           clipAngles="d58.865 d58.865 d-7.701 d70.238"
           orientation="ypr d-135.0 d0.0 d0.0"
           linearInterpolation="on">
@@ -166,8 +188,8 @@
       <!--FOV left="57.05" right="57.05" up="65.31" down="6.50" /-->
       <!--Orientation heading="57.0" pitch="49.5" roll="0.0" /-->
       <GeometryCorrectedProjectorView
-          bufferWidth="2048"
-          bufferHeight="2048"
+          bufferWidth="4096"
+          bufferHeight="2160"
           clipAngles="d58.992 d58.992 d11.608 d55.336"
           orientation="ypr d57.0 d48.0 d0.0"
           linearInterpolation="on">
@@ -180,8 +202,8 @@
       <!--FOV left="57.05" right="57.05" up="65.31" down="6.50" /-->
       <!--Orientation heading="-123.0" pitch="49.5" roll="0.0" /-->
       <GeometryCorrectedProjectorView
-          bufferWidth="2048"
-          bufferHeight="2048"
+          bufferWidth="4096"
+          bufferHeight="2160"
           clipAngles="d58.992 d58.992 d11.608 d55.336"
           orientation="ypr d-123.0 d48.0 d0.0"
           linearInterpolation="on">
