@@ -253,6 +253,7 @@ Optional dependencies:
  - Inkscape (binaries), for generating textures from SVG
  - libuvc, for UVC support, reading image data from video class USB devices.
  - OpenVR, for HMD and OpenVR tracking support
+ - TinyObjLoader, for loading Wavefront files
 
 
 ### Module Program Design Principles
