@@ -653,11 +653,12 @@ void ObjRenderer::Impl::render(Camera camera, float near, float far) {
                                                           camera.getEye()));
       }
     } else {
-      static Eigen::Vector3f zero = Eigen::Vector3f::Zero();
-      glUniform3fv(LOC(color_ambient), 1, zero.data());
-      glUniform3fv(LOC(color_diffuse), 1, zero.data());
-      glUniform3fv(LOC(color_specular), 1, zero.data());
-      glUniform3fv(LOC(color_emissive), 1, zero.data());
+      static Eigen::Vector3f black = Eigen::Vector3f::Zero();
+      static Eigen::Vector3f gray = Eigen::Vector3f(0.8f, 0.8f, 0.8f);
+      glUniform3fv(LOC(color_ambient), 1, black.data());
+      glUniform3fv(LOC(color_diffuse), 1, gray.data());
+      glUniform3fv(LOC(color_specular), 1, black.data());
+      glUniform3fv(LOC(color_emissive), 1, black.data());
       glUniform1f(LOC(shininess), 32);
     }
 
