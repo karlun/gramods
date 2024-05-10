@@ -4,7 +4,6 @@
 
 #include <gmGraphics/config.hh>
 
-#include <gmCore/Object.hh>
 #include <gmGraphics/Camera.hh>
 
 #include <set>
@@ -14,8 +13,7 @@ BEGIN_NAMESPACE_GMGRAPHICS;
 /**
    The base of graphics Renderer implementations.
  */
-class Renderer
-  : public gmCore::Object {
+class Renderer : public gmCore::Object {
 
 public:
 

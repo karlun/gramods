@@ -1,6 +1,6 @@
 
-#ifndef GRAMODS_GRAPHICS_RENDERERDISPATCHER
-#define GRAMODS_GRAPHICS_RENDERERDISPATCHER
+#ifndef GRAMODS_GRAPHICS_VIEWBASE
+#define GRAMODS_GRAPHICS_VIEWBASE
 
 #include <gmGraphics/config.hh>
 #include <gmGraphics/Renderer.hh>
@@ -18,7 +18,7 @@ BEGIN_NAMESPACE_GMGRAPHICS;
    The common base for nodes taking renderers for dispatching
    rendering jobs.
 */
-class RendererDispatcher
+class ViewBase
   : public gmCore::Object {
 
 public:
@@ -94,7 +94,7 @@ public:
 
   /**
      Sets the viewpoint to use in the views rendered by this
-     RendererDispatcher.
+     ViewBase.
   */
   void setViewpoint(std::shared_ptr<Viewpoint> viewpoint) {
     viewpoints = {viewpoint};
@@ -102,9 +102,9 @@ public:
 
   /**
      Adds a viewpoint to use in the views rendered by this
-     RendererDispatcher.
+     ViewBase.
 
-     \gmXmlTag{gmGraphics,RendererDispatcher,viewpoint}
+     \gmXmlTag{gmGraphics,ViewBase,viewpoint}
   */
   void addViewpoint(std::shared_ptr<Viewpoint> viewpoint) {
     viewpoints.push_back(viewpoint);

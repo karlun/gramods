@@ -9,8 +9,8 @@
 BEGIN_NAMESPACE_GMGRAPHICS;
 
 /**
-   The TiledView tiles up a RendererDispatcher (a Window or another
-   View) into sub tiles each containing a separate View.
+   The TiledView tiles up a view into sub tiles each containing a
+   separate View.
 
    Example usage:
    ~~~~~{.xml}

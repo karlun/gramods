@@ -2,7 +2,7 @@
 #ifndef GRAMODS_GRAPHICS_WINDOW
 #define GRAMODS_GRAPHICS_WINDOW
 
-#include <gmGraphics/RendererDispatcher.hh>
+#include <gmGraphics/ViewBase.hh>
 
 #include <gmCore/float.hh>
 #include <gmCore/int.hh>
@@ -17,8 +17,7 @@ class View;
 /**
    The base of graphics Window implementations.
 */
-class Window
-  : public RendererDispatcher {
+class Window : public ViewBase {
 
 public:
 

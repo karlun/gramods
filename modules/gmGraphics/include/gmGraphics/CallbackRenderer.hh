@@ -31,7 +31,9 @@ public:
 
   /**
      The signature of the rendering function that provides the actual
-     graphics. See gmGraphics::Dispatcher for more information.
+     graphics.
+
+     @see gmGraphics::Renderer::render
   */
   typedef std::function<void(Camera, float, float)> RenderFunction;
 

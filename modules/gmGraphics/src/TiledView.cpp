@@ -122,7 +122,7 @@ void TiledView::clearRenderers(bool recursive) {
   if (recursive)
     for (auto tile : _impl->tiles)
       tile.view->clearRenderers(recursive);
-  RendererDispatcher::clearRenderers(recursive);
+  ViewBase::clearRenderers(recursive);
 }
 
 END_NAMESPACE_GMGRAPHICS;

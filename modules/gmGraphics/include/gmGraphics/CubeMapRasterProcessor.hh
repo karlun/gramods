@@ -3,7 +3,10 @@
 #define GRAMODS_GRAPHICS_CUBEMAPRASTERPROCESSOR
 
 #include <gmGraphics/config.hh>
-#include <gmGraphics/RendererDispatcher.hh>
+#include <gmGraphics/Renderer.hh>
+
+#include <GL/glew.h>
+#include <GL/gl.h>
 
 #include <memory>
 

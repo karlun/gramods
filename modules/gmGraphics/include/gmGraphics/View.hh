@@ -2,7 +2,7 @@
 #ifndef GRAMODS_GRAPHICS_VIEW
 #define GRAMODS_GRAPHICS_VIEW
 
-#include <gmGraphics/RendererDispatcher.hh>
+#include <gmGraphics/ViewBase.hh>
 
 BEGIN_NAMESPACE_GMGRAPHICS;
 
@@ -10,8 +10,7 @@ BEGIN_NAMESPACE_GMGRAPHICS;
    The base of graphics View implementations. A view is a projection
    of rendered data into a buffer.
 */
-class View
-  : public RendererDispatcher {
+class View : public ViewBase {
 
   /**
      Returns the default key, in Configuration, for the

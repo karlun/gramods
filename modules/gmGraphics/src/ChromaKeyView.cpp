@@ -158,7 +158,7 @@ void ChromaKeyView::clearRenderers(bool recursive) {
   if (recursive)
     for (auto view : _impl->views)
       view->clearRenderers(recursive);
-  RendererDispatcher::clearRenderers(recursive);
+  ViewBase::clearRenderers(recursive);
 }
 
 END_NAMESPACE_GMGRAPHICS;

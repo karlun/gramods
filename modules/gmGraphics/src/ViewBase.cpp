@@ -1,13 +1,13 @@
 
-#include <gmGraphics/RendererDispatcher.hh>
+#include <gmGraphics/ViewBase.hh>
 
 BEGIN_NAMESPACE_GMGRAPHICS;
 
-GM_OFI_DEFINE(RendererDispatcher);
-GM_OFI_POINTER2(RendererDispatcher, renderer, gmGraphics::Renderer, addRenderer);
-GM_OFI_POINTER2(RendererDispatcher, viewpoint, gmGraphics::Viewpoint, addViewpoint);
+GM_OFI_DEFINE(ViewBase);
+GM_OFI_POINTER2(ViewBase, renderer, gmGraphics::Renderer, addRenderer);
+GM_OFI_POINTER2(ViewBase, viewpoint, gmGraphics::Viewpoint, addViewpoint);
 
-void RendererDispatcher::renderFullPipeline(ViewSettings settings) {
+void ViewBase::renderFullPipeline(ViewSettings settings) {
 
   populateViewSettings(settings);
 
@@ -23,7 +23,7 @@ void RendererDispatcher::renderFullPipeline(ViewSettings settings) {
     renderer->render(camera, near, far);
 }
 
-void RendererDispatcher::populateViewSettings(ViewSettings &settings) {
+void ViewBase::populateViewSettings(ViewSettings &settings) {
   settings.renderers.insert(settings.renderers.end(),
                             renderers.begin(), renderers.end());
   if (!viewpoints.empty())
@@ -31,7 +31,7 @@ void RendererDispatcher::populateViewSettings(ViewSettings &settings) {
         settings.viewpoints.end(), viewpoints.begin(), viewpoints.end());
 }
 
-void RendererDispatcher::clearRenderers(bool) {
+void ViewBase::clearRenderers(bool) {
   renderers.clear();
 }
 
