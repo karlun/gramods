@@ -91,4 +91,8 @@ bool RegisteredMultiPoseTracker::Impl::getPose(std::map<int, PoseSample> &p) {
   return true;
 }
 
+void RegisteredMultiPoseTracker::traverse(Visitor *visitor) {
+  if (_impl->tracker) _impl->tracker->accept(visitor);
+}
+
 END_NAMESPACE_GMTRACK;

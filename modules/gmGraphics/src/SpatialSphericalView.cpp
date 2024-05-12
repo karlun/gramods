@@ -248,4 +248,9 @@ void SpatialSphericalView::setOrientation(Eigen::Quaternionf q) {
   _impl->orientation = q;
 }
 
+void SpatialSphericalView::traverse(Visitor *visitor) {
+  MultiscopicView::traverse(visitor);
+  if (_impl->mapper) _impl->mapper->accept(visitor);
+}
+
 END_NAMESPACE_GMGRAPHICS;

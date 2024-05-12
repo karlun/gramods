@@ -80,6 +80,13 @@ public:
   */
   bool getAnalogs(AnalogsSample &p) override;
 
+  /**
+     Propagates the specified visitor.
+
+     @see Object::Visitor
+  */
+  void traverse(Visitor *visitor) override;
+
   GM_OFI_DECLARE;
 
 private:

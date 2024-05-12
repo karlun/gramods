@@ -79,4 +79,8 @@ void Window::sync() {
   glFinish();
 }
 
+void Window::traverse(Visitor *visitor) {
+  for (auto &v : views) v->accept(visitor);
+}
+
 END_NAMESPACE_GMGRAPHICS;

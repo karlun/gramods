@@ -80,6 +80,7 @@ RemapperView::RemapperView() : _impl(std::make_unique<Impl>()) {}
 RemapperView::~RemapperView() {}
 
 void RemapperView::addView(std::shared_ptr<View> view) {
+  if (!view) throw gmCore::InvalidArgument("null not allowed");
   _impl->views.push_back(view);
 }
 
@@ -201,6 +202,12 @@ void RemapperView::clearRenderers(bool recursive) {
   if (recursive)
     for (auto view : _impl->views) view->clearRenderers(recursive);
   ViewBase::clearRenderers(recursive);
+}
+
+void RemapperView::traverse(Visitor *visitor) {
+  for (auto &v : _impl->views) v->accept(visitor);
+  if (_impl->from) _impl->from->accept(visitor);
+  if (_impl->to) _impl->to->accept(visitor);
 }
 
 END_NAMESPACE_GMGRAPHICS;

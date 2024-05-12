@@ -26,6 +26,13 @@ public:
   void render(Camera camera, float near = -1, float far = -1) override;
 
   /**
+     Propagates the specified visitor.
+
+     @see Object::Visitor
+  */
+  void traverse(Visitor *visitor) override;
+
+  /**
      Extracts the currently optimal near and far plane distances. This
      is typically used by a View if there are multiple renderers that
      need to be rendered with the same near and far planes for correct

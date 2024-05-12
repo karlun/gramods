@@ -344,4 +344,9 @@ void GeometryCorrectedProjectorView::Impl::renderFullPipeline(
   glBindTexture(GL_TEXTURE_2D, 0);
 }
 
+void GeometryCorrectedProjectorView::traverse(Visitor *visitor) {
+  MultiscopicView::traverse(visitor);
+  if (_impl->geometry) _impl->geometry->accept(visitor);
+}
+
 END_NAMESPACE_GMGRAPHICS;

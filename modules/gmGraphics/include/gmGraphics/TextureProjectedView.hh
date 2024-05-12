@@ -48,6 +48,13 @@ public:
   void renderFullPipeline(ViewSettings settings, Eye eye) override;
 
   /**
+     Propagates the specified visitor.
+
+     @see Object::Visitor
+  */
+  void traverse(Visitor *visitor) override;
+
+  /**
      Sets the Texture to use for warping coordinates.
 
      \gmXmlTag{gmGraphics,TextureProjectedView,texture}

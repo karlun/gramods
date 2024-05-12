@@ -135,6 +135,13 @@ public:
                                        float inlier_dist = -1.f,
                                        size_t *inlier_count = nullptr);
 
+  /**
+     Propagates the specified visitor.
+
+     @see Object::Visitor
+  */
+  void traverse(Visitor *visitor) override;
+
   GM_OFI_DECLARE;
 
 };

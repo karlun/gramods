@@ -27,6 +27,13 @@ public:
   void renderFullPipeline(ViewSettings settings) override;
 
   /**
+     Propagates the specified visitor.
+
+     @see Object::Visitor
+  */
+  void traverse(Visitor *visitor) override;
+
+  /**
      Adds a view to mask with chroma key.
 
      \gmXmlTag{gmGraphics,ChromaKeyView,view}

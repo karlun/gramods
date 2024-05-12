@@ -46,6 +46,12 @@ public:
   */
   void addTexture(std::shared_ptr<TextureInterface> texture);
 
+  /**
+     Propagates the specified visitor.
+
+     @see Object::Visitor
+  */
+  void traverse(Visitor *visitor) override;
 
   GM_OFI_DECLARE;
 

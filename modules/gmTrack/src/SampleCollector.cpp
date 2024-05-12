@@ -348,4 +348,8 @@ SampleCollector::getTrackerOrientations() const {
   return _impl->tracker_orientations;
 }
 
+void SampleCollector::traverse(Visitor *visitor) {
+  if (_impl->controller) _impl->controller->accept(visitor);
+}
+
 END_NAMESPACE_GMTRACK;

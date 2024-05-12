@@ -80,6 +80,7 @@ TextureWarpedView::TextureWarpedView()
 TextureWarpedView::~TextureWarpedView() {}
 
 void TextureWarpedView::addView(std::shared_ptr<View> view) {
+  if (!view) throw gmCore::InvalidArgument("specified view is null");
   _impl->views.push_back(view);
 }
 
@@ -176,6 +177,12 @@ void TextureWarpedView::clearRenderers(bool recursive) {
     for (auto view : _impl->views)
       view->clearRenderers(recursive);
   ViewBase::clearRenderers(recursive);
+}
+
+void TextureWarpedView::traverse(Visitor *visitor) {
+  if (auto obj = std::dynamic_pointer_cast<gmCore::Object>(_impl->texture))
+    obj->accept(visitor);
+  for (auto &v : _impl->views) v->accept(visitor);
 }
 
 END_NAMESPACE_GMGRAPHICS;

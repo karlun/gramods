@@ -160,6 +160,7 @@ bool ViewTexture::getUseAlpha() {
 }
 
 void ViewTexture::addView(std::shared_ptr<View> view) {
+  if (!view) throw gmCore::InvalidArgument("null not allowed");
   _impl->views.push_back(view);
 }
 
@@ -180,6 +181,10 @@ GLuint ViewTexture::updateTexture(size_t frame_number, Eye eye) {
   _impl->update(settings);
 
   return _impl->render_target.getTexId();
+}
+
+void ViewTexture::traverse(Visitor *visitor) {
+  for (auto &v : _impl->views) v->accept(visitor);
 }
 
 END_NAMESPACE_GMGRAPHICS;

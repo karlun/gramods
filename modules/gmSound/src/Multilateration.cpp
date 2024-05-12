@@ -154,4 +154,9 @@ void Multilateration::Impl::estimatePose(std::vector<float> &offsets,
           Eigen::Quaternionf::Identity(),
           time - gmCore::TimeTools::secondsToDuration(dt)};
 }
+
+void Multilateration::traverse(Visitor *visitor) {
+  if (_impl->sound_detector) _impl->sound_detector->accept(visitor);
+}
+
 }}

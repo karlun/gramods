@@ -198,4 +198,8 @@ void PosedSphericalView::setLinearInterpolation(bool on) {
   _impl->cubemap->setLinearInterpolation(on);
 }
 
+void PosedSphericalView::traverse(Visitor *visitor) {
+  if (_impl->mapper) _impl->mapper->accept(visitor);
+}
+
 END_NAMESPACE_GMGRAPHICS;

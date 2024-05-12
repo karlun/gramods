@@ -26,6 +26,13 @@ public:
   void renderFullPipeline(ViewSettings settings) override;
 
   /**
+     Propagates the specified visitor.
+
+     @see Object::Visitor
+  */
+  void traverse(Visitor *visitor) override;
+
+  /**
      Set type of mixing. Default is average. Valid values are
 
      - average, showing the per pixel average value of all the views,

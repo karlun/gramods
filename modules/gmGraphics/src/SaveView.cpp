@@ -393,6 +393,7 @@ void SaveView::setExit(bool on) {
 }
 
 void SaveView::addView(std::shared_ptr<View> view) {
+  if (!view) throw gmCore::InvalidArgument("null not allowed");
   _impl->views.push_back(view);
 }
 
@@ -448,6 +449,10 @@ void SaveView::Impl::save_process() {
 
     save_image.reset();
   }
+}
+
+void SaveView::traverse(Visitor *visitor) {
+  for (auto &v : _impl->views) v->accept(visitor);
 }
 
 END_NAMESPACE_GMGRAPHICS;

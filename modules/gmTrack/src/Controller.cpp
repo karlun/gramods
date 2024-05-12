@@ -50,4 +50,10 @@ void Controller::setAnalogsTracker(std::shared_ptr<AnalogsTracker> at) {
   analogs_tracker = at;
 }
 
+void Controller::traverse(Visitor *visitor) {
+  if (single_pose_tracker) single_pose_tracker->accept(visitor);
+  if (buttons_tracker) buttons_tracker->accept(visitor);
+  if (analogs_tracker) analogs_tracker->accept(visitor);
+}
+
 END_NAMESPACE_GMTRACK;

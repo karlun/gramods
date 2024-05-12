@@ -55,4 +55,8 @@ void TrackedViewpoint::setSinglePoseTracker(std::shared_ptr<gmTrack::SinglePoseT
   _impl->tracker = t;
 }
 
+void TrackedViewpoint::traverse(Visitor *visitor) {
+  if (_impl->tracker) _impl->tracker->accept(visitor);
+}
+
 END_NAMESPACE_GMGRAPHICS;

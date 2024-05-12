@@ -31,4 +31,8 @@ bool SingleToMultiPoseTracker::getPose(std::map<int, PoseSample> &p) {
   return got_data;
 }
 
+void SingleToMultiPoseTracker::traverse(Visitor *visitor) {
+  for (auto &t : trackers) t->accept(visitor);
+}
+
 END_NAMESPACE_GMTRACK;

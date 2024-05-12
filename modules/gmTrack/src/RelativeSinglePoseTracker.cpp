@@ -53,5 +53,10 @@ void RelativeSinglePoseTracker::setTargetTracker(std::shared_ptr<SinglePoseTrack
   target_tracker = tracker;
 }
 
+void RelativeSinglePoseTracker::traverse(Visitor *visitor) {
+  if (origin_tracker) origin_tracker->accept(visitor);
+  if (target_tracker) target_tracker->accept(visitor);
+}
+
 END_NAMESPACE_GMTRACK;
 

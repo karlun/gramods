@@ -42,6 +42,13 @@ public:
   void renderFullPipeline(ViewSettings settings) override;
 
   /**
+     Propagates the specified visitor.
+
+     @see Object::Visitor
+  */
+  void traverse(Visitor *visitor) override;
+
+  /**
      Adds a view to the window. A window without views will render
      nothing - it is the tiles that provide the graphics. If multiple
      views are added, then these will be rendered over each other.
@@ -49,6 +56,7 @@ public:
      \gmXmlTag{gmGraphics,Window,view}
   */
   void addView(std::shared_ptr<View> view) {
+    if (!view) throw gmCore::InvalidArgument("null not allowed");
     views.push_back(view);
   }
 

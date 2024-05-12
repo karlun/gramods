@@ -20,6 +20,13 @@ public:
   void renderFullPipeline(ViewSettings settings) override final;
 
   /**
+     Propagates the specified visitor.
+
+     @see Object::Visitor
+  */
+  void traverse(Visitor *visitor) override;
+
+  /**
      Sets the multiscopic multiplexing to use for rendering. If not
      set, monoscopic rendering will be used.
 

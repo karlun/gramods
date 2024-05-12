@@ -39,6 +39,13 @@ public:
   virtual ~GeometryCorrectedProjectorView();
 
   /**
+     Propagates the specified visitor.
+
+     @see Object::Visitor
+  */
+  void traverse(Visitor *visitor) override;
+
+  /**
      Sets the resolution of the intermediate buffer, in
      pixels. Default is 2048.
 

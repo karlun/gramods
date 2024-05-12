@@ -335,4 +335,10 @@ void SphereRenderer::setCoordinatesMapper(std::shared_ptr<CoordinatesMapper> map
   _impl->mapper = mapper;
 }
 
+void SphereRenderer::traverse(Visitor *visitor) {
+  if (auto obj = std::dynamic_pointer_cast<gmCore::Object>(_impl->texture))
+    obj->accept(visitor);
+  if (_impl->mapper) _impl->mapper->accept(visitor);
+}
+
 END_NAMESPACE_GMGRAPHICS;

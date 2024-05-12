@@ -35,4 +35,9 @@ void ViewBase::clearRenderers(bool) {
   renderers.clear();
 }
 
+void ViewBase::traverse(Visitor *visitor) {
+  for (auto &r : renderers) r->accept(visitor);
+  for (auto &v : viewpoints) v->accept(visitor);
+}
+
 END_NAMESPACE_GMGRAPHICS;

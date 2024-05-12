@@ -25,6 +25,13 @@ public:
   void renderFullPipeline(ViewSettings settings) override;
 
   /**
+     Propagates the specified visitor.
+
+     @see Object::Visitor
+  */
+  void traverse(Visitor *visitor) override;
+
+  /**
      Sets the file path to save the view to.
 
      If a sequence of image files should be saved, then set this as a

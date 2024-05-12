@@ -76,6 +76,13 @@ public:
   */
   void addCoordinatesMapper(std::shared_ptr<CoordinatesMapper> m);
 
+  /**
+     Propagates the specified visitor.
+
+     @see Object::Visitor
+  */
+  void traverse(Visitor *visitor) override;
+
   GM_OFI_DECLARE;
 
 private:

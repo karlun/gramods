@@ -61,6 +61,13 @@ public:
   */
   void setTolerance(gmCore::float2 tol);
 
+  /**
+     Propagates the specified visitor.
+
+     @see Object::Visitor
+  */
+  void traverse(Visitor *visitor) override;
+
   GM_OFI_DECLARE;
 
 private:

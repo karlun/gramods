@@ -204,6 +204,10 @@ void HmdView::setOpenVR(std::shared_ptr<gmCore::OpenVR> openvr) {
   _impl->openvr = openvr;
 }
 
+void HmdView::traverse(Visitor *visitor) {
+  if (_impl->openvr) _impl->openvr->accept(visitor);
+}
+
 END_NAMESPACE_GMGRAPHICS;
 
 #endif

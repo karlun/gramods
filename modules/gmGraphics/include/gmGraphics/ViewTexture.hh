@@ -31,6 +31,13 @@ public:
   void renderFullPipeline(ViewSettings settings) override;
 
   /**
+     Propagates the specified visitor.
+
+     @see Object::Visitor
+  */
+  void traverse(Visitor *visitor) override;
+
+  /**
      Sets the resolution to render sub views at, regarless of
      resolution of the parent. Default is 1024x1024.
 

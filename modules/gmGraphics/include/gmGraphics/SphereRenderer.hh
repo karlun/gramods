@@ -49,6 +49,13 @@ public:
   void getNearFar(Camera camera, float &near, float &far) override;
 
   /**
+     Propagates the specified visitor.
+
+     @see Object::Visitor
+  */
+  void traverse(Visitor *visitor) override;
+
+  /**
      Set the radius of the sphere.
 
      \gmXmlTag{gmGraphics,SphereRenderer,radius}

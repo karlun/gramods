@@ -235,4 +235,10 @@ void TextureProjectedView::setWarpOffset(Eigen::Vector3f offset) {
   _impl->offset = offset;
 }
 
+void TextureProjectedView::traverse(Visitor *visitor) {
+  MultiscopicView::traverse(visitor);
+  if (auto obj = std::dynamic_pointer_cast<gmCore::Object>(_impl->texture))
+    obj->accept(visitor);
+}
+
 END_NAMESPACE_GMGRAPHICS;

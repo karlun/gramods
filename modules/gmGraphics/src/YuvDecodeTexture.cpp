@@ -141,5 +141,8 @@ void YuvDecodeTexture::setUvRange(gmCore::float2 v) {
   _impl->yuvRange = Eigen::Vector3f(1, v[0], v[1]);
 }
 
+void YuvDecodeTexture::traverse(Visitor *visitor) {
+  if (_impl->texture) _impl->texture->accept(visitor);
+}
 
 END_NAMESPACE_GMGRAPHICS;

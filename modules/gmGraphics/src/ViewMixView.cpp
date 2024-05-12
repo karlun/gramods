@@ -107,6 +107,7 @@ ViewMixView::ViewMixView()
 ViewMixView::~ViewMixView() {}
 
 void ViewMixView::addView(std::shared_ptr<View> v) {
+  if (!v) throw gmCore::InvalidArgument("null not allowed");
   _impl->views.push_back(v);
 }
 
@@ -215,6 +216,10 @@ void ViewMixView::clearRenderers(bool recursive) {
     for (auto view : _impl->views)
       view->clearRenderers(recursive);
   ViewBase::clearRenderers(recursive);
+}
+
+void ViewMixView::traverse(Visitor *visitor) {
+  for (auto &v : _impl->views) v->accept(visitor);
 }
 
 END_NAMESPACE_GMGRAPHICS;

@@ -184,7 +184,12 @@ void TransitionCoordinatesMapper::setRatio(float r) {
 
 void TransitionCoordinatesMapper::addCoordinatesMapper(
     std::shared_ptr<CoordinatesMapper> m) {
+  if (!m) throw gmCore::InvalidArgument("null not allowed");
   _impl->mappers.push_back(m);
+}
+
+void TransitionCoordinatesMapper::traverse(Visitor *visitor) {
+  for (auto &m : _impl->mappers) m->accept(visitor);
 }
 
 END_NAMESPACE_GMGRAPHICS;

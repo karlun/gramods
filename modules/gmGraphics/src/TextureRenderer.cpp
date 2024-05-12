@@ -161,4 +161,9 @@ void TextureRenderer::setFlip(bool flip) {
   _impl->flip = flip;
 }
 
+void TextureRenderer::traverse(Visitor *visitor) {
+  if (auto obj = std::dynamic_pointer_cast<gmCore::Object>(texture))
+    obj->accept(visitor);
+}
+
 END_NAMESPACE_GMGRAPHICS;

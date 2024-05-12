@@ -85,4 +85,8 @@ bool RegisteredSinglePoseTracker::Impl::getPose(PoseSample &p) {
   return true;
 }
 
+void RegisteredSinglePoseTracker::traverse(Visitor *visitor) {
+  if (_impl->tracker) _impl->tracker->accept(visitor);
+}
+
 END_NAMESPACE_GMTRACK;

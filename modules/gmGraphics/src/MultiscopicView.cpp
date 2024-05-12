@@ -27,4 +27,8 @@ void MultiscopicView::renderFullPipeline(ViewSettings settings) {
   }
 }
 
+void MultiscopicView::traverse(Visitor *visitor) {
+  if (multiscopic_multiplexer) multiscopic_multiplexer->accept(visitor);
+}
+
 END_NAMESPACE_GMGRAPHICS;

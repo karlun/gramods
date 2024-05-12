@@ -28,6 +28,13 @@ public:
   void renderFullPipeline(ViewSettings settings) override;
 
   /**
+     Propagates the specified visitor.
+
+     @see Object::Visitor
+  */
+  void traverse(Visitor *visitor) override;
+
+  /**
      Adds a view to warp.
 
      \gmXmlTag{gmGraphics,TextureWarpedView,view}

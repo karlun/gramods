@@ -49,4 +49,8 @@ void OffsetSinglePoseTracker::setOffsetMatrix(Eigen::Matrix4f m) {
   orientation_offset = Eigen::Quaternionf(R);
 }
 
+void OffsetSinglePoseTracker::traverse(Visitor *visitor) {
+  if (tracker) tracker->accept(visitor);
+}
+
 END_NAMESPACE_GMTRACK;

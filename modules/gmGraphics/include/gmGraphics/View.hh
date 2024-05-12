@@ -21,7 +21,6 @@ class View : public ViewBase {
 public:
 
   GM_OFI_DECLARE;
-
 };
 
 END_NAMESPACE_GMGRAPHICS;

@@ -33,6 +33,13 @@ public:
   void renderFullPipeline(ViewSettings settings, Eye eye) override;
 
   /**
+     Propagates the specified visitor.
+
+     @see Object::Visitor
+  */
+  void traverse(Visitor *visitor) override;
+
+  /**
      Sets the resolution of the intermediate cube map, in
      pixels. Default is 2048.
 

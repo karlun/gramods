@@ -40,6 +40,13 @@ public:
   void renderFullPipeline(ViewSettings settings) override;
 
   /**
+     Propagates the specified visitor.
+
+     @see Object::Visitor
+  */
+  void traverse(Visitor *visitor) override;
+
+  /**
      Adds a location and span that is used when adding views. Format
      is [row col rowspan colspan] where row and col start at zero at
      top left corner.
