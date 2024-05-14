@@ -377,13 +377,14 @@ bool ObjRenderer::Impl::read_obj(std::vector<GLfloat> &vertices,
   try {
     const auto filepath = gmCore::FileResolver::getDefault()->resolve(
         file, gmCore::FileResolver::Check::ReadableFile);
+	tex_root_path = filepath.parent_path();
 
     tinyobj::ObjReaderConfig reader_config;
     reader_config.triangulate = true;
     reader_config.vertex_color = false;
-    reader_config.mtl_search_path = tex_root_path = filepath.parent_path();
+    reader_config.mtl_search_path = filepath.parent_path().u8string();
 
-    if (!objreader.ParseFromFile(filepath, reader_config)) {
+    if (!objreader.ParseFromFile(filepath.u8string(), reader_config)) {
       const auto err = objreader.Error();
       if (err.empty())
         GM_ERR("ObjRenderer",
