@@ -44,8 +44,7 @@ void Window::renderFullPipeline(ViewSettings settings) {
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
     Camera c(settings);
-    for (auto renderer : settings.renderers)
-      renderer->render(c);
+    settings.renderNodes(c);
   }
   glFlush();
 }
@@ -73,6 +72,7 @@ void Window::sync() {
 }
 
 void Window::traverse(Visitor *visitor) {
+  ViewBase::traverse(visitor);
   for (auto &v : views) v->accept(visitor);
 }
 

@@ -16,8 +16,6 @@ BEGIN_NAMESPACE_GMGRAPHICS;
 
 GM_OFI_DEFINE_SUB(SphereRenderer, Renderer);
 GM_OFI_PARAM2(SphereRenderer, radius, float, setRadius);
-GM_OFI_PARAM2(SphereRenderer, position, Eigen::Vector3f, setPosition);
-GM_OFI_PARAM2(SphereRenderer, orientation, Eigen::Quaternionf, setOrientation);
 GM_OFI_POINTER2(SphereRenderer, texture, gmGraphics::TextureInterface, setTexture);
 GM_OFI_POINTER2(SphereRenderer, coordinatesMapper, gmGraphics::CoordinatesMapper, setCoordinatesMapper);
 
@@ -27,8 +25,11 @@ struct SphereRenderer::Impl {
 
   void setup();
   std::string createFragmentCode();
-  void render(Camera camera, float near, float far);
-  void getNearFar(Camera camera, float &near, float &far);
+  void render(const Camera &camera, const Eigen::Affine3f &Mm);
+  void getNearFar(const Camera &camera,
+                  const Eigen::Affine3f &Mm,
+                  float &near,
+                  float &far);
   void teardown();
 
   static const std::string vertex_shader_code;
@@ -44,8 +45,6 @@ struct SphereRenderer::Impl {
   GLuint vertex_count = 0;
 
   float radius = 10;
-  Eigen::Vector3f position = Eigen::Vector3f::Zero();
-  Eigen::Quaternionf orientation = Eigen::Quaternionf::Identity();
 
   std::shared_ptr<TextureInterface> texture;
   std::shared_ptr<CoordinatesMapper> mapper;
@@ -57,23 +56,28 @@ struct SphereRenderer::Impl {
 SphereRenderer::SphereRenderer()
   : _impl(std::make_unique<Impl>()) {}
 
-void SphereRenderer::render(Camera camera, float near, float far) { 
+void SphereRenderer::render(const Camera &camera, const Eigen::Affine3f &Mm) {
   if (!eyes.empty() && eyes.count(camera.getEye()) == 0) return;
-  _impl->render(camera, near, far);
+  _impl->render(camera, Mm);
 }
 
-void SphereRenderer::getNearFar(Camera camera, float &near, float &far) {
+void SphereRenderer::getNearFar(const Camera &camera,
+                                const Eigen::Affine3f &Mm,
+                                float &near,
+                                float &far) {
   if (!eyes.empty() && eyes.count(camera.getEye()) == 0) return;
-  _impl->getNearFar(camera, near, far);
+  _impl->getNearFar(camera, Mm, near, far);
 }
 
-void SphereRenderer::Impl::getNearFar(Camera camera, float &near, float &far) {
+void SphereRenderer::Impl::getNearFar(const Camera &camera,
+                                      const Eigen::Affine3f &Mm,
+                                      float &near,
+                                      float &far) {
 
-  Eigen::Affine3f Mm = Eigen::Translation3f(position) * orientation;
   Eigen::Affine3f Mv = camera.getViewMatrix();
 
-  near = 0.99f * (-(Mv * Mm).translation().z() - radius);
-  far = 1.01f * (-(Mv * Mm).translation().z() + radius);
+  near = -(Mv * Mm).translation().z() - radius;
+  far = -(Mv * Mm).translation().z() + radius;
 }
 
 const std::string SphereRenderer::Impl::vertex_shader_code = R"lang=glsl(
@@ -244,7 +248,8 @@ std::string SphereRenderer::Impl::createFragmentCode() {
   return fragment_code;
 }
 
-void SphereRenderer::Impl::render(Camera camera, float near, float far) {
+void SphereRenderer::Impl::render(const Camera &camera,
+                                  const Eigen::Affine3f &Mm) {
 
   if (!texture)
     GM_RUNONCE(GM_WRN("SphereRenderer", "No texture to render"));
@@ -261,15 +266,8 @@ void SphereRenderer::Impl::render(Camera camera, float near, float far) {
 
   GM_DBG2("SphereRenderer", "rendering");
 
-  if (far < 0) {
-    getNearFar(camera, near, far);
-    if (near <= std::numeric_limits<float>::epsilon())
-      near = 1e-3f * radius;
-  }
-
-  Eigen::Affine3f Mm = Eigen::Translation3f(position) * orientation;
   Eigen::Affine3f Mv = camera.getViewMatrix();
-  Eigen::Matrix4f Mp = camera.getProjectionMatrix(near, far);
+  Eigen::Matrix4f Mp = camera.getProjectionMatrix();
 
   glActiveTexture(GL_TEXTURE0);
   glBindTexture(GL_TEXTURE_2D, tex_id);
@@ -317,14 +315,6 @@ void SphereRenderer::Impl::teardown() {
 
 void SphereRenderer::setRadius(float r) {
   _impl->radius = r;
-}
-
-void SphereRenderer::setPosition(Eigen::Vector3f p) {
-  _impl->position = p;
-}
-
-void SphereRenderer::setOrientation(Eigen::Quaternionf q) {
-  _impl->orientation = q;
 }
 
 void SphereRenderer::setTexture(std::shared_ptr<TextureInterface> tex) {

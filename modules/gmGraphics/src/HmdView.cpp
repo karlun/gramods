@@ -112,14 +112,11 @@ void HmdView::Impl::processEye(ViewSettings settings,
     camera.setOrientation(Q_rot);
   }
 
-  // TODO: Both eyes should render with the same near/far distances or
-  // we might end up with inconsistencies between the eyes
-  float near, far;
-  Renderer::getNearFar(settings.renderers, camera, near, far);
-
   render_target.bind(render_width, render_height, eye);
 
-  for (auto renderer : settings.renderers) renderer->render(camera, near, far);
+  // TODO: Both eyes should render with the same near/far distances or
+  // we might end up with inconsistencies between the eyes
+  settings.renderNodes(camera);
 
   if (!compositor) return;
 

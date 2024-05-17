@@ -25,11 +25,7 @@ void FovPlanarView::renderFullPipeline(ViewSettings settings) {
     camera.setClipPlanes(planes[0], planes[1], planes[2], planes[3]);
     camera.setPose(x_VP, orientation);
 
-    float near, far;
-    Renderer::getNearFar(settings.renderers, camera, near, far);
-
-    for (auto renderer : settings.renderers)
-      renderer->render(camera, near, far);
+    settings.renderNodes(camera);
   }
 }
 

@@ -4,6 +4,7 @@
 
 #include <gmGraphics/config.hh>
 
+#include <gmGraphics/Node.hh>
 #include <gmGraphics/Camera.hh>
 
 #include <set>
@@ -13,11 +14,9 @@ BEGIN_NAMESPACE_GMGRAPHICS;
 /**
    The base of graphics Renderer implementations.
  */
-class Renderer : public gmCore::Object {
+class Renderer : public gmGraphics::Node {
 
 public:
-
-  typedef std::vector<std::shared_ptr<Renderer>> list;
 
   /**
      Performs rendering of 3D objects in the scene.
@@ -25,7 +24,7 @@ public:
      It is assumed that depth test and blending is enabled upon
      calling this method.
   */
-  virtual void render(Camera camera, float near = -1, float far = -1) = 0;
+  virtual void render(const Camera &camera, const Eigen::Affine3f &Mm) = 0;
 
   /**
      Extracts the currently optimal near and far plane distances. This
@@ -33,21 +32,10 @@ public:
      need to be rendered with the same near and far planes for correct
      depth testing.
   */
-  virtual void getNearFar(Camera camera, float &near, float &far) = 0;
-
-  /**
-     Returns the default key, in Configuration, for the
-     Object.
-  */
-  virtual std::string getDefaultKey() override { return "renderer"; }
-
-  /**
-     Finds good near and far plane distances from the optimal near and
-     far planes for the specified renderers. Call this from overloaded
-     renderFullPipeline.
-  */
-  static void getNearFar(Renderer::list renderers, Camera camera,
-                         float &near, float &far);
+  virtual void getNearFar(const Camera &camera,
+                          const Eigen::Affine3f &Mm,
+                          float &near,
+                          float &far) = 0;
 
   /**
      Add an eye to render to. If no eye is specified, then all eyes

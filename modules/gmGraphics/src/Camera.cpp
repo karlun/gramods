@@ -3,15 +3,19 @@
 
 #include <gmCore/Console.hh>
 #include <gmCore/RunLimited.hh>
+#include <gmCore/PreConditionViolation.hh>
 
 BEGIN_NAMESPACE_GMGRAPHICS;
 
-Eigen::Matrix4f Camera::getProjectionMatrix(float near, float far) const {
+Eigen::Matrix4f Camera::getProjectionMatrix() const {
+  if (!near || !far)
+    throw gmCore::PreConditionViolation(
+        "near and far plane distances required");
 
   GM_DBG2("Camera", "Creating projection matrix from ("
           << left << ", " << right << ", "
           << bottom << ", " << top << ", "
-          << near << ", " << far << ")");
+          << *near << ", " << *far << ")");
 
   Eigen::Matrix4f Mp = Eigen::Matrix4f::Zero();
 
@@ -19,9 +23,9 @@ Eigen::Matrix4f Camera::getProjectionMatrix(float near, float far) const {
   Mp(1,1) = 2.f / (top - bottom);
   Mp(0,2) = (right + left) / (right - left);
   Mp(1,2) = (top + bottom) / (top - bottom);
-  Mp(2,2) = -(far + near) / (far - near);
+  Mp(2,2) = -(*far + *near) / (*far - *near);
   Mp(3,2) = -1.f;
-  Mp(2,3) = -(2.f * far * near) / (far - near);
+  Mp(2,3) = -(2.f * *far * *near) / (*far - *near);
 
   return Mp;
 }

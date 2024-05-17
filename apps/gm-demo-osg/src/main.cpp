@@ -60,7 +60,7 @@ int main(int argc, char *argv[]) {
   if (!windows.empty())
     // Add our app to the first window since we do not currently
     // support multiple OpenGL contexts
-    windows[0]->addRenderer(myapp->getRenderer());
+    windows[0]->addNode(myapp->getRenderer());
 
   // Extract all other objects, just in case there are things in the
   // config that needs to be loaded

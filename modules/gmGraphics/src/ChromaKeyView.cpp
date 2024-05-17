@@ -3,6 +3,7 @@
 
 #include <gmGraphics/GLUtils.hh>
 #include <gmCore/RunOnce.hh>
+#include <gmCore/Console.hh>
 
 #include <gmGraphics/OffscreenRenderTargets.hh>
 #include <gmGraphics/RasterProcessor.hh>

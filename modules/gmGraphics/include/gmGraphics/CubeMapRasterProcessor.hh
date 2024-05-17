@@ -3,7 +3,7 @@
 #define GRAMODS_GRAPHICS_CUBEMAPRASTERPROCESSOR
 
 #include <gmGraphics/config.hh>
-#include <gmGraphics/Renderer.hh>
+#include <gmGraphics/ViewBase.hh>
 
 #include <GL/glew.h>
 #include <GL/gl.h>
@@ -29,8 +29,7 @@ public:
   /**
      Renders the cube map.
   */
-  void renderFullPipeline(size_t frame_number,
-                          Renderer::list renderers,
+  void renderFullPipeline(ViewBase::ViewSettings &settings,
                           Eigen::Vector3f pos,
                           Eigen::Quaternionf rot,
                           Eye eye,

@@ -38,7 +38,7 @@ public:
   /**
      Performs rendering of 3D objects in the scene.
   */
-  void render(Camera camera, float near = -1, float far = -1) override;
+  void render(const Camera &camera, const Eigen::Affine3f &Mm) override;
 
   /**
      Extracts the currently optimal near and far plane distances. This
@@ -46,7 +46,10 @@ public:
      need to be rendered with the same near and far planes for correct
      depth testing.
   */
-  void getNearFar(Camera camera, float &near, float &far) override;
+  void getNearFar(const Camera &camera,
+                  const Eigen::Affine3f &Mm,
+                  float &near,
+                  float &far) override;
 
   /**
      Propagates the specified visitor.
@@ -61,24 +64,6 @@ public:
      \gmXmlTag{gmGraphics,SphereRenderer,radius}
   */
   void setRadius(float r);
-
-  /**
-     Set the position of the sphere.
-
-     \gmXmlTag{gmGraphics,SphereRenderer,position}
-
-     \sa gramods::operator>>(std::istream &, Eigen::Vector3f &)
-  */
-  void setPosition(Eigen::Vector3f p);
-
-  /**
-     Set the orientation of the sphere.
-
-     \gmXmlTag{gmGraphics,SphereRenderer,orientation}
-
-     \sa gramods::operator>>(std::istream &, Eigen::Quaternionf &)
-  */
-  void setOrientation(Eigen::Quaternionf q);
 
   /**
      Sets the Texture to apply on the sphere.

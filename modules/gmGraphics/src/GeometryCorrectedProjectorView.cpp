@@ -266,6 +266,7 @@ void GeometryCorrectedProjectorView::Impl::renderFullPipeline(ViewSettings setti
   Camera projector_camera(settings);
   if (!setCamera(projector_camera))
     return;
+  projector_camera.setNearFar(1.f, 2.f);
 
   for (auto viewpoint : settings.viewpoints)
     renderFullPipeline(settings, eye, &projector_camera, viewpoint.get());
@@ -305,13 +306,9 @@ void GeometryCorrectedProjectorView::Impl::renderFullPipeline(
   render_target.push();
   render_target.bind(buffer_width, buffer_height);
 
-  float near, far;
-  Renderer::getNearFar(settings.renderers, render_camera, near, far);
-
   glEnable(GL_DEPTH_TEST);
 
-  for (auto renderer : settings.renderers)
-    renderer->render(render_camera, near, far);
+  settings.renderNodes(render_camera);
 
   render_target.pop();
 
@@ -329,13 +326,14 @@ void GeometryCorrectedProjectorView::Impl::renderFullPipeline(
   geometry->setMapperUniforms(program_id);
 
   glUniform1i(glGetUniformLocation(program_id, "tex"), 0);
-  Eigen::Matrix4f pPV = projector_camera->getProjectionMatrix(1, 2) *
+  Eigen::Matrix4f pPV = projector_camera->getProjectionMatrix() *
                         projector_camera->getViewMatrix().matrix();
   Eigen::Matrix4f pPV_inv = pPV.inverse();
   glUniformMatrix4fv(glGetUniformLocation(program_id, "pPV_inv"), 1, false, pPV_inv.data());
 
+  render_camera.setNearFar(1.f, 2.f);
   Eigen::Matrix4f rPV =
-    render_camera.getProjectionMatrix(1, 2) *
+    render_camera.getProjectionMatrix() *
     render_camera.getViewMatrix().matrix();
   glUniformMatrix4fv(glGetUniformLocation(program_id, "rPV"), 1, false, rPV.data());
 

@@ -9,6 +9,7 @@
 
 #include <Eigen/Eigen>
 #include <functional>
+#include <optional>
 
 BEGIN_NAMESPACE_GMGRAPHICS;
 
@@ -29,6 +30,8 @@ public:
       right(other.right),
       bottom(other.bottom),
       top(other.top),
+      near(other.near),
+      far(other.far),
       position(other.position),
       orientation(other.orientation),
       eye(other.eye) {}
@@ -43,6 +46,8 @@ public:
     right = other.right;
     bottom = other.bottom;
     top = other.top;
+    near = other.near;
+    far = other.far;
     position = other.position;
     orientation = other.orientation;
     eye = other.eye;
@@ -58,9 +63,9 @@ public:
 
   /**
      Computes and returns a projection matrix for the current camera
-     and the provided near and far distances.
+     and near and far distances.
   */
-  Eigen::Matrix4f getProjectionMatrix(float near, float far) const;
+  Eigen::Matrix4f getProjectionMatrix() const;
 
   /**
      Computes and returns a view matrix for the current camera.
@@ -143,6 +148,14 @@ public:
                        Eigen::Vector3f up = Eigen::Vector3f::Zero());
 
   /**
+     Sets the near and far planes.
+  */
+  void setNearFar(float near, float far) {
+    this->near = near;
+    this->far = far;
+  }
+
+  /**
      Sets which eye the camera is supposed to render.
   */
   void setEye(Eye e) { eye = e; }
@@ -163,6 +176,11 @@ private:
      Frustum planes at distance of 1.0 (meters, typically).
   */
   float left = -1.f, right = 1.f, bottom = -1.f, top = 1.f;
+
+  /**
+     Near and far planes.
+  */
+  std::optional<float> near, far;
 
   /**
      The position of the camera.

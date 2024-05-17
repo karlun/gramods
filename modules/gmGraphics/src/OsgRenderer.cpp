@@ -14,9 +14,12 @@ struct OsgRenderer::Impl {
 
   void setup();
 
-  void render(Camera camera, float near, float far);
+  void render(const Camera &camera, const Eigen::Affine3f &Mm);
 
-  void getNearFar(Camera camera, float &near, float &far);
+  void getNearFar(const Camera &camera,
+                  const Eigen::Affine3f &Mm,
+                  float &near,
+                  float &far);
 
   void setSceneData(osg::Node *node);
 
@@ -41,14 +44,17 @@ void OsgRenderer::Impl::setFrameNumber(unsigned int n) {
   frame_number = n;
 }
 
-void OsgRenderer::render(Camera camera, float near, float far) {
+void OsgRenderer::render(const Camera &camera, const Eigen::Affine3f &Mm) {
   if (!eyes.empty() && eyes.count(camera.getEye()) == 0) return;
-  _impl->render(camera, near, far);
+  _impl->render(camera, Mm);
 }
 
-void OsgRenderer::getNearFar(Camera camera, float &near, float &far) {
+void OsgRenderer::getNearFar(const Camera &camera,
+                             const Eigen::Affine3f &Mm,
+                             float &near,
+                             float &far) {
   if (!eyes.empty() && eyes.count(camera.getEye()) == 0) return;
-  _impl->getNearFar(camera, near, far);
+  _impl->getNearFar(camera, Mm, near, far);
 }
 
 void OsgRenderer::setSceneData(osg::Node *node) {
@@ -86,7 +92,8 @@ void OsgRenderer::Impl::setup() {
   is_initialized = true;
 }
 
-void OsgRenderer::Impl::render(Camera camera, float near, float far) {
+void OsgRenderer::Impl::render(const Camera &camera,
+                               const Eigen::Affine3f &Mm) {
 
   if (!is_initialized) setup();
 
@@ -96,7 +103,7 @@ void OsgRenderer::Impl::render(Camera camera, float near, float far) {
   glGetIntegerv(GL_VIEWPORT, vp);
   osg_cam->setViewport(vp[0], vp[1], vp[2], vp[3]);
 
-  Eigen::Matrix4f proj = camera.getProjectionMatrix(near, far);
+  Eigen::Matrix4f proj = camera.getProjectionMatrix();
   osg_cam->setProjectionMatrix(osg::Matrix(proj.data()));
 
   Eigen::Matrix4f view = camera.getViewMatrix().matrix();
@@ -105,7 +112,10 @@ void OsgRenderer::Impl::render(Camera camera, float near, float far) {
   viewer->renderingTraversals();
 }
 
-void OsgRenderer::Impl::getNearFar(Camera, float &, float &) {
+void OsgRenderer::Impl::getNearFar(const Camera &,
+                                   const Eigen::Affine3f &,
+                                   float &,
+                                   float &) {
   // We currently ignore near and far distances
 }
 

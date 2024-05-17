@@ -166,13 +166,9 @@ void TextureProjectedView::Impl::renderFullPipeline(ViewSettings settings,
   render_target.push();
   render_target.bind(buffer_res[0], buffer_res[1]);
 
-  float near, far;
-  Renderer::getNearFar(settings.renderers, camera, near, far);
-
   glEnable(GL_DEPTH_TEST);
 
-  for (auto renderer : settings.renderers)
-    renderer->render(camera, near, far);
+  settings.renderNodes(camera);
 
   render_target.pop();
 
@@ -198,8 +194,9 @@ void TextureProjectedView::Impl::renderFullPipeline(ViewSettings settings,
   glUniform3fv(glGetUniformLocation(program_id, "scale"), 1, scale.data());
   glUniform3fv(glGetUniformLocation(program_id, "offset"), 1, offset.data());
 
+  camera.setNearFar(1, 2);
   Eigen::Matrix4f rPV =
-      camera.getProjectionMatrix(1, 2) * camera.getViewMatrix().matrix();
+      camera.getProjectionMatrix() * camera.getViewMatrix().matrix();
   glUniformMatrix4fv(
       glGetUniformLocation(program_id, "rPV"), 1, false, rPV.data());
 

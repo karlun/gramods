@@ -18,7 +18,6 @@ BEGIN_NAMESPACE_GMGRAPHICS;
 GM_OFI_DEFINE_SUB(SphereSceneRenderer, Renderer);
 GM_OFI_PARAM2(SphereSceneRenderer, sphereRadius, float, setSphereRadius);
 GM_OFI_PARAM2(SphereSceneRenderer, sphereSetRadius, float, setSphereSetRadius);
-GM_OFI_PARAM2(SphereSceneRenderer, position, Eigen::Vector3f, setPosition);
 GM_OFI_PARAM2(SphereSceneRenderer, color, Eigen::Vector3f, setColor);
 
 #define N_VERTICES 108
@@ -28,8 +27,11 @@ struct SphereSceneRenderer::Impl {
   ~Impl();
 
   void setup();
-  void render(Camera camera, float near, float far);
-  void getNearFar(Camera camera, float &near, float &far);
+  void render(const Camera &camera, const Eigen::Affine3f &Mm);
+  void getNearFar(const Camera &camera,
+                  const Eigen::Affine3f &Mm,
+                  float &near,
+                  float &far);
   void teardown();
 
   GLuint vertex_shader_id = 0;
@@ -52,9 +54,10 @@ struct SphereSceneRenderer::Impl {
 SphereSceneRenderer::SphereSceneRenderer()
   : _impl(std::make_unique<Impl>()) {}
 
-void SphereSceneRenderer::render(Camera camera, float near, float far) {
+void SphereSceneRenderer::render(const Camera &camera,
+                                 const Eigen::Affine3f &Mm) {
   if (!eyes.empty() && eyes.count(camera.getEye()) == 0) return;
-  _impl->render(camera, near, far);
+  _impl->render(camera, Mm);
 }
 
 namespace {
@@ -270,15 +273,19 @@ void SphereSceneRenderer::Impl::setup() {
   is_functional = true;
 }
 
-void SphereSceneRenderer::getNearFar(Camera camera, float &near, float &far){
+void SphereSceneRenderer::getNearFar(const Camera &camera,
+                                     const Eigen::Affine3f &Mm,
+                                     float &near,
+                                     float &far) {
   if (!eyes.empty() && eyes.count(camera.getEye()) == 0) return;
-  _impl->getNearFar(camera, near, far);
+  _impl->getNearFar(camera, Mm, near, far);
 }
 
-void SphereSceneRenderer::Impl::getNearFar(Camera camera, float &near, float &far){
+void SphereSceneRenderer::Impl::getNearFar(const Camera &camera,
+                                           const Eigen::Affine3f &Mm,
+                                           float &near,
+                                           float &far) {
 
-  Eigen::Affine3f Mm;
-  Mm = Eigen::Translation3f(position);
   Eigen::Affine3f Mv = camera.getViewMatrix();
 
   near =
@@ -290,7 +297,7 @@ void SphereSceneRenderer::Impl::getNearFar(Camera camera, float &near, float &fa
     + sphere_set_radius + sphere_radius;
 }
 
-void SphereSceneRenderer::Impl::render(Camera camera, float near, float far) {
+void SphereSceneRenderer::Impl::render(const Camera &camera, const Eigen::Affine3f &Mm) {
 
   if (!is_setup)
     setup();
@@ -299,14 +306,8 @@ void SphereSceneRenderer::Impl::render(Camera camera, float near, float far) {
 
   GM_DBG2("SphereSceneRenderer", "rendering");
 
-  if (far < 0) {
-    getNearFar(camera, near, far);
-    if (near <= std::numeric_limits<float>::epsilon())
-      near = 0.1f * sphere_radius;
-  }
-
   Eigen::Affine3f Mv = camera.getViewMatrix();
-  Eigen::Matrix4f Mp = camera.getProjectionMatrix(near, far);
+  Eigen::Matrix4f Mp = camera.getProjectionMatrix();
 
   glUseProgram(program_id);
   glUniformMatrix4fv(glGetUniformLocation(program_id, "Mp"),  1, false, Mp.data());
@@ -322,11 +323,11 @@ void SphereSceneRenderer::Impl::render(Camera camera, float near, float far) {
 
   for (auto pos : set_positions) {
 
-    Eigen::Affine3f Mm = Eigen::Affine3f::Identity();
-    Mm *= Eigen::Translation3f(position[0] + pos[0],
-                               position[1] + pos[1],
-                               position[2] + pos[2]);
-    glUniformMatrix4fv(Mm_id, 1, false, Mm.data());
+    Eigen::Affine3f cMm = Mm;
+    cMm *= Eigen::Translation3f(position[0] + pos[0],
+                                position[1] + pos[1],
+                                position[2] + pos[2]);
+    glUniformMatrix4fv(Mm_id, 1, false, cMm.data());
     glDrawElements(GL_TRIANGLES, indices.size(),  GL_UNSIGNED_INT, indices.data());
   }
 
@@ -364,10 +365,6 @@ void SphereSceneRenderer::setSphereRadius(float d) {
 
 void SphereSceneRenderer::setSphereSetRadius(float d) {
   _impl->sphere_set_radius = d;
-}
-
-void SphereSceneRenderer::setPosition(Eigen::Vector3f p) {
-  _impl->position = p;
 }
 
 void SphereSceneRenderer::setColor(Eigen::Vector3f c) {
