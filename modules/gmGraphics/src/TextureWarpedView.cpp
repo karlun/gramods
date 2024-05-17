@@ -172,13 +172,6 @@ void TextureWarpedView::setWarpOffset(Eigen::Vector2f offset) {
   _impl->offset = offset;
 }
 
-void TextureWarpedView::clearRenderers(bool recursive) {
-  if (recursive)
-    for (auto view : _impl->views)
-      view->clearRenderers(recursive);
-  ViewBase::clearRenderers(recursive);
-}
-
 void TextureWarpedView::traverse(Visitor *visitor) {
   if (auto obj = std::dynamic_pointer_cast<gmCore::Object>(_impl->texture))
     obj->accept(visitor);

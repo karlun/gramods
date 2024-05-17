@@ -31,7 +31,7 @@ void ViewBase::populateViewSettings(ViewSettings &settings) {
         settings.viewpoints.end(), viewpoints.begin(), viewpoints.end());
 }
 
-void ViewBase::clearRenderers(bool) {
+void ViewBase::clearRenderers() {
   renderers.clear();
 }
 

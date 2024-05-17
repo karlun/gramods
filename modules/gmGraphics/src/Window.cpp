@@ -67,13 +67,6 @@ void Window::removeEventHandler(void *tag) {
   event_handlers.erase(tag);
 }
 
-void Window::clearRenderers(bool recursive) {
-  if (recursive)
-    for (auto view : views)
-      view->clearRenderers(recursive);
-  ViewBase::clearRenderers(recursive);
-}
-
 void Window::sync() {
   makeGLContextCurrent();
   glFinish();

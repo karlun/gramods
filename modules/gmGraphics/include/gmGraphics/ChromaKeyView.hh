@@ -56,12 +56,6 @@ public:
   */
   void setTolerance(gmCore::float2 tol);
 
-  /**
-     Removes all renderers and, if recursive is set to true, also
-     renderers added to sub dispatchers.
-  */
-  virtual void clearRenderers(bool recursive = false) override;
-
   GM_OFI_DECLARE;
 
 private:

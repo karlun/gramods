@@ -397,13 +397,6 @@ void SaveView::addView(std::shared_ptr<View> view) {
   _impl->views.push_back(view);
 }
 
-void SaveView::clearRenderers(bool recursive) {
-  if (recursive)
-    for (auto view : _impl->views)
-      view->clearRenderers(recursive);
-  ViewBase::clearRenderers(recursive);
-}
-
 void SaveView::Impl::saveImage(std::unique_ptr<FileBuffer> image) {
   std::lock_guard<std::mutex> guard(save_lock);
   assert(!save_image);

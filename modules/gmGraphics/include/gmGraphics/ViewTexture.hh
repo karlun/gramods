@@ -76,12 +76,6 @@ public:
   void addView(std::shared_ptr<View> view);
 
   /**
-     Removes all renderers and, if recursive is set to true, also
-     renderers added to sub dispatchers.
-  */
-  void clearRenderers(bool recursive = false);
-
-  /**
      Updates the texture and returns the ID of the associated GL
      texture object. Must be called with GL context. Observe also that
      this method may perform off-screen rendering.

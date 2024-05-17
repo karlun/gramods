@@ -211,13 +211,6 @@ void ViewMixView::Impl::renderFullPipeline(ViewSettings settings) {
   }
 }
 
-void ViewMixView::clearRenderers(bool recursive) {
-  if (recursive)
-    for (auto view : _impl->views)
-      view->clearRenderers(recursive);
-  ViewBase::clearRenderers(recursive);
-}
-
 void ViewMixView::traverse(Visitor *visitor) {
   for (auto &v : _impl->views) v->accept(visitor);
 }

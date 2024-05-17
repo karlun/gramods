@@ -155,13 +155,6 @@ void ChromaKeyView::setTolerance(gmCore::float2 tol) {
   _impl->tolerance = tol;
 }
 
-void ChromaKeyView::clearRenderers(bool recursive) {
-  if (recursive)
-    for (auto view : _impl->views)
-      view->clearRenderers(recursive);
-  ViewBase::clearRenderers(recursive);
-}
-
 void ChromaKeyView::traverse(Visitor *visitor) {
   for (auto &v : _impl->views) v->accept(visitor);
 }

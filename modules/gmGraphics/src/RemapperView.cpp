@@ -198,12 +198,6 @@ std::string RemapperView::Impl::createFragmentCode() {
   return fragment_code;
 }
 
-void RemapperView::clearRenderers(bool recursive) {
-  if (recursive)
-    for (auto view : _impl->views) view->clearRenderers(recursive);
-  ViewBase::clearRenderers(recursive);
-}
-
 void RemapperView::traverse(Visitor *visitor) {
   for (auto &v : _impl->views) v->accept(visitor);
   if (_impl->from) _impl->from->accept(visitor);

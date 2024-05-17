@@ -83,14 +83,9 @@ public:
   }
 
   /**
-     Removes all renderers on this dispatcher and, if recursive is set
-     to true, also renderers added to sub dispatchers.
-
-     Sub classes that have sub dispatchers should override this method
-     to, when requested, call the clearRenderers method of those sub
-     dispatchers.
+     Removes all renderers on this dispatcher.
   */
-  virtual void clearRenderers(bool recursive = false);
+  void clearRenderers();
 
   /**
      Sets the viewpoint to use in the views rendered by this

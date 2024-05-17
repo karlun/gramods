@@ -164,13 +164,6 @@ void ViewTexture::addView(std::shared_ptr<View> view) {
   _impl->views.push_back(view);
 }
 
-void ViewTexture::clearRenderers(bool recursive) {
-  if (recursive)
-    for (auto view : _impl->views)
-      view->clearRenderers(recursive);
-  ViewBase::clearRenderers(recursive);
-}
-
 GLuint ViewTexture::updateTexture(size_t frame_number, Eye eye) {
   if (!_impl->setup()) return 0;
   if (_impl->cache_frame == frame_number)
