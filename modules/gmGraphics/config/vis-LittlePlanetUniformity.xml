@@ -18,6 +18,8 @@
     <PosedSphericalView
         linearInterpolation="1">
 
+      <Viewpoint/>
+
       <AngularFisheyeCoordinatesMapper
           coverageAngle="6.283"/>
 
