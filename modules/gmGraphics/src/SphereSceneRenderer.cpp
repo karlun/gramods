@@ -111,12 +111,12 @@ uint32_t getPtIdx(std::vector<GLfloat> &vertices,
                       uint32_t i0,
                       uint32_t i1) {
 
-  size_t iH01 = i0 < i1
-    ? std::numeric_limits<uint32_t>::max() * i0 + i1
-    : std::numeric_limits<uint32_t>::max() * i1 + i0;
-  if (new_pt_idx.count(iH01) > 0) {
-    return new_pt_idx[iH01];
-  }
+  uint64_t iH01 = i0 < i1 ? i0 : i1;
+  iH01 <<= 32;
+  iH01 += i0 < i1 ? i1 : i0;
+
+  auto it = new_pt_idx.find(iH01);
+  if (it != new_pt_idx.end()) return it->second;
 
   Eigen::Vector3f p0(vertices[3 * i0 + 0],
                      vertices[3 * i0 + 1],
@@ -208,10 +208,9 @@ void SphereSceneRenderer::Impl::setup() {
   indices = { 2, 5, 0, 2, 1, 5, 2, 4, 1, 2, 0, 4,
               3, 0, 5, 3, 5, 1, 3, 1, 4, 3, 4, 0 };
 
-  float necessary_spheres = 0.1f * sphere_set_radius * sphere_set_radius /
-                            (sphere_radius * sphere_radius);
-  size_t refs = (size_t)((::log(necessary_spheres) - ::log(8)) / ::log(4) - 1);
-  refs = std::min(size_t(14), refs);
+  float necessary_spheres = 1.0f * sphere_set_radius / sphere_radius;
+  size_t refs =
+      (size_t)(std::max(0.f, std::min(14.f, std::log2(necessary_spheres) - 2)));
 
   for (size_t idx = 0; idx < refs; ++idx)
     refine_polyhedron(vertices, indices);
@@ -229,7 +228,6 @@ void SphereSceneRenderer::Impl::setup() {
 
   for (int idx = refs; idx < 5; ++idx)
     refine_polyhedron(vertices, indices);
-
 
   GM_DBG2("SphereSceneRenderer", "Creating vertex shader");
   vertex_shader_id = glCreateShader(GL_VERTEX_SHADER);
