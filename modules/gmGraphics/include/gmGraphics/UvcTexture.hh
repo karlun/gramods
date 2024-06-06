@@ -6,7 +6,7 @@
 
 #ifdef gramods_ENABLE_libuvc
 
-#include <gmCore/size.hh>
+#include <gmCore/io_size.hh>
 #include <gmCore/OFactory.hh>
 #include <gmCore/VideoSource.hh>
 

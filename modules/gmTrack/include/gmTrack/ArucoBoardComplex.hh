@@ -6,7 +6,7 @@
 
 #ifdef gramods_ENABLE_OpenCV_objdetect
 
-#include <gmCore/eigen.hh>
+#include <gmCore/io_eigen.hh>
 #include <gmCore/OFactory.hh>
 
 #include <Eigen/Eigen>

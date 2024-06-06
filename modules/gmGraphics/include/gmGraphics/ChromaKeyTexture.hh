@@ -6,8 +6,8 @@
 #include <gmGraphics/Texture.hh>
 
 #include <gmCore/OFactory.hh>
-#include <gmCore/float.hh>
-#include <gmCore/eigen.hh>
+#include <gmCore/io_float.hh>
+#include <gmCore/io_eigen.hh>
 
 #include <memory>
 

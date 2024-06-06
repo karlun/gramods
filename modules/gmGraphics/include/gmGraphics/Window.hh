@@ -4,9 +4,9 @@
 
 #include <gmGraphics/ViewBase.hh>
 
-#include <gmCore/float.hh>
-#include <gmCore/int.hh>
-#include <gmCore/size.hh>
+#include <gmCore/io_float.hh>
+#include <gmCore/io_int.hh>
+#include <gmCore/io_size.hh>
 
 #include <limits>
 

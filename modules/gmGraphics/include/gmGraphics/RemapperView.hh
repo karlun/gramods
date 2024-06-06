@@ -5,8 +5,8 @@
 #include <gmGraphics/View.hh>
 #include <gmGraphics/CoordinatesMapper.hh>
 
-#include <gmCore/float.hh>
-#include <gmCore/angle.hh>
+#include <gmCore/io_float.hh>
+#include <gmCore/io_angle.hh>
 
 BEGIN_NAMESPACE_GMGRAPHICS;
 

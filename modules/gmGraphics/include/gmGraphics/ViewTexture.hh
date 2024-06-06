@@ -5,7 +5,7 @@
 #include <gmGraphics/View.hh>
 #include <gmGraphics/TextureInterface.hh>
 
-#include <gmCore/size.hh>
+#include <gmCore/io_size.hh>
 
 BEGIN_NAMESPACE_GMGRAPHICS;
 

@@ -1,9 +1,9 @@
 
-#include <gmCore/eigen.hh>
+#include <gmCore/io_eigen.hh>
 
 #ifdef gramods_ENABLE_Eigen3
 
-#include <gmCore/angle.hh>
+#include <gmCore/io_angle.hh>
 
 #include <gmCore/Console.hh>
 

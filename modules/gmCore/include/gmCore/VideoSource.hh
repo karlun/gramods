@@ -6,7 +6,7 @@
 
 #ifdef gramods_ENABLE_OpenCV
 
-#include <gmCore/size.hh>
+#include <gmCore/io_size.hh>
 
 #include <opencv2/opencv.hpp>
 

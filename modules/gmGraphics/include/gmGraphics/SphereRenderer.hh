@@ -6,7 +6,7 @@
 #include <gmGraphics/TextureInterface.hh>
 #include <gmGraphics/CoordinatesMapper.hh>
 
-#include <gmCore/eigen.hh>
+#include <gmCore/io_eigen.hh>
 #include <gmCore/OFactory.hh>
 
 BEGIN_NAMESPACE_GMGRAPHICS;

@@ -3,7 +3,7 @@
 #define GRAMODS_GRAPHICS_CHROMAKEYVIEW
 
 #include <gmGraphics/View.hh>
-#include <gmCore/float.hh>
+#include <gmCore/io_float.hh>
 
 BEGIN_NAMESPACE_GMGRAPHICS;
 

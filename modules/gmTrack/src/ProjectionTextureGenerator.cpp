@@ -10,7 +10,7 @@
 #include <gmCore/RunOnce.hh>
 #include <gmCore/Console.hh>
 #include <gmCore/PreConditionViolation.hh>
-#include <gmCore/float.hh>
+#include <gmCore/io_float.hh>
 #include <gmCore/MathConstants.hh>
 
 #include <gmMisc/PolyFit.hh>

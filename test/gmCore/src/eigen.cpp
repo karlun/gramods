@@ -3,8 +3,8 @@
 
 #ifdef gramods_ENABLE_Eigen3
 
-#include <gmCore/eigen.hh>
-#include <gmCore/angle.hh>
+#include <gmCore/io_eigen.hh>
+#include <gmCore/io_angle.hh>
 
 #include <sstream>
 

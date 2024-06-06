@@ -7,7 +7,7 @@
 #include <gmCore/RuntimeException.hh>
 #include <gmCore/FileResolver.hh>
 
-#include <gmCore/eigen.hh>
+#include <gmCore/io_eigen.hh>
 #include <gmTrack/Controller.hh>
 #include <gmTrack/PoseRegistrationEstimator.hh>
 

@@ -4,7 +4,7 @@
 
 #include <gmGraphics/CoordinatesMapper.hh>
 
-#include <gmCore/angle.hh>
+#include <gmCore/io_angle.hh>
 
 #include <GL/glew.h>
 #include <GL/gl.h>

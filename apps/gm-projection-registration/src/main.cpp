@@ -8,7 +8,7 @@
 #include <gmCore/RuntimeException.hh>
 #include <gmCore/TimeTools.hh>
 
-#include <gmCore/eigen.hh>
+#include <gmCore/io_eigen.hh>
 #include <gmTrack/ProjectionTextureGenerator.hh>
 
 #include <tclap/CmdLine.h>

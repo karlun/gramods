@@ -4,7 +4,7 @@
 
 #include <gmTrack/AnalogsTracker.hh>
 
-#include <gmCore/size.hh>
+#include <gmCore/io_size.hh>
 
 #include <gmCore/OFactory.hh>
 

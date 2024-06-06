@@ -1,7 +1,7 @@
 
 #include <gmCore/config.hh>
 
-#include <gmCore/angle.hh>
+#include <gmCore/io_angle.hh>
 
 #include <gmCore/Console.hh>
 #include <gmCore/OStreamMessageSink.hh>

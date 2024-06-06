@@ -1,7 +1,7 @@
 
 #include <gmSound/Multilateration.hh>
 
-#include <gmCore/eigen.hh>
+#include <gmCore/io_eigen.hh>
 #include <gmCore/Console.hh>
 #include <gmCore/RunOnce.hh>
 #include <gmCore/PreConditionViolation.hh>

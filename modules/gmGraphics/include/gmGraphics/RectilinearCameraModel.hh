@@ -4,7 +4,7 @@
 
 #include <gmGraphics/CoordinatesMapper.hh>
 
-#include <gmCore/float.hh>
+#include <gmCore/io_float.hh>
 
 #include <GL/glew.h>
 #include <GL/gl.h>

@@ -3,7 +3,7 @@
 #define GRAMODS_GRAPHICS_OFFSCREENRENDERTARGETS
 
 #include <gmGraphics/config.hh>
-#include <gmCore/size.hh>
+#include <gmCore/io_size.hh>
 
 #include <GL/glew.h>
 #include <GL/gl.h>
