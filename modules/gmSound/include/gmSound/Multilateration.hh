@@ -2,7 +2,7 @@
 #ifndef GRAMODS_SOUND_MULTILATERATION
 #define GRAMODS_SOUND_MULTILATERATION
 
-#include <gmSound/Capture.hh>
+#include <gmSound/SoundDetector.hh>
 
 #include <gmCore/Updateable.hh>
 #include <gmTrack/SinglePoseTracker.hh>
@@ -32,23 +32,6 @@ public:
   void addPoint(Eigen::Vector3f pt);
 
   /**
-     Sets the threshold used for detecting a sound event in the range
-     0-1. Default is 70%.
-
-     \gmXmlTag{gmSound,Multilateration,threshold}
-  */
-  void setThreshold(float r);
-
-  /**
-     Sets the time window (in seconds) over which to search for
-     matching events. Default is 0.03 seconds, which corresponds to
-     approximately 10 meters with the default speed of sound.
-
-     \gmXmlTag{gmSound,Multilateration,window}
-  */
-  void setWindow(float t);
-
-  /**
      Sets the speed of sound (m/s) to use when estimating the
      distances from the sound. Default is 343 m/s, which is the speed
      of sound in air at 20 °C.
@@ -62,9 +45,9 @@ public:
      microphone positions should match the number of channels in the
      capture.
 
-     \gmXmlTag{gmSound,Multilateration,capture}
+     \gmXmlTag{gmSound,Multilateration,soundDetector}
   */
-  void setCapture(std::shared_ptr<Capture>);
+  void setSoundDetector(std::shared_ptr<SoundDetector>);
 
   /**
      Replaces the contents of p with pose data. Use sample time to check if
