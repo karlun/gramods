@@ -140,6 +140,14 @@ PolyFit::polco PolyFit::Impl::estimateCoefficients() {
   return res;
 }
 
+double PolyFit::getValue(double inval) const {
+  if (_impl->IDIM != 1 || _impl->ODIM != 1)
+    throw gmCore::InvalidArgument(
+        GM_STR("Cannot use 1D method on polynomial with dimensions "
+               << _impl->IDIM << " and " << _impl->ODIM << "."));
+  return getValue(std::vector<double> {inval})[0];
+}
+
 std::vector<double>
 PolyFit::getValue(const std::vector<double> &in_values) const {
   return _impl->getValue(in_values);

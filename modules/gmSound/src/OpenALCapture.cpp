@@ -36,6 +36,7 @@ OpenALCapture::OpenALCapture() : _impl(std::make_unique<Impl>()) {}
 OpenALCapture::~OpenALCapture() {}
 
 void OpenALCapture::initialize() {
+  Capture::initialize();
   _impl->open();
 }
 

@@ -81,6 +81,12 @@ public:
   std::vector<double> getValue(const std::vector<double> &inval) const;
 
   /**
+     Convenience method for 1D polynomials.
+     \sa getValue(const std::vector<double>&)
+  */
+  double getValue(double inval) const;
+
+  /**
      Resets the contents of this object.
   */
   void clear();
