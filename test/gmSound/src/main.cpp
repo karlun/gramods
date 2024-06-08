@@ -1,6 +1,7 @@
 
 #include <gtest/gtest.h>
 
+#include "constants.cpp"
 #include "openal.cpp"
 #include "multilateration.cpp"
 

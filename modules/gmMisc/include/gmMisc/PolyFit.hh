@@ -36,6 +36,14 @@ public:
      @param[in] ord Order of the polynomial.
   */
   PolyFit(size_t idim, size_t odim, size_t ord);
+
+  /**
+     Creates a PolyFit instance and adds the specified sample values.
+  */
+  PolyFit(const std::vector<std::vector<double>> &invals,
+          const std::vector<std::vector<double>> &outvals,
+          size_t ord);
+
   ~PolyFit();
 
   /**
@@ -58,7 +66,7 @@ public:
      This method will cache the coefficients until new samples have
      been added.
   */
-  polco estimateCoefficients();
+  polco estimateCoefficients() const;
 
   /**
      Estimates the polynomial result from the specified input.
@@ -70,7 +78,7 @@ public:
      The dimensions of the input must match the dimensionality of the
      object or exception will be thrown.
   */
-  std::vector<double> getValue(const std::vector<double> &inval);
+  std::vector<double> getValue(const std::vector<double> &inval) const;
 
   /**
      Resets the contents of this object.

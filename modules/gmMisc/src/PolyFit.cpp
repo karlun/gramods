@@ -24,7 +24,7 @@ struct PolyFit::Impl {
 
   polco estimateCoefficients();
 
-  std::vector<double> getValue(const std::vector<double> &inval);
+  std::vector<double> getValue(const std::vector<double> &inval) const;
 
   void clear();
 
@@ -41,6 +41,17 @@ struct PolyFit::Impl {
 
 PolyFit::PolyFit(size_t idim, size_t odim, size_t ord)
   : _impl(std::make_unique<Impl>(idim, odim, ord)) {}
+
+PolyFit::PolyFit(const std::vector<std::vector<double>> &invals,
+                 const std::vector<std::vector<double>> &outvals,
+                 size_t ord)
+  : PolyFit(invals.back().size(), outvals.back().size(), ord) {
+  if (invals.size() != outvals.size())
+    throw gmCore::InvalidArgument(GM_STR(
+        "Invalid data sizes: " << invals.size() << " != " << outvals.size()));
+  for (size_t idx = 0; idx < invals.size(); ++idx)
+    addSample(invals[idx], outvals[idx]);
+}
 
 PolyFit::~PolyFit() {}
 
@@ -70,8 +81,8 @@ void PolyFit::Impl::addSample(const std::vector<double> &inval,
   out_values.push_back(outval);
 }
 
-PolyFit::polco PolyFit::estimateCoefficients() {
-  return _impl->estimateCoefficients();
+PolyFit::polco PolyFit::estimateCoefficients() const {
+  return const_cast<PolyFit*>(this)->_impl->estimateCoefficients();
 }
 
 PolyFit::polco PolyFit::Impl::estimateCoefficients() {
@@ -130,19 +141,19 @@ PolyFit::polco PolyFit::Impl::estimateCoefficients() {
 }
 
 std::vector<double>
-PolyFit::getValue(const std::vector<double> &in_values) {
+PolyFit::getValue(const std::vector<double> &in_values) const {
   return _impl->getValue(in_values);
 }
 
 std::vector<double>
-PolyFit::Impl::getValue(const std::vector<double> &in_values) {
+PolyFit::Impl::getValue(const std::vector<double> &in_values) const {
 
   if (in_values.size() != IDIM)
     throw gmCore::InvalidArgument(GM_STR("Wrong size on polynomial input ("
                                          << in_values.size() << " != " << IDIM
                                          << ")."));
 
-  estimateCoefficients();
+  const_cast<Impl *>(this)->estimateCoefficients();
 
   std::vector<std::vector<double>> comp(IDIM);
   for (size_t idim = 0; idim < IDIM; ++idim) {
