@@ -61,10 +61,12 @@ struct ObjRenderer::Impl {
   void setup();
   bool read_obj(std::vector<GLfloat> &vertices,
                 std::vector<GLfloat> &normals,
-                std::vector<GLfloat> &tcoords);
+                std::vector<GLfloat> &tcoords,
+                std::vector<GLint> &mtls);
   void addTriangle(std::vector<GLfloat> &vertices,
                    std::vector<GLfloat> &normals,
                    std::vector<GLfloat> &tcoords,
+                   std::vector<GLint> &mtls,
                    index_map_t &index_map,
                    const tinyobj::attrib_t &attrib,
                    const tinyobj::mesh_t &mesh);
@@ -81,8 +83,8 @@ struct ObjRenderer::Impl {
   GLuint fragment_shader_id = 0;
   GLuint program_id = 0;
   GLuint vao_id = 0;
-  GLuint vbo_id[3] = { 0, 0, 0 };
-  std::vector<std::optional<Material>> triangle_materials;
+  GLuint vbo_id[4] = { 0, 0, 0, 0 };
+  std::vector<Material> materials;
   std::vector<std::vector<GLuint>> triangle_indices;
 
   struct uniforms {
@@ -169,10 +171,12 @@ const vec3 light2 = vec3(0, 0.7071, 0.7071);
 layout (location = 0) in vec4 vert_position;
 layout (location = 1) in vec3 vert_normal;
 layout (location = 2) in vec2 vert_tcoord;
+layout (location = 3) in int vert_mtl;
 
 out vec3 frag_pos;
 out vec3 frag_normal;
 out vec2 frag_tcoord;
+flat out int frag_mtl;
 out vec3 local_light1;
 out vec3 local_light2;
 
@@ -185,6 +189,7 @@ void main() {
   frag_pos = (Mv * Mm * vert_position).xyz;
   frag_normal = normalize(mat3(Mv) * Mn * vert_normal);
   frag_tcoord = vert_tcoord;
+  frag_mtl = vert_mtl;
 }
 )lang=glsl";
 
@@ -208,6 +213,7 @@ uniform float shininess;
 in vec3 frag_pos;
 in vec3 frag_normal;
 in vec2 frag_tcoord;
+flat in int frag_mtl;
 in vec3 local_light1;
 in vec3 local_light2;
 
@@ -265,8 +271,12 @@ vec3 emission() {
 }
 
 void main() {
-  vec3 rgb = min(vec3(1,1,1), ambient() + diffuse() + specular() + emission());
-  fragColor = vec4(rgb, 1);
+  if (frag_mtl < 0) {
+    fragColor = vec4(1,0,1,1);
+  } else {
+    vec3 rgb = min(vec3(1,1,1), ambient() + diffuse() + specular() + emission());
+    fragColor = vec4(rgb, 1);
+  }
 }
 )lang=glsl";
 
@@ -276,8 +286,9 @@ void ObjRenderer::Impl::setup() {
   std::vector<GLfloat> vertices;
   std::vector<GLfloat> normals;
   std::vector<GLfloat> tcoords;
+  std::vector<GLint> mtls;
 
-  if (!read_obj(vertices, normals, tcoords)) return;
+  if (!read_obj(vertices, normals, tcoords, mtls)) return;
 
   if (vertices.size() < 3) {
     GM_ERR("ObjRenderer", "No vertices read");
@@ -331,7 +342,7 @@ void ObjRenderer::Impl::setup() {
   glBindVertexArray(vao_id);
 
   GM_DBG2("ObjRenderer", "Creating and setting up array buffer");
-  glGenBuffers(3, vbo_id);
+  glGenBuffers(4, vbo_id);
 
   glBindBuffer(GL_ARRAY_BUFFER, vbo_id[0]);
   glBufferData(GL_ARRAY_BUFFER,
@@ -350,6 +361,12 @@ void ObjRenderer::Impl::setup() {
                tcoords.size() * sizeof(GLfloat),
                tcoords.data(), GL_STATIC_DRAW);
   glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 0, 0);
+
+  glBindBuffer(GL_ARRAY_BUFFER, vbo_id[3]);
+  glBufferData(GL_ARRAY_BUFFER,
+               mtls.size() * sizeof(GLint),
+               mtls.data(), GL_STATIC_DRAW);
+  glVertexAttribPointer(3, 1, GL_INT, GL_FALSE, 0, 0);
 
   glEnableVertexAttribArray(0);
   glEnableVertexAttribArray(1);
@@ -370,7 +387,8 @@ namespace {
 
 bool ObjRenderer::Impl::read_obj(std::vector<GLfloat> &vertices,
                                  std::vector<GLfloat> &normals,
-                                 std::vector<GLfloat> &tcoords) {
+                                 std::vector<GLfloat> &tcoords,
+                                 std::vector<GLint> &mtls) {
 
   tinyobj::ObjReader objreader;
 
@@ -397,10 +415,12 @@ bool ObjRenderer::Impl::read_obj(std::vector<GLfloat> &vertices,
       return false;
     }
 
-    const auto wrn = objreader.Warning();
-    if (!wrn.empty())
+    std::string wrn = objreader.Warning();
+    if (!wrn.empty()) {
+      if (wrn.back() == '\n') wrn.pop_back();
       GM_WRN("ObjRenderer",
              "Warning while reading file '" << filepath << "': " << wrn);
+    }
 
   } catch (gmCore::InvalidArgument &err) {
     GM_ERR("ObjRenderer", "Error: " << err.what);
@@ -416,11 +436,14 @@ bool ObjRenderer::Impl::read_obj(std::vector<GLfloat> &vertices,
   vertices.reserve(attrib.vertices.size());
   normals.reserve(attrib.normals.size());
   tcoords.reserve(attrib.texcoords.size());
+  mtls.reserve(attrib.texcoords.size() / 2);
 
-  if (!materials.empty() && materials.size() != shapes.size())
+  if (materials.size() > 1)
     GM_WRN("ObjRenderer",
-           "Material and shape lists do not match: "
-               << materials.size() << " != " << shapes.size());
+           "Only one material supported (" << materials.size() << " > 1)!");
+
+  for (const auto &material : materials)
+    this->materials.push_back(makeMaterial(material));
 
   for (size_t idx = 0; idx < shapes.size(); ++idx) {
 
@@ -436,14 +459,10 @@ bool ObjRenderer::Impl::read_obj(std::vector<GLfloat> &vertices,
       addTriangle(vertices,
                   normals,
                   tcoords,
+                  mtls,
                   index_map,
                   attrib,
                   shape.mesh);
-      if (idx < materials.size()) {
-        triangle_materials.push_back(makeMaterial(materials[idx]));
-      } else {
-        triangle_materials.push_back(std::nullopt);
-      }
     }
   }
 
@@ -453,6 +472,7 @@ bool ObjRenderer::Impl::read_obj(std::vector<GLfloat> &vertices,
 void ObjRenderer::Impl::addTriangle(std::vector<GLfloat> &vertices,
                                     std::vector<GLfloat> &normals,
                                     std::vector<GLfloat> &tcoords,
+                                    std::vector<GLint> &mtls,
                                     index_map_t &index_map,
                                     const tinyobj::attrib_t &attrib,
                                     const tinyobj::mesh_t &mesh) {
@@ -493,6 +513,16 @@ void ObjRenderer::Impl::addTriangle(std::vector<GLfloat> &vertices,
         static_assert(std::numeric_limits<GLfloat>::has_quiet_NaN);
 
         if (f_i.normal_index >= 0) {
+          Eigen::Vector3f normal(attrib.normals[f_i.normal_index * 3],
+                                 attrib.normals[f_i.normal_index * 3 + 1],
+                                 attrib.normals[f_i.normal_index * 3 + 2]);
+          float norm = normal.norm();
+          if (std::fabs(norm - 1) > 1e-3) {
+            GM_RUNONCE(GM_WRN("ObjRenderer",
+                              "Normalizing non-normalized normals (off by "
+                                  << std::fabs(norm - 1) << ")"));
+            normal /= norm;
+          }
           normals.push_back(attrib.normals[f_i.normal_index * 3]);
           normals.push_back(attrib.normals[f_i.normal_index * 3 + 1]);
           normals.push_back(attrib.normals[f_i.normal_index * 3 + 2]);
@@ -508,6 +538,12 @@ void ObjRenderer::Impl::addTriangle(std::vector<GLfloat> &vertices,
         } else {
           tcoords.push_back(std::numeric_limits<GLfloat>::quiet_NaN());
           tcoords.push_back(std::numeric_limits<GLfloat>::quiet_NaN());
+        }
+
+        if (face_idx < mesh.material_ids.size()) {
+          mtls.push_back(face_idx);
+        } else {
+          mtls.push_back(-1);
         }
       }
     }
@@ -527,29 +563,27 @@ ObjRenderer::Impl::makeMaterial(const tinyobj::material_t &mat) {
                   {mat.emission[0], mat.emission[1], mat.emission[2]},
                   mat.shininess};
 
-#  define LOAD_TEXTURE(XXX)                                                    \
-    if (!mat.XXX##_texname.empty()) {                                          \
-      auto str = mat.XXX##_texname;                                            \
-      auto tmp =                                                               \
-          std::find_if(triangle_materials.begin(),                             \
-                       triangle_materials.end(),                               \
-                       [&str](const std::optional<Material> &mat) {            \
-                         return mat && str == mat->texture_##XXX->getFile();   \
-                       });                                                     \
-      if (tmp != triangle_materials.end()) {                                   \
-        res.texture_##XXX = (*tmp)->texture_##XXX;                             \
-      } else {                                                                 \
-        auto tex = std::make_shared<ImageTexture>();                           \
-        tex->setFile(tex_root_path / str);                                     \
-        tex->initialize();                                                     \
-        res.texture_##XXX = tex;                                               \
-        if (res.color_##XXX.sum() < std::numeric_limits<float>::epsilon())     \
-          GM_WRN("ObjRenderer",                                                \
-                 "Texture " << #XXX                                            \
-                            << " will not have any effect since "              \
-                               "corresponding mesh color is zero.");           \
-      }                                                                        \
-    }
+#define LOAD_TEXTURE(XXX)                                                      \
+  if (!mat.XXX##_texname.empty()) {                                            \
+    auto str = mat.XXX##_texname;                                              \
+    auto tmp = std::find_if(                                                   \
+        materials.begin(), materials.end(), [&str](const Material &mat) {      \
+          return str == mat.texture_##XXX->getFile();                          \
+        });                                                                    \
+    if (tmp != materials.end()) {                                              \
+      res.texture_##XXX = tmp->texture_##XXX;                                  \
+    } else {                                                                   \
+      auto tex = std::make_shared<ImageTexture>();                             \
+      tex->setFile(tex_root_path / str);                                       \
+      tex->initialize();                                                       \
+      res.texture_##XXX = tex;                                                 \
+      if (res.color_##XXX.sum() < std::numeric_limits<float>::epsilon())       \
+        GM_WRN("ObjRenderer",                                                  \
+               "Texture " << #XXX                                              \
+                          << " will not have any effect since "                \
+                             "corresponding mesh color is zero.");             \
+    }                                                                          \
+  }
   LOAD_TEXTURE(ambient);
   LOAD_TEXTURE(diffuse);
   LOAD_TEXTURE(specular);
@@ -610,69 +644,68 @@ void ObjRenderer::Impl::render(Camera camera, float near, float far) {
   glUniform1i(LOC(texture_specular), 2);
   glUniform1i(LOC(texture_emissive), 3);
 
+  GLint texture_active = 0;
+  if (!materials.empty()) {
+    const Material &mat = materials.front();
+
+    glUniform3fv(LOC(color_ambient), 1, mat.color_ambient.data());
+    glUniform3fv(LOC(color_diffuse), 1, mat.color_diffuse.data());
+    glUniform3fv(LOC(color_specular), 1, mat.color_specular.data());
+    glUniform3fv(LOC(color_emissive), 1, mat.color_emissive.data());
+    glUniform1f(LOC(shininess), mat.shininess);
+
+    if (mat.texture_ambient) {
+      texture_active |= 0x1;
+      glActiveTexture(GL_TEXTURE0);
+      glBindTexture(GL_TEXTURE_2D,
+                    mat.texture_ambient->updateTexture(camera.frame_number,
+                                                       camera.getEye()));
+    }
+    if (mat.texture_diffuse) {
+      texture_active |= 0x1 << 1;
+      glActiveTexture(GL_TEXTURE1);
+      glBindTexture(GL_TEXTURE_2D,
+                    mat.texture_diffuse->updateTexture(camera.frame_number,
+                                                       camera.getEye()));
+    }
+    if (mat.texture_specular) {
+      texture_active |= 0x1 << 2;
+      glActiveTexture(GL_TEXTURE2);
+      glBindTexture(GL_TEXTURE_2D,
+                    mat.texture_specular->updateTexture(camera.frame_number,
+                                                        camera.getEye()));
+    }
+    if (mat.texture_emissive) {
+      texture_active |= 0x1 << 3;
+      glActiveTexture(GL_TEXTURE3);
+      glBindTexture(GL_TEXTURE_2D,
+                    mat.texture_emissive->updateTexture(camera.frame_number,
+                                                        camera.getEye()));
+    }
+  } else {
+    static Eigen::Vector3f black = Eigen::Vector3f::Zero();
+    static Eigen::Vector3f gray = Eigen::Vector3f(0.8f, 0.8f, 0.8f);
+    glUniform3fv(LOC(color_ambient), 1, black.data());
+    glUniform3fv(LOC(color_diffuse), 1, gray.data());
+    glUniform3fv(LOC(color_specular), 1, black.data());
+    glUniform3fv(LOC(color_emissive), 1, black.data());
+    glUniform1f(LOC(shininess), 32);
+  }
+
+  glUniform1i(LOC(texture_active), texture_active);
+
   glBindVertexArray(vao_id);
   for (size_t idx = 0; idx < triangle_indices.size(); ++idx) {
     const auto &ind = triangle_indices[idx];
-
-    GLint texture_active = 0;
-    if (triangle_materials[idx]) {
-      const Material &mat = *triangle_materials[idx];
-
-      glUniform3fv(LOC(color_ambient), 1, mat.color_ambient.data());
-      glUniform3fv(LOC(color_diffuse), 1, mat.color_diffuse.data());
-      glUniform3fv(LOC(color_specular), 1, mat.color_specular.data());
-      glUniform3fv(LOC(color_emissive), 1, mat.color_emissive.data());
-      glUniform1f(LOC(shininess), mat.shininess);
-
-      if (mat.texture_ambient) {
-        texture_active |= 0x1;
-        glActiveTexture(GL_TEXTURE0);
-        glBindTexture(GL_TEXTURE_2D,
-                      mat.texture_ambient->updateTexture(camera.frame_number,
-                                                         camera.getEye()));
-      }
-      if (mat.texture_diffuse) {
-        texture_active |= 0x1 << 1;
-        glActiveTexture(GL_TEXTURE1);
-        glBindTexture(GL_TEXTURE_2D,
-                      mat.texture_diffuse->updateTexture(camera.frame_number,
-                                                         camera.getEye()));
-      }
-      if (mat.texture_specular) {
-        texture_active |= 0x1 << 2;
-        glActiveTexture(GL_TEXTURE2);
-        glBindTexture(GL_TEXTURE_2D,
-                      mat.texture_specular->updateTexture(camera.frame_number,
-                                                          camera.getEye()));
-      }
-      if (mat.texture_emissive) {
-        texture_active |= 0x1 << 3;
-        glActiveTexture(GL_TEXTURE3);
-        glBindTexture(GL_TEXTURE_2D,
-                      mat.texture_emissive->updateTexture(camera.frame_number,
-                                                          camera.getEye()));
-      }
-    } else {
-      static Eigen::Vector3f black = Eigen::Vector3f::Zero();
-      static Eigen::Vector3f gray = Eigen::Vector3f(0.8f, 0.8f, 0.8f);
-      glUniform3fv(LOC(color_ambient), 1, black.data());
-      glUniform3fv(LOC(color_diffuse), 1, gray.data());
-      glUniform3fv(LOC(color_specular), 1, black.data());
-      glUniform3fv(LOC(color_emissive), 1, black.data());
-      glUniform1f(LOC(shininess), 32);
-    }
-
-    glUniform1i(LOC(texture_active), texture_active);
-
     glDrawElements(GL_TRIANGLES, ind.size(), GL_UNSIGNED_INT, ind.data());
-
-    for (GLint idx = 0; idx < 4; ++idx) {
-      glActiveTexture(GL_TEXTURE0 + idx);
-      glBindTexture(GL_TEXTURE_2D, 0);
-    }
   }
-  glBindVertexArray(0);
 
+  for (GLint idx = 0; idx < 4; ++idx) {
+    glActiveTexture(GL_TEXTURE0 + idx);
+    glBindTexture(GL_TEXTURE_2D, 0);
+  }
+
+  glBindVertexArray(0);
   glUseProgram(0);
 
   GM_DBG3("ObjRenderer", "Done rendering");
@@ -689,7 +722,7 @@ void ObjRenderer::Impl::teardown() {
   if (vertex_shader_id) glDeleteShader(vertex_shader_id);
   if (fragment_shader_id) glDeleteShader(fragment_shader_id);
   if (vao_id) glDeleteVertexArrays(1, &vao_id);
-  if (vbo_id[0]) glDeleteBuffers(3, vbo_id);
+  if (vbo_id[0]) glDeleteBuffers(4, vbo_id);
 
   vertex_shader_id = 0;
   fragment_shader_id = 0;
