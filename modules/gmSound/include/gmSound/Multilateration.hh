@@ -14,7 +14,7 @@ namespace gmSound {
    Estimates the position of sound.
 */
 class Multilateration : public gmTrack::SinglePoseTracker,
-                         public gmCore::Updateable {
+                        public gmCore::Updateable {
 
 public:
   typedef gmCore::Updateable::clock clock;

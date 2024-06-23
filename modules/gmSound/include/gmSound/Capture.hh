@@ -33,7 +33,7 @@ public:
   virtual void startCapture() = 0;
   virtual void stopCapture() = 0;
   virtual size_t getAvailableSamplesCount() = 0;
-  virtual std::vector<std::int16_t> getAvailableSamples() = 0;
+  virtual std::vector<float> getAvailableSamples() = 0;
 
   std::string getDefaultKey() override { return "capture"; }
 
@@ -42,15 +42,15 @@ public:
      each with an Nth of the original samples.
   */
   template<size_t N>
-  static std::array<std::vector<std::int16_t>, N>
-  deinterlaceSamples(std::vector<std::int16_t> data);
+  static std::array<std::vector<float>, N>
+  deinterlaceSamples(std::vector<float> data);
 
   /**
      De-interlaces the input sample data into an array of N vectors
      each with an Nth of the original samples.
   */
-  static std::vector<std::vector<std::int16_t>>
-  deinterlaceSamples(std::vector<std::int16_t> data, size_t N);
+  static std::vector<std::vector<float>>
+  deinterlaceSamples(std::vector<float> data, size_t N);
 };
 }}
 

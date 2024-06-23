@@ -13,13 +13,13 @@ namespace gramods {
 namespace gmSound {
 
 template<size_t N>
-std::array<std::vector<std::int16_t>, N>
-Capture::deinterlaceSamples(std::vector<std::int16_t> data) {
+std::array<std::vector<float>, N>
+Capture::deinterlaceSamples(std::vector<float> data) {
   if (data.size() % N)
     throw gmCore::InvalidArgument(
         "Number of samples not evenly dividable with number of channels");
 
-  std::array<std::vector<std::int16_t>, N> results;
+  std::array<std::vector<float>, N> results;
   for (size_t channel = 0; channel < N; ++channel) {
     auto &result = results[channel];
     result.reserve(data.size() / N);
@@ -30,13 +30,13 @@ Capture::deinterlaceSamples(std::vector<std::int16_t> data) {
   return results;
 }
 
-std::vector<std::vector<std::int16_t>>
-Capture::deinterlaceSamples(std::vector<std::int16_t> data, size_t N) {
+std::vector<std::vector<float>>
+Capture::deinterlaceSamples(std::vector<float> data, size_t N) {
   if (data.size() % N)
     throw gmCore::InvalidArgument(
         "Number of samples not evenly dividable with number of channels");
 
-  std::vector<std::vector<std::int16_t>> results(N);
+  std::vector<std::vector<float>> results(N);
   for (size_t channel = 0; channel < N; ++channel) {
     auto &result = results[channel];
     result.reserve(data.size() / N);

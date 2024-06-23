@@ -73,6 +73,7 @@ void Multilateration::update(clock::time_point t, size_t frame) {
 }
 
 void Multilateration::initialize() {
+  gmTrack::SinglePoseTracker::initialize();
   _impl->initialize();
   if (_impl->capture) _impl->capture->startCapture();
 }

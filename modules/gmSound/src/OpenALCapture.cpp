@@ -135,7 +135,7 @@ void OpenALCapture::stopCapture() {
   alcCaptureStop(_impl->device);
 }
 
-std::vector<std::int16_t> OpenALCapture::getAvailableSamples() {
+std::vector<float> OpenALCapture::getAvailableSamples() {
   if (!_impl->device) return {};
 
   ALCint count;
@@ -146,7 +146,12 @@ std::vector<std::int16_t> OpenALCapture::getAvailableSamples() {
   std::vector<std::int16_t> bytes(count * _impl->channels, 0);
   alcCaptureSamples(_impl->device, bytes.data(), count);
 
-  return bytes;
+  std::vector<float> samples;
+  samples.reserve(bytes.size());
+  for (auto val : bytes)
+    samples.push_back(val / std::numeric_limits<std::int16_t>::max());
+
+  return samples;
 }
 
 size_t OpenALCapture::getAvailableSamplesCount() {
