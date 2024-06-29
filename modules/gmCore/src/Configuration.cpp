@@ -327,6 +327,12 @@ Configuration::~Configuration(){
         GM_WRN("Configuration", "Override '" << param.first << "', "
                << "set to '" << param.second->value << "', "
                << "has not been used!");
+
+  // Delete in reverse order; at least ImportLibrary must be deleted
+  // after the Objects imported with it, or their virtual destructors
+  // won't be available when being deleted.
+  for (auto ptr = child_objects.rbegin(); ptr != child_objects.rend(); ptr++)
+    ptr->object.reset();
 }
 
 bool Configuration::hasParam(std::string name) {
