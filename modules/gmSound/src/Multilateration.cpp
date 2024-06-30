@@ -9,25 +9,18 @@
 
 #include <gmMisc/NelderMead.hh>
 
-#include <optional>
-#include <deque>
-
 namespace gramods { namespace gmSound {
 
 GM_OFI_DEFINE(Multilateration);
 GM_OFI_PARAM2(Multilateration, point, Eigen::Vector3f, addPoint);
-GM_OFI_PARAM2(Multilateration, threshold, float, setThreshold);
-GM_OFI_PARAM2(Multilateration, window, float, setWindow);
 GM_OFI_PARAM2(Multilateration, speedOfSound, float, setSpeedOfSound);
-GM_OFI_POINTER2(Multilateration, capture, gmSound::Capture, setCapture);
+GM_OFI_POINTER2(Multilateration, soundDetector, gmSound::SoundDetector, setSoundDetector);
 
 struct Multilateration::Impl {
   void update(clock::time_point t);
   void initialize();
 
-  bool refreshData();
-  std::optional<std::vector<float>> findDistances();
-  void estimatePose(std::vector<float> &distances,
+  void estimatePose(std::vector<float> &offsets,
                     clock::time_point time);
 
   std::optional<PoseSample> pose;
@@ -35,12 +28,8 @@ struct Multilateration::Impl {
   std::vector<Eigen::Vector3f> points;
   float max_mic_dist = 0;
 
-  float threshold = 0.7;
-  float window = 0.05;
   float speed_of_sound = 343;
-  std::shared_ptr<Capture> capture;
-
-  std::vector<std::deque<std::int16_t>> data;
+  std::shared_ptr<SoundDetector> sound_detector;
 };
 
 Multilateration::Multilateration()
@@ -51,14 +40,10 @@ void Multilateration::addPoint(Eigen::Vector3f pt) {
   _impl->points.push_back(pt);
 }
 
-void Multilateration::setThreshold(float r) { _impl->threshold = r; }
-
-void Multilateration::setWindow(float t) { _impl->window = t; }
-
 void Multilateration::setSpeedOfSound(float v) { _impl->speed_of_sound = v; }
 
-void Multilateration::setCapture(std::shared_ptr<Capture> c) {
-  _impl->capture = c;
+void Multilateration::setSoundDetector(std::shared_ptr<SoundDetector> sd) {
+  _impl->sound_detector = sd;
 }
 
 bool Multilateration::getPose(PoseSample &p) {
@@ -75,7 +60,6 @@ void Multilateration::update(clock::time_point t, size_t frame) {
 void Multilateration::initialize() {
   gmTrack::SinglePoseTracker::initialize();
   _impl->initialize();
-  if (_impl->capture) _impl->capture->startCapture();
 }
 
 void Multilateration::Impl::initialize() {
@@ -86,84 +70,47 @@ void Multilateration::Impl::initialize() {
 }
 
 void Multilateration::Impl::update(clock::time_point time) {
-  if (!capture) {
+  if (!sound_detector) {
     GM_RUNONCE(GM_ERR(
         "Multilateration",
-        "Cannot read data without a Capture instance to read data from!"));
+        "Cannot read data without a sound detector instance to read data from!"));
     return;
   }
 
-  if (!refreshData()) return;
-  auto distances = findDistances();
-  if (distances) estimatePose(*distances, time);
-}
+  const auto &offsets = sound_detector->detectSound();
+  if (offsets.empty()) return;
 
-bool Multilateration::Impl::refreshData() {
-  const auto channels = capture->getChannelCount();
-  if (channels < 1)
-    throw gmCore::PreConditionViolation("Too few audio channels");
-
-  if (!data.size()) data.resize(channels);
-  else if (data.size() != channels) {
-    GM_RUNONCE(GM_ERR("Multilateration", "Channel count changed - cannot proceed!"));
-    return false;
+  std::vector<float> first_offsets;
+  first_offsets.reserve(offsets.size());
+  for (const auto &co : offsets) {
+    if (co.empty()) continue;
+    first_offsets.push_back(co.front());
   }
 
-  if (capture->getAvailableSamplesCount() < 1) return false;
+  if (first_offsets.size() != points.size()) return;
 
-  const auto interlaced_samples = capture->getAvailableSamples();
-  const auto samples =
-      Capture::deinterlaceSamples(interlaced_samples, channels);
-
-  for (size_t idx = 0; idx < channels; ++idx)
-    data[idx].insert(data[idx].end(), samples[idx].begin(), samples[idx].end());
-
-  const size_t max_samples = size_t(window * capture->getSampleRate());
-  if (data[0].size() < max_samples) return true;
-  // If there is too much data, remove some
-
-  const auto rmN = data[0].size() - max_samples;
-  for (size_t idx = 0; idx < channels; ++idx)
-    data[idx].erase(data[idx].begin(), data[idx].begin() + rmN);
-
-  return true;
+  estimatePose(first_offsets, time);
 }
 
-std::optional<std::vector<float>>
-Multilateration::Impl::findDistances() {
-
-  const std::int16_t level =
-      std::int16_t(threshold * std::numeric_limits<std::int16_t>::max());
-
-  std::vector<float> result;
-  for (const auto &samples : data) {
-    std::optional<size_t> hit_idx;
-    for (size_t idx = 0; idx < samples.size(); ++idx) {
-      if (samples[idx] < level && samples[idx] > -level) continue;
-      hit_idx = idx;
-      break;
-    }
-    if (hit_idx) result.push_back(*hit_idx);
-  }
-
-  if (result.size() != data.size()) return std::nullopt;
-
-  const float m_per_sample = speed_of_sound / capture->getSampleRate();
-  for (auto &value : result) value = m_per_sample * value;
-
-  std::stringstream dbg_str;
-  for (const auto d : result) dbg_str << d << " ";
-  GM_DBG2("Multilateration", "Detected distances: " << dbg_str.str());
-
-  return result;
-}
-
-void Multilateration::Impl::estimatePose(std::vector<float> &distances,
+void Multilateration::Impl::estimatePose(std::vector<float> &offsets,
                                          clock::time_point time) {
-  float d0 = std::numeric_limits<float>::max();
-  for (const auto value : distances) d0 = std::min(d0, value);
-  for (auto &value : distances) value -= d0;
 
+  // Time offset (from now) to the first microphone
+  float t0 = offsets[0];
+  size_t t0_idx = 0;
+  for (size_t idx = 1; idx < offsets.size(); ++idx) {
+    const auto &value = offsets[idx];
+    if (value <= t0) continue;
+    t0 = value;
+    t0_idx = idx;
+  }
+
+  // Additional distance to source relative first microphone
+  std::vector<float> distances;
+  distances.reserve(offsets.size());
+  for (const auto &t : offsets) distances.push_back((t0 - t) * speed_of_sound);
+
+  // Initial simplex based on the microphone positions
   std::vector<Eigen::Vector4f> x0;
   for (const auto &pt : points)
     x0.push_back({pt[0], pt[1], pt[2], 0.2f * max_mic_dist});
@@ -182,6 +129,8 @@ void Multilateration::Impl::estimatePose(std::vector<float> &distances,
 
         float err2 = 0.f;
         for (size_t idx = 0; idx < points.size(); ++idx) {
+          // Mic distance to source should be relative distance plus
+          // distance to first microphone
           float err = (points[idx] - p).norm() - (distances[idx] + d0);
           err2 += err * err;
         }
@@ -189,15 +138,20 @@ void Multilateration::Impl::estimatePose(std::vector<float> &distances,
       },
       iterations);
 
-  const auto pt = res4.block<3, 1>(0, 0);
-  const auto d1 = res4[3];
+  const auto pt = res4.block<3, 1>(0, 0); // Microphone position
+  const auto d0 = res4[3]; // Distance from source to first microphone
 
-  float window_secs = data[0].size() / float(capture->getSampleRate());
-  auto dt = -window_secs + (d0 - d1) / speed_of_sound;
-  GM_DBG2("Multilateration", "Time offset: " << dt << " seconds");
+  // Incorrect distance to first mic indicates error
+  const float err = std::fabs((pt - points[t0_idx]).norm() - d0);
+  if (err > 10 * max_mic_dist * std::numeric_limits<float>::epsilon()) return;
+
+  // Sound originated some time ago
+  const auto dt = t0 + d0 / speed_of_sound;
+  GM_DBG2("Multilateration",
+         "Time offset: t0=" << t0 << ", d0=" << d0 << " -> " << dt << " seconds ");
 
   pose = {pt,
           Eigen::Quaternionf::Identity(),
-          time + gmCore::TimeTools::secondsToDuration(dt)};
+          time - gmCore::TimeTools::secondsToDuration(dt)};
 }
 }}

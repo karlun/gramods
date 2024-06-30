@@ -1,22 +1,27 @@
 
 #include <gmSound/Multilateration.hh>
+#include <gmSound/SoundBurstDetector.hh>
 
 #include <gmCore/Console.hh>
 #include <gmCore/OStreamMessageSink.hh>
+#include <gmCore/TimeTools.hh>
 
 using namespace gramods;
 
+#define TOTAL_SECONDS 10
 #define SAMPRATE 1000
 #define SPEED 12
+#define T0_SECONDS 5.1
+#define SAMPLES_PER_FRAME 5
 
 struct TestCapture : gmSound::Capture {
 
   TestCapture(std::vector<float> distances) {
-    data.assign(4 * SAMPRATE * 10, 0.f);
+    data.assign(4 * SAMPRATE * TOTAL_SECONDS, 0.f);
 
     for (size_t ch = 0; ch < 4; ++ch) {
-      size_t dix = SAMPRATE * distances[ch] / SPEED;
-      if (dix >= SAMPRATE * 10) throw "TEST ERROR";
+      size_t dix = size_t(SAMPRATE * (T0_SECONDS + distances[ch] / SPEED));
+      if (dix >= SAMPRATE * TOTAL_SECONDS) throw "TEST ERROR";
       data[4 * dix + ch] += 0.9f;
     }
   }
@@ -31,7 +36,7 @@ struct TestCapture : gmSound::Capture {
   void stopCapture() override { is_started = false; }
 
   size_t getAvailableSamplesCount() override {
-    return std::min(size_t(5), data.size() - pos);
+    return std::min(size_t(SAMPLES_PER_FRAME), data.size() - pos);
   }
 
   std::vector<float> getAvailableSamples() override {
@@ -84,26 +89,44 @@ TEST(gmSoundMultilateration, Positioning) {
 
   auto capture = std::make_shared<TestCapture>(distances);
   EXPECT_FALSE(capture->is_started);
+  capture->initialize();
+
+  auto detector = std::make_shared<gmSound::SoundBurstDetector>();
+  detector->setCapture(capture);
+  detector->setWindow(5);
+  detector->initialize();
 
   gmSound::Multilateration proc;
-  proc.setCapture(capture);
+  proc.setSoundDetector(detector);
   proc.setSpeedOfSound(SPEED);
-  proc.setWindow(1);
   proc.addPoint(p1);
   proc.addPoint(p2);
   proc.addPoint(p3);
   proc.addPoint(p4);
   proc.initialize();
 
-  for (int idx = 0; idx < 5; ++idx) { gmCore::Updateable::updateAll(); }
+  size_t samples_left = SAMPRATE * TOTAL_SECONDS;
+
+  for (size_t idx = 0; idx < 5; ++idx) { gmCore::Updateable::updateAll(); }
+  samples_left -= 5 * SAMPLES_PER_FRAME;
 
   EXPECT_TRUE(capture->is_started);
   gmTrack::PoseTracker::PoseSample pose;
   EXPECT_FALSE(proc.getPose(pose));
 
-  for (int idx = 0; idx < 364; ++idx) { gmCore::Updateable::updateAll(); }
+  auto time = gmCore::Updateable::clock::now();
+  for (size_t idx = 0; idx < 2 * samples_left / SAMPLES_PER_FRAME; ++idx) {
+    time = gmCore::Updateable::clock::now();
+    gmCore::Updateable::updateAll(time);
+  }
+
+  double pose_time_ago = (TOTAL_SECONDS - T0_SECONDS);
 
   EXPECT_TRUE(proc.getPose(pose));
   EXPECT_LE((pose.position - p).norm(),1e-2);
-
+  EXPECT_LE(std::fabs(gmCore::TimeTools::durationToSeconds(time - pose.time) -
+                      pose_time_ago),
+            1e-2)
+      << gmCore::TimeTools::durationToSeconds(time - pose.time) << " - "
+      << pose_time_ago;
 }
