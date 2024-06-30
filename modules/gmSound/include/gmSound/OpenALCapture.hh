@@ -50,7 +50,7 @@ public:
 
   void startCapture() override;
   void stopCapture() override;
-  std::vector<std::int16_t> getAvailableSamples() override;
+  std::vector<float> getAvailableSamples() override;
   size_t getAvailableSamplesCount() override;
 
   void initialize() override;

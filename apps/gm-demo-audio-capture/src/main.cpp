@@ -60,8 +60,8 @@ int main(int argc, char *argv[]) {
 
   if (!capture.isOpen()) return -2;
 
-  int max_value = std::numeric_limits<int>::min();
-  int min_value = std::numeric_limits<int>::max();
+  float max_value = std::numeric_limits<float>::min();
+  float min_value = std::numeric_limits<float>::max();
 
   capture.startCapture();
 
@@ -86,11 +86,11 @@ int main(int argc, char *argv[]) {
         file << "\n";
       }
 
-    int current_max_value = std::numeric_limits<int>::min();
-    int current_min_value = std::numeric_limits<int>::max();
+    float current_max_value = std::numeric_limits<float>::min();
+    float current_min_value = std::numeric_limits<float>::max();
     for (auto val : samples_data) {
-      current_max_value = std::max(int(val), current_max_value);
-      current_min_value = std::min(int(val), current_min_value);
+      current_max_value = std::max(val, current_max_value);
+      current_min_value = std::min(val, current_min_value);
     }
 
     if (current_min_value < min_value || current_max_value > max_value) {

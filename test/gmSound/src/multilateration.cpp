@@ -12,32 +12,32 @@ using namespace gramods;
 struct TestCapture : gmSound::Capture {
 
   TestCapture(std::vector<float> distances) {
-    data.assign(4 * SAMPRATE * 10, 0);
+    data.assign(4 * SAMPRATE * 10, 0.f);
 
     for (size_t ch = 0; ch < 4; ++ch) {
       size_t dix = SAMPRATE * distances[ch] / SPEED;
       if (dix >= SAMPRATE * 10) throw "TEST ERROR";
-      data[4 * dix + ch] += std::int16_t(30000);
+      data[4 * dix + ch] += 0.9f;
     }
   }
 
-  size_t getSampleRate() { return SAMPRATE; }
+  size_t getSampleRate() override { return SAMPRATE; }
 
-  size_t getChannelCount() { return 4; }
+  size_t getChannelCount() override { return 4; }
 
-  bool isOpen() { return true; }
+  bool isOpen() override { return true; }
 
-  void startCapture() { is_started = true; }
-  void stopCapture() { is_started = false; }
+  void startCapture() override { is_started = true; }
+  void stopCapture() override { is_started = false; }
 
-  size_t getAvailableSamplesCount() {
+  size_t getAvailableSamplesCount() override {
     return std::min(size_t(5), data.size() - pos);
   }
 
-  std::vector<std::int16_t> getAvailableSamples() {
+  std::vector<float> getAvailableSamples() override {
     if (pos >= data.size()) return {};
 
-    std::vector<std::int16_t> res;
+    std::vector<float> res;
 
     size_t len = getAvailableSamplesCount();
     res.insert(res.end(), data.begin() + pos, data.begin() + pos + 4 * len);
@@ -47,7 +47,7 @@ struct TestCapture : gmSound::Capture {
   }
 
   bool is_started = false;
-  std::vector<std::int16_t> data;
+  std::vector<float> data;
   size_t pos = 0;
   
 };
