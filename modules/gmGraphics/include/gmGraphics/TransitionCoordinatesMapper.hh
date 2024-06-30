@@ -4,8 +4,8 @@
 
 #include <gmGraphics/CoordinatesMapper.hh>
 
-#include <gmCore/float.hh>
-#include <gmCore/size.hh>
+#include <gmCore/io_float.hh>
+#include <gmCore/io_size.hh>
 
 #include <GL/glew.h>
 #include <GL/gl.h>
@@ -75,6 +75,13 @@ public:
      surrounding into the 2D view. Two are needed for transition.
   */
   void addCoordinatesMapper(std::shared_ptr<CoordinatesMapper> m);
+
+  /**
+     Propagates the specified visitor.
+
+     @see Object::Visitor
+  */
+  void traverse(Visitor *visitor) override;
 
   GM_OFI_DECLARE;
 

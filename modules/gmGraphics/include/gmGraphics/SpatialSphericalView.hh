@@ -5,7 +5,7 @@
 #include <gmGraphics/MultiscopicView.hh>
 
 #include <gmGraphics/CoordinatesMapper.hh>
-#include <gmCore/eigen.hh>
+#include <gmCore/io_eigen.hh>
 
 BEGIN_NAMESPACE_GMGRAPHICS;
 
@@ -31,6 +31,13 @@ public:
      Dispatches renderers.
   */
   void renderFullPipeline(ViewSettings settings, Eye eye) override;
+
+  /**
+     Propagates the specified visitor.
+
+     @see Object::Visitor
+  */
+  void traverse(Visitor *visitor) override;
 
   /**
      Sets the resolution of the intermediate cube map, in

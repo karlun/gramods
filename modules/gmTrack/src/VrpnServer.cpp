@@ -240,27 +240,38 @@ void VrpnServer::addTrackerName(std::string name) {
 }
 
 void VrpnServer::addAnalogsTracker(std::shared_ptr<AnalogsTracker> t) {
+  if (!t) throw gmCore::InvalidArgument("null not allowed");
   if (isInitialized()) throw std::logic_error("Add AnalogsTracker after initialization");
   _impl->name_map.push_back(ANALOG_IDX);
   _impl->analogs_trackers.push_back(t);
 }
 
 void VrpnServer::addButtonsTracker(std::shared_ptr<ButtonsTracker> t) {
+  if (!t) throw gmCore::InvalidArgument("null not allowed");
   if (isInitialized()) throw std::logic_error("Add ButtonsTracker after initialization");
   _impl->name_map.push_back(BUTTON_IDX);
   _impl->buttons_trackers.push_back(t);
 }
 
 void VrpnServer::addMultiPoseTracker(std::shared_ptr<MultiPoseTracker> t) {
+  if (!t) throw gmCore::InvalidArgument("null not allowed");
   if (isInitialized()) throw std::logic_error("Add MultiPoseTracker after initialization");
   _impl->name_map.push_back(MULTI_POSE_IDX);
   _impl->multi_pose_trackers.push_back(t);
 }
 
 void VrpnServer::addSinglePoseTracker(std::shared_ptr<SinglePoseTracker> t) {
+  if (!t) throw gmCore::InvalidArgument("null not allowed");
   if (isInitialized()) throw std::logic_error("Add SinglePoseTracker after initialization");
   _impl->name_map.push_back(SINGLE_POSE_IDX);
   _impl->single_pose_trackers.push_back(t);
+}
+
+void VrpnServer::traverse(Visitor *visitor) {
+  for (auto &t : _impl->single_pose_trackers) t->accept(visitor);
+  for (auto &t : _impl->multi_pose_trackers) t->accept(visitor);
+  for (auto &t : _impl->buttons_trackers) t->accept(visitor);
+  for (auto &t : _impl->analogs_trackers) t->accept(visitor);
 }
 
 END_NAMESPACE_GMTRACK;

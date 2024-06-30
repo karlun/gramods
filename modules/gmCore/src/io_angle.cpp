@@ -1,5 +1,5 @@
 
-#include <gmCore/angle.hh>
+#include <gmCore/io_angle.hh>
 
 #include <gmCore/MathConstants.hh>
 #include <gmCore/Console.hh>

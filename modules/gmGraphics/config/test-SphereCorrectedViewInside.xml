@@ -11,10 +11,12 @@
         DEF="SDLContext"
         useVideo="1"/>
 
-    <CubeSceneRenderer
-        cubeSize="0.1"
-        cubeSetSize="5.0"
-        position="0 0 -10"/>
+    <PoseTransform
+        position="0 0 -10">
+      <CubeSceneRenderer
+          cubeSize="0.1"
+          cubeSetSize="5.0"/>
+    </PoseTransform>
 
     <GeometryCorrectedProjectorView
         bufferWidth="4096"

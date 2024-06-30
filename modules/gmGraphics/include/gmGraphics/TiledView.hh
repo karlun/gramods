@@ -4,13 +4,13 @@
 
 #include <gmGraphics/View.hh>
 
-#include <gmCore/size.hh>
+#include <gmCore/io_size.hh>
 
 BEGIN_NAMESPACE_GMGRAPHICS;
 
 /**
-   The TiledView tiles up a RendererDispatcher (a Window or another
-   View) into sub tiles each containing a separate View.
+   The TiledView tiles up a view into sub tiles each containing a
+   separate View.
 
    Example usage:
    ~~~~~{.xml}
@@ -40,6 +40,13 @@ public:
   void renderFullPipeline(ViewSettings settings) override;
 
   /**
+     Propagates the specified visitor.
+
+     @see Object::Visitor
+  */
+  void traverse(Visitor *visitor) override;
+
+  /**
      Adds a location and span that is used when adding views. Format
      is [row col rowspan colspan] where row and col start at zero at
      top left corner.
@@ -54,12 +61,6 @@ public:
      \gmXmlTag{gmGraphics,TiledView,view}
   */
   void addView(std::shared_ptr<View> view);
-
-  /**
-     Removes all renderers and, if recursive is set to true, also
-     renderers added to sub dispatchers.
-  */
-  virtual void clearRenderers(bool recursive = false);
 
   GM_OFI_DECLARE;
 

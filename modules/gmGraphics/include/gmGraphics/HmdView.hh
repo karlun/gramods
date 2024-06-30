@@ -26,6 +26,13 @@ public:
   void renderFullPipeline(ViewSettings settings) override;
 
   /**
+     Propagates the specified visitor.
+
+     @see Object::Visitor
+  */
+  void traverse(Visitor *visitor) override;
+
+  /**
      Sets if left eye (0, default), right eye (1) or both eyes (2)
      should be shown in the view.
   */

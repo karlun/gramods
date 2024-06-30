@@ -32,6 +32,7 @@ ArucoBoardComplex::ArucoBoardComplex()
   : _impl(std::make_unique<Impl>()) {}
 
 void ArucoBoardComplex::addArucoBoard(std::shared_ptr<ArucoBoard> b) {
+  if (!b) throw gmCore::InvalidArgument("null not allowed");
   _impl->cache_up_to_date = false;
   _impl->boards.push_back(b);
 }
@@ -120,6 +121,10 @@ cv::Ptr<cv::aruco::Board> ArucoBoardComplex::Impl::getBoard() {
 
   cache_board = new cv::aruco::Board(objPoints, dictionary, ids);
   return cache_board;
+}
+
+void ArucoBoardComplex::traverse(Visitor *visitor) {
+  for (auto &b : _impl->boards) b->accept(visitor);
 }
 
 END_NAMESPACE_GMTRACK;

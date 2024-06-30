@@ -54,4 +54,8 @@ bool AnalogsMapper::getAnalogs(AnalogsSample &p) {
   return true;
 }
 
+void AnalogsMapper::traverse(Visitor *visitor) {
+  if (analogsTracker) analogsTracker->accept(visitor);
+}
+
 END_NAMESPACE_GMTRACK;

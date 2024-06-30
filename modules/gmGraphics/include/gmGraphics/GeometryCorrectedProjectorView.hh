@@ -6,9 +6,9 @@
 
 #include <gmGraphics/Geometry.hh>
 
-#include <gmCore/float.hh>
-#include <gmCore/eigen.hh>
-#include <gmCore/angle.hh>
+#include <gmCore/io_float.hh>
+#include <gmCore/io_eigen.hh>
+#include <gmCore/io_angle.hh>
 
 BEGIN_NAMESPACE_GMGRAPHICS;
 
@@ -37,6 +37,13 @@ public:
 
   GeometryCorrectedProjectorView();
   virtual ~GeometryCorrectedProjectorView();
+
+  /**
+     Propagates the specified visitor.
+
+     @see Object::Visitor
+  */
+  void traverse(Visitor *visitor) override;
 
   /**
      Sets the resolution of the intermediate buffer, in

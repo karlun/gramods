@@ -151,4 +151,9 @@ void ChromaKeyTexture::setTolerance(gmCore::float2 tol) {
   _impl->tolerance = tol;
 }
 
+void ChromaKeyTexture::traverse(Visitor *visitor) {
+  if (auto obj = std::dynamic_pointer_cast<gmCore::Object>(_impl->texture))
+    obj->accept(visitor);
+}
+
 END_NAMESPACE_GMGRAPHICS;

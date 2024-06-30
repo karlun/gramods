@@ -4,7 +4,7 @@
 
 #include <gmTrack/AnalogsTracker.hh>
 
-#include <gmCore/float.hh>
+#include <gmCore/io_float.hh>
 #include <gmCore/OFactory.hh>
 
 BEGIN_NAMESPACE_GMTRACK;

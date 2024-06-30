@@ -5,7 +5,7 @@
 #include <gmTrack/ButtonsTracker.hh>
 #include <gmTrack/export.hh>
 
-#include <gmCore/size.hh>
+#include <gmCore/io_size.hh>
 
 #include <gmCore/OFactory.hh>
 
@@ -77,6 +77,13 @@ public:
      are fresh.
   */
   bool getButtons(ButtonsSample &p) override;
+
+  /**
+     Propagates the specified visitor.
+
+     @see Object::Visitor
+  */
+  void traverse(Visitor *visitor) override;
 
   GM_OFI_DECLARE;
 

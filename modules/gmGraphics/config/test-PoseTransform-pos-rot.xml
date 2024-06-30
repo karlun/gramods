@@ -1,0 +1,152 @@
+<config>
+
+  <ImportLibrary library="gmGraphics"/>
+
+  <ObjRenderer
+      DEF="OBJ"
+      recenter="false"
+      file="model.obj"/>
+
+  <SdlWindow
+      size="900 900"
+      title="Spatial"
+      GLMajor="3" GLMinor="3">
+
+    <SdlContext
+        DEF="SDLContext"
+        useVideo="1"/>
+
+    <ObjRenderer USE="OBJ"/>
+
+    <TiledView>
+
+      <param name="tileLocation" value="0 0 1 1"/>
+      <SpatialPlanarView
+          topLeftCorner="-1.20 1.20 0.0"
+          bottomRightCorner="1.20 -1.20 0.0"
+          upDirection="0.0 1.0 0.0">
+        <Viewpoint
+            position="0.0 0.0 30.0"/>
+        <PoseTransform
+            position="0 0 0"
+            orientation="ypr 0 0 d0">
+          <ObjRenderer USE="OBJ"/>
+        </PoseTransform>
+      </SpatialPlanarView>
+
+      <param name="tileLocation" value="0 1 1 1"/>
+      <SpatialPlanarView
+          topLeftCorner="-1.20 1.20 0.0"
+          bottomRightCorner="1.20 -1.20 0.0"
+          upDirection="0.0 1.0 0.0">
+        <Viewpoint
+            position="0.0 0.0 30.0"/>
+        <PoseTransform
+            position="0 0 0"
+            orientation="ypr 0 0 d45">
+          <ObjRenderer USE="OBJ"/>
+        </PoseTransform>
+      </SpatialPlanarView>
+
+      <param name="tileLocation" value="0 2 1 1"/>
+      <SpatialPlanarView
+          topLeftCorner="-1.20 1.20 0.0"
+          bottomRightCorner="1.20 -1.20 0.0"
+          upDirection="0.0 1.0 0.0">
+        <Viewpoint
+            position="0.0 0.0 30.0"/>
+        <PoseTransform
+            position="0 0 0"
+            orientation="ypr 0 0 d90">
+          <ObjRenderer USE="OBJ"/>
+        </PoseTransform>
+      </SpatialPlanarView>
+
+      <param name="tileLocation" value="1 0 1 1"/>
+      <SpatialPlanarView
+          topLeftCorner="-1.20 1.20 0.0"
+          bottomRightCorner="1.20 -1.20 0.0"
+          upDirection="0.0 1.0 0.0">
+        <Viewpoint
+            position="0.0 0.0 30.0"/>
+        <PoseTransform
+            position="0.3 0 0"
+            orientation="ypr 0 0 d0">
+          <ObjRenderer USE="OBJ"/>
+        </PoseTransform>
+      </SpatialPlanarView>
+
+      <param name="tileLocation" value="1 1 1 1"/>
+      <SpatialPlanarView
+          topLeftCorner="-1.20 1.20 0.0"
+          bottomRightCorner="1.20 -1.20 0.0"
+          upDirection="0.0 1.0 0.0">
+        <Viewpoint
+            position="0.0 0.0 30.0"/>
+        <PoseTransform
+            position="0.3 0 0"
+            orientation="ypr 0 0 d45">
+          <ObjRenderer USE="OBJ"/>
+        </PoseTransform>
+      </SpatialPlanarView>
+
+      <param name="tileLocation" value="1 2 1 1"/>
+      <SpatialPlanarView
+          topLeftCorner="-1.20 1.20 0.0"
+          bottomRightCorner="1.20 -1.20 0.0"
+          upDirection="0.0 1.0 0.0">
+        <Viewpoint
+            position="0.0 0.0 30.0"/>
+        <PoseTransform
+            position="0.3 0 0"
+            orientation="ypr 0 0 d90">
+          <ObjRenderer USE="OBJ"/>
+        </PoseTransform>
+      </SpatialPlanarView>
+
+      <param name="tileLocation" value="2 0 1 1"/>
+      <SpatialPlanarView
+          topLeftCorner="-1.20 1.20 0.0"
+          bottomRightCorner="1.20 -1.20 0.0"
+          upDirection="0.0 1.0 0.0">
+        <Viewpoint
+            position="0.0 0.0 30.0"/>
+        <PoseTransform
+            position="0.6 0 0"
+            orientation="ypr 0 0 d0">
+          <ObjRenderer USE="OBJ"/>
+        </PoseTransform>
+      </SpatialPlanarView>
+
+      <param name="tileLocation" value="2 1 1 1"/>
+      <SpatialPlanarView
+          topLeftCorner="-1.20 1.20 0.0"
+          bottomRightCorner="1.20 -1.20 0.0"
+          upDirection="0.0 1.0 0.0">
+        <Viewpoint
+            position="0.0 0.0 30.0"/>
+        <PoseTransform
+            position="0.6 0 0"
+            orientation="ypr 0 0 d45">
+          <ObjRenderer USE="OBJ"/>
+        </PoseTransform>
+      </SpatialPlanarView>
+
+      <param name="tileLocation" value="2 2 1 1"/>
+      <SpatialPlanarView
+          topLeftCorner="-1.20 1.20 0.0"
+          bottomRightCorner="1.20 -1.20 0.0"
+          upDirection="0.0 1.0 0.0">
+        <Viewpoint
+            position="0.0 0.0 30.0"/>
+        <PoseTransform
+            position="0.6 0 0"
+            orientation="ypr 0 0 d90">
+          <ObjRenderer USE="OBJ"/>
+        </PoseTransform>
+      </SpatialPlanarView>
+
+    </TiledView>
+  </SdlWindow>
+
+</config>

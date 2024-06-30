@@ -61,4 +61,8 @@ bool ButtonsMapper::getButtons(ButtonsSample &p) {
   return true;
 }
 
+void ButtonsMapper::traverse(Visitor *visitor) {
+  if (buttonsTracker) buttonsTracker->accept(visitor);
+}
+
 END_NAMESPACE_GMTRACK;

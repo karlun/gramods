@@ -4,7 +4,7 @@
 
 #include <gmTrack/config.hh>
 
-#include <gmCore/eigen.hh>
+#include <gmCore/io_eigen.hh>
 #include <gmCore/Object.hh>
 #include <gmTrack/Controller.hh>
 #include <gmCore/Updateable.hh>
@@ -134,6 +134,13 @@ public:
                                        float *maxdev = nullptr,
                                        float inlier_dist = -1.f,
                                        size_t *inlier_count = nullptr);
+
+  /**
+     Propagates the specified visitor.
+
+     @see Object::Visitor
+  */
+  void traverse(Visitor *visitor) override;
 
   GM_OFI_DECLARE;
 

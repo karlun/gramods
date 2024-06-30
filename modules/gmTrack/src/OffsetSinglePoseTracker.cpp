@@ -5,7 +5,7 @@
 #include <gmCore/Console.hh>
 #include <gmCore/RunOnce.hh>
 
-#include <gmCore/eigen.hh>
+#include <gmCore/io_eigen.hh>
 
 BEGIN_NAMESPACE_GMTRACK;
 
@@ -47,6 +47,10 @@ void OffsetSinglePoseTracker::setOffsetMatrix(Eigen::Matrix4f m) {
 
   Eigen::Matrix3f R = U * V.transpose();
   orientation_offset = Eigen::Quaternionf(R);
+}
+
+void OffsetSinglePoseTracker::traverse(Visitor *visitor) {
+  if (tracker) tracker->accept(visitor);
 }
 
 END_NAMESPACE_GMTRACK;

@@ -16,7 +16,6 @@ BEGIN_NAMESPACE_GMGRAPHICS;
 GM_OFI_DEFINE_SUB(CubeSceneRenderer, Renderer);
 GM_OFI_PARAM2(CubeSceneRenderer, cubeSize, float, setCubeSize);
 GM_OFI_PARAM2(CubeSceneRenderer, cubeSetSize, float, setCubeSetSize);
-GM_OFI_PARAM2(CubeSceneRenderer, position, Eigen::Vector3f, setPosition);
 GM_OFI_PARAM2(CubeSceneRenderer, animate, bool, setAnimate);
 
 #define N_VERTICES 108
@@ -26,8 +25,11 @@ struct CubeSceneRenderer::Impl : gmCore::Updateable {
   ~Impl();
 
   void setup();
-  void render(Camera camera, float near, float far);
-  void getNearFar(Camera camera, float &near, float &far);
+  void render(const Camera &camera, const Eigen::Affine3f &Mm);
+  void getNearFar(const Camera &camera,
+                  const Eigen::Affine3f &Mm,
+                  float &near,
+                  float &far);
   void teardown();
 
   void update(clock::time_point time, size_t frame) override;
@@ -40,7 +42,6 @@ struct CubeSceneRenderer::Impl : gmCore::Updateable {
 
   float cube_size = 0.1f;
   float cube_set_size = 1.f;
-  Eigen::Vector3f position = Eigen::Vector3f::Zero();
 
   bool animate = true;
   double animation_secs = 0.0;
@@ -52,9 +53,10 @@ struct CubeSceneRenderer::Impl : gmCore::Updateable {
 CubeSceneRenderer::CubeSceneRenderer()
   : _impl(std::make_unique<Impl>()) {}
 
-void CubeSceneRenderer::render(Camera camera, float near, float far) {
+void CubeSceneRenderer::render(const Camera &camera,
+                               const Eigen::Affine3f &Mm) {
   if (!eyes.empty() && eyes.count(camera.getEye()) == 0) return;
-  _impl->render(camera, near, far);
+  _impl->render(camera, Mm);
 }
 
 namespace {
@@ -194,15 +196,19 @@ void CubeSceneRenderer::Impl::setup() {
   is_functional = true;
 }
 
-void CubeSceneRenderer::getNearFar(Camera camera, float &near, float &far){
+void CubeSceneRenderer::getNearFar(const Camera &camera,
+                                   const Eigen::Affine3f &Mm,
+                                   float &near,
+                                   float &far) {
   if (!eyes.empty() && eyes.count(camera.getEye()) == 0) return;
-  _impl->getNearFar(camera, near, far);
+  _impl->getNearFar(camera, Mm, near, far);
 }
 
-void CubeSceneRenderer::Impl::getNearFar(Camera camera, float &near, float &far){
+void CubeSceneRenderer::Impl::getNearFar(const Camera &camera,
+                                         const Eigen::Affine3f &Mm,
+                                         float &near,
+                                         float &far) {
 
-  Eigen::Affine3f Mm;
-  Mm = Eigen::Translation3f(position);
   Eigen::Affine3f Mv = camera.getViewMatrix();
 
   near =
@@ -214,7 +220,8 @@ void CubeSceneRenderer::Impl::getNearFar(Camera camera, float &near, float &far)
     + 0.87f * (cube_set_size + cube_size);
 }
 
-void CubeSceneRenderer::Impl::render(Camera camera, float near, float far) {
+void CubeSceneRenderer::Impl::render(const Camera &camera,
+                                     const Eigen::Affine3f &Mm) {
 
   if (!is_setup)
     setup();
@@ -223,14 +230,8 @@ void CubeSceneRenderer::Impl::render(Camera camera, float near, float far) {
 
   GM_DBG2("CubeSceneRenderer", "rendering");
 
-  if (far < 0) {
-    getNearFar(camera, near, far);
-    if (near <= std::numeric_limits<float>::epsilon())
-      near = 0.1f * cube_size;
-  }
-
   Eigen::Affine3f Mv = camera.getViewMatrix();
-  Eigen::Matrix4f Mp = camera.getProjectionMatrix(near, far);
+  Eigen::Matrix4f Mp = camera.getProjectionMatrix();
 
   size_t N = (size_t)(cube_set_size / (3.f * cube_size));
   float pD = N > 1 ? cube_set_size / (N - 1) : 0.f;
@@ -257,18 +258,17 @@ void CubeSceneRenderer::Impl::render(Camera camera, float near, float far) {
             idx_z != 0 && idx_z != N - 1)
           continue;
 
-        Eigen::Affine3f Mm = Eigen::Affine3f::Identity();
-        Mm *= Eigen::Translation3f(position[0] + p0 + pD * idx_x,
-                                   position[1] + p0 + pD * idx_y,
-                                   position[2] + p0 + pD * idx_z);
-        Mm *= Eigen::Scaling(0.5f * cube_size);
-        Mm *= Eigen::AngleAxis<float>
+        Eigen::Affine3f cMm = Mm;
+        cMm *= Eigen::Translation3f(
+            p0 + pD * idx_x, p0 + pD * idx_y, p0 + pD * idx_z);
+        cMm *= Eigen::Scaling(0.5f * cube_size);
+        cMm *= Eigen::AngleAxis<float>
           (1.0f * step * idx_x +
            0.4f * step * idx_y +
            0.7f * step * idx_z +
            (float)(rate * animation_secs),
            Eigen::Vector3f(idx_z + 1, idx_y, idx_x).normalized());
-        glUniformMatrix4fv(Mm_id, 1, false, Mm.data());
+        glUniformMatrix4fv(Mm_id, 1, false, cMm.data());
 
         Eigen::Vector3f color(0.2f + 0.8f * step * idx_x,
                               0.2f + 0.8f * step * idx_y,
@@ -322,10 +322,6 @@ void CubeSceneRenderer::setCubeSize(float d) {
 
 void CubeSceneRenderer::setCubeSetSize(float d) {
   _impl->cube_set_size = d;
-}
-
-void CubeSceneRenderer::setPosition(Eigen::Vector3f p) {
-  _impl->position = p;
 }
 
 void CubeSceneRenderer::setAnimate(bool on) {

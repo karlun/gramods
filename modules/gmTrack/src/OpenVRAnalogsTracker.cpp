@@ -78,6 +78,9 @@ bool OpenVRAnalogsTracker::Impl::getAnalogs(AnalogsSample &b) {
   return true;
 }
 
+void OpenVRAnalogsTracker::traverse(Visitor *visitor) {
+  if (_impl->openvr) _impl->openvr->accept(visitor);
+}
 
 END_NAMESPACE_GMTRACK;
 

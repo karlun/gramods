@@ -5,7 +5,7 @@
 #include <gmCore/Console.hh>
 #include <gmCore/RunOnce.hh>
 
-#include <gmCore/eigen.hh>
+#include <gmCore/io_eigen.hh>
 
 BEGIN_NAMESPACE_GMTRACK;
 
@@ -89,6 +89,10 @@ bool RegisteredMultiPoseTracker::Impl::getPose(std::map<int, PoseSample> &p) {
   }
 
   return true;
+}
+
+void RegisteredMultiPoseTracker::traverse(Visitor *visitor) {
+  if (_impl->tracker) _impl->tracker->accept(visitor);
 }
 
 END_NAMESPACE_GMTRACK;

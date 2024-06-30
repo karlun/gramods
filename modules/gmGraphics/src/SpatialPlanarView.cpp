@@ -104,11 +104,7 @@ void SpatialPlanarView::Impl::renderFullPipeline(ViewSettings settings,
   camera.setPose(x_VP, Q1 * Q0);
   camera.setEye(eye);
 
-  float near, far;
-  Renderer::getNearFar(settings.renderers, camera, near, far);
-
-  for (auto renderer : settings.renderers)
-    renderer->render(camera, near, far);
+  settings.renderNodes(camera);
 }
 
 void SpatialPlanarView::Impl::calculateCorners() {

@@ -5,7 +5,7 @@
 #include <gmGraphics/config.hh>
 #include <gmGraphics/Eye.hh>
 
-#include <gmCore/eigen.hh>
+#include <gmCore/io_eigen.hh>
 
 #include <gmCore/Object.hh>
 #include <gmCore/OFactory.hh>

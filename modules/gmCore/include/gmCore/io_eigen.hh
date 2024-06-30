@@ -63,7 +63,7 @@ std::istream& operator>> (std::istream &in, Eigen::Quaternionf &q);
 std::istream& operator>> (std::istream &in, Eigen::Matrix3f &m);
 
 /**
-   Stream operator reading 12 or 16 values into an
+   Stream operator reading 9, 12 or 16 values into an
    Eigen::Matrix4f. This is typically used to read XML position and
    matrix attributes. This will read 16 values from the stream.
 */

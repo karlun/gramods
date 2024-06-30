@@ -55,14 +55,12 @@ struct CubeMapRasterProcessor::Impl {
   void setup();
   void teardown();
 
-  void renderFullPipeline(size_t frame_number,
-                          Renderer::list renderers,
+  void renderFullPipeline(ViewBase::ViewSettings &settings,
                           Eigen::Vector3f pos,
                           Eigen::Quaternionf rot,
                           Eye eye,
                           bool make_square);
-  void renderSide(size_t frame_number,
-                  Renderer::list renderers,
+  void renderSide(ViewBase::ViewSettings &settings,
                   Eigen::Vector3f pos,
                   Eigen::Quaternionf rot,
                   Eye eye,
@@ -81,14 +79,13 @@ CubeMapRasterProcessor::~CubeMapRasterProcessor() {
   _impl = nullptr;
 }
 
-void CubeMapRasterProcessor::renderFullPipeline
-(size_t frame_number,
- Renderer::list renderers,
- Eigen::Vector3f pos,
- Eigen::Quaternionf rot,
- Eye eye,
- bool make_square) {
-  _impl->renderFullPipeline(frame_number, renderers, pos, rot, eye, make_square);
+void CubeMapRasterProcessor::renderFullPipeline(
+    ViewBase::ViewSettings &settings,
+    Eigen::Vector3f pos,
+    Eigen::Quaternionf rot,
+    Eye eye,
+    bool make_square) {
+  _impl->renderFullPipeline(settings, pos, rot, eye, make_square);
 }
 
 void CubeMapRasterProcessor::Impl::setup() {
@@ -222,13 +219,12 @@ GLint CubeMapRasterProcessor::getProgram() {
   return _impl->program_id;
 }
 
-void CubeMapRasterProcessor::Impl::renderFullPipeline
-(size_t frame_number,
- Renderer::list renderers,
- Eigen::Vector3f pos,
- Eigen::Quaternionf rot,
- Eye eye,
- bool make_square) {
+void CubeMapRasterProcessor::Impl::renderFullPipeline(
+    ViewBase::ViewSettings &settings,
+    Eigen::Vector3f pos,
+    Eigen::Quaternionf rot,
+    Eye eye,
+    bool make_square) {
 
   GLint previous_viewport[4] = { 0, 0, 0, 0 };
   glGetIntegerv(GL_VIEWPORT, previous_viewport);
@@ -240,7 +236,7 @@ void CubeMapRasterProcessor::Impl::renderFullPipeline
     setup();
   if (!is_functional)
     return;
-  if (renderers.empty())
+  if (settings.nodes.empty())
     return;
 
   glEnable(GL_DEPTH_TEST);
@@ -248,7 +244,7 @@ void CubeMapRasterProcessor::Impl::renderFullPipeline
   glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
   for (size_t idx = 0; idx < SIDE_COUNT; ++idx)
-    renderSide(frame_number, renderers, pos, rot, eye, idx);
+    renderSide(settings, pos, rot, eye, idx);
 
   GM_DBG2("CubeMapRasterProcessor", "finalizing");
 
@@ -309,8 +305,7 @@ void CubeMapRasterProcessor::Impl::renderFullPipeline
 }
 
 void CubeMapRasterProcessor::Impl::renderSide
-(size_t frame_number,
- Renderer::list renderers,
+(ViewBase::ViewSettings &settings,
  Eigen::Vector3f pos,
  Eigen::Quaternionf rot,
  Eye eye,
@@ -322,7 +317,7 @@ void CubeMapRasterProcessor::Impl::renderSide
   glClearColor(0, 0, 0, 0);
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-  Camera camera(frame_number);
+  Camera camera(settings.frame_number);
   camera.setPose(pos, rot * side_orientation[side]);
   camera.setEye(eye);
 
@@ -373,11 +368,7 @@ void CubeMapRasterProcessor::Impl::renderSide
     }
   }
 
-  float near, far;
-  Renderer::getNearFar(renderers, camera, near, far);
-
-  for (auto renderer : renderers)
-    renderer->render(camera, near, far);
+  settings.renderNodes(camera);
 }
 
 void CubeMapRasterProcessor::setFragmentCode(std::string code) {

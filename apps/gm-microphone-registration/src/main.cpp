@@ -3,7 +3,7 @@
 #include <gmCore/CommandLineParser.hh>
 #include <gmCore/Console.hh>
 #include <gmCore/RunOnce.hh>
-#include <gmCore/eigen.hh>
+#include <gmCore/io_eigen.hh>
 
 #include <gmSound/SoundDetector.hh>
 #include <gmSound/SoundConstants.hh>

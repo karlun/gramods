@@ -1,9 +1,9 @@
 
-#include <gmCore/eigen.hh>
+#include <gmCore/io_eigen.hh>
 
 #ifdef gramods_ENABLE_Eigen3
 
-#include <gmCore/angle.hh>
+#include <gmCore/io_angle.hh>
 
 #include <gmCore/Console.hh>
 
@@ -142,35 +142,50 @@ std::istream& operator>> (std::istream &in, Eigen::Matrix3f &m) {
 
 std::istream& operator>> (std::istream &in, Eigen::Matrix4f &m) {
 
-  float a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12;
-  in >> a1 >> a2 >> a3 >> a4 >> a5 >> a6 >> a7 >> a8 >> a9 >> a10 >> a11 >> a12;
-
-  if (!in)
-    return in;
-
-  float a13;
-  in >> a13;
+  float a01, a02, a03, a04, a05, a06, a07, a08, a09;
+  in >> a01 >> a02 >> a03 >> a04 >> a05 >> a06 >> a07 >> a08 >> a09;
 
   if (!in) {
+    GM_DBG3("eigen",
+            "Failed to read 9 values from stream into Eigen::Matrix4f");
+    return in;
+  }
+
+  float a10, a11, a12;
+  in >> a10 >> a11 >> a12;
+
+  if (!in) {
+    GM_DBG3("eigen",
+            "Read 9 values, but not 12, from stream into Eigen::Matrix4f");
     m <<
-      a1, a2, a3, a4,
-      a5, a6, a7, a8,
-      a9, a10, a11, a12,
+      a01, a02, a03, 0.f,
+      a04, a05, a06, 0.f,
+      a07, a08, a09, 0.f,
       0.f, 0.f, 0.f, 1.f;
     in.clear();
     return in;
   }
 
-  float a14, a15, a16;
-  in >> a14 >> a15 >> a16;
+  float a13, a14, a15, a16;
+  in >> a13 >> a14 >> a15 >> a16;
 
-  if (!in)
+  if (!in) {
+    GM_DBG3("eigen",
+            "Read 12 values, but not 16, from stream into Eigen::Matrix4f");
+    m <<
+      a01, a02, a03, a04,
+      a05, a06, a07, a08,
+      a09, a10, a11, a12,
+      0.f, 0.f, 0.f, 1.f;
+    in.clear();
     return in;
+  }
 
+  GM_DBG3("eigen", "Read 16 values from stream into Eigen::Matrix4f");
   m <<
-    a1, a2, a3, a4,
-    a5, a6, a7, a8,
-    a9, a10, a11, a12,
+    a01, a02, a03, a04,
+    a05, a06, a07, a08,
+    a09, a10, a11, a12,
     a13, a14, a15, a16;
 
   return in;

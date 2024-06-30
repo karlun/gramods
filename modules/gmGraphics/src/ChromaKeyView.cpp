@@ -3,6 +3,7 @@
 
 #include <gmGraphics/GLUtils.hh>
 #include <gmCore/RunOnce.hh>
+#include <gmCore/Console.hh>
 
 #include <gmGraphics/OffscreenRenderTargets.hh>
 #include <gmGraphics/RasterProcessor.hh>
@@ -85,6 +86,7 @@ ChromaKeyView::ChromaKeyView()
 ChromaKeyView::~ChromaKeyView() {}
 
 void ChromaKeyView::addView(std::shared_ptr<View> view) {
+  if (!view) throw gmCore::InvalidArgument("null not allowed");
   _impl->views.push_back(view);
 }
 
@@ -154,11 +156,8 @@ void ChromaKeyView::setTolerance(gmCore::float2 tol) {
   _impl->tolerance = tol;
 }
 
-void ChromaKeyView::clearRenderers(bool recursive) {
-  if (recursive)
-    for (auto view : _impl->views)
-      view->clearRenderers(recursive);
-  RendererDispatcher::clearRenderers(recursive);
+void ChromaKeyView::traverse(Visitor *visitor) {
+  for (auto &v : _impl->views) v->accept(visitor);
 }
 
 END_NAMESPACE_GMGRAPHICS;

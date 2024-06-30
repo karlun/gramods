@@ -1,7 +1,7 @@
 
 #include <gmSound/Multilateration.hh>
 
-#include <gmCore/eigen.hh>
+#include <gmCore/io_eigen.hh>
 #include <gmCore/Console.hh>
 #include <gmCore/RunOnce.hh>
 #include <gmCore/PreConditionViolation.hh>
@@ -154,4 +154,9 @@ void Multilateration::Impl::estimatePose(std::vector<float> &offsets,
           Eigen::Quaternionf::Identity(),
           time - gmCore::TimeTools::secondsToDuration(dt)};
 }
+
+void Multilateration::traverse(Visitor *visitor) {
+  if (_impl->sound_detector) _impl->sound_detector->accept(visitor);
+}
+
 }}

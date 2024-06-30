@@ -31,9 +31,12 @@ public:
 
   /**
      The signature of the rendering function that provides the actual
-     graphics. See gmGraphics::Dispatcher for more information.
+     graphics.
+
+     @see gmGraphics::Renderer::render
   */
-  typedef std::function<void(Camera, float, float)> RenderFunction;
+  typedef std::function<void(const Camera &, const Eigen::Affine3f &)>
+      RenderFunction;
 
   /**
      The signature of an optional function that returns the currently
@@ -41,17 +44,19 @@ public:
      View if there are multiple renderers that need to be rendered
      with the same near and far planes for correct depth testing.
   */
-  typedef std::function<void(Camera, float&, float&)> NearFarFunction;
+  typedef std::function<void(
+      const Camera &, const Eigen::Affine3f &, float &, float &)>
+      NearFarFunction;
 
   /**
      Performs rendering of 3D objects in the scene.
   */
-  void render(Camera camera, float near = -1, float far = -1) override {
+  void render(const Camera &camera, const Eigen::Affine3f &Mm) override {
     if (!has_been_setup) {
       if (setup_function) setup_function();
       has_been_setup = true;
     }
-    if (render_function) render_function(camera, near, far);
+    if (render_function) render_function(camera, Mm);
   }
 
   /**
@@ -60,9 +65,12 @@ public:
      need to be rendered with the same near and far planes for correct
      depth testing.
   */
-  void getNearFar(Camera camera, float &near, float &far) override {
-    if (nearfar_function) nearfar_function(camera, near, far);
-    else near = far = -1;
+  void getNearFar(const Camera &camera,
+                  const Eigen::Affine3f &Mm,
+                  float &near,
+                  float &far) override {
+    if (!nearfar_function) return;
+    nearfar_function(camera, Mm, near, far);
   }
 
   /**

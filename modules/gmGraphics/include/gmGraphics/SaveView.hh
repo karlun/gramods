@@ -4,7 +4,7 @@
 
 #include <gmGraphics/View.hh>
 
-#include <gmCore/size.hh>
+#include <gmCore/io_size.hh>
 
 BEGIN_NAMESPACE_GMGRAPHICS;
 
@@ -23,6 +23,13 @@ public:
      Forwards rendering to the sub view and saves the result.
   */
   void renderFullPipeline(ViewSettings settings) override;
+
+  /**
+     Propagates the specified visitor.
+
+     @see Object::Visitor
+  */
+  void traverse(Visitor *visitor) override;
 
   /**
      Sets the file path to save the view to.
@@ -93,12 +100,6 @@ public:
      \gmXmlTag{gmGraphics,SaveView,view}
   */
   void addView(std::shared_ptr<View> view);
-
-  /**
-     Removes all renderers and, if recursive is set to true, also
-     renderers added to sub dispatchers.
-  */
-  virtual void clearRenderers(bool recursive = false) override;
 
   GM_OFI_DECLARE;
 

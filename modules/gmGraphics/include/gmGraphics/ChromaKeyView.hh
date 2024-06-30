@@ -3,7 +3,7 @@
 #define GRAMODS_GRAPHICS_CHROMAKEYVIEW
 
 #include <gmGraphics/View.hh>
-#include <gmCore/float.hh>
+#include <gmCore/io_float.hh>
 
 BEGIN_NAMESPACE_GMGRAPHICS;
 
@@ -27,6 +27,13 @@ public:
   void renderFullPipeline(ViewSettings settings) override;
 
   /**
+     Propagates the specified visitor.
+
+     @see Object::Visitor
+  */
+  void traverse(Visitor *visitor) override;
+
+  /**
      Adds a view to mask with chroma key.
 
      \gmXmlTag{gmGraphics,ChromaKeyView,view}
@@ -48,12 +55,6 @@ public:
      \gmXmlTag{gmGraphics,ChromaKeyView,tolerance}
   */
   void setTolerance(gmCore::float2 tol);
-
-  /**
-     Removes all renderers and, if recursive is set to true, also
-     renderers added to sub dispatchers.
-  */
-  virtual void clearRenderers(bool recursive = false) override;
 
   GM_OFI_DECLARE;
 

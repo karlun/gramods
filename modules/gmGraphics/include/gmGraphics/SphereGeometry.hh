@@ -2,7 +2,7 @@
 #ifndef GRAMODS_GRAPHICS_SPHEREGEOMETRY
 #define GRAMODS_GRAPHICS_SPHEREGEOMETRY
 
-#include <gmCore/eigen.hh>
+#include <gmCore/io_eigen.hh>
 #include <gmGraphics/Geometry.hh>
 
 BEGIN_NAMESPACE_GMGRAPHICS;

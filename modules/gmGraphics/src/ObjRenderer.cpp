@@ -27,9 +27,6 @@ BEGIN_NAMESPACE_GMGRAPHICS;
 GM_OFI_DEFINE_SUB(ObjRenderer, Renderer);
 GM_OFI_PARAM2(ObjRenderer, file, std::filesystem::path, setFile);
 GM_OFI_PARAM2(ObjRenderer, recenter, bool, setRecenter);
-GM_OFI_PARAM2(ObjRenderer, position, Eigen::Vector3f, setPosition);
-GM_OFI_PARAM2(ObjRenderer, orientation, Eigen::Quaternionf, setOrientation);
-GM_OFI_PARAM2(ObjRenderer, transform, Eigen::Matrix4f, setTransform);
 
 struct ObjRenderer::Impl {
 
@@ -58,6 +55,7 @@ struct ObjRenderer::Impl {
 
   ~Impl();
 
+  void load_data();
   void setup();
   bool read_obj(std::vector<GLfloat> &vertices,
                 std::vector<GLfloat> &normals,
@@ -71,8 +69,11 @@ struct ObjRenderer::Impl {
                    const tinyobj::attrib_t &attrib,
                    const tinyobj::mesh_t &mesh);
   Material makeMaterial(const tinyobj::material_t &mat);
-  void render(Camera camera, float near, float far);
-  void getNearFar(Camera camera, float &near, float &far);
+  void render(const Camera &camera, const Eigen::Affine3f &Mm);
+  void getNearFar(const Camera &camera,
+                  const Eigen::Affine3f &Mm,
+                  float &near,
+                  float &far);
   void teardown();
 
   static const std::string vertex_shader_code;
@@ -109,12 +110,15 @@ struct ObjRenderer::Impl {
 
   std::unordered_map<GLint, uniforms> loc;
 
+  std::vector<GLfloat> vertices;
+  std::vector<GLfloat> normals;
+  std::vector<GLfloat> tcoords;
+  std::vector<GLint> mtls;
+
   std::optional<AABB> bounds;
-  float epsilon = 0;
 
   std::filesystem::path file;
   std::filesystem::path tex_root_path;
-  Eigen::Matrix4f model_matrix = Eigen::Matrix4f::Identity();
   bool recenter = false;
 
   bool is_setup = false;
@@ -124,37 +128,79 @@ struct ObjRenderer::Impl {
 ObjRenderer::ObjRenderer()
   : _impl(std::make_unique<Impl>()) {}
 
-void ObjRenderer::render(Camera camera, float near, float far) {
-  if (!eyes.empty() && eyes.count(camera.getEye()) == 0) return;
-  _impl->render(camera, near, far);
+void ObjRenderer::initialize() {
+  Renderer::initialize();
+  _impl->load_data();
 }
 
-void ObjRenderer::getNearFar(Camera camera, float &near, float &far) {
-  if (!eyes.empty() && eyes.count(camera.getEye()) == 0) return;
-  _impl->getNearFar(camera, near, far);
+void ObjRenderer::Impl::load_data() {
+
+  vertices.clear();
+  normals.clear();
+  tcoords.clear();
+  mtls.clear();
+
+  if (!read_obj(vertices, normals, tcoords, mtls)) return;
+
+  if (vertices.size() < 3) {
+    GM_ERR("ObjRenderer", "No vertices read");
+    return;
+  }
+
+  bounds = AABB({vertices[0], vertices[1], vertices[2]});
+  for (size_t idx = 3; idx + 2 < vertices.size(); idx += 3)
+    *bounds +=
+        Eigen::Vector3f(vertices[idx], vertices[idx + 1], vertices[idx + 2]);
+
+  if (recenter) {
+    Eigen::Vector3f offset = bounds->getCenter();
+    for (size_t idx = 0; idx + 2 < vertices.size(); idx += 3) {
+      vertices[idx + 0] -= offset.x();
+      vertices[idx + 1] -= offset.y();
+      vertices[idx + 2] -= offset.z();
+    }
+    bounds->addOffset(-offset);
+  }
+
+  GM_DBG1("ObjRenderer",
+          "Initialized with "
+              << vertices.size() << " vertices, " << normals.size()
+              << " normals and " << tcoords.size() << " texture coordinates\n"
+              << "Bounds: " << bounds->min().transpose() << " - "
+              << bounds->max().transpose());
 }
 
-void ObjRenderer::Impl::getNearFar(Camera camera, float &near, float &far) {
+void ObjRenderer::render(const Camera &camera, const Eigen::Affine3f &Mm) {
+  if (!eyes.empty() && eyes.count(camera.getEye()) == 0) return;
+  _impl->render(camera, Mm);
+}
+
+void ObjRenderer::getNearFar(const Camera &camera,
+                             const Eigen::Affine3f &Mm,
+                             float &near,
+                             float &far) {
+  if (!eyes.empty() && eyes.count(camera.getEye()) == 0) return;
+  _impl->getNearFar(camera, Mm, near, far);
+}
+
+void ObjRenderer::Impl::getNearFar(const Camera &camera,
+                                   const Eigen::Affine3f &Mm,
+                                   float &near,
+                                   float &far) {
 
   if (!bounds) return;
 
-  Eigen::Matrix4f Mm = model_matrix;
-  Eigen::Affine3f Mv = camera.getViewMatrix();
+  auto Mv = camera.getViewMatrix();
 
   near = std::numeric_limits<float>::max();
   far = std::numeric_limits<float>::min();
 
-  Eigen::Matrix4f T = Mv * Mm;
+  auto T = Mv * Mm;
   for (auto const &pt : bounds->getCorners()) {
     const float z = -(T * pt.homogeneous()).z();
     near = std::min(near, z);
     far = std::max(far, z);
   }
-
-  const float epsilon = std::numeric_limits<float>::epsilon() * far;
-
-  near -= epsilon;
-  far += epsilon;
 }
 
 const std::string ObjRenderer::Impl::vertex_shader_code = R"lang=glsl(
@@ -283,39 +329,6 @@ void main() {
 void ObjRenderer::Impl::setup() {
   is_setup = true;
 
-  std::vector<GLfloat> vertices;
-  std::vector<GLfloat> normals;
-  std::vector<GLfloat> tcoords;
-  std::vector<GLint> mtls;
-
-  if (!read_obj(vertices, normals, tcoords, mtls)) return;
-
-  if (vertices.size() < 3) {
-    GM_ERR("ObjRenderer", "No vertices read");
-    return;
-  }
-
-  bounds = AABB({vertices[0], vertices[1], vertices[2]});
-  for (size_t idx = 3; idx + 2 < vertices.size(); idx += 3)
-    *bounds +=
-        Eigen::Vector3f(vertices[idx], vertices[idx + 1], vertices[idx + 2]);
-
-  if (recenter) {
-    Eigen::Vector3f offset = bounds->getCenter();
-    for (size_t idx = 0; idx + 2 < vertices.size(); idx += 3) {
-      vertices[idx + 0] -= offset.x();
-      vertices[idx + 1] -= offset.y();
-      vertices[idx + 2] -= offset.z();
-    }
-    bounds->addOffset(-offset);
-  }
-
-  epsilon = std::numeric_limits<float>::epsilon() *
-            (bounds->max() - bounds->min()).norm();
-  GM_DBG2("ObjRenderer",
-          "Bounds: " << bounds->min().transpose() << " - "
-                     << bounds->max().transpose());
-
   GM_DBG2("ObjRenderer", "Creating vertex shader");
   vertex_shader_id = glCreateShader(GL_VERTEX_SHADER);
   const char *vert_strs[] = { vertex_shader_code.c_str() };
@@ -375,10 +388,6 @@ void ObjRenderer::Impl::setup() {
   glBindBuffer(GL_ARRAY_BUFFER, 0);
   glBindVertexArray(0);
 
-  GM_DBG1("ObjRenderer",
-          "Initialized with " << vertices.size() << " vertices, "
-                              << normals.size() << " normals and "
-                              << tcoords.size() << " texture coordinates");
   is_functional = true;
 }
 
@@ -610,7 +619,7 @@ ObjRenderer::Impl::makeMaterial(const tinyobj::material_t &mat) {
   return res;
 }
 
-void ObjRenderer::Impl::render(Camera camera, float near, float far) {
+void ObjRenderer::Impl::render(const Camera &camera, const Eigen::Affine3f &Mm) {
 
   if (!is_setup)
     setup();
@@ -619,15 +628,9 @@ void ObjRenderer::Impl::render(Camera camera, float near, float far) {
 
   GM_DBG2("ObjRenderer", "rendering");
 
-  if (far < 0) {
-    getNearFar(camera, near, far);
-    near = std::max(near, epsilon);
-  }
-
-  const Eigen::Matrix4f &Mm = model_matrix;
   Eigen::Affine3f Mv = camera.getViewMatrix();
   Eigen::Matrix3f Mn = Mm.matrix().block<3, 3>(0, 0).inverse().transpose();
-  Eigen::Matrix4f Mp = camera.getProjectionMatrix(near, far);
+  Eigen::Matrix4f Mp = camera.getProjectionMatrix();
 
 #  define LOC(VAR)                                                             \
     (loc[program_id].VAR > 0                                                   \
@@ -743,20 +746,6 @@ void ObjRenderer::setRecenter(bool on) {
   if (_impl->recenter == on) return;
   _impl->recenter = on;
 }
-
-void ObjRenderer::setPosition(Eigen::Vector3f p) {
-  _impl->model_matrix.block<3, 1>(0, 3) = p;
-}
-
-void ObjRenderer::setOrientation(Eigen::Quaternionf q) {
-  _impl->model_matrix.block<3, 3>(0, 0) = Eigen::Matrix3f(q);
-}
-
-
-void ObjRenderer::setTransform(Eigen::Matrix4f m) {
-  _impl->model_matrix = m;
-}
-
 
 END_NAMESPACE_GMGRAPHICS;
 

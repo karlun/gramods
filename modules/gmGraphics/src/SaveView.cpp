@@ -393,14 +393,8 @@ void SaveView::setExit(bool on) {
 }
 
 void SaveView::addView(std::shared_ptr<View> view) {
+  if (!view) throw gmCore::InvalidArgument("null not allowed");
   _impl->views.push_back(view);
-}
-
-void SaveView::clearRenderers(bool recursive) {
-  if (recursive)
-    for (auto view : _impl->views)
-      view->clearRenderers(recursive);
-  RendererDispatcher::clearRenderers(recursive);
 }
 
 void SaveView::Impl::saveImage(std::unique_ptr<FileBuffer> image) {
@@ -448,6 +442,10 @@ void SaveView::Impl::save_process() {
 
     save_image.reset();
   }
+}
+
+void SaveView::traverse(Visitor *visitor) {
+  for (auto &v : _impl->views) v->accept(visitor);
 }
 
 END_NAMESPACE_GMGRAPHICS;

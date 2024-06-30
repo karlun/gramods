@@ -43,8 +43,14 @@ GLuint MultiscopicTextureMultiplexer::Impl::updateTexture(size_t frame_number, E
 }
 
 void MultiscopicTextureMultiplexer::addTexture(std::shared_ptr<TextureInterface> texture) {
+  if (!texture) throw gmCore::InvalidArgument("null not allowed");
   _impl->textures.push_back(texture);
 }
 
+void MultiscopicTextureMultiplexer::traverse(Visitor *visitor) {
+  for (auto &t : _impl->textures)
+    if (auto obj = std::dynamic_pointer_cast<gmCore::Object>(t))
+      obj->accept(visitor);
+}
 
 END_NAMESPACE_GMGRAPHICS;

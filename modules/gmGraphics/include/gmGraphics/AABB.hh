@@ -3,6 +3,7 @@
 #define GRAMODS_GRAPHICS_AABB
 
 #include <gmGraphics/config.hh>
+#include <gmGraphics/IntersectionVisitor.hh>
 
 #include <Eigen/Eigen>
 
@@ -49,6 +50,23 @@ public:
         Eigen::Vector3f(bmax.x(), bmax.y(), bmax.z()),
     };
   }
+
+  /**
+     Line for intersection checking.
+  */
+  typedef IntersectionLine Line;
+
+  /**
+     Check if the specified line has an intersection with the AABB.
+  */
+  bool isIntersecting(const Line &line);
+
+  /**
+     Retrieves the intersections for the specified line as ratio on
+     the provided line. Use Line::getPosition to convert ratio into
+     position.
+  */
+  std::vector<float> getIntersections(const Line &line);
 
 private:
   Eigen::Vector3f bmin;

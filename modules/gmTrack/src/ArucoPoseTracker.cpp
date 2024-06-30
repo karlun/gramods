@@ -329,6 +329,11 @@ bool ArucoPoseTracker::Impl::readCameraParameters
   return true;
 }
 
+void ArucoPoseTracker::traverse(Visitor *visitor) {
+  for (auto &b:_impl->boards) b->accept(visitor);
+  if (_impl->video_source) _impl->video_source->accept(visitor);
+}
+
 END_NAMESPACE_GMTRACK;
 
 #endif

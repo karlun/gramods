@@ -4,7 +4,7 @@
 
 #include <gmGraphics/Renderer.hh>
 
-#include <gmCore/eigen.hh>
+#include <gmCore/io_eigen.hh>
 #include <gmCore/OFactory.hh>
 
 BEGIN_NAMESPACE_GMGRAPHICS;
@@ -23,7 +23,7 @@ public:
   /**
      Performs rendering of 3D objects in the scene.
   */
-  void render(Camera camera, float near = -1, float far = -1) override;
+  void render(const Camera &camera, const Eigen::Affine3f &Mm) override;
 
   /**
      Extracts the currently optimal near and far plane distances. This
@@ -31,7 +31,10 @@ public:
      need to be rendered with the same near and far planes for correct
      depth testing.
   */
-  void getNearFar(Camera camera, float &near, float &far) override;
+  void getNearFar(const Camera &camera,
+                  const Eigen::Affine3f &Mm,
+                  float &near,
+                  float &far) override;
 
   /**
      Sets the size of each cube to be drawn.
@@ -46,15 +49,6 @@ public:
      \gmXmlTag{gmGraphics,CubeSceneRenderer,cubeSetSize}
   */
   void setCubeSetSize(float d);
-
-  /**
-     Sets the position of the cube set.
-
-     \gmXmlTag{gmGraphics,CubeSceneRenderer,position}
-
-     \sa gramods::operator>>(std::istream &, Eigen::Vector3f &)
-  */
-  void setPosition(Eigen::Vector3f c);
 
   /**
      Set animation on or off.

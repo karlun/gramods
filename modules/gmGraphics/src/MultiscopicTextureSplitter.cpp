@@ -158,4 +158,9 @@ void MultiscopicTextureSplitter::setSplitType(size_t type) {
   _impl->split_type = type;
 }
 
+void MultiscopicTextureSplitter::traverse(Visitor *visitor) {
+  if (auto obj = std::dynamic_pointer_cast<gmCore::Object>(_impl->texture))
+    obj->accept(visitor);
+}
+
 END_NAMESPACE_GMGRAPHICS;

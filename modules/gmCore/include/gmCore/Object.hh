@@ -63,6 +63,26 @@ public:
   virtual void initialize() { is_initialized = true; }
 
   /**
+     The visitor of a design pattern for automatic traversal.
+  */
+  struct Visitor {
+    /**
+       This method is called for each visited objects.
+    */
+    virtual void apply(Object *node) { node->traverse(this); }
+  };
+
+  /**
+     Calls the visitors apply method with this as argument.
+  */
+  virtual void accept(Visitor *visitor) { visitor->apply(this); }
+
+  /**
+     Calls the child Object's accept method, if such exist.
+  */
+  virtual void traverse(Visitor *visitor) {}
+
+  /**
      Returns the default key for the Object when automatically
      instantiated in a Configuration, i.e. where it ends up in a
      parent Object. Default is "object", but this should be overriden

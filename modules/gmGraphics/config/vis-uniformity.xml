@@ -16,6 +16,8 @@
         sphereSetRadius="1.0"
         color="0.5 0.6 0.9"/>
 
+    <Viewpoint/>
+
     <TiledView>
 
       <!-- Little Planet -->

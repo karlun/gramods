@@ -4,7 +4,7 @@
 
 #include <gmGraphics/MultiscopicMultiplexer.hh>
 
-#include <gmCore/float.hh>
+#include <gmCore/io_float.hh>
 
 BEGIN_NAMESPACE_GMGRAPHICS;
 

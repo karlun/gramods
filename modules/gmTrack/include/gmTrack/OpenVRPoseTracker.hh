@@ -62,6 +62,13 @@ public:
   */
   void setOpenVR(std::shared_ptr<gmCore::OpenVR> openvr);
 
+  /**
+     Propagates the specified visitor.
+
+     @see Object::Visitor
+  */
+  void traverse(Visitor *visitor) override;
+
   GM_OFI_DECLARE;
 
 private:

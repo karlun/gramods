@@ -115,14 +115,12 @@ void TiledView::addView(std::shared_ptr<View> view) {
 
 void TiledView::Impl::addView(gmCore::size4 tile_location,
                               std::shared_ptr<View> view) {
+  if (!view) throw gmCore::InvalidArgument("null not allowed");
   tiles.push_back(Impl::Tile({ tile_location, view }));
 }
 
-void TiledView::clearRenderers(bool recursive) {
-  if (recursive)
-    for (auto tile : _impl->tiles)
-      tile.view->clearRenderers(recursive);
-  RendererDispatcher::clearRenderers(recursive);
+void TiledView::traverse(Visitor *visitor) {
+  for (auto &t : _impl->tiles) t.view->accept(visitor);
 }
 
 END_NAMESPACE_GMGRAPHICS;

@@ -19,8 +19,49 @@
 
 #include <chrono>
 
+#ifdef __GNUG__
+#include <cxxabi.h>
+#endif
 
 using namespace gramods;
+
+namespace {
+struct PrintVisitor : gmCore::Object::Visitor {
+
+  size_t indent = 0;
+  size_t count = 0;
+  bool traversing = false;
+
+  void apply(gmCore::Object *node) override {
+    ++count;
+
+    std::string type_name = typeid(*node).name();
+
+#ifdef __GNUG__
+    int status;
+    char *dname = abi::__cxa_demangle(type_name.c_str(), NULL, NULL, &status);
+    if (!status) type_name = dname;
+    std::free(dname);
+#endif
+
+    if (traversing) std::cout << "\n";
+    for (size_t idx = 0; idx < indent; ++idx) std::cout << "  ";
+    std::cout << type_name << " {";
+
+    size_t my_count = count;
+
+    ++indent;
+    traversing = true;
+    node->traverse(this);
+    traversing = false;
+    --indent;
+
+    if (my_count != count)
+      for (size_t idx = 0; idx < indent; ++idx) std::cout << "  ";
+    std::cout << "}\n";
+  }
+};
+}
 
 int main(int argc, char *argv[]) {
 
@@ -51,6 +92,11 @@ int main(int argc, char *argv[]) {
   TCLAP::SwitchArg sync_start("","sync-start","Wait for the other nodes specified in the configuration, to start at the same time.", cmd, false);
   TCLAP::SwitchArg sync_swap("","sync-swap","Synchronize swap buffers with the other nodes specified in the configuration.", cmd, false);
   TCLAP::SwitchArg sync_time("","sync-time","Synchronize update time with the other nodes specified in the configuration. Observe that this will assume that peer 0 (zero) is the primary, activate synchronization and that DataSync::update() will be automatically called before the rendering pass.", cmd, false);
+
+  TCLAP::SwitchArg output_tree(
+      "", "print-tree",
+      "Print the loaded configuration recursively (to stdout).",
+      cmd, false);
 
   try {
     cmd.parse(argc, argv);
@@ -115,6 +161,15 @@ int main(int argc, char *argv[]) {
 
   std::vector<std::shared_ptr<gmCore::Object>> objects;
   config->getAllObjects(objects);
+
+  if (output_tree.getValue()) {
+    std::cout << "\n";
+    for (auto &object : objects) {
+      PrintVisitor visitor;
+      object->accept(&visitor);
+      std::cout << "\n";
+    }
+  }
 
   typedef std::chrono::steady_clock clock;
   typedef std::chrono::duration<double, std::ratio<1>> d_seconds;

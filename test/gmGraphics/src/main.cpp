@@ -2,7 +2,8 @@
 #include <gtest/gtest.h>
 
 #define gramods_STRIP_PATH_FROM_FILE
-#include "sdl_window.cpp"
+//#include "sdl_window.cpp"
+#include "intersection.cpp"
 
 
 int main(int argc, char **argv) {

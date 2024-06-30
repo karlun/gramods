@@ -5,7 +5,7 @@
 #include <gmGraphics/View.hh>
 #include <gmGraphics/TextureInterface.hh>
 
-#include <gmCore/float.hh>
+#include <gmCore/io_float.hh>
 
 BEGIN_NAMESPACE_GMGRAPHICS;
 
@@ -26,6 +26,13 @@ public:
      and warps the result using the specified texture.
   */
   void renderFullPipeline(ViewSettings settings) override;
+
+  /**
+     Propagates the specified visitor.
+
+     @see Object::Visitor
+  */
+  void traverse(Visitor *visitor) override;
 
   /**
      Adds a view to warp.
@@ -70,12 +77,6 @@ public:
      \gmXmlTag{gmGraphics,TextureWarpedView,warpOffset}
   */
   void setWarpOffset(Eigen::Vector2f offset);
-
-  /**
-     Removes all renderers and, if recursive is set to true, also
-     renderers added to sub dispatchers.
-  */
-  virtual void clearRenderers(bool recursive = false) override;
 
   GM_OFI_DECLARE;
 

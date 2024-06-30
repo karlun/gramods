@@ -77,6 +77,9 @@ bool OpenVRButtonsTracker::Impl::getButtons(ButtonsSample &b) {
   return true;
 }
 
+void OpenVRButtonsTracker::traverse(Visitor *visitor) {
+  if (_impl->openvr) _impl->openvr->accept(visitor);
+}
 
 END_NAMESPACE_GMTRACK;
 

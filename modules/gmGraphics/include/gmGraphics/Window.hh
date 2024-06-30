@@ -2,11 +2,11 @@
 #ifndef GRAMODS_GRAPHICS_WINDOW
 #define GRAMODS_GRAPHICS_WINDOW
 
-#include <gmGraphics/RendererDispatcher.hh>
+#include <gmGraphics/ViewBase.hh>
 
-#include <gmCore/float.hh>
-#include <gmCore/int.hh>
-#include <gmCore/size.hh>
+#include <gmCore/io_float.hh>
+#include <gmCore/io_int.hh>
+#include <gmCore/io_size.hh>
 
 #include <limits>
 
@@ -17,8 +17,7 @@ class View;
 /**
    The base of graphics Window implementations.
 */
-class Window
-  : public RendererDispatcher {
+class Window : public ViewBase {
 
 public:
 
@@ -43,6 +42,13 @@ public:
   void renderFullPipeline(ViewSettings settings) override;
 
   /**
+     Propagates the specified visitor.
+
+     @see Object::Visitor
+  */
+  void traverse(Visitor *visitor) override;
+
+  /**
      Adds a view to the window. A window without views will render
      nothing - it is the tiles that provide the graphics. If multiple
      views are added, then these will be rendered over each other.
@@ -50,6 +56,7 @@ public:
      \gmXmlTag{gmGraphics,Window,view}
   */
   void addView(std::shared_ptr<View> view) {
+    if (!view) throw gmCore::InvalidArgument("null not allowed");
     views.push_back(view);
   }
 
@@ -164,12 +171,6 @@ public:
      synchronization (v-sync), for example for timing reasons.
   */
   virtual void sync();
-
-  /**
-     Removes all renderers and, if recursive is set to true, also
-     renderers added to sub dispatchers.
-  */
-  virtual void clearRenderers(bool recursive = false) override;
 
   GM_OFI_DECLARE;
 

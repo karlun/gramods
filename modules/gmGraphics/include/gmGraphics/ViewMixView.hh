@@ -26,6 +26,13 @@ public:
   void renderFullPipeline(ViewSettings settings) override;
 
   /**
+     Propagates the specified visitor.
+
+     @see Object::Visitor
+  */
+  void traverse(Visitor *visitor) override;
+
+  /**
      Set type of mixing. Default is average. Valid values are
 
      - average, showing the per pixel average value of all the views,
@@ -46,12 +53,6 @@ public:
      \gmXmlTag{gmGraphics,ViewMixView,view}
   */
   void addView(std::shared_ptr<View>);
-
-  /**
-     Removes all renderers and, if recursive is set to true, also
-     renderers added to sub dispatchers.
-  */
-  virtual void clearRenderers(bool recursive = false) override;
 
   GM_OFI_DECLARE;
 

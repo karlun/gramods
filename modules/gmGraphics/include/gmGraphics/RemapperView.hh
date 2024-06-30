@@ -5,8 +5,8 @@
 #include <gmGraphics/View.hh>
 #include <gmGraphics/CoordinatesMapper.hh>
 
-#include <gmCore/float.hh>
-#include <gmCore/angle.hh>
+#include <gmCore/io_float.hh>
+#include <gmCore/io_angle.hh>
 
 BEGIN_NAMESPACE_GMGRAPHICS;
 
@@ -26,6 +26,13 @@ public:
      to the sub views and mixes the results.
   */
   void renderFullPipeline(ViewSettings settings) override;
+
+  /**
+     Propagates the specified visitor.
+
+     @see Object::Visitor
+  */
+  void traverse(Visitor *visitor) override;
 
   /**
      Adds a view to mask with chroma key.
@@ -76,12 +83,6 @@ public:
      \gmXmlTag{gmGraphics,RemapperView,orientation}
   */
   void setOrientation(gmCore::angle2);
-
-  /**
-     Removes all renderers and, if recursive is set to true, also
-     renderers added to sub dispatchers.
-  */
-  virtual void clearRenderers(bool recursive = false) override;
 
   GM_OFI_DECLARE;
 

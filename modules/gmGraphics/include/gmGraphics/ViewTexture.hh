@@ -5,7 +5,7 @@
 #include <gmGraphics/View.hh>
 #include <gmGraphics/TextureInterface.hh>
 
-#include <gmCore/size.hh>
+#include <gmCore/io_size.hh>
 
 BEGIN_NAMESPACE_GMGRAPHICS;
 
@@ -29,6 +29,13 @@ public:
      Forwards rendering to the sub view and saves the result.
   */
   void renderFullPipeline(ViewSettings settings) override;
+
+  /**
+     Propagates the specified visitor.
+
+     @see Object::Visitor
+  */
+  void traverse(Visitor *visitor) override;
 
   /**
      Sets the resolution to render sub views at, regarless of
@@ -67,12 +74,6 @@ public:
      \gmXmlTag{gmGraphics,ViewTexture,view}
   */
   void addView(std::shared_ptr<View> view);
-
-  /**
-     Removes all renderers and, if recursive is set to true, also
-     renderers added to sub dispatchers.
-  */
-  void clearRenderers(bool recursive = false);
 
   /**
      Updates the texture and returns the ID of the associated GL

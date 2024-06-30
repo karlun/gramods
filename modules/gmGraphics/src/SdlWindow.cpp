@@ -289,6 +289,11 @@ bool SdlWindow::processEvent(SDL_Event& event) {
   }
 }
 
+void SdlWindow::traverse(Visitor *visitor) {
+  Window::traverse(visitor);
+  if (context) context->accept(visitor);
+}
+
 END_NAMESPACE_GMGRAPHICS;
 
 #endif

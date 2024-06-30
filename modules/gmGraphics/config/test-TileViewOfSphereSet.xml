@@ -1,0 +1,57 @@
+<config>
+
+  <ImportLibrary library="gmGraphics"/>
+
+  <SdlWindow
+      size="900 900"
+      title="Spatial"
+      GLMajor="3" GLMinor="3">
+
+    <SdlContext
+        DEF="SDLContext"
+        useVideo="1"/>
+
+    <SphereSceneRenderer
+        sphereRadius="0.1"
+        sphereSetRadius="2.0"/>
+
+    <TiledView>
+
+      <param name="tileLocation" value="0 0 1 1"/>
+      <SpatialPlanarView
+          topLeftCorner="-2.0 2.0 0.0"
+          bottomRightCorner="2.0 -2.0 0.0"
+          upDirection="0.0 1.0 0.0">
+        <Viewpoint
+            position="0.0 0.0 3.0"/>
+      </SpatialPlanarView>
+
+      <param name="tileLocation" value="0 1 1 1"/>
+      <SpatialPlanarView
+          topLeftCorner="0.0 2.0 -2.0"
+          bottomRightCorner="0.0 -2.0 2.0"
+          upDirection="0.0 1.0 0.0">
+        <Viewpoint
+            position="-3.0 0.0 0.0"/>
+      </SpatialPlanarView>
+
+      <param name="tileLocation" value="1 0 1 1"/>
+      <SpatialPlanarView
+          topLeftCorner="-2.0 0.0 -2.0"
+          bottomRightCorner="2.0 0.0 2.0"
+          upDirection="0.0 0.0 -1.0">
+        <Viewpoint
+            position="0.0 3.0 0.0"/>
+      </SpatialPlanarView>
+
+      <param name="tileLocation" value="1 1 1 1"/>
+      <PosedPlanarView
+          fieldOfView="1 -1">
+        <Viewpoint
+            position="2.0 2.0 2.0"
+            lookAt="0.0 0.0 0.0"/>
+      </PosedPlanarView>
+   </TiledView>
+  </SdlWindow>
+
+</config>

@@ -167,6 +167,10 @@ void OpenVRPoseTracker::setOpenVR(std::shared_ptr<gmCore::OpenVR> openvr) {
   _impl->openvr = openvr;
 }
 
+void OpenVRPoseTracker::traverse(Visitor *visitor) {
+  if (_impl->openvr) _impl->openvr->accept(visitor);
+}
+
 END_NAMESPACE_GMTRACK;
 
 #endif

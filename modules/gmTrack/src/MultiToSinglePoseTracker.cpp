@@ -31,4 +31,8 @@ bool MultiToSinglePoseTracker::getPose(PoseSample &p) {
   return true;
 }
 
+void MultiToSinglePoseTracker::traverse(Visitor *visitor) {
+  if (tracker) tracker->accept(visitor);
+}
+
 END_NAMESPACE_GMTRACK;

@@ -1,6 +1,7 @@
 
 #include <gmGraphics/PosedPlanarView.hh>
 #include <gmCore/RunOnce.hh>
+#include <gmCore/Console.hh>
 
 #include <GL/glew.h>
 #include <GL/gl.h>
@@ -89,11 +90,7 @@ void PosedPlanarView::Impl::renderFullPipeline(ViewSettings settings,
 
   camera.setPose(x_VP, q_VP);
 
-  float near, far;
-  Renderer::getNearFar(settings.renderers, camera, near, far);
-
-  for (auto renderer : settings.renderers)
-    renderer->render(camera, near, far);
+  settings.renderNodes(camera);
 }
 
 END_NAMESPACE_GMGRAPHICS;

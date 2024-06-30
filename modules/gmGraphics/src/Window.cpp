@@ -7,7 +7,7 @@
 
 BEGIN_NAMESPACE_GMGRAPHICS;
 
-GM_OFI_DEFINE_ABSTRACT_SUB(Window, RendererDispatcher);
+GM_OFI_DEFINE_ABSTRACT_SUB(Window, ViewBase);
 GM_OFI_PARAM2(Window, fullscreen, bool, setFullscreen);
 GM_OFI_PARAM2(Window, display, size_t, setDisplay);
 GM_OFI_PARAM2(Window, title, std::string, setTitle);
@@ -44,8 +44,7 @@ void Window::renderFullPipeline(ViewSettings settings) {
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
     Camera c(settings);
-    for (auto renderer : settings.renderers)
-      renderer->render(c);
+    settings.renderNodes(c);
   }
   glFlush();
 }
@@ -67,16 +66,14 @@ void Window::removeEventHandler(void *tag) {
   event_handlers.erase(tag);
 }
 
-void Window::clearRenderers(bool recursive) {
-  if (recursive)
-    for (auto view : views)
-      view->clearRenderers(recursive);
-  RendererDispatcher::clearRenderers(recursive);
-}
-
 void Window::sync() {
   makeGLContextCurrent();
   glFinish();
+}
+
+void Window::traverse(Visitor *visitor) {
+  ViewBase::traverse(visitor);
+  for (auto &v : views) v->accept(visitor);
 }
 
 END_NAMESPACE_GMGRAPHICS;

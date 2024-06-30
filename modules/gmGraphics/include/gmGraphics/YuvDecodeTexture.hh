@@ -6,8 +6,8 @@
 #include <gmGraphics/Texture.hh>
 
 #include <gmCore/OFactory.hh>
-#include <gmCore/float.hh>
-#include <gmCore/eigen.hh>
+#include <gmCore/io_float.hh>
+#include <gmCore/io_eigen.hh>
 
 #include <memory>
 
@@ -61,6 +61,13 @@ public:
      \gmXmlTag{gmGraphics,YuvDecodeTexture,uvRange}
   */
   void setUvRange(gmCore::float2 v);
+
+  /**
+     Propagates the specified visitor.
+
+     @see Object::Visitor
+  */
+  void traverse(Visitor *visitor) override;
 
   GM_OFI_DECLARE;
 

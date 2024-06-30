@@ -6,7 +6,7 @@
 
 #ifdef gramods_ENABLE_OpenCV_objdetect
 
-#include <gmCore/eigen.hh>
+#include <gmCore/io_eigen.hh>
 #include <gmCore/OFactory.hh>
 
 #include <Eigen/Eigen>
@@ -71,6 +71,13 @@ public:
      Returns a reference to the board defined by this node.
   */
   cv::Ptr<cv::aruco::Board> getBoard() override;
+
+  /**
+     Propagates the specified visitor.
+
+     @see Object::Visitor
+  */
+  void traverse(Visitor *visitor) override;
 
   GM_OFI_DECLARE;
 

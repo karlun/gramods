@@ -46,7 +46,7 @@ struct TextureRenderer::Impl {
 
   ~Impl();
 
-  void render(size_t frame_number, TextureInterface *tex, Camera &camera);
+  void render(const Camera &cam, TextureInterface *tex);
   void setup();
 
   GLuint vertex_shader_id = 0;
@@ -63,14 +63,22 @@ struct TextureRenderer::Impl {
 TextureRenderer::TextureRenderer()
   : _impl(new Impl) {}
 
-void TextureRenderer::render(Camera camera, float, float) {
+void TextureRenderer::render(const Camera &camera, const Eigen::Affine3f &Mm) {
   if (!eyes.empty() && eyes.count(camera.getEye()) == 0) return;
-  _impl->render(camera.frame_number, texture.get(), camera);
+  _impl->render(camera, texture.get());
 }
 
-void TextureRenderer::getNearFar(Camera, float &, float &) {}
+void TextureRenderer::getNearFar(const Camera &camera,
+                                 const Eigen::Affine3f &Mm,
+                                 float &near,
+                                 float &far) {
+  // Some value, to avoid culling away
+  near = 1e3 * std::numeric_limits<float>::epsilon();
+  far = 1e6 * std::numeric_limits<float>::epsilon();
+}
 
-void TextureRenderer::Impl::render(size_t frame_number, TextureInterface *texture, Camera &cam) {
+void TextureRenderer::Impl::render(const Camera &cam,
+                                   TextureInterface *texture) {
   if (!texture) {
     GM_RUNONCE(GM_WRN("TextureRenderer", "No texture to render"));
     return;
@@ -79,7 +87,7 @@ void TextureRenderer::Impl::render(size_t frame_number, TextureInterface *textur
   if (!has_been_setup) setup();
   GM_DBG2("TextureRenderer", "rendering");
 
-  GLuint tex_id = texture->updateTexture(frame_number, cam.getEye());
+  GLuint tex_id = texture->updateTexture(cam.frame_number, cam.getEye());
   if (!tex_id) return;
 
   glDisable(GL_DEPTH_TEST);
@@ -159,6 +167,11 @@ TextureRenderer::Impl::~Impl() {
 
 void TextureRenderer::setFlip(bool flip) {
   _impl->flip = flip;
+}
+
+void TextureRenderer::traverse(Visitor *visitor) {
+  if (auto obj = std::dynamic_pointer_cast<gmCore::Object>(texture))
+    obj->accept(visitor);
 }
 
 END_NAMESPACE_GMGRAPHICS;

@@ -34,6 +34,13 @@ public:
   */
   void setSinglePoseTracker(std::shared_ptr<gmTrack::SinglePoseTracker> t);
 
+  /**
+     Propagates the specified visitor.
+
+     @see Object::Visitor
+  */
+  void traverse(Visitor *visitor) override;
+
   GM_OFI_DECLARE;
 
 protected:

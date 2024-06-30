@@ -2,7 +2,7 @@
 #ifndef GRAMODS_GRAPHICS_POSEDPLANARVIEW
 #define GRAMODS_GRAPHICS_POSEDPLANARVIEW
 
-#include <gmCore/angle.hh>
+#include <gmCore/io_angle.hh>
 #include <gmGraphics/View.hh>
 
 BEGIN_NAMESPACE_GMGRAPHICS;

@@ -4,7 +4,7 @@
 
 #include <gmGraphics/Renderer.hh>
 
-#include <gmCore/eigen.hh>
+#include <gmCore/io_eigen.hh>
 #include <gmCore/OFactory.hh>
 
 BEGIN_NAMESPACE_GMGRAPHICS;
@@ -20,9 +20,14 @@ public:
   ObjRenderer();
 
   /**
+     Called to initialize the Object. This should be called once only!
+  */
+  void initialize() override;
+
+  /**
      Performs rendering of 3D objects in the scene.
   */
-  void render(Camera camera, float near = -1, float far = -1) override;
+  void render(const Camera &camera, const Eigen::Affine3f &Mm) override;
 
   /**
      Extracts the currently optimal near and far plane distances. This
@@ -30,7 +35,10 @@ public:
      need to be rendered with the same near and far planes for correct
      depth testing.
   */
-  void getNearFar(Camera camera, float &near, float &far) override;
+  void getNearFar(const Camera &camera,
+                  const Eigen::Affine3f &Mm,
+                  float &near,
+                  float &far) override;
 
   /**
      Set the obj file to render.
@@ -46,39 +54,6 @@ public:
      \gmXmlTag{gmGraphics,ObjRenderer,recenter}
   */
   void setRecenter(bool on);
-
-  /**
-     Set the position of the object.
-
-     \gmXmlTag{gmGraphics,ObjRenderer,position}
-
-     \sa gramods::operator>>(std::istream &, Eigen::Vector3f &)
-     \sa setTransform
-  */
-  void setPosition(Eigen::Vector3f p);
-
-  /**
-     Set the orientation of the object.
-
-     \gmXmlTag{gmGraphics,ObjRenderer,orientation}
-
-     \sa gramods::operator>>(std::istream &, Eigen::Quaternionf &)
-     \sa setTransform
-  */
-  void setOrientation(Eigen::Quaternionf q);
-
-  /**
-     Set the model matrix of the rendered object. The functions
-     setPosition and setOrientation can also be used to control the
-     transform.
-
-     \gmXmlTag{gmGraphics,ObjRenderer,transform}
-
-     \sa gramods::operator>>(std::istream &, Eigen::Matrix4f &)
-     \sa setPosition
-     \sa setOrientation
-  */
-  void setTransform(Eigen::Matrix4f m);
 
   GM_OFI_DECLARE;
 
