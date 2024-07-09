@@ -2,6 +2,9 @@
 #ifndef GRAMODS_TRACK_REGISTEREDSINGLEPOSETRACKER
 #define GRAMODS_TRACK_REGISTEREDSINGLEPOSETRACKER
 
+// Required before gmCore/OFactory.hh for some compilers
+#include <gmCore/io_eigen.hh>
+
 #include <gmTrack/SinglePoseTracker.hh>
 
 #include <gmCore/OFactory.hh>

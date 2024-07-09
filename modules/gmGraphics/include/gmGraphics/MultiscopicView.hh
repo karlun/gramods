@@ -2,6 +2,9 @@
 #ifndef GRAMODS_GRAPHICS_MULTISCOPICVIEW
 #define GRAMODS_GRAPHICS_MULTISCOPICVIEW
 
+// Required before gmCore/OFactory.hh for some compilers
+#include <gmCore/io_eigen.hh>
+
 #include <gmGraphics/View.hh>
 
 #include <gmGraphics/Eye.hh>

@@ -2,9 +2,10 @@
 #ifndef GRAMODS_GRAPHICS_EQUIRECTANGULARCOORDINATESMAPPER
 #define GRAMODS_GRAPHICS_EQUIRECTANGULARCOORDINATESMAPPER
 
-#include <gmGraphics/CoordinatesMapper.hh>
-
+// Required before gmCore/OFactory.hh for some compilers
 #include <gmCore/io_angle.hh>
+
+#include <gmGraphics/CoordinatesMapper.hh>
 
 #include <GL/glew.h>
 #include <GL/gl.h>

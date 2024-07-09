@@ -6,8 +6,10 @@
 
 #ifdef gramods_ENABLE_OpenCV_objdetect
 
+// Required before gmCore/OFactory.hh for some compilers
 #include <gmCore/io_eigen.hh>
 #include <gmCore/io_float.hh>
+
 #include <gmCore/OFactory.hh>
 
 #include <Eigen/Eigen>

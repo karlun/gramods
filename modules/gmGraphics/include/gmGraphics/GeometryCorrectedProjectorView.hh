@@ -2,13 +2,14 @@
 #ifndef GRAMODS_GRAPHICS_GEOMETRYCORRECTEDPROJECTORVIEW
 #define GRAMODS_GRAPHICS_GEOMETRYCORRECTEDPROJECTORVIEW
 
-#include <gmGraphics/MultiscopicView.hh>
-
-#include <gmGraphics/Geometry.hh>
-
+// Required before gmCore/OFactory.hh for some compilers
 #include <gmCore/io_float.hh>
 #include <gmCore/io_eigen.hh>
 #include <gmCore/io_angle.hh>
+
+#include <gmGraphics/MultiscopicView.hh>
+
+#include <gmGraphics/Geometry.hh>
 
 BEGIN_NAMESPACE_GMGRAPHICS;
 

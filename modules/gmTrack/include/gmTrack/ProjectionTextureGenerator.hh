@@ -6,9 +6,10 @@
 
 #ifdef gramods_ENABLE_FreeImage
 
-#include <gmTrack/SampleCollector.hh>
-
+// Required before gmCore/OFactory.hh for some compilers
 #include <gmCore/io_size.hh>
+
+#include <gmTrack/SampleCollector.hh>
 
 #include <filesystem>
 

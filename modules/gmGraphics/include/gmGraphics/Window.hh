@@ -2,11 +2,12 @@
 #ifndef GRAMODS_GRAPHICS_WINDOW
 #define GRAMODS_GRAPHICS_WINDOW
 
-#include <gmGraphics/ViewBase.hh>
-
+// Required before gmCore/OFactory.hh for some compilers
 #include <gmCore/io_float.hh>
 #include <gmCore/io_int.hh>
 #include <gmCore/io_size.hh>
+
+#include <gmGraphics/ViewBase.hh>
 
 #include <limits>
 

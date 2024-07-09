@@ -2,10 +2,12 @@
 #ifndef GRAMODS_GRAPHICS_FOVPLANARVIEW
 #define GRAMODS_GRAPHICS_FOVPLANARVIEW
 
-#include <gmGraphics/View.hh>
-
+// Required before gmCore/OFactory.hh for some compilers
 #include <gmCore/io_float.hh>
 #include <gmCore/io_angle.hh>
+#include <gmCore/io_eigen.hh>
+
+#include <gmGraphics/View.hh>
 
 BEGIN_NAMESPACE_GMGRAPHICS;
 

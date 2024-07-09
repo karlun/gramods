@@ -2,10 +2,11 @@
 #ifndef GRAMODS_GRAPHICS_TEXTUREWARPEDVIEW
 #define GRAMODS_GRAPHICS_TEXTUREWARPEDVIEW
 
+// Required before gmCore/OFactory.hh for some compilers
+#include <gmCore/io_eigen.hh>
+
 #include <gmGraphics/View.hh>
 #include <gmGraphics/TextureInterface.hh>
-
-#include <gmCore/io_float.hh>
 
 BEGIN_NAMESPACE_GMGRAPHICS;
 

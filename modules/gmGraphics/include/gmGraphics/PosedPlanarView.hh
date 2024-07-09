@@ -2,7 +2,9 @@
 #ifndef GRAMODS_GRAPHICS_POSEDPLANARVIEW
 #define GRAMODS_GRAPHICS_POSEDPLANARVIEW
 
+// Required before gmCore/OFactory.hh for some compilers
 #include <gmCore/io_angle.hh>
+
 #include <gmGraphics/View.hh>
 
 BEGIN_NAMESPACE_GMGRAPHICS;

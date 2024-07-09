@@ -3,11 +3,13 @@
 #ifndef GRAMODS_GRAPHICS_CHROMAKEYTEXTURE
 #define GRAMODS_GRAPHICS_CHROMAKEYTEXTURE
 
+// Required before gmCore/OFactory.hh for some compilers
+#include <gmCore/io_float.hh>
+#include <gmCore/io_eigen.hh>
+
 #include <gmGraphics/Texture.hh>
 
 #include <gmCore/OFactory.hh>
-#include <gmCore/io_float.hh>
-#include <gmCore/io_eigen.hh>
 
 #include <memory>
 

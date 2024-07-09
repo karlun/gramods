@@ -2,6 +2,9 @@
 #ifndef GRAMODS_SOUND_MULTILATERATION
 #define GRAMODS_SOUND_MULTILATERATION
 
+// Required before gmCore/OFactory.hh for some compilers
+#include <gmCore/io_eigen.hh>
+
 #include <gmSound/SoundDetector.hh>
 
 #include <gmCore/Updateable.hh>

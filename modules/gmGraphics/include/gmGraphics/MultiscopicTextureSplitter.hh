@@ -3,11 +3,12 @@
 #ifndef GRAMODS_GRAPHICS_MULTISCOPICTEXTURESPLITTER
 #define GRAMODS_GRAPHICS_MULTISCOPICTEXTURESPLITTER
 
+// Required before gmCore/OFactory.hh for some compilers
+#include <gmCore/io_size.hh>
+
 #include <gmGraphics/Texture.hh>
 
 #include <gmCore/OFactory.hh>
-#include <gmCore/io_float.hh>
-#include <gmCore/io_eigen.hh>
 
 #include <memory>
 

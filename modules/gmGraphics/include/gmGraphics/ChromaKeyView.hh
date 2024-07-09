@@ -2,8 +2,10 @@
 #ifndef GRAMODS_GRAPHICS_CHROMAKEYVIEW
 #define GRAMODS_GRAPHICS_CHROMAKEYVIEW
 
-#include <gmGraphics/View.hh>
+// Required before gmCore/OFactory.hh for some compilers
 #include <gmCore/io_float.hh>
+
+#include <gmGraphics/View.hh>
 
 BEGIN_NAMESPACE_GMGRAPHICS;
 

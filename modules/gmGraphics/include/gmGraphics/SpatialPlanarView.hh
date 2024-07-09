@@ -2,11 +2,12 @@
 #ifndef GRAMODS_GRAPHICS_SPATIALPLANARVIEW
 #define GRAMODS_GRAPHICS_SPATIALPLANARVIEW
 
-#include <gmGraphics/MultiscopicView.hh>
-
+// Required before gmCore/OFactory.hh for some compilers
 #include <gmCore/io_float.hh>
 #include <gmCore/io_eigen.hh>
 #include <gmCore/io_angle.hh>
+
+#include <gmGraphics/MultiscopicView.hh>
 
 BEGIN_NAMESPACE_GMGRAPHICS;
 
