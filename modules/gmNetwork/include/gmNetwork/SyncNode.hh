@@ -4,6 +4,9 @@
 
 #include <gmNetwork/config.hh>
 
+// Required before gmCore/OFactory.hh for some compilers
+#include <gmCore/io_size.hh>
+
 #include <gmNetwork/Protocol.hh>
 
 #include <gmCore/Object.hh>

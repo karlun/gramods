@@ -2,9 +2,10 @@
 #ifndef GRAMODS_GRAPHICS_RECTILINEARCAMERAMODEL
 #define GRAMODS_GRAPHICS_RECTILINEARCAMERAMODEL
 
-#include <gmGraphics/CoordinatesMapper.hh>
-
+// Required before gmCore/OFactory.hh for some compilers
 #include <gmCore/io_float.hh>
+
+#include <gmGraphics/CoordinatesMapper.hh>
 
 #include <GL/glew.h>
 #include <GL/gl.h>

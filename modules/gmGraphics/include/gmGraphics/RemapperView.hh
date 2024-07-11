@@ -2,11 +2,12 @@
 #ifndef GRAMODS_GRAPHICS_REMAPPERVIEW
 #define GRAMODS_GRAPHICS_REMAPPERVIEW
 
-#include <gmGraphics/View.hh>
-#include <gmGraphics/CoordinatesMapper.hh>
-
+// Required before gmCore/OFactory.hh for some compilers
 #include <gmCore/io_float.hh>
 #include <gmCore/io_angle.hh>
+
+#include <gmGraphics/View.hh>
+#include <gmGraphics/CoordinatesMapper.hh>
 
 BEGIN_NAMESPACE_GMGRAPHICS;
 

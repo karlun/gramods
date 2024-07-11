@@ -2,6 +2,9 @@
 #ifndef GRAMODS_TRACK_REGISTEREDMULTIPOSETRACKER
 #define GRAMODS_TRACK_REGISTEREDMULTIPOSETRACKER
 
+// Required before gmCore/OFactory.hh for some compilers
+#include <gmCore/io_eigen.hh>
+
 #include <gmTrack/MultiPoseTracker.hh>
 
 #include <gmCore/OFactory.hh>

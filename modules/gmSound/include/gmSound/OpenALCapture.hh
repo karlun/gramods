@@ -2,6 +2,9 @@
 #ifndef GRAMODS_SOUND_OPENALCAPTURE
 #define GRAMODS_SOUND_OPENALCAPTURE
 
+// Required before gmCore/OFactory.hh for some compilers
+#include <gmCore/io_size.hh>
+
 #include <gmSound/Capture.hh>
 
 #include <memory>

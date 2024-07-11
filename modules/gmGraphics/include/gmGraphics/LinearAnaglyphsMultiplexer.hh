@@ -2,9 +2,10 @@
 #ifndef GRAMODS_GRAPHICS_LINEARANAGLYPHSMULTIPLEXER
 #define GRAMODS_GRAPHICS_LINEARANAGLYPHSMULTIPLEXER
 
-#include <gmGraphics/MultiscopicMultiplexer.hh>
-
+// Required before gmCore/OFactory.hh for some compilers
 #include <gmCore/io_float.hh>
+
+#include <gmGraphics/MultiscopicMultiplexer.hh>
 
 BEGIN_NAMESPACE_GMGRAPHICS;
 

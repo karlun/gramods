@@ -43,6 +43,7 @@ namespace gramods {
 #cmakedefine HAVE_tinyobjloader
 #ifdef HAVE_tinyobjloader
 #cmakedefine gramods_ENABLE_tinyobjloader
+#cmakedefine TINYOBJLOADER_USE_MAPBOX_EARCUT
 #endif
 
 #cmakedefine HAVE_OpenSceneGraph

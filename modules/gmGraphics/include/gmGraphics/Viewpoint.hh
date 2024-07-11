@@ -5,6 +5,7 @@
 #include <gmGraphics/config.hh>
 #include <gmGraphics/Eye.hh>
 
+// Required before gmCore/OFactory.hh for some compilers
 #include <gmCore/io_eigen.hh>
 
 #include <gmCore/Object.hh>

@@ -2,7 +2,9 @@
 #ifndef GRAMODS_GRAPHICS_PLANEGEOMETRY
 #define GRAMODS_GRAPHICS_PLANEGEOMETRY
 
+// Required before gmCore/OFactory.hh for some compilers
 #include <gmCore/io_eigen.hh>
+
 #include <gmGraphics/Geometry.hh>
 
 BEGIN_NAMESPACE_GMGRAPHICS;

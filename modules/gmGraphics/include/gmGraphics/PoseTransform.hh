@@ -2,6 +2,9 @@
 #ifndef GRAMODS_GRAPHICS_POSETRANSFORM
 #define GRAMODS_GRAPHICS_POSETRANSFORM
 
+// Required before gmCore/OFactory.hh for some compilers
+#include <gmCore/io_eigen.hh>
+
 #include <gmGraphics/Transform.hh>
 
 BEGIN_NAMESPACE_GMGRAPHICS;

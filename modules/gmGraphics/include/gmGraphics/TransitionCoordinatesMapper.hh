@@ -2,10 +2,11 @@
 #ifndef GRAMODS_GRAPHICS_TRANSITIONCOORDINATESMAPPER
 #define GRAMODS_GRAPHICS_TRANSITIONCOORDINATESMAPPER
 
-#include <gmGraphics/CoordinatesMapper.hh>
-
+// Required before gmCore/OFactory.hh for some compilers
 #include <gmCore/io_float.hh>
 #include <gmCore/io_size.hh>
+
+#include <gmGraphics/CoordinatesMapper.hh>
 
 #include <GL/glew.h>
 #include <GL/gl.h>

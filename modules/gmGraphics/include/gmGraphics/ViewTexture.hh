@@ -2,10 +2,12 @@
 #ifndef GRAMODS_GRAPHICS_VIEWTEXTURE
 #define GRAMODS_GRAPHICS_VIEWTEXTURE
 
+// Required before gmCore/OFactory.hh for some compilers
+#include <gmCore/io_size.hh>
+
 #include <gmGraphics/View.hh>
 #include <gmGraphics/TextureInterface.hh>
 
-#include <gmCore/io_size.hh>
 
 BEGIN_NAMESPACE_GMGRAPHICS;
 

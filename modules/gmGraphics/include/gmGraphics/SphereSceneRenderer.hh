@@ -2,9 +2,11 @@
 #ifndef GRAMODS_GRAPHICS_SPHERESCENERENDERER
 #define GRAMODS_GRAPHICS_SPHERESCENERENDERER
 
+// Required before gmCore/OFactory.hh for some compilers
+#include <gmCore/io_eigen.hh>
+
 #include <gmGraphics/Renderer.hh>
 
-#include <gmCore/io_eigen.hh>
 #include <gmCore/OFactory.hh>
 
 BEGIN_NAMESPACE_GMGRAPHICS;

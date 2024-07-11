@@ -2,9 +2,10 @@
 #ifndef GRAMODS_GRAPHICS_TILEDVIEW
 #define GRAMODS_GRAPHICS_TILEDVIEW
 
-#include <gmGraphics/View.hh>
-
+// Required before gmCore/OFactory.hh for some compilers
 #include <gmCore/io_size.hh>
+
+#include <gmGraphics/View.hh>
 
 BEGIN_NAMESPACE_GMGRAPHICS;
 
