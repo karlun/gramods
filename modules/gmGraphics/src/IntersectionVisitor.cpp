@@ -5,8 +5,8 @@ BEGIN_NAMESPACE_GMGRAPHICS;
 
 void IntersectionVisitor::apply(gmCore::Object *obj) {
   if (auto *node = dynamic_cast<Node *>(obj)) {
-    Node::TransformStackVisitor::apply(obj);
     node_path.push_back(node);
+    Node::TransformStackVisitor::apply(obj);
 
     auto line = this->line.getInSpace(stack.back());
     auto ratio_list = node->getIntersections(line);
