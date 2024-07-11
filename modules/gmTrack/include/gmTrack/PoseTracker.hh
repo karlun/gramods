@@ -24,6 +24,10 @@ public:
     Eigen::Vector3f position;
     Eigen::Quaternionf orientation;
     clock::time_point time;
+
+    Eigen::Affine3f asMatrix() const {
+      return Eigen::Translation3f(position) * orientation;
+    }
   };
 };
 

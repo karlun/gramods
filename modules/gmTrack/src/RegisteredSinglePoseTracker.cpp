@@ -73,10 +73,7 @@ bool RegisteredSinglePoseTracker::Impl::getPose(PoseSample &p) {
   PoseSample reg_pose;
   reg_pose.time = raw_pose.time;
 
-  Eigen::Affine3f M = Eigen::Affine3f::Identity();
-  M *= Eigen::Translation3f(raw_pose.position);
-  M *= raw_pose.orientation;
-
+  const Eigen::Affine3f M = raw_pose.asMatrix();
   reg_pose.position = (reg_matrix * M.matrix() * bias_matrix).block<3, 1>(0, 3);
   reg_pose.orientation = reg_rotation * raw_pose.orientation * bias_rotation;
 
