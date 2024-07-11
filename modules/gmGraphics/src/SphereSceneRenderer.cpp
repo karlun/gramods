@@ -18,6 +18,7 @@ BEGIN_NAMESPACE_GMGRAPHICS;
 GM_OFI_DEFINE_SUB(SphereSceneRenderer, Renderer);
 GM_OFI_PARAM2(SphereSceneRenderer, sphereRadius, float, setSphereRadius);
 GM_OFI_PARAM2(SphereSceneRenderer, sphereSetRadius, float, setSphereSetRadius);
+GM_OFI_PARAM2(SphereSceneRenderer, fillRatio, float, setFillRatio);
 GM_OFI_PARAM2(SphereSceneRenderer, color, Eigen::Vector3f, setColor);
 
 #define N_VERTICES 108
@@ -42,6 +43,7 @@ struct SphereSceneRenderer::Impl {
 
   float sphere_radius = 0.1f;
   float sphere_set_radius = 1.0f;
+  float fill_ratio = 0.5;
   Eigen::Vector3f position = Eigen::Vector3f::Zero();
   Eigen::Vector3f color = Eigen::Vector3f::Ones();
   std::vector<Eigen::Vector3f> set_positions;
@@ -211,7 +213,7 @@ void SphereSceneRenderer::Impl::setup() {
   indices = { 2, 5, 0, 2, 1, 5, 2, 4, 1, 2, 0, 4,
               3, 0, 5, 3, 5, 1, 3, 1, 4, 3, 4, 0 };
 
-  float necessary_spheres = 1.0f * sphere_set_radius / sphere_radius;
+  float necessary_spheres = fill_ratio * sphere_set_radius / sphere_radius;
   size_t refs =
       (size_t)(std::max(0.f, std::min(14.f, std::log2(necessary_spheres) - 2)));
 
@@ -365,6 +367,10 @@ void SphereSceneRenderer::setSphereRadius(float d) {
 
 void SphereSceneRenderer::setSphereSetRadius(float d) {
   _impl->sphere_set_radius = d;
+}
+
+void SphereSceneRenderer::setFillRatio(float r) {
+  _impl->fill_ratio = r;
 }
 
 void SphereSceneRenderer::setColor(Eigen::Vector3f c) {

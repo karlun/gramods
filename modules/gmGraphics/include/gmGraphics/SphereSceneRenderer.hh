@@ -53,6 +53,14 @@ public:
   void setSphereSetRadius(float r);
 
   /**
+     Sets how large portion (approximately) of the space that should
+     be covered by spheres.
+
+     \gmXmlTag{gmGraphics,SphereSceneRenderer,fillRatio}
+  */
+  void setFillRatio(float r);
+
+  /**
      Sets the color of the spheres in the set. Shading will be added.
 
      \sa gramods::operator>>(std::istream &, Eigen::Vector3f &)
