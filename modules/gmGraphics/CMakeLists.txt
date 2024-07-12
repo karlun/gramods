@@ -200,6 +200,8 @@ INSTALL(EXPORT Gramods-gmGraphics-targets
 
 INSTALL(DIRECTORY config/
   DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/gramods/gmGraphics/config)
+INSTALL(DIRECTORY resources/
+  DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/gramods/gmGraphics/resources)
 
 LIST(APPEND gramods_LIB_TARGET_FILES "$<TARGET_FILE:gmGraphics>")
 SET(gramods_LIB_TARGET_FILES ${gramods_LIB_TARGET_FILES} PARENT_SCOPE)

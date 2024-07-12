@@ -5,7 +5,7 @@
   <ObjRenderer
       DEF="OBJ"
       recenter="false"
-      file="model.obj"/>
+      file="urn:gramods:gmGraphics/resources/axes.obj"/>
 
   <SdlWindow
       size="900 900"

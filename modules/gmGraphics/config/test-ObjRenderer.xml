@@ -13,7 +13,7 @@
 
     <ObjRenderer
         recenter="true"
-        file="model.obj"/>
+        file="urn:gramods:gmGraphics/resources/axes.obj"/>
 
     <TiledView>
 
