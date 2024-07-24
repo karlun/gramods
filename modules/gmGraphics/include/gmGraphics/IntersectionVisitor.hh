@@ -21,7 +21,6 @@ struct IntersectionVisitor : Node::TransformStackVisitor {
      Data associated with an intersection.
   */
   struct Intersection {
-    const float ratio;
     /**
        The position of the intersection in the local space of the node
        where the intersection was detected.
