@@ -28,6 +28,11 @@ public:
   void setMatrix(Eigen::Matrix4f m);
 
   /**
+     Returns the matrix of the childrens' space.
+  */
+  Eigen::Matrix4f getMatrix() const;
+
+  /**
      \sa Transform::getTransform
   */
   Eigen::Affine3f getTransform() override;
