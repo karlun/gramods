@@ -4,7 +4,6 @@
 #ifdef gramods_ENABLE_tinyobjloader
 
 #include <gmGraphics/AABB.hh>
-#include <gmGraphics/ImageTexture.hh>
 #include <gmGraphics/GLUtils.hh>
 
 #include <gmCore/Console.hh>
@@ -36,21 +35,6 @@ struct ObjRenderer::Impl {
   };
 
   typedef std::unordered_map<std::array<int, 3>, size_t, MyHash> index_map_t;
-
-  struct Material {
-
-    Eigen::Vector3f color_ambient;
-    Eigen::Vector3f color_diffuse;
-    Eigen::Vector3f color_specular;
-    Eigen::Vector3f color_emissive;
-
-    float shininess;
-
-    std::shared_ptr<gmGraphics::ImageTexture> texture_ambient = 0;
-    std::shared_ptr<gmGraphics::ImageTexture> texture_diffuse = 0;
-    std::shared_ptr<gmGraphics::ImageTexture> texture_specular = 0;
-    std::shared_ptr<gmGraphics::ImageTexture> texture_emissive = 0;
-  };
 
   ~Impl();
 
@@ -114,6 +98,7 @@ struct ObjRenderer::Impl {
   std::vector<GLfloat> tcoords;
   std::vector<GLint> mtls;
 
+  std::vector<float> getIntersections(const IntersectionLine &line);
   std::optional<AABB> bounds;
 
   std::filesystem::path file;
@@ -126,6 +111,7 @@ struct ObjRenderer::Impl {
 
 ObjRenderer::ObjRenderer()
   : _impl(std::make_unique<Impl>()) {}
+ObjRenderer::~ObjRenderer() {}
 
 void ObjRenderer::initialize() {
   Renderer::initialize();
@@ -562,7 +548,7 @@ void ObjRenderer::Impl::addTriangle(std::vector<GLfloat> &vertices,
   triangle_indices.emplace_back(std::move(shape_indices));
 }
 
-ObjRenderer::Impl::Material
+ObjRenderer::Material
 ObjRenderer::Impl::makeMaterial(const tinyobj::material_t &mat) {
 
   Material res = {{mat.ambient[0], mat.ambient[1], mat.ambient[2]},
@@ -744,6 +730,32 @@ void ObjRenderer::setFile(std::filesystem::path file) {
 void ObjRenderer::setRecenter(bool on) {
   if (_impl->recenter == on) return;
   _impl->recenter = on;
+}
+
+std::vector<ObjRenderer::Material> ObjRenderer::getMaterials() const {
+  return _impl->materials;
+}
+
+void ObjRenderer::setMaterials(
+    const std::vector<ObjRenderer::Material> &materials) {
+  if (materials.size() != _impl->materials.size())
+    throw gmCore::InvalidArgument("Wrong number of materials");
+
+  _impl->materials = materials;
+}
+
+std::vector<float> ObjRenderer::getIntersections(const IntersectionLine &line) {
+  return _impl->getIntersections(line);
+}
+
+std::vector<float>
+ObjRenderer::Impl::getIntersections(const IntersectionLine &line) {
+  if (!bounds) return {};
+  auto bounds_intersections = bounds->getIntersections(line);
+  if (bounds_intersections.empty()) return {};
+
+  // TODO: Check triangle intersection
+  return bounds_intersections;
 }
 
 END_NAMESPACE_GMGRAPHICS;
