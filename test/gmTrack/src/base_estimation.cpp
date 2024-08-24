@@ -1,5 +1,5 @@
 
-#include <gmTrack/PoseRegistrationEstimator.hh>
+#include <gmTrack/TrackerRegistrationEstimator.hh>
 
 #include <gmTrack/TimeSamplePoseTracker.hh>
 #include <gmTrack/TimeSampleButtonsTracker.hh>
@@ -49,7 +49,7 @@ TEST(gmTrackBaseEstimation, FullSamplesByInverse) {
     controller->setButtonsTracker(ts_buttons_tracker);
     controller->initialize();
 
-    auto registrator = std::make_shared<gmTrack::PoseRegistrationEstimator>();
+    auto registrator = std::make_shared<gmTrack::TrackerRegistrationEstimator>();
     registrator->setController(controller);
     registrator->initialize();
 
@@ -134,7 +134,7 @@ TEST(gmTrackBaseEstimation, OverDeterminedSamplesByQR) {
     controller->setButtonsTracker(ts_buttons_tracker);
     controller->initialize();
 
-    auto registrator = std::make_shared<gmTrack::PoseRegistrationEstimator>();
+    auto registrator = std::make_shared<gmTrack::TrackerRegistrationEstimator>();
     registrator->setController(controller);
     registrator->initialize();
 
@@ -242,7 +242,7 @@ TEST(gmTrackBaseEstimation, RandomTesting) {
                                    real_random(random_engine),
                                    real_random(random_engine)});
 
-    gmTrack::PoseRegistrationEstimator registrator;
+    gmTrack::TrackerRegistrationEstimator registrator;
     for (auto &pt : tracker_positions) {
       registrator.addTrackerPosition(pt);
       registrator.addActualPosition(

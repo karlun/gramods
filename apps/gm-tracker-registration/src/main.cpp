@@ -9,7 +9,7 @@
 
 #include <gmCore/io_eigen.hh>
 #include <gmTrack/Controller.hh>
-#include <gmTrack/PoseRegistrationEstimator.hh>
+#include <gmTrack/TrackerRegistrationEstimator.hh>
 
 #include <tclap/CmdLine.h>
 
@@ -295,8 +295,8 @@ int main(int argc, char *argv[]) {
     osms->initialize();
   }
 
-  std::shared_ptr<gmTrack::PoseRegistrationEstimator> registrator =
-    std::make_shared<gmTrack::PoseRegistrationEstimator>();
+  std::shared_ptr<gmTrack::TrackerRegistrationEstimator> registrator =
+    std::make_shared<gmTrack::TrackerRegistrationEstimator>();
   registrator->setInlierThreshold(arg_pos_inlier.getValue());
   registrator->setOrientationInlierThreshold(arg_ori_inlier.getValue());
 

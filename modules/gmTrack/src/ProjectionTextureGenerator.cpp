@@ -3,7 +3,7 @@
 
 #ifdef gramods_ENABLE_FreeImage
 
-#include <gmTrack/SampleCollector.impl.hh>
+#include <gmTrack/PoseSampleCollector.impl.hh>
 
 #include <gmTrack/ButtonsMapper.hh>
 
@@ -23,11 +23,11 @@
 
 BEGIN_NAMESPACE_GMTRACK;
 
-GM_OFI_DEFINE_SUB(ProjectionTextureGenerator, SampleCollector);
+GM_OFI_DEFINE_SUB(ProjectionTextureGenerator, PoseSampleCollector);
 GM_OFI_PARAM2(ProjectionTextureGenerator, bufferPosition, Eigen::Vector2f, addBufferPosition);
 GM_OFI_PARAM2(ProjectionTextureGenerator, region, size_t, addRegion);
 
-struct ProjectionTextureGenerator::Impl : SampleCollector::Impl {
+struct ProjectionTextureGenerator::Impl : PoseSampleCollector::Impl {
 
   typedef gmCore::Updateable::clock clock;
 
@@ -50,7 +50,7 @@ struct ProjectionTextureGenerator::Impl : SampleCollector::Impl {
 };
 
 ProjectionTextureGenerator::ProjectionTextureGenerator()
-  : SampleCollector(new Impl) {}
+  : PoseSampleCollector(new Impl) {}
 
 ProjectionTextureGenerator::~ProjectionTextureGenerator() {}
 
@@ -60,7 +60,7 @@ ProjectionTextureGenerator::~ProjectionTextureGenerator() {}
 
 void ProjectionTextureGenerator::Impl::update(clock::time_point now) {
 
-  SampleCollector::Impl::update(now);
+  PoseSampleCollector::Impl::update(now);
   if (tracker_positions.size() < total_region_positions_count) return;
 
   GM_INF("ProjectionTextureGenerator",

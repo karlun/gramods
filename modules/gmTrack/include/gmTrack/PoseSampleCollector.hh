@@ -1,6 +1,6 @@
 
-#ifndef GM_TRACK_SAMPLECOLLECTOR
-#define GM_TRACK_SAMPLECOLLECTOR
+#ifndef GM_TRACK_POSESAMPLECOLLECTOR
+#define GM_TRACK_POSESAMPLECOLLECTOR
 
 #include <gmTrack/config.hh>
 
@@ -12,9 +12,9 @@
 BEGIN_NAMESPACE_GMTRACK;
 
 /**
-   The SampleCollector is a utility for sampling tracker data.
+   The PoseSampleCollector is a utility for sampling tracker data.
 */
-class SampleCollector
+class PoseSampleCollector
   : public gmCore::Object,
     public gmCore::Updateable {
 
@@ -23,8 +23,8 @@ protected:
   std::unique_ptr<Impl> _impl;
 
 public:
-  SampleCollector(Impl *impl = nullptr);
-  ~SampleCollector();
+  PoseSampleCollector(Impl *impl = nullptr);
+  ~PoseSampleCollector();
 
   /**
      Updates the internal states. Automatically called via
@@ -35,21 +35,21 @@ public:
   /**
      Sets the controller to use for reading tracker samples.
 
-     \gmXmlTag{gmTrack,SampleCollector,controller}
+     \gmXmlTag{gmTrack,PoseSampleCollector,controller}
   */
   void setController(std::shared_ptr<Controller> controller);
 
   /**
      Adds a tracker position.
 
-     \gmXmlTag{gmTrack,SampleCollector,trackerPosition}
+     \gmXmlTag{gmTrack,PoseSampleCollector,trackerPosition}
   */
   void addTrackerPosition(Eigen::Vector3f p);
 
   /**
      Adds a tracker orientation.
 
-     \gmXmlTag{gmTrack,SampleCollector,trackerOrientation}
+     \gmXmlTag{gmTrack,PoseSampleCollector,trackerOrientation}
   */
   void addTrackerOrientation(Eigen::Quaternionf o);
 
@@ -58,7 +58,7 @@ public:
      controller button is pressed. Default is 1. At most one sample
      per frame will be used regardless of this value.
 
-     \gmXmlTag{gmTrack,SampleCollector,samplesPerSecond}
+     \gmXmlTag{gmTrack,PoseSampleCollector,samplesPerSecond}
   */
   void setSamplesPerSecond(float n);
 
@@ -66,7 +66,7 @@ public:
      Sets the data offset required to trigger a warning. Default is
      0.01, i.e. one cm.
 
-     \gmXmlTag{gmTrack,SampleCollector,warningThreshold}
+     \gmXmlTag{gmTrack,PoseSampleCollector,warningThreshold}
   */
   void setWarningThreshold(float d);
 
@@ -81,7 +81,7 @@ public:
      Sets the data offset required to trigger a warning. Default is
      π/4 radians.
 
-     \gmXmlTag{gmTrack,SampleCollector,orientationWarningThreshold}
+     \gmXmlTag{gmTrack,PoseSampleCollector,orientationWarningThreshold}
   */
   void setOrientationWarningThreshold(float d);
 

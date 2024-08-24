@@ -1,6 +1,4 @@
 
-#include <gmTrack/PoseRegistrationEstimator.hh>
-
 #include <gmTrack/TimeSampleButtonsTracker.hh>
 #include <gmTrack/TimeSampleAnalogsTracker.hh>
 #include <gmTrack/ButtonsMapper.hh>

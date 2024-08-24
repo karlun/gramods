@@ -3,7 +3,7 @@
 
 BEGIN_NAMESPACE_GMTRACK;
 
-struct SampleCollector::Impl {
+struct PoseSampleCollector::Impl {
 
   typedef gmCore::Updateable::clock clock;
 

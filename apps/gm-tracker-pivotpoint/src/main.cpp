@@ -9,7 +9,7 @@
 #include <gmCore/TimeTools.hh>
 
 #include <gmCore/io_eigen.hh>
-#include <gmTrack/SampleCollector.hh>
+#include <gmTrack/PoseSampleCollector.hh>
 
 #include <tclap/CmdLine.h>
 
@@ -98,8 +98,8 @@ int main(int argc, char *argv[]) {
     return 3;
   }
 
-  std::shared_ptr<gmTrack::SampleCollector> collector =
-      std::make_shared<gmTrack::SampleCollector>();
+  std::shared_ptr<gmTrack::PoseSampleCollector> collector =
+      std::make_shared<gmTrack::PoseSampleCollector>();
   collector->setController(controller);
   collector->setInlierThreshold(arg_pos_inlier.getValue());
   collector->setOrientationInlierThreshold(arg_ori_inlier.getValue());
@@ -158,7 +158,7 @@ int main(int argc, char *argv[]) {
 
   float stddev, maxdev;
   size_t inlier_count;
-  Eigen::Vector3f pt = gmTrack::SampleCollector::getAverage(
+  Eigen::Vector3f pt = gmTrack::PoseSampleCollector::getAverage(
       rel_pts, &stddev, &maxdev, arg_pos_inlier.getValue(), &inlier_count);
 
   std::cout << "Estimated absolute pivot point: " << pt.transpose()
