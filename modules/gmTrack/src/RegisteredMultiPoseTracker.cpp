@@ -10,7 +10,7 @@
 BEGIN_NAMESPACE_GMTRACK;
 
 GM_OFI_DEFINE(RegisteredMultiPoseTracker);
-GM_OFI_POINTER2(RegisteredMultiPoseTracker, singlePoseTracker, MultiPoseTracker, setMultiPoseTracker);
+GM_OFI_POINTER2(RegisteredMultiPoseTracker, multiPoseTracker, MultiPoseTracker, setMultiPoseTracker);
 GM_OFI_PARAM2(RegisteredMultiPoseTracker, registrationMatrix, Eigen::Matrix4f, setRegistrationMatrix);
 GM_OFI_PARAM2(RegisteredMultiPoseTracker, biasMatrix, Eigen::Matrix4f, setBiasMatrix);
 GM_OFI_PARAM2(RegisteredMultiPoseTracker, positionBias, Eigen::Vector3f, setPositionBias);

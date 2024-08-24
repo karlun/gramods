@@ -25,6 +25,8 @@ public:
 
   /**
      Sets the MultiPoseTracker to register data from.
+
+     \gmXmlTag{gmTrack,RegisteredMultiPoseTracker,multiPoseTracker}
   */
   void setMultiPoseTracker(std::shared_ptr<MultiPoseTracker> tracker);
 
