@@ -191,7 +191,7 @@ PoseSampleCollector::getAverage(std::vector<Eigen::Vector3f> samples,
 
   Eigen::Vector3f x;
 
-  if (inlier_dist == std::numeric_limits<float>::max()) {
+  if (inlier_dist <= 0.f || inlier_dist == std::numeric_limits<float>::max()) {
     x = Eigen::Vector3f::Zero();
     for (auto p : samples) x += p;
     x *= (1.0 / samples.size());
@@ -290,7 +290,8 @@ PoseSampleCollector::getAverage(std::vector<Eigen::Quaternionf> samples,
 
     x = Eigen::Quaternionf(V[0], V[1], V[2], V[3]);
 
-    if (inlier_dist <= 0.f) break;
+    if (inlier_dist <= 0.f || inlier_dist == std::numeric_limits<float>::max())
+      break;
     if (samples.size() == 1) break;
 
     size_t worst_idx = 0;
