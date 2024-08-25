@@ -261,14 +261,12 @@ PoseSampleCollector::getAverage(std::vector<Eigen::Quaternionf> samples,
 
   Eigen::Quaternionf x;
   while (true) {
-    float s = 1.f / samples.size();
-
     Eigen::MatrixXf Qm(4, samples.size());
     for (size_t idx = 0; idx < samples.size(); ++idx) {
       Eigen::MatrixXf Q(4, 1);
       Q << samples[idx].w(), samples[idx].x(), samples[idx].y(),
           samples[idx].z();
-      Qm.col(idx) = s * Q;
+      Qm.col(idx) = Q;
     }
 
     Eigen::EigenSolver<Eigen::MatrixXf> solver(Qm * Qm.transpose());
