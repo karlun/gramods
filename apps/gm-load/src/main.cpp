@@ -23,6 +23,15 @@
 #include <cxxabi.h>
 #endif
 
+#include <signal.h>
+
+namespace {
+bool alive = true;
+void signal_handler(int s) {
+  alive = false;
+}
+}
+
 using namespace gramods;
 
 namespace {
@@ -193,8 +202,11 @@ int main(int argc, char *argv[]) {
 
   int exit_code = 0;
 
+  signal(SIGINT, signal_handler);
+  signal(SIGTERM, signal_handler);
+  signal(SIGQUIT, signal_handler);
+
   try {
-    bool alive = true;
     while (alive) {
 
       alive = windows.empty();

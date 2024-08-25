@@ -30,10 +30,9 @@ bool RelativeSinglePoseTracker::getPose(PoseSample &p) {
   if (!target_tracker->getPose(target_sample))
     return false;
 
-  if (origin_sample.time > target_sample.time)
-    p = origin_sample;
-  else
-    p = target_sample;
+  p.time = origin_sample.time > target_sample.time //
+               ? origin_sample.time
+               : target_sample.time;
 
   p.orientation =
     origin_sample.orientation.conjugate()
