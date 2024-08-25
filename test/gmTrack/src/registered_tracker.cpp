@@ -1,4 +1,5 @@
 
+#include <gmTrack/PoseSampleCollector.hh>
 #include <gmTrack/RegisteredSinglePoseTracker.hh>
 #include <gmTrack/RegisteredMultiPoseTracker.hh>
 #include <gmTrack/SingleToMultiPoseTracker.hh>
@@ -23,6 +24,31 @@ using namespace gramods;
               .norm() +                                                        \
           ((A)*Eigen::Vector3f::UnitZ() - (B)*Eigen::Vector3f::UnitZ())        \
               .norm())
+
+TEST(gmTrackRegisteredPose, getAverage) {
+  std::vector<Eigen::Vector3f> positions;
+  positions.reserve(100);
+  for (size_t idx = 0; idx <= 100; ++idx)
+    positions.push_back({float(idx), 50.f, 50.f});
+  Eigen::Vector3f mean_pos =
+      gmTrack::PoseSampleCollector::getAverage(positions);
+  EXPECT_EQ_EIGEN_VECTOR(mean_pos, Eigen::Vector3f(50.f, 50.f, 50.f));
+
+  std::vector<Eigen::Quaternionf> orientations;
+  orientations.push_back(Eigen::Quaternionf(
+      Eigen::Quaternionf::AngleAxisType(0.1f, Eigen::Vector3f::UnitX())));
+  orientations.push_back(Eigen::Quaternionf(
+      Eigen::Quaternionf::AngleAxisType(0.2f, Eigen::Vector3f::UnitX())));
+  orientations.push_back(Eigen::Quaternionf(
+      Eigen::Quaternionf::AngleAxisType(0.3f, Eigen::Vector3f::UnitX())));
+  orientations.push_back(Eigen::Quaternionf(
+      Eigen::Quaternionf::AngleAxisType(0.4f, Eigen::Vector3f::UnitX())));
+  Eigen::Quaternionf mean_rot =
+      gmTrack::PoseSampleCollector::getAverage(orientations);
+  EXPECT_EQ_EIGEN_ORIENT(mean_rot,
+                         Eigen::Quaternionf(Eigen::Quaternionf::AngleAxisType(
+                             0.25f, Eigen::Vector3f::UnitX())));
+}
 
 TEST(gmTrackRegisteredPose, SinglePose) {
 
