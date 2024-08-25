@@ -209,9 +209,8 @@ int main(int argc, char *argv[]) {
 
   for (size_t point_idx = 3; point_idx < arg_microphone_count.getValue();
        ++point_idx) {
-    size_t iterations = 0;
-    auto res = gmMisc::NelderMead::solve<float>(
-        X0, [points, point_idx, mic_pair_offset](const Eigen::Vector3f &x) {
+    gmMisc::NelderMead<float, Eigen::Vector3f> solver(
+        [points, point_idx, mic_pair_offset](const Eigen::Vector3f &x) {
           float err2 = 0.f;
           for (size_t idx = 0; idx < points.size(); ++idx) {
             float err =
@@ -219,7 +218,9 @@ int main(int argc, char *argv[]) {
             err2 += err * err;
           }
           return err2;
-        }, iterations);
+        });
+    size_t iterations = 0;
+    auto res = solver.solve(X0, iterations);
     points.push_back(res);
   }
 
