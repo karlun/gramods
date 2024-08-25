@@ -60,8 +60,12 @@ TEST(gmTrackProjectionTexture, SimpleFlat) {
   generator->addBufferPosition({0.f, 1.f});
   generator->addBufferPosition({1.f, 1.f});
   ts_pose_tracker->addPosition({1.f, 1.f, 5.f});
+  ts_pose_tracker->addPosition({1.f, 1.f, 5.f});
+  ts_pose_tracker->addPosition({2.f, 1.f, 5.f});
   ts_pose_tracker->addPosition({2.f, 1.f, 5.f});
   ts_pose_tracker->addPosition({1.f, 3.f, 5.f});
+  ts_pose_tracker->addPosition({1.f, 3.f, 5.f});
+  ts_pose_tracker->addPosition({2.f, 3.f, 5.f});
   ts_pose_tracker->addPosition({2.f, 3.f, 5.f});
 
   generator->initialize();
@@ -107,6 +111,7 @@ TEST(gmTrackProjectionTexture, CurvatureWRegions) {
       auto y = idx_y / (float)RES_Y;
       generator->addBufferPosition({x, y});
       ts_pose_tracker->addPosition({FUN1_X(x, y), FUN1_Y(x, y), FUN1_Z(x, y)});
+      ts_pose_tracker->addPosition({FUN1_X(x, y), FUN1_Y(x, y), FUN1_Z(x, y)});
       ts_buttons_tracker->addButtons(0);
       ts_buttons_tracker->addButtons(1);
     }
@@ -127,6 +132,7 @@ TEST(gmTrackProjectionTexture, CurvatureWRegions) {
       auto x = idx_x / (float)RES_X;
       auto y = idx_y / (float)RES_Y;
       generator->addBufferPosition({x, y});
+      ts_pose_tracker->addPosition({FUN2_X(x, y), FUN2_Y(x, y), FUN2_Z(x, y)});
       ts_pose_tracker->addPosition({FUN2_X(x, y), FUN2_Y(x, y), FUN2_Z(x, y)});
       ts_buttons_tracker->addButtons(0);
       ts_buttons_tracker->addButtons(1);

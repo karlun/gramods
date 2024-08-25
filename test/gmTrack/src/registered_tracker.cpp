@@ -53,7 +53,7 @@ TEST(gmTrackRegisteredPose, getAverage) {
 TEST(gmTrackRegisteredPose, SinglePose) {
 
   gmCore::Console::removeAllSinks();
-#if 0
+#if 1
   std::shared_ptr<gmCore::OStreamMessageSink> osms =
     std::make_shared<gmCore::OStreamMessageSink>();
   osms->initialize();
@@ -81,14 +81,19 @@ TEST(gmTrackRegisteredPose, SinglePose) {
 
   gmTrack::PoseTracker::PoseSample pose;
 
+  gmCore::Updateable::updateAll();
   EXPECT_TRUE(reg_tracker->getPose(pose));
   EXPECT_EQ_EIGEN_VECTOR(pose.position, Eigen::Vector3f(0, 0, 0));
   EXPECT_EQ_EIGEN_ORIENT(pose.orientation,
                          Eigen::AngleAxisf(0, Eigen::Vector3f::UnitX()));
+
+  gmCore::Updateable::updateAll();
   EXPECT_TRUE(reg_tracker->getPose(pose));
   EXPECT_EQ_EIGEN_VECTOR(pose.position, Eigen::Vector3f(3, 0, 0));
   EXPECT_EQ_EIGEN_ORIENT(pose.orientation,
                          Eigen::AngleAxisf(GM_PI_2, Eigen::Vector3f::UnitX()));
+
+  gmCore::Updateable::updateAll();
   EXPECT_TRUE(reg_tracker->getPose(pose));
   EXPECT_EQ_EIGEN_VECTOR(pose.position, Eigen::Vector3f(0, 3, 0));
   EXPECT_EQ_EIGEN_ORIENT(pose.orientation,
@@ -96,14 +101,19 @@ TEST(gmTrackRegisteredPose, SinglePose) {
 
   reg_tracker->setPositionBias(Eigen::Vector3f(0, 1, 2));
 
+  gmCore::Updateable::updateAll();
   EXPECT_TRUE(reg_tracker->getPose(pose));
   EXPECT_EQ_EIGEN_VECTOR(pose.position, Eigen::Vector3f(0, 1, 2));
   EXPECT_EQ_EIGEN_ORIENT(pose.orientation,
                          Eigen::AngleAxisf(0, Eigen::Vector3f::UnitX()));
+
+  gmCore::Updateable::updateAll();
   EXPECT_TRUE(reg_tracker->getPose(pose));
   EXPECT_EQ_EIGEN_VECTOR(pose.position, Eigen::Vector3f(3, -2, 1));
   EXPECT_EQ_EIGEN_ORIENT(pose.orientation,
                          Eigen::AngleAxisf(GM_PI_2, Eigen::Vector3f::UnitX()));
+
+  gmCore::Updateable::updateAll();
   EXPECT_TRUE(reg_tracker->getPose(pose));
   EXPECT_EQ_EIGEN_VECTOR(pose.position, Eigen::Vector3f(0, 1, 1));
   EXPECT_EQ_EIGEN_ORIENT(pose.orientation,
@@ -113,14 +123,19 @@ TEST(gmTrackRegisteredPose, SinglePose) {
   reg_tracker->setOrientationBias(
       Eigen::Quaternionf(Eigen::AngleAxisf(GM_PI_2, Eigen::Vector3f::UnitX())));
 
+  gmCore::Updateable::updateAll();
   EXPECT_TRUE(reg_tracker->getPose(pose));
   EXPECT_EQ_EIGEN_VECTOR(pose.position, Eigen::Vector3f(1, 2, 3));
   EXPECT_EQ_EIGEN_ORIENT(pose.orientation,
                          Eigen::AngleAxisf(GM_PI_2, Eigen::Vector3f::UnitX()));
+
+  gmCore::Updateable::updateAll();
   EXPECT_TRUE(reg_tracker->getPose(pose));
   EXPECT_EQ_EIGEN_VECTOR(pose.position, Eigen::Vector3f(4, -3, 2));
   EXPECT_EQ_EIGEN_ORIENT(pose.orientation,
                          Eigen::AngleAxisf(GM_PI, Eigen::Vector3f::UnitX()));
+
+  gmCore::Updateable::updateAll();
   EXPECT_TRUE(reg_tracker->getPose(pose));
   EXPECT_EQ_EIGEN_VECTOR(pose.position, Eigen::Vector3f(1, 0, 2));
   EXPECT_EQ_EIGEN_ORIENT(pose.orientation,
@@ -164,6 +179,7 @@ TEST(gmTrackRegisteredPose, MultiPose) {
   gmTrack::PoseTracker::PoseSample pose;
 
 #define GET_POSE                                                               \
+  gmCore::Updateable::updateAll();                                             \
   EXPECT_TRUE(reg_tracker->getPose(poses));                                    \
   ASSERT_EQ(poses.size(), 1);                                                  \
   pose = poses.begin()->second;

@@ -67,23 +67,29 @@ TEST(gmTrackMapper, Buttons) {
 
     gmTrack::ButtonsTracker::ButtonsSample sample;
 
+    EXPECT_FALSE(tracker->getButtons(sample));
+
     // 0
+    gmCore::Updateable::updateAll();
     EXPECT_TRUE(tracker->getButtons(sample));
     EXPECT_EQ(0, sample.buttons.size());
 
     // 1 (0 -> 2)
+    gmCore::Updateable::updateAll();
     EXPECT_TRUE(tracker->getButtons(sample));
     EXPECT_EQ(1, sample.buttons.size());
     EXPECT_EQ(1, sample.buttons.count(2));
     EXPECT_TRUE(sample.buttons[2]);
 
     // 2 (1 -> 0)
+    gmCore::Updateable::updateAll();
     EXPECT_TRUE(tracker->getButtons(sample));
     EXPECT_EQ(1, sample.buttons.size());
     EXPECT_EQ(1, sample.buttons.count(0));
     EXPECT_TRUE(sample.buttons[0]);
 
     // 3 (0 -> 2 / 1 -> 0)
+    gmCore::Updateable::updateAll();
     EXPECT_TRUE(tracker->getButtons(sample));
     EXPECT_EQ(2, sample.buttons.size());
     EXPECT_EQ(1, sample.buttons.count(0));
@@ -92,6 +98,7 @@ TEST(gmTrackMapper, Buttons) {
     EXPECT_TRUE(sample.buttons[2]);
 
     // 4 (2 -> 1)
+    gmCore::Updateable::updateAll();
     EXPECT_TRUE(tracker->getButtons(sample));
     EXPECT_EQ(1, sample.buttons.size());
     EXPECT_EQ(1, sample.buttons.count(1));
@@ -155,23 +162,29 @@ TEST(gmTrackMapper, Buttons2) {
 
     gmTrack::ButtonsTracker::ButtonsSample sample;
 
+    EXPECT_FALSE(tracker->getButtons(sample));
+
     // 0
+    gmCore::Updateable::updateAll();
     EXPECT_TRUE(tracker->getButtons(sample));
     EXPECT_EQ(0, sample.buttons.size());
 
     // 1 (0 -> 2)
+    gmCore::Updateable::updateAll();
     EXPECT_TRUE(tracker->getButtons(sample));
     EXPECT_EQ(1, sample.buttons.size());
     EXPECT_EQ(1, sample.buttons.count(2));
     EXPECT_TRUE(sample.buttons[2]);
 
     // 2 (1 -> 0)
+    gmCore::Updateable::updateAll();
     EXPECT_TRUE(tracker->getButtons(sample));
     EXPECT_EQ(1, sample.buttons.size());
     EXPECT_EQ(1, sample.buttons.count(0));
     EXPECT_TRUE(sample.buttons[0]);
 
     // 3 (0 -> 2 / 1 -> 0)
+    gmCore::Updateable::updateAll();
     EXPECT_TRUE(tracker->getButtons(sample));
     EXPECT_EQ(2, sample.buttons.size());
     EXPECT_EQ(1, sample.buttons.count(0));
@@ -180,6 +193,7 @@ TEST(gmTrackMapper, Buttons2) {
     EXPECT_TRUE(sample.buttons[2]);
 
     // 4 (2 -> 1)
+    gmCore::Updateable::updateAll();
     EXPECT_TRUE(tracker->getButtons(sample));
     EXPECT_EQ(1, sample.buttons.size());
     EXPECT_EQ(1, sample.buttons.count(1));
@@ -237,18 +251,25 @@ TEST(gmTrackMapper, Analogs) {
 
     gmTrack::AnalogsTracker::AnalogsSample sample;
 
-    EXPECT_TRUE(tracker->getAnalogs(sample));
-    ASSERT_GE(3, sample.analogs.size());
-    EXPECT_EQ(0, sample.analogs[gmTrack::AnalogsMapper::AnalogIndex::VERTICAL]);
-    EXPECT_EQ(0, sample.analogs[gmTrack::AnalogsMapper::AnalogIndex::HORIZONTAL]);
-    EXPECT_EQ(0, sample.analogs[gmTrack::AnalogsMapper::AnalogIndex::TRIGGER]);
+    gmCore::Updateable::updateAll();
+    bool good = tracker->getAnalogs(sample);
+    EXPECT_TRUE(good);
+    if (good) {
+      ASSERT_GE(3, sample.analogs.size());
+      EXPECT_EQ(0, sample.analogs[gmTrack::AnalogsMapper::AnalogIndex::VERTICAL]);
+      EXPECT_EQ(0, sample.analogs[gmTrack::AnalogsMapper::AnalogIndex::HORIZONTAL]);
+      EXPECT_EQ(0, sample.analogs[gmTrack::AnalogsMapper::AnalogIndex::TRIGGER]);
+    }
 
-    EXPECT_TRUE(tracker->getAnalogs(sample));
-    ASSERT_GE(3, sample.analogs.size());
-    EXPECT_EQ(2, sample.analogs[gmTrack::AnalogsMapper::AnalogIndex::VERTICAL]);
-    EXPECT_EQ(3, sample.analogs[gmTrack::AnalogsMapper::AnalogIndex::HORIZONTAL]);
-    EXPECT_EQ(1, sample.analogs[gmTrack::AnalogsMapper::AnalogIndex::TRIGGER]);
-
+    gmCore::Updateable::updateAll();
+    good = tracker->getAnalogs(sample);
+    EXPECT_TRUE(good);
+    if (good) {
+      ASSERT_GE(3, sample.analogs.size());
+      EXPECT_EQ(2, sample.analogs[gmTrack::AnalogsMapper::AnalogIndex::VERTICAL]);
+      EXPECT_EQ(3, sample.analogs[gmTrack::AnalogsMapper::AnalogIndex::HORIZONTAL]);
+      EXPECT_EQ(1, sample.analogs[gmTrack::AnalogsMapper::AnalogIndex::TRIGGER]);
+    }
   }
 }
 
@@ -302,12 +323,16 @@ TEST(gmTrackMapper, Analogs2) {
 
     gmTrack::AnalogsTracker::AnalogsSample sample;
 
+    EXPECT_FALSE(tracker->getAnalogs(sample));
+
+    gmCore::Updateable::updateAll();
     EXPECT_TRUE(tracker->getAnalogs(sample));
     ASSERT_GE(3, sample.analogs.size());
     EXPECT_EQ(0, sample.analogs[gmTrack::AnalogsMapper::AnalogIndex::VERTICAL]);
     EXPECT_EQ(0, sample.analogs[gmTrack::AnalogsMapper::AnalogIndex::HORIZONTAL]);
     EXPECT_EQ(0, sample.analogs[gmTrack::AnalogsMapper::AnalogIndex::TRIGGER]);
 
+    gmCore::Updateable::updateAll();
     EXPECT_TRUE(tracker->getAnalogs(sample));
     ASSERT_GE(3, sample.analogs.size());
     EXPECT_EQ(2, sample.analogs[gmTrack::AnalogsMapper::AnalogIndex::VERTICAL]);

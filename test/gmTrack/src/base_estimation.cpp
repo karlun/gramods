@@ -76,14 +76,17 @@ TEST(gmTrackBaseEstimation, FullSamplesByInverse) {
 
     Eigen::Matrix4f samples = RegA.inverse() * points;
 
-    for (int idx = 0; idx < 4; ++idx)
-      registrator->addActualPosition({points(0, idx),
-                                      points(1, idx),
-                                      points(2, idx)});
-    for (int idx = 0; idx < 4; ++idx)
-      ts_pose_tracker->addPosition({samples(0, idx),
-                                    samples(1, idx),
-                                    samples(2, idx)});
+    for (int idx = 0; idx < 4; ++idx){
+      auto p = Eigen::Vector3f(points(0, idx), points(1, idx), points(2, idx));
+      registrator->addActualPosition(p);
+    }
+
+    for (int idx = 0; idx < 4; ++idx) {
+      auto p =
+          Eigen::Vector3f(samples(0, idx), samples(1, idx), samples(2, idx));
+      ts_pose_tracker->addPosition(p);
+      ts_pose_tracker->addPosition(p);
+    }
 
     for (int idx = 1; idx <= 9; ++idx) {
       gmCore::Updateable::updateAll();
@@ -92,10 +95,13 @@ TEST(gmTrackBaseEstimation, FullSamplesByInverse) {
     Eigen::Matrix4f Raw;
     Eigen::Matrix4f Unit;
 
-    EXPECT_TRUE(registrator->getRegistration(&Raw, &Unit));
+    bool good = registrator->getRegistration(&Raw, &Unit);
+    EXPECT_TRUE(good);
 
-    EXPECT_LT((Raw - RegA).norm(), 1e-5);
-    EXPECT_LT((Unit - RegB).norm(), 1e-5);
+    if (good) {
+      EXPECT_LT((Raw - RegA).norm(), 1e-5);
+      EXPECT_LT((Unit - RegB).norm(), 1e-5);
+    }
   }
 }
 
@@ -161,14 +167,17 @@ TEST(gmTrackBaseEstimation, OverDeterminedSamplesByQR) {
 
     Eigen::Matrix4f samples = RegA.inverse() * points;
 
-    for (int idx = 0; idx < 4; ++idx)
-      registrator->addActualPosition({points(0, idx),
-                                      points(1, idx),
-                                      points(2, idx)});
-    for (int idx = 0; idx < 4; ++idx)
-      ts_pose_tracker->addPosition({samples(0, idx),
-                                    samples(1, idx),
-                                    samples(2, idx)});
+    for (int idx = 0; idx < 4; ++idx) {
+      auto p = Eigen::Vector3f {points(0, idx), points(1, idx), points(2, idx)};
+      registrator->addActualPosition(p);
+    }
+
+    for (int idx = 0; idx < 4; ++idx) {
+      auto p =
+          Eigen::Vector3f {samples(0, idx), samples(1, idx), samples(2, idx)};
+      ts_pose_tracker->addPosition(p);
+      ts_pose_tracker->addPosition(p);
+    }
 
     for (int idx = 1; idx <= 9; ++idx) {
       gmCore::Updateable::updateAll();
@@ -177,10 +186,13 @@ TEST(gmTrackBaseEstimation, OverDeterminedSamplesByQR) {
     Eigen::Matrix4f Raw;
     Eigen::Matrix4f Unit;
 
-    EXPECT_TRUE(registrator->getRegistration(&Raw, &Unit));
+    bool good = registrator->getRegistration(&Raw, &Unit);
+    EXPECT_TRUE(good);
 
-    EXPECT_LT((Raw - RegA).norm(), 1e-5);
-    EXPECT_LT((Unit - RegB).norm(), 1e-5);
+    if (good) {
+      EXPECT_LT((Raw - RegA).norm(), 1e-5);
+      EXPECT_LT((Unit - RegB).norm(), 1e-5);
+    }
   }
 }
 

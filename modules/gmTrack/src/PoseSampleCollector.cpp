@@ -24,7 +24,7 @@ GM_OFI_POINTER(PoseSampleCollector, controller, Controller, PoseSampleCollector:
 
 
 PoseSampleCollector::PoseSampleCollector(Impl *_impl)
-  : Updateable(-1000), _impl(_impl) {
+  : Updateable(-200), _impl(_impl) {
   if (!this->_impl) this->_impl = std::make_unique<Impl>();
 }
 
