@@ -34,11 +34,11 @@ IntersectionLine IntersectionLine::getInSpace(const Eigen::Affine3f &M4) const {
   float dir_length = new_dir.norm();
   new_dir /= dir_length;
 
-  return {.p0 = M4_inv * p0,
-          .dir = new_dir,
-          .dir_inv = new_dir.cwiseInverse(),
-          .start = start ? *start * dir_length : start,
-          .stop = stop ? *stop * dir_length : stop};
+  return {/*.p0 = */ M4_inv * p0,
+          /*.dir = */ new_dir,
+          /*.dir_inv = */ new_dir.cwiseInverse(),
+          /*.start = */ start ? *start * dir_length : start,
+          /*.stop = */ stop ? *stop * dir_length : stop};
 }
 
 END_NAMESPACE_GMGRAPHICS;
