@@ -21,7 +21,7 @@ ENDIF ()
 LIST (APPEND APP_LIBS gmTrack_internal_deps)
 
 IF (NOT TARGET gmSound)
-  MESSAGE (WARNING "Not including gm-microphone-registration - requires gmTrack")
+  MESSAGE (WARNING "Not including gm-microphone-registration - requires gmSound")
   RETURN()
 ENDIF ()
 LIST (APPEND APP_LIBS gmSound_internal_deps)
