@@ -76,10 +76,7 @@ bool RegisteredMultiPoseTracker::Impl::getPose(std::map<int, PoseSample> &p) {
     PoseSample reg_pose;
     reg_pose.time = raw_pose.second.time;
 
-    Eigen::Affine3f M = Eigen::Affine3f::Identity();
-    M *= Eigen::Translation3f(raw_pose.second.position);
-    M *= raw_pose.second.orientation;
-
+    const Eigen::Affine3f M = raw_pose.second.asMatrix();
     reg_pose.position =
         (reg_matrix * M.matrix() * bias_matrix).block<3, 1>(0, 3);
     reg_pose.orientation =

@@ -17,8 +17,25 @@ public:
 
   /**
      Adds a child
+
+     \gmXmlTag{gmGraphics,Group,node}
   */
   void addNode(std::shared_ptr<Node> node);
+
+  /**
+     Removes a child.
+  */
+  void removeNode(std::shared_ptr<Node> node);
+
+  /**
+     Removes a child.
+  */
+  void removeNode(size_t idx);
+
+  /**
+     Returns the current list of nodes.
+  */
+  std::vector<std::shared_ptr<Node>> getNodes();
 
   /**
      Propagates the specified visitor.

@@ -23,6 +23,10 @@ void MatrixTransform::setMatrix(Eigen::Matrix4f m) {
   _impl->cache_transform = std::nullopt;
 }
 
+Eigen::Matrix4f MatrixTransform::getMatrix() const {
+  return _impl->matrix;
+}
+
 Eigen::Affine3f MatrixTransform::getTransform() {
   return _impl->getTransform();
 }

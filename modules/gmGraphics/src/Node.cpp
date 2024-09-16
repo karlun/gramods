@@ -6,14 +6,11 @@
 
 BEGIN_NAMESPACE_GMGRAPHICS;
 
-void Node::TransformStackVisitor::apply(Object *node) {
-  if (auto *transform = dynamic_cast<Transform *>(node)) {
-    stack.push_back(stack.back() * transform->getTransform());
-    Object::Visitor::apply(node);
-    stack.pop_back();
-  } else {
-    Object::Visitor::apply(node);
-  }
+void Node::TransformStackVisitor::apply(Object *node,
+                                        const Eigen::Affine3f &transform) {
+  stack.push_back(stack.back() * transform);
+  apply(node);
+  stack.pop_back();
 }
 
 void Node::NearFarVisitor::apply(gmCore::Object *node) {

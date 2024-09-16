@@ -1,0 +1,6 @@
+newmtl mat_axes
+Ka 0.2 0.2 0.2 1
+Kd 1.0 1.0 1.0 1
+Ks 0.2 0.2 0.2 1
+Ns 100
+map_Kd axes.png

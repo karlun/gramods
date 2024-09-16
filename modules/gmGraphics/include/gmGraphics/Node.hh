@@ -29,7 +29,8 @@ public:
   */
   struct TransformStackVisitor : Visitor {
 
-    void apply(Object *node) override;
+    void apply(gmCore::Object *node) override { Visitor::apply(node); }
+    void apply(Object *node, const Eigen::Affine3f &transform);
 
     std::vector<Eigen::Affine3f> stack {Eigen::Affine3f::Identity()};
   };
