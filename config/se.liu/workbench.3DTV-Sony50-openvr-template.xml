@@ -58,7 +58,7 @@
       registrationMatrix="%%M0x %%M1x %%M2x %%M3x
                           %%M0y %%M1y %%M2y %%M3y
                           %%M0z %%M1z %%M2z %%M3z">
-    <OpenVRPoseTracker serial="LHR-1FDECF81">
+    <OpenVRPoseTracker serial="LHR-36A70325">
       <OpenVR USE="OPENVR"/>
     </OpenVRPoseTracker>
   </RegisteredSinglePoseTracker>
@@ -87,7 +87,7 @@
         registrationMatrix="%%M0x %%M1x %%M2x %%M3x
                             %%M0y %%M1y %%M2y %%M3y
                             %%M0z %%M1z %%M2z %%M3z">
-      <OpenVRPoseTracker serial="LHR-FFAF7B46">
+      <OpenVRPoseTracker serial="LHR-22B4136B">
         <OpenVR USE="OPENVR"/>
       </OpenVRPoseTracker>
     </RegisteredSinglePoseTracker>

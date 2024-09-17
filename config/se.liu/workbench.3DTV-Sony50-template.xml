@@ -55,7 +55,7 @@
                           %%M0z %%M1z %%M2z %%M3z">
     <MultiToSinglePoseTracker sensor="0">
       <VrpnPoseTracker
-          connectionString="openvr/device/LHR-1BDC55AF@tcp://win04681.ad.liu.se"/>
+          connectionString="openvr/device/LHR-03D3A5F2@tcp://win04681.ad.liu.se"/>
     </MultiToSinglePoseTracker>
   </RegisteredSinglePoseTracker>
 
@@ -86,7 +86,7 @@
       <MultiToSinglePoseTracker
           sensor="0">
         <VrpnPoseTracker
-            connectionString="openvr/device/LHR-FFAF7B46@tcp://win04681.ad.liu.se"/>
+            connectionString="openvr/device/LHR-22B4136B@tcp://win04681.ad.liu.se"/>
       </MultiToSinglePoseTracker>
     </RegisteredSinglePoseTracker>
     <AnalogsMapper
@@ -94,13 +94,13 @@
         horizontalAnalog="2"
         triggerAnalog="2">
       <VrpnAnalogsTracker
-          connectionString="openvr/device/LHR-FFAF7B46@tcp://win04681.ad.liu.se"/>
+          connectionString="openvr/device/LHR-22B4136B@tcp://win04681.ad.liu.se"/>
     </AnalogsMapper>
     <ButtonsMapper
         mainButton="33"
         secondaryButton="32">
       <VrpnButtonsTracker
-          connectionString="openvr/device/LHR-FFAF7B46@tcp://win04681.ad.liu.se"/>
+          connectionString="openvr/device/LHR-22B4136B@tcp://win04681.ad.liu.se"/>
     </ButtonsMapper>
   </Controller>
 

@@ -59,7 +59,7 @@
         <VRPNTracker
             DEF="TRACKER"
             sensorId="0"
-            connectionString="openvr/device/LHR-1BDC55AF@tcp://win04681.ad.liu.se"/>
+            connectionString="openvr/device/LHR-03D3A5F2@tcp://win04681.ad.liu.se"/>
         <AffineMapping
             orientationPreCalibration="%Rix %Riy %Riz %Ria"
             orientationPostCalibration="%%Rx %%Ry %%Rz %%Ra"
