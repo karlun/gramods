@@ -404,17 +404,21 @@ int main(int argc, char *argv[]) {
   }
 
   for (size_t file_idx = 0; file_idx < output_files.size(); ++file_idx) {
+    std::ofstream fout;
     auto output_file = output_files[file_idx];
-    std::filesystem::path output_file_path =
-        gmCore::FileResolver::getDefault()->resolve(
-            output_file, gmCore::FileResolver::Check::WritableFile);
-    std::ofstream fout(output_file_path);
-
-    if (!fout) {
-      std::cerr << "Warning: skipping '" << output_file
-                << "' because file could not be open for writing." << std::endl
-                << std::endl;
-      continue;
+    try {
+      std::filesystem::path output_file_path =
+          gmCore::FileResolver::getDefault()->resolve(
+              output_file, gmCore::FileResolver::Check::WritableFile);
+      fout = std::ofstream(output_file_path);
+      if (!fout) {
+        std::cerr << "Warning: could not open output file '" << output_file_path
+                  << "' (" << output_file << ")\n\n";
+        continue;
+      }
+    } catch (const gmCore::InvalidArgument &e) {
+      std::cerr << "Exception while resolving output file: " << e.what
+                << "\n\n";
     }
 
     if (file_idx >= input_files.size()) {
@@ -447,17 +451,21 @@ int main(int argc, char *argv[]) {
         std::cout << "Results written to " << output_file << std::endl;
       }
     } else {
+      std::ifstream fin;
       auto input_file = input_files[file_idx];
-      std::filesystem::path input_file_path =
-          gmCore::FileResolver::getDefault()->resolve(
-              input_file, gmCore::FileResolver::Check::ReadableFile);
-      std::ifstream fin(input_file_path);
-
-      if (!fin) {
-        std::cerr << std::endl
-                  << "Warning: could not open template file '" << input_file_path
-                  << "' (" << input_file << ")" << std::endl
-                  << std::endl;
+      try {
+        std::filesystem::path input_file_path =
+            gmCore::FileResolver::getDefault()->resolve(
+                input_file, gmCore::FileResolver::Check::ReadableFile);
+        fin = std::ifstream(input_file_path);
+        if (!fin) {
+          std::cerr << "Warning: could not open template file '"
+                    << input_file_path << "' (" << input_file << ")\n\n";
+          continue;
+        }
+      } catch (const gmCore::InvalidArgument &e) {
+        std::cerr << "Exception while resolving template file: " << e.what
+                  << "\n\n";
         continue;
       }
 
