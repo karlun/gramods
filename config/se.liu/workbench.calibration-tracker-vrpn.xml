@@ -2,7 +2,7 @@
 
   <Controller>
     <OffsetSinglePoseTracker
-        positionOffset="-0.0005 -0.001 0.1002">
+        positionOffset="0 0 0.1">
       <MultiToSinglePoseTracker
           sensor="0">
         <VrpnPoseTracker
