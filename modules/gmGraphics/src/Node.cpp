@@ -33,14 +33,14 @@ Node::NearFarVisitor::getNearFar() const {
   if (far <= near) return std::nullopt;
   if (far < std::numeric_limits<float>::epsilon()) return std::nullopt;
 
-  float near = this->near;
+  // Expanding near-far span by 1% to accomodate for numerical errors
+  // in transform processing, and using a minimum near plane of
+  // 1:10000 to the far plan.
+  float near =
+      std::max(this->near - 0.01f * std::abs(this->near), float(1e-4) * far);
+  float far = 1.01f * this->far;
 
-  if (near < std::numeric_limits<float>::epsilon())
-    near = std::numeric_limits<float>::epsilon() * (1e3 * far);
-
-  float epsilon = (far - near) * std::numeric_limits<float>::epsilon();
-
-  return std::pair<float, float>({near - epsilon, far + epsilon});
+  return std::pair<float, float>({near, far});
 }
 
 void Node::RenderVisitor::apply(gmCore::Object *node) {

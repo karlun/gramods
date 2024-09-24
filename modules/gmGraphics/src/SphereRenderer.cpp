@@ -76,8 +76,9 @@ void SphereRenderer::Impl::getNearFar(const Camera &camera,
 
   Eigen::Affine3f Mv = camera.getViewMatrix();
 
-  near = -(Mv * Mm).translation().z() - radius;
-  far = -(Mv * Mm).translation().z() + radius;
+  float Z = (Mv * Mm).translation().z();
+  near = -Z - radius;
+  far = -Z + radius;
 }
 
 const std::string SphereRenderer::Impl::vertex_shader_code = R"lang=glsl(
