@@ -108,10 +108,11 @@
     <SdlContext
         useVideo="true"/>
 
-    <CubeSceneRenderer
-        position="0 2 -3"
-        cubeSize="0.1"
-        cubeSetSize="2.0"/>
+    <PoseTransform position="0 2 -3">
+      <CubeSceneRenderer
+          cubeSize="0.1"
+          cubeSetSize="2.0"/>
+    </PoseTransform>
 
     <Viewpoint
         position="0 0 0"/>

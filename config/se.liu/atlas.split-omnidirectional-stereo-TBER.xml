@@ -19,29 +19,29 @@
 
     <Viewpoint eyeSeparation="0"/>
 
-    <SphereRenderer
-        eye="LEFT"
-        orientation="ypr -0.004 0 0">
-      <!-- rotating atan(eye offset / dome radius) -->
-      <EquirectangularCoordinatesMapper/>
+    <PoseTransform orientation="ypr -0.004 0 0">
+      <SphereRenderer eye="LEFT">
+        <!-- rotating atan(eye offset / dome radius) -->
+        <EquirectangularCoordinatesMapper/>
 
-      <MultiscopicTextureSplitter
-          DEF="TEXTURE"
-          splitType="1">
-        <ImageTexture
-            autoRange="true"
-            exit="true"
-            file="raw/out_%09d.png"/>
-      </MultiscopicTextureSplitter>
-    </SphereRenderer>
+        <MultiscopicTextureSplitter
+            DEF="TEXTURE"
+            splitType="1">
+          <ImageTexture
+              autoRange="true"
+              exit="true"
+              file="raw/out_%09d.png"/>
+        </MultiscopicTextureSplitter>
+      </SphereRenderer>
+    </PoseTransform>
 
-    <SphereRenderer
-        eye="RIGHT"
-        orientation="ypr 0.004 0 0">
-      <!-- rotating atan(eye offset / dome radius) -->
-      <EquirectangularCoordinatesMapper/>
-      <MultiscopicTextureSplitter USE="TEXTURE"/>
-    </SphereRenderer>
+    <PoseTransform orientation="ypr 0.004 0 0">
+      <SphereRenderer eye="RIGHT">
+        <!-- rotating atan(eye offset / dome radius) -->
+        <EquirectangularCoordinatesMapper/>
+        <MultiscopicTextureSplitter USE="TEXTURE"/>
+      </SphereRenderer>
+    </PoseTransform>
 
     <TiledView>
 

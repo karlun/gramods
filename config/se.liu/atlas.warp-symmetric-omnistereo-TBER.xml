@@ -32,29 +32,29 @@
         <SideBySideMultiplexer pattern="0"/>
         <EquirectangularCoordinatesMapper/>
 
-        <SphereRenderer
-            eye="LEFT"
-            orientation="ypr -0.004 0 0">
-          <!-- rotating atan(eye offset / dome radius) -->
+        <PoseTransform orientation="ypr -0.004 0 0">
+          <SphereRenderer eye="LEFT">
+            <!-- rotating atan(eye offset / dome radius) -->
 
-          <EquirectangularCoordinatesMapper/>
+            <EquirectangularCoordinatesMapper/>
 
-          <MultiscopicTextureSplitter DEF="TEXTURE" splitType="1">
-            <ImageTexture file="omnistereo.jpg"/>
-          </MultiscopicTextureSplitter>
+            <MultiscopicTextureSplitter DEF="TEXTURE" splitType="1">
+              <ImageTexture file="omnistereo.jpg"/>
+            </MultiscopicTextureSplitter>
 
-        </SphereRenderer>
+          </SphereRenderer>
+        </PoseTransform>
 
-        <SphereRenderer
-            eye="RIGHT"
-            orientation="ypr 0.004 0 0">
-          <!-- rotating atan(eye offset / dome radius) -->
+        <PoseTransform orientation="ypr 0.004 0 0">
+          <SphereRenderer eye="RIGHT">
+            <!-- rotating atan(eye offset / dome radius) -->
 
-          <EquirectangularCoordinatesMapper/>
+            <EquirectangularCoordinatesMapper/>
 
-          <MultiscopicTextureSplitter USE="TEXTURE"/>
+            <MultiscopicTextureSplitter USE="TEXTURE"/>
 
-        </SphereRenderer>
+          </SphereRenderer>
+        </PoseTransform>
 
       </SpatialSphericalView>
 
