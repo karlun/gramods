@@ -37,10 +37,10 @@
       --output-file se.liu.haptics.head-tracked-stereo-view.x3d \
       --config urn:gramods:config/output-normal-to-console.xml \
       --config urn:gramods:config/se.liu/workbench.calibration-tracker-vrpn.xml \
-      --a-point -0.266,0.278,0.128 \
-      --a-point -0.266,0.278,0.428 \
-      --a-point +0.266,0.278,0.428 \
-      --a-point +0.266,0.278,0.128
+      --a-point -0.267,0.276,0.125 \
+      --a-point -0.267,0.276,0.427 \
+      --a-point +0.267,0.276,0.427 \
+      --a-point +0.267,0.276,0.125
   ]]>
 
   <PythonScript url="urn:candy:python/AutoLoadSO.py"/>
