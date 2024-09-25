@@ -7,15 +7,16 @@
 
     <SdlContext useVideo="true"/>
 
-    <SphereRenderer
-        orientation="ypr 0 d45 0"
-        radius="10">
-      <ImageTexture
-          autoRange="true"
-          exit="true"
-          file="raw/out_%09d.png"/>
-      <EquirectangularCoordinatesMapper/>
-    </SphereRenderer>
+    <PoseTransform orientation="ypr 0 d45 0">
+      <SphereRenderer
+          radius="10">
+        <ImageTexture
+            autoRange="true"
+            exit="true"
+            file="raw/out_%09d.png"/>
+        <EquirectangularCoordinatesMapper/>
+      </SphereRenderer>
+    </PoseTransform>
 
     <Viewpoint/>
 

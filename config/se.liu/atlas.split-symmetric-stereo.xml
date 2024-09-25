@@ -25,29 +25,32 @@
           <LinearAnaglyphsMultiplexer/>
           <Viewpoint eyeSeparation="0.06"/>
 
-          <SphereRenderer
-              eye="LEFT"
-              position="-0.03 0 0"
-              radius="10">
-            <ImageTexture
-                DEF="LEFT_TEXTURE"
-                autoRange="true"
-                exit="true"
-                file="raw/left_%09d.png"/>
-            <EquirectangularCoordinatesMapper/>
-          </SphereRenderer>
+          <PoseTransform position="-0.03 0 0">
+            <SphereRenderer
+                eye="LEFT"
+                radius="10">
+              <ImageTexture
+                  DEF="LEFT_TEXTURE"
+                  autoRange="true"
+                  exit="true"
+                  file="raw/left_%09d.png"/>
+              <EquirectangularCoordinatesMapper/>
+            </SphereRenderer>
+          </PoseTransform>
 
-          <SphereRenderer
-              eye="RIGHT"
-              position="+0.03 0 0"
-              radius="10">
-            <ImageTexture
-                DEF="RIGHT_TEXTURE"
-                autoRange="true"
-                exit="true"
-                file="raw/right_%09d.png"/>
-            <EquirectangularCoordinatesMapper/>
-          </SphereRenderer>
+          <PoseTransform position="+0.03 0 0">
+            <SphereRenderer
+                eye="RIGHT"
+                position="+0.03 0 0"
+                radius="10">
+              <ImageTexture
+                  DEF="RIGHT_TEXTURE"
+                  autoRange="true"
+                  exit="true"
+                  file="raw/right_%09d.png"/>
+              <EquirectangularCoordinatesMapper/>
+            </SphereRenderer>
+          </PoseTransform>
 
         </SpatialPlanarView>
       </SaveView>

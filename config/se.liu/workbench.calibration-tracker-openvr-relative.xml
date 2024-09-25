@@ -9,12 +9,12 @@
     <RelativeSinglePoseTracker>
       <OffsetSinglePoseTracker
           KEY="targetTracker"
-          positionOffset="-0.0005 -0.001 0.1002">
-        <OpenVRPoseTracker serial="LHR-0FC1EC83">
+          positionOffset="0 0 0.1">
+        <OpenVRPoseTracker serial="LHR-36A70325">
           <OpenVR USE="OPENVR"/>
         </OpenVRPoseTracker>
       </OffsetSinglePoseTracker>
-      <OpenVRPoseTracker KEY="originTracker" serial="LHR-1FDECF81">
+      <OpenVRPoseTracker KEY="originTracker" serial="LHR-36A70325">
         <OpenVR USE="OPENVR"/>
       </OpenVRPoseTracker>
     </RelativeSinglePoseTracker>

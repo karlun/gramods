@@ -32,27 +32,24 @@
         <SideBySideMultiplexer pattern="0"/>
         <AngularFisheyeCoordinatesMapper/>
 
-        <SphereRenderer
-            eye="LEFT"
-            orientation="ypr -0.00439186365423591377 0 0">
+        <PoseTransform orientation="ypr -0.00439186365423591377 0 0">
+          <SphereRenderer eye="LEFT">
+            <AngularFisheyeCoordinatesMapper/>
+            <MultiscopicTextureSplitter DEF="TEXTURE" splitType="0">
+              <ImageTexture file="omnistereo.jpg"/>
+            </MultiscopicTextureSplitter>
 
-          <AngularFisheyeCoordinatesMapper/>
+          </SphereRenderer>
+        </PoseTransform>
 
-          <MultiscopicTextureSplitter DEF="TEXTURE" splitType="0">
-            <ImageTexture file="omnistereo.jpg"/>
-          </MultiscopicTextureSplitter>
-
-        </SphereRenderer>
-
-        <SphereRenderer
-            eye="RIGHT"
-            orientation="ypr 0.00439186365423591377 0 0">
-
-          <AngularFisheyeCoordinatesMapper/>
-
-          <MultiscopicTextureSplitter USE="TEXTURE"/>
-
-        </SphereRenderer>
+        <PoseTransform orientation="ypr 0.00439186365423591377 0 0">
+          <SphereRenderer
+              eye="RIGHT"
+              orientation="ypr 0.00439186365423591377 0 0">
+            <AngularFisheyeCoordinatesMapper/>
+            <MultiscopicTextureSplitter USE="TEXTURE"/>
+          </SphereRenderer>
+        </PoseTransform>
 
       </SpatialSphericalView>
 

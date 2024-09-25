@@ -2,17 +2,17 @@
 
   <Controller>
     <OffsetSinglePoseTracker
-        positionOffset="-0.0005 -0.001 0.1002">
+        positionOffset="0 0 0.1">
       <MultiToSinglePoseTracker
           sensor="0">
         <VrpnPoseTracker
-            connectionString="openvr/device/LHR-0FC1EC83@tcp://win04681.ad.liu.se"/>
+            connectionString="openvr/device/LHR-36A70325@tcp://win04681.ad.liu.se"/>
       </MultiToSinglePoseTracker>
     </OffsetSinglePoseTracker>
     <ButtonsMapper
         mainButton="33">
       <VrpnButtonsTracker
-          connectionString="openvr/device/LHR-FFAF7B46@tcp://win04681.ad.liu.se"/>
+          connectionString="openvr/device/LHR-22B4136B@tcp://win04681.ad.liu.se"/>
     </ButtonsMapper>
   </Controller>
 

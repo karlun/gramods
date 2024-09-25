@@ -32,27 +32,27 @@
         <SideBySideMultiplexer pattern="0"/>
         <EquirectangularCoordinatesMapper/>
 
-        <SphereRenderer
-            eye="LEFT"
-            position="-0.0325 0 0">
+        <PoseTransform position="-0.0325 0 0">
+          <SphereRenderer eye="LEFT">
 
-          <EquirectangularCoordinatesMapper/>
+            <EquirectangularCoordinatesMapper/>
 
-          <MultiscopicTextureSplitter DEF="TEXTURE" splitType="1">
-            <ImageTexture file="forwardstereo.jpg"/>
-          </MultiscopicTextureSplitter>
+            <MultiscopicTextureSplitter DEF="TEXTURE" splitType="1">
+              <ImageTexture file="forwardstereo.jpg"/>
+            </MultiscopicTextureSplitter>
 
-        </SphereRenderer>
+          </SphereRenderer>
+        </PoseTransform>
 
-        <SphereRenderer
-            eye="RIGHT"
-            position="+0.0325 0 0">
+        <PoseTransform position="+0.0325 0 0">
+          <SphereRenderer eye="RIGHT">
 
-          <EquirectangularCoordinatesMapper/>
+            <EquirectangularCoordinatesMapper/>
 
-          <MultiscopicTextureSplitter USE="TEXTURE"/>
+            <MultiscopicTextureSplitter USE="TEXTURE"/>
 
-        </SphereRenderer>
+          </SphereRenderer>
+        </PoseTransform>
 
       </SpatialSphericalView>
 

@@ -1,0 +1,98 @@
+<config>
+
+  <ImportLibrary library="gmTrack"/>
+  <ImportLibrary library="gmGraphics"/>
+
+  <SdlWindow
+      size="900 900"
+      title="Spatial"
+      GLMajor="3" GLMinor="3">
+
+    <SdlContext
+        DEF="SDLContext"
+        useVideo="1"/>
+
+    <Group>
+      <PoseTransform DEF="AXIS" scale="0.1 0.1 0.1">
+        <ObjRenderer
+            DEF="OBJ"
+            recenter="false"
+            file="urn:gramods:gmGraphics/resources/axes.obj"/>
+      </PoseTransform>
+      <TrackedTransform>
+
+        <Node USE="AXIS"/>
+
+        <MultiToSinglePoseTracker
+            DEF="GENERIC_PIKE"
+            sensor="0">
+          <VrpnPoseTracker
+              connectionString="openvr/device/LHR-0FC1EC83@tcp://win04681.ad.liu.se"/>
+        </MultiToSinglePoseTracker>
+
+        <OffsetSinglePoseTracker
+            positionOffset="0 0 0.1">
+          <MultiToSinglePoseTracker USE="GENERIC_PIKE"/>
+        </OffsetSinglePoseTracker>
+
+        <MultiToSinglePoseTracker
+            DEF="GENERIC_HEAD"
+            sensor="0">
+          <VrpnPoseTracker
+              connectionString="openvr/device/LHR-1BDC55AF@tcp://win04681.ad.liu.se"/>
+        </MultiToSinglePoseTracker>
+
+        <RegisteredSinglePoseTracker
+            biasMatrix="%Mi0x %Mi1x %Mi2x %Mi3x
+                        %Mi0y %Mi1y %Mi2y %Mi3y
+                        %Mi0z %Mi1z %Mi2z %Mi3z"
+            registrationMatrix="1 0 0 0
+                                0 1 0 0
+                                0 0 1 0">
+          <MultiToSinglePoseTracker USE="GENERIC_HEAD"/>
+        </RegisteredSinglePoseTracker>
+
+      </TrackedTransform>
+    </Group>
+
+    <TiledView>
+
+      <param name="tileLocation" value="0 0 1 1"/>
+      <SpatialPlanarView
+          topLeftCorner="-2.0 2.0 0.0"
+          bottomRightCorner="2.0 -2.0 0.0"
+          upDirection="0.0 1.0 0.0">
+        <Viewpoint
+            position="0.0 0.0 10.0"/>
+      </SpatialPlanarView>
+
+      <param name="tileLocation" value="0 1 1 1"/>
+      <SpatialPlanarView
+          topLeftCorner="0.0 2.0 -2.0"
+          bottomRightCorner="0.0 -2.0 2.0"
+          upDirection="0.0 1.0 0.0">
+        <Viewpoint
+            position="-10.0 0.0 0.0"/>
+      </SpatialPlanarView>
+
+      <param name="tileLocation" value="1 0 1 1"/>
+      <SpatialPlanarView
+          topLeftCorner="-2.0 0.0 -2.0"
+          bottomRightCorner="2.0 0.0 2.0"
+          upDirection="0.0 0.0 -10.0">
+        <Viewpoint
+            position="0.0 3.0 0.0"/>
+      </SpatialPlanarView>
+
+      <param name="tileLocation" value="1 1 1 1"/>
+      <PosedPlanarView
+          fieldOfView="1 -1">
+        <Viewpoint
+            position="2.0 2.0 2.0"
+            lookAt="0.0 0.0 0.0"/>
+      </PosedPlanarView>
+    </TiledView>
+
+  </SdlWindow>
+
+</config>
