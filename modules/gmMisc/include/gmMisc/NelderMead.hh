@@ -71,7 +71,8 @@ TYPE_IN NelderMead<TYPE_OUT, TYPE_IN>::solve(const std::vector<TYPE_IN> &X0,
   size_t iteration = 0;
   size_t count_reflect = 0;
   size_t count_expand = 0;
-  size_t count_contract = 0;
+  size_t count_contract_in = 0;
+  size_t count_contract_out = 0;
   size_t count_shrink = 0;
 
   while (true) {
@@ -79,9 +80,12 @@ TYPE_IN NelderMead<TYPE_OUT, TYPE_IN>::solve(const std::vector<TYPE_IN> &X0,
     if (iterations > 0 && iteration > iterations) {
       GM_DBG1("NelderMead",
               "Termination by iteration limits ("
-                  << iterations << ") after " << count_reflect << " reflect, "
-                  << count_expand << " expand, " << count_contract
-                  << " contract, and " << count_shrink << " shrink.");
+                  << iterations << ") after "                       //
+                  << count_reflect << " reflect, "                  //
+                  << count_expand << " expand, "                    //
+                  << count_contract_in << "/"                       //
+                  << count_contract_out << " contract in/out, and " //
+                  << count_shrink << " shrink.");
       return F_X.front().second;
     }
 
@@ -136,8 +140,8 @@ TYPE_IN NelderMead<TYPE_OUT, TYPE_IN>::solve(const std::vector<TYPE_IN> &X0,
         F_X.pop_back();
         F_X.push_back({Fc, Xc});
 
-        GM_DBG3("NelderMead", "Contract (" << Fc << ")");
-        ++count_contract;
+        GM_DBG3("NelderMead", "Contract inside (" << Fc << ")");
+        ++count_contract_in;
         continue;
       }
     } else /* Fr >= F_X.back().first */ {
@@ -148,8 +152,8 @@ TYPE_IN NelderMead<TYPE_OUT, TYPE_IN>::solve(const std::vector<TYPE_IN> &X0,
         F_X.pop_back();
         F_X.push_back({Fc, Xc});
 
-        GM_DBG3("NelderMead", "Contract (" << Fc << ")");
-        ++count_contract;
+        GM_DBG3("NelderMead", "Contract outside (" << Fc << ")");
+        ++count_contract_out;
         continue;
       }
     }
@@ -158,6 +162,7 @@ TYPE_IN NelderMead<TYPE_OUT, TYPE_IN>::solve(const std::vector<TYPE_IN> &X0,
     for (size_t i = 1; i < N; i++) {
       F_X[i].second = func_mean(F_X.front().second, F_X[i].second);
       F_X[i].first = function(F_X[i].second);
+      ++count_shrink;
     }
     GM_DBG3("NelderMead",
             "Shrink (" << F_X.front().first << "/" << F_X.back().first << ")");
@@ -168,8 +173,10 @@ TYPE_IN NelderMead<TYPE_OUT, TYPE_IN>::solve(const std::vector<TYPE_IN> &X0,
         iterations = iteration;
         GM_DBG1("NelderMead",
                 "Termination by precision after "
-                    << count_reflect << " reflect, " << count_expand
-                    << " expand, " << count_contract << " contract, and "
+                    << count_reflect << " reflect, "                  //
+                    << count_expand << " expand, "                    //
+                    << count_contract_in << "/"                       //
+                    << count_contract_out << " contract in/out, and " //
                     << count_shrink << " shrink.");
         return F_X[0].second;
       }
