@@ -272,7 +272,7 @@ void ArucoPoseTracker::setCameraConfigurationFile(std::filesystem::path file) {
 bool ArucoPoseTracker::Impl::readCameraParameters
 (std::filesystem::path filename, cv::Mat &camMatrix, cv::Mat &distCoeffs, int &width, int &height) {
 
-  cv::FileStorage fs(filename, cv::FileStorage::READ);
+  cv::FileStorage fs(filename.string(), cv::FileStorage::READ);
   if(!fs.isOpened()) {
     GM_ERR("ArucoPoseTracker",
            "Could not open file '" << filename

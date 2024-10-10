@@ -151,7 +151,7 @@ cv::VideoCaptureAPIs OpenCvVideoCapture::Impl::backendFromString(std::string api
 
 void OpenCvVideoCapture::Impl::openVideo(std::filesystem::path file) {
 
-  if (video_capture.open(file, backend)){
+  if (video_capture.open(file.string(), backend)){
 
     GM_DBG1("OpenCvVideoCapture", "Opened video file '" << file << "'");
 
