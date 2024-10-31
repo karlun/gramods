@@ -146,7 +146,7 @@ int main(int argc, char *argv[]) {
 
   Eigen::JacobiSVD<Eigen::MatrixXf> svd(D, Eigen::ComputeThinU | Eigen::ComputeThinV);
   Eigen::Vector4f x = svd.solve(zero);
-  x(3, 0) = 1.f;
+  x /= x(3, 0);
 
   std::cout << "\nEstimated relative pivot point: " << x.transpose() << std::endl;
 
