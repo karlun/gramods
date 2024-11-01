@@ -49,9 +49,9 @@ Use CMake to find dependencies and to set up the build environment. Every module
 
 Observe that CMake cannot automatically deactivate dependent modules when a modules is made unavailable, by a missing dependency or by deactivation, so this will result in a build error.
 
-Most dependencies can be automatically installed and handled, with *vcpkg* through `vcpkg install asio eigen3 freeimage glew sdl2 tclap tinyxml2`, or with *apt* through `apt install libasio-dev libeigen3-dev libfreeimage-dev libglew-dev libsdl2-dev libtclap-dev libtinyxml2-dev`. When using vcpkg, do not forget to set `VCPKG_DEFAULT_TRIPLET=x64-windows` or use command line argument `--triplet x64-windows` (see [vcpkg issue #12357](https://github.com/microsoft/vcpkg/issues/12357)).
+Most dependencies can be automatically installed and handled, with *vcpkg* through `vcpkg install asio eigen3 freeimage glew sdl2 tclap tinyobjloader tinyxml2`, or with *apt* through `apt install libasio-dev libeigen3-dev libfreeimage-dev libglew-dev libsdl2-dev libtclap-dev libtinyobjloader-dev libtinyxml2-dev`.
 
-If CMake config files are missing in your installation but needed by Gramods, then the *_DIR* can be pointed to a backup CMake config folder in the Gramods/cmake_modules folder. This will expose variables in CMake to manually point at include and lib folders for the library.
+If CMake config files are missing in your installation but needed by Gramods, then the `*_DIR` can be pointed to a backup CMake config folder in the `Gramods/cmake_modules` folder. This will expose variables in CMake to manually point at include and lib folders for the library.
 
 
 ## Standard Build Procedure
