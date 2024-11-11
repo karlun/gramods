@@ -14,6 +14,16 @@ BEGIN_NAMESPACE_GMGRAPHICS;
 
 /**
    Visitor that collects intersections.
+
+   Example usage:
+
+   ```
+   gmGraphics::IntersectionVisitor iv
+       (gmGraphics::IntersectionLine::forwardRay(pos, dir));
+   scenegraph_root->accept(&iv);
+   for (const auto &isec : iv.intersections) {
+     ...
+   ```
 */
 struct IntersectionVisitor : Node::TransformStackVisitor {
 

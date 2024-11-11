@@ -14,20 +14,22 @@ BEGIN_NAMESPACE_GMGRAPHICS;
 */
 struct IntersectionLine {
   /**
-     Creates a IntersectionLine for line segment intersection testing.
+     Creates a IntersectionLine for line segment intersection testing,
+     from p0 to p1.
   */
   static IntersectionLine lineSegment(Eigen::Vector3f p0, Eigen::Vector3f p1);
 
   /**
      Creates a IntersectionLine that has infinite forward extent, for
-     intersection testing.
+     intersection testing, from p0 and in direction dir.
   */
-  static IntersectionLine forwardRay(Eigen::Vector3f p0, Eigen::Vector3f d);
+  static IntersectionLine forwardRay(Eigen::Vector3f p0, Eigen::Vector3f dir);
 
   /**
-     Creates a IntersectionLine for two-way infinite ray intersection testing.
+     Creates a IntersectionLine for two-way infinite ray intersection
+     testing, from p0 and in both direction dir and -dir.
   */
-  static IntersectionLine infiniteRay(Eigen::Vector3f p0, Eigen::Vector3f d);
+  static IntersectionLine infiniteRay(Eigen::Vector3f p0, Eigen::Vector3f dir);
 
   /**
      Get this line but transformed into another coordinates base.
@@ -35,8 +37,8 @@ struct IntersectionLine {
   IntersectionLine getInSpace(const Eigen::Affine3f &M) const;
 
   /**
-     Returns the position on the line that corresponds to a specified
-     ratio.
+     Returns the position on the line that corresponds to the
+     specified ratio.
   */
   inline Eigen::Vector3f getPosition(float ratio) { return p0 + dir * ratio; }
 

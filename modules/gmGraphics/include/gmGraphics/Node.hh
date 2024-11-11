@@ -26,6 +26,12 @@ public:
   /**
      Base for Visitor:s that need to track the space transform through
      traversal.
+
+     Transform objects will call the apply method with its affine
+     transform as argument upon which this visitor will populate its
+     stack member before calling the standard apply method. Sub
+     classes can then access the stack member, e.g. stack.back() to
+     find the transform of the current 3D space.
   */
   struct TransformStackVisitor : Visitor {
 
@@ -38,6 +44,14 @@ public:
   /**
      Visitor that extracts the optimal near and far planes for a
      scenegraph.
+
+     Example usage:
+
+     ```
+     Node::NearFarVisitor nfv(camera);
+     node->accept(&nfv);
+     auto near_far = nfv.getNearFar();
+     ```
   */
   struct NearFarVisitor : TransformStackVisitor {
 
@@ -59,6 +73,13 @@ public:
   /**
      Visitor that renders a scenegraph to the currently active
      viewport.
+
+     Example usage:
+
+     ```
+     Node::RenderVisitor rv(camera);
+     node->accept(&rv);
+     ```
   */
   struct RenderVisitor : TransformStackVisitor {
 

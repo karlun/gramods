@@ -141,7 +141,9 @@ public:
   virtual bool handleEvent(event *);
 
   /**
-     Registers an event handler associated with the specified tag.
+     Registers an event handler associated with the specified tag. The
+     tag can be a pointer to any object and is only used for calls to
+     removeEventHandler.
   */
   void addEventHandler(std::function<bool(const event*)> fun, void *tag);
 

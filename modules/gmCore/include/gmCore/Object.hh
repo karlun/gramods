@@ -64,6 +64,13 @@ public:
 
   /**
      The visitor of a design pattern for automatic traversal.
+
+     Example usage:
+
+     ```
+     MyVisitor visitor;
+     node->accept(&visitor);
+     ```
   */
   struct Visitor {
     /**
