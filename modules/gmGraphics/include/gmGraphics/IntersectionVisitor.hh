@@ -52,13 +52,26 @@ struct IntersectionVisitor : Node::TransformStackVisitor {
     const std::vector<gmGraphics::Node *> node_path;
   };
 
+  /**
+     Create a visitor for checking for intersection against the
+     specified line.
+  */
   IntersectionVisitor(IntersectionLine line) : line(line) {}
 
+  /**
+     This method is called for each visited objects.
+  */
   void apply(gmCore::Object *node) override;
 
-  const IntersectionLine line;
-  std::vector<gmGraphics::Node *> node_path;
+  /**
+     This is the list of intersections found by the visitors during
+     traversal.
+  */
   std::vector<Intersection> intersections;
+
+protected:
+  const IntersectionLine line;               //< Line checked against
+  std::vector<gmGraphics::Node *> node_path; //< Current path
 };
 
 END_NAMESPACE_GMGRAPHICS;
