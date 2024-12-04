@@ -33,9 +33,17 @@ void PoseTransform::setPosition(Eigen::Vector3f p) {
   _impl->cache_transform = std::nullopt;
 }
 
+Eigen::Vector3f PoseTransform::getPosition() {
+  return _impl->position;
+}
+
 void PoseTransform::setOrientation(Eigen::Quaternionf q) {
   _impl->orientation = q;
   _impl->cache_transform = std::nullopt;
+}
+
+Eigen::Quaternionf PoseTransform::getOrientation() {
+  return _impl->orientation;
 }
 
 void PoseTransform::setOrientationCenter(Eigen::Vector3f p) {
@@ -43,9 +51,17 @@ void PoseTransform::setOrientationCenter(Eigen::Vector3f p) {
   _impl->cache_transform = std::nullopt;
 }
 
+Eigen::Vector3f PoseTransform::getOrientationCenter() {
+  return _impl->orientation_center;
+}
+
 void PoseTransform::setScale(Eigen::Vector3f p) {
   _impl->scale = p;
   _impl->cache_transform = std::nullopt;
+}
+
+Eigen::Vector3f PoseTransform::getScale() {
+  return _impl->scale;
 }
 
 void PoseTransform::setScaleCenter(Eigen::Vector3f p) {
@@ -53,9 +69,17 @@ void PoseTransform::setScaleCenter(Eigen::Vector3f p) {
   _impl->cache_transform = std::nullopt;
 }
 
+Eigen::Vector3f PoseTransform::getScaleCenter() {
+  return _impl->scale_center;
+}
+
 void PoseTransform::setScaleOrientation(Eigen::Quaternionf q) {
   _impl->scale_orientation = q;
   _impl->cache_transform = std::nullopt;
+}
+
+Eigen::Quaternionf PoseTransform::getScaleOrientation() {
+  return _impl->scale_orientation;
 }
 
 Eigen::Affine3f PoseTransform::getTransform() {

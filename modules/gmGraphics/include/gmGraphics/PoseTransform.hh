@@ -28,6 +28,11 @@ public:
   void setPosition(Eigen::Vector3f p);
 
   /**
+     Get the position of the childrens' space.
+  */
+  Eigen::Vector3f getPosition();
+
+  /**
      Set the orientation of the childrens' space.
 
      \gmXmlTag{gmGraphics,PoseTransform,orientation}
@@ -35,6 +40,11 @@ public:
      \sa gramods::operator>>(std::istream &, Eigen::Quaternionf &)
   */
   void setOrientation(Eigen::Quaternionf q);
+
+  /**
+     Get the orientation of the childrens' space.
+  */
+  Eigen::Quaternionf getOrientation();
 
   /**
      Set the center of the orientation change.
@@ -46,6 +56,11 @@ public:
   void setOrientationCenter(Eigen::Vector3f c);
 
   /**
+     Get the center of the orientation change.
+  */
+  Eigen::Vector3f getOrientationCenter();
+
+  /**
      Set the scale of the childrens' space.
 
      \gmXmlTag{gmGraphics,PoseTransform,scale}
@@ -53,6 +68,11 @@ public:
      \sa gramods::operator>>(std::istream &, Eigen::Vector3f &)
   */
   void setScale(Eigen::Vector3f p);
+
+  /**
+     Get the scale of the childrens' space.
+  */
+  Eigen::Vector3f getScale();
 
   /**
      Set the center of the scale change.
@@ -64,6 +84,11 @@ public:
   void setScaleCenter(Eigen::Vector3f c);
 
   /**
+     Get the center of the scale change.
+  */
+  Eigen::Vector3f getScaleCenter();
+
+  /**
      Set the orientation of the scale vector, in local space.
 
      \gmXmlTag{gmGraphics,PoseTransform,scaleOrientation}
@@ -71,6 +96,11 @@ public:
      \sa gramods::operator>>(std::istream &, Eigen::Vector3f &)
   */
   void setScaleOrientation(Eigen::Quaternionf q);
+
+  /**
+     Get the orientation of the scale vector, in local space.
+  */
+  Eigen::Quaternionf getScaleOrientation();
 
   /**
      \sa Transform::getTransform
