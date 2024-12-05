@@ -213,8 +213,9 @@ OpenVR::Impl::getAnalog(std::string action, vr::VRInputValueHandle_t device) {
   auto err =
       vr::VRInput()->GetAnalogActionData(*handle, &data, sizeof(data), device);
   if (err != vr::VRInputError_None) {
-    GM_ERR("OpenVR",
-           "Failed to get analog action data: " << getEvrInputError(err));
+    GM_RUNONCE(
+        GM_ERR("OpenVR",
+               "Failed to get analog action data: " << getEvrInputError(err)));
     return std::nullopt;
   }
 
