@@ -98,7 +98,8 @@
     </AnalogsMapper>
     <ButtonsMapper
         mainButton="33"
-        secondaryButton="32">
+        secondaryButton="1"
+        menuButton="32">
       <VrpnButtonsTracker
           connectionString="openvr/device/LHR-22B4136B@tcp://win04681.ad.liu.se"/>
     </ButtonsMapper>

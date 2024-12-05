@@ -1,10 +1,14 @@
 {
-      "default_bindings": [
-         {
-            "controller_type" : "generic",
-            "binding_url" : "standard_bindings.json"
-         }
-      ], 
+  "default_bindings": [
+    {
+      "controller_type" : "generic",
+      "binding_url" : "standard_bindings.json"
+    },
+    {
+      "controller_type" : "knuckles",
+      "binding_url" : "standard_bindings_knuckles.json"
+    }
+  ],
   "actions": [
     {
       "name": "/actions/std/in/MainButton",
@@ -12,6 +16,10 @@
     },
     {
       "name": "/actions/std/in/SecondButton",
+      "type": "boolean"
+    },
+    {
+      "name": "/actions/std/in/MenuButton",
       "type": "boolean"
     },
     {
@@ -24,6 +32,7 @@
             "language_tag": "en_US",
             "/actions/std/in/MainButton" : "Main Button",
             "/actions/std/in/SecondButton" : "Second Button",
+            "/actions/std/in/MenuButton" : "Menu Button",
             "/actions/std/in/AnalogInput" : "Analog Input"
         }
     ]
