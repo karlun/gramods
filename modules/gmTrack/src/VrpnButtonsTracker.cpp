@@ -96,14 +96,13 @@ void VrpnButtonsTracker::Impl::handler(const vrpn_BUTTONCB info) {
     (std::chrono::microseconds(info.msg_time.tv_usec));
   auto time = clock::time_point(secs + usecs);
 
-  ButtonsSample sample;
-  sample.time = time;
+  if (!latest_sample) latest_sample = ButtonsSample {};
+  latest_sample->time = time;
   if (info.state)
-    sample.buttons[info.button] = true;
+    latest_sample->buttons[info.button] = true;
   else
-    sample.buttons[info.button] = false;
+    latest_sample->buttons[info.button] = false;
 
-  latest_sample = sample;
   got_data = true;
 
   GM_DBG3("VrpnButtonsTracker", "Got vrpn button data for button " << info.button << " (" << info.state << ")");
