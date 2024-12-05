@@ -98,6 +98,7 @@
       <OpenVR USE="OPENVR"/>
       <param name="action" value="/actions/std/in/MainButton"/>
       <param name="action" value="/actions/std/in/SecondButton"/>
+      <param name="action" value="/actions/std/in/MenuButton"/>
     </OpenVRButtonsTracker>
   </Controller>
 
