@@ -9,7 +9,19 @@
 BEGIN_NAMESPACE_GMCORE;
 
 /**
-   Static functions for converting time.
+   Static functions for converting time. For example, to find the time
+   in seconds used in a certain call:
+
+   ```
+   typedef gmCore::TimeTools::clock clock;
+   clock::time_point t0 = clock::now();
+   expensive_call_to_measure();
+   clock::time_point t1 = clock::now();
+   clock::duration time_span = t1 - t0;
+   std::cerr << "Time used: "
+             << gmCore::TimeTools::durationToSeconds(time_span)
+             << std::endl;
+   ```
 */
 struct TimeTools {
 
