@@ -18,6 +18,10 @@
     </HmdView>
   </SdlWindow>
 
+  <OpenVRPoseTracker DEF="head" type="HMD">
+    <OpenVR USE="OPENVR"/>
+  </OpenVRPoseTracker>
+
   <Controller>
     <OpenVRPoseTracker
         type="Controller">

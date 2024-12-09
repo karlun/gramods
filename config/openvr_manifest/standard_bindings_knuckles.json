@@ -4,48 +4,12 @@
          "sources" : [
             {
                "inputs" : {
-                  "position" : {
-                     "output" : "/actions/std/in/AnalogInput"
-                  }
-               },
-               "mode" : "trackpad",
-               "path" : "/user/hand/right/input/trackpad"
-            },
-            {
-               "inputs" : {
                   "click" : {
                      "output" : "/actions/std/in/MainButton"
                   }
                },
                "mode" : "button",
                "path" : "/user/hand/right/input/trigger"
-            },
-            {
-               "inputs" : {
-                  "click" : {
-                     "output" : "/actions/std/in/SecondButton"
-                  }
-               },
-               "mode" : "button",
-               "path" : "/user/hand/right/input/a"
-            },
-            {
-               "inputs" : {
-                  "click" : {
-                     "output" : "/actions/std/in/MenuButton"
-                  }
-               },
-               "mode" : "button",
-               "path" : "/user/hand/right/input/menu"
-            },
-            {
-               "inputs" : {
-                  "position" : {
-                     "output" : "/actions/std/in/AnalogInput"
-                  }
-               },
-               "mode" : "trackpad",
-               "path" : "/user/hand/left/input/trackpad"
             },
             {
                "inputs" : {
@@ -63,7 +27,16 @@
                   }
                },
                "mode" : "button",
-               "path" : "/user/hand/left/input/a"
+               "path" : "/user/hand/right/input/b"
+            },
+            {
+               "inputs" : {
+                  "click" : {
+                     "output" : "/actions/std/in/SecondButton"
+                  }
+               },
+               "mode" : "button",
+               "path" : "/user/hand/left/input/b"
             },
             {
                "inputs" : {
@@ -72,7 +45,34 @@
                   }
                },
                "mode" : "button",
-               "path" : "/user/hand/left/input/menu"
+               "path" : "/user/hand/right/input/thumbstick"
+            },
+            {
+               "inputs" : {
+                  "click" : {
+                     "output" : "/actions/std/in/MenuButton"
+                  }
+               },
+               "mode" : "button",
+               "path" : "/user/hand/left/input/thumbstick"
+            },
+            {
+               "inputs" : {
+                  "position" : {
+                     "output" : "/actions/std/in/AnalogInput"
+                  }
+               },
+               "mode" : "trackpad",
+               "path" : "/user/hand/right/input/trackpad"
+            },
+            {
+               "inputs" : {
+                  "position" : {
+                     "output" : "/actions/std/in/AnalogInput"
+                  }
+               },
+               "mode" : "trackpad",
+               "path" : "/user/hand/left/input/trackpad"
             }
          ]
       }
