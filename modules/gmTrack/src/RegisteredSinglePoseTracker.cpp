@@ -38,12 +38,12 @@ void RegisteredSinglePoseTracker::setSinglePoseTracker(std::shared_ptr<SinglePos
 
 void RegisteredSinglePoseTracker::setRegistrationMatrix(Eigen::Matrix4f m) {
   _impl->reg_matrix = m;
-  _impl->reg_rotation = Eigen::Quaternionf(m.block<3, 3>(0, 0));
+  _impl->reg_rotation = Eigen::Quaternionf(m.block<3, 3>(0, 0)).normalized();
 }
 
 void RegisteredSinglePoseTracker::setBiasMatrix(Eigen::Matrix4f m) {
   _impl->bias_matrix = m;
-  _impl->bias_rotation = Eigen::Quaternionf(m.block<3, 3>(0, 0));
+  _impl->bias_rotation = Eigen::Quaternionf(m.block<3, 3>(0, 0)).normalized();
 }
 
 void RegisteredSinglePoseTracker::setPositionBias(Eigen::Vector3f p) {
