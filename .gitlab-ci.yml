@@ -3,6 +3,14 @@ stages:
   - build
   - test
 
+workflow:
+  rules:
+    - if: $CI_COMMIT_TITLE !~ /^WIP/ && $CI_COMMIT_TITLE !~ /^wip/
+      changes:
+        - apps/**/*
+        - modules/**/*
+        - test/**/*
+
 BuildMini:
   image: $CI_REGISTRY/karlu20/gramods:20.04-mini
   stage: build
