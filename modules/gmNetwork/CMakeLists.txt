@@ -7,12 +7,14 @@ SET (PUBLIC_LIBS CACHE INTERNAL "Libraries with headers used in module header fi
 SET (PRIVATE_LIBS CACHE INTERNAL "Libraries *not* used in module header files.")
 SET (INTERNAL_LIBS CACHE INTERNAL "Internal targets and dependencies with full paths.")
 
+SET(gramods_PARTS
+  ${gramods_PARTS} lib_gmNetwork PARENT_SCOPE)
 
 LIST (APPEND PUBLIC_LIBS gmCore)
 LIST (APPEND INTERNAL_LIBS gmCore_internal_deps)
 
 # Boost ASIO (headers only)
-FIND_PACKAGE (ASIO)
+FIND_PACKAGE (ASIO QUIET)
 IF (ASIO_FOUND)
 
   SET(HAVE_ASIO 1)
@@ -20,15 +22,16 @@ IF (ASIO_FOUND)
   OPTION(gramods_ENABLE_ASIO "Enable functionality that requires ASIO" ON)
 
   IF (NOT gramods_ENABLE_ASIO)
-    MESSAGE (STATUS "Not including gmNetwork - requires ASIO (disabled)")
+    SET(gramods_REQ_lib_gmNetwork "ASIO" PARENT_SCOPE)
     RETURN()
   ENDIF()
   LIST(APPEND gramods_DOCS_DEFINES gramods_ENABLE_ASIO)
 ELSE()
-  MESSAGE (STATUS "Not including gmNetwork - requires ASIO")
+  SET(gramods_REQ_lib_gmNetwork "ASIO" PARENT_SCOPE)
   RETURN()
 ENDIF()
 LIST (APPEND PRIVATE_INCLUDE_DIRS ${ASIO_INCLUDE_DIRS})
+LIST (APPEND gramods_FEAT_lib_gmNetwork "ASIO")
 
 
 SET(gramods_DOCS_DEFINES ${gramods_DOCS_DEFINES} PARENT_SCOPE)
@@ -56,6 +59,9 @@ SOURCE_GROUP("headers" FILES ${HEADERS_ABSOLUTE})
 SOURCE_GROUP("sources" FILES ${SOURCES})
 
 ADD_LIBRARY(gmNetwork SHARED)
+SET(gramods_FEAT_lib_gmNetwork ${gramods_FEAT_lib_gmNetwork} PARENT_SCOPE)
+SET(gramods_DISA_lib_gmNetwork ${gramods_DISA_lib_gmNetwork} PARENT_SCOPE)
+SET(gramods_MISS_lib_gmNetwork ${gramods_MISS_lib_gmNetwork} PARENT_SCOPE)
 
 TARGET_INCLUDE_DIRECTORIES(gmNetwork
   PUBLIC

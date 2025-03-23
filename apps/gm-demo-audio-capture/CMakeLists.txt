@@ -5,18 +5,23 @@ CMAKE_POLICY(VERSION 3.10)
 SET (APP_INCLUDE_DIRS CACHE INTERNAL "The list of include folders to search for the app.")
 SET (APP_LIBS CACHE INTERNAL "The list of libraries that the app should link against.")
 
+SET(gramods_PARTS
+  ${gramods_PARTS} app_gm_demo_audio_capture PARENT_SCOPE)
+
+
 LIST (APPEND APP_INCLUDE_DIRS ${CMAKE_CURRENT_SOURCE_DIR}/include)
 LIST (APPEND APP_INCLUDE_DIRS ${CMAKE_CURRENT_BINARY_DIR}/include)
 
 IF (NOT TARGET gmSound)
-  MESSAGE (WARNING "Not including gm-demo-audio-capture - requires gmSound")
+  SET(gramods_REQ_app_gm_demo_audio_capture "gmSound" PARENT_SCOPE)
   RETURN()
 ENDIF ()
 LIST (APPEND APP_LIBS gmSound_internal_deps)
 
-FIND_PACKAGE (TCLAP)
+
+FIND_PACKAGE (TCLAP QUIET)
 IF (NOT TCLAP_FOUND)
-  MESSAGE (STATUS "Not including gm-demo-audio-capture - requires TCLAP")
+  SET(gramods_REQ_app_gm_demo_audio_capture "TCLAP" PARENT_SCOPE)
   RETURN()
 ENDIF ()
 LIST (APPEND APP_INCLUDE_DIRS ${TCLAP_INCLUDE_DIRS})

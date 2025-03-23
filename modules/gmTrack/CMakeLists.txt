@@ -7,6 +7,8 @@ SET (PUBLIC_LIBS CACHE INTERNAL "Libraries with headers used in module header fi
 SET (PRIVATE_LIBS CACHE INTERNAL "Libraries *not* used in module header files.")
 SET (INTERNAL_LIBS CACHE INTERNAL "Internal targets and dependencies with full paths.")
 
+SET(gramods_PARTS
+  ${gramods_PARTS} lib_gmTrack PARENT_SCOPE)
 
 LIST (APPEND PUBLIC_LIBS gmCore)
 LIST (APPEND INTERNAL_LIBS gmCore_internal_deps)
@@ -14,11 +16,11 @@ LIST (APPEND PUBLIC_LIBS gmMisc)
 LIST (APPEND INTERNAL_LIBS gmMisc_internal_deps)
 
 IF (NOT gramods_ENABLE_Eigen3)
-  MESSAGE (WARNING "Not including gmTrack - requires Eigen3")
+  SET(gramods_REQ_lib_gmTrack "Eigen3" PARENT_SCOPE)
   RETURN()
 ENDIF()
 
-FIND_PACKAGE(VRPN CONFIG)
+FIND_PACKAGE(VRPN CONFIG QUIET)
 IF(VRPN_FOUND)
 
   SET(HAVE_VRPN 1)
@@ -29,12 +31,18 @@ IF(VRPN_FOUND)
     LIST (APPEND PRIVATE_LIBS VRPN::Server)
     LIST (APPEND PRIVATE_LIBS VRPN::Quat)
     LIST (APPEND gramods_DOCS_DEFINES gramods_ENABLE_VRPN)
+    LIST(APPEND gramods_FEAT_lib_gmTrack "VRPN")
+  ELSE()
+    LIST(APPEND gramods_DISA_lib_gmTrack "VRPN")
   ENDIF()
+
+ELSE()
+  LIST(APPEND gramods_MISS_lib_gmTrack "VRPN")
 ENDIF(VRPN_FOUND)
 
 FIND_PACKAGE(OpenCV QUIET OPTIONAL_COMPONENTS videoio highgui objdetect)
 IF(OpenCV_FOUND AND NOT OPENCV_OBJDETECT_FOUND)
-  MESSAGE(STATUS "Found OpenCV without objdetect module")
+  LIST(APPEND gramods_MISS_lib_gmTrack "OpenCV ObjDetect")
 ENDIF()
 IF(OPENCV_VIDEOIO_FOUND AND OPENCV_HIGHGUI_FOUND)
   SET(HAVE_OpenCV 1)
@@ -55,7 +63,13 @@ IF(OPENCV_VIDEOIO_FOUND AND OPENCV_HIGHGUI_FOUND)
         LIST (APPEND gramods_DOCS_DEFINES gramods_ENABLE_OpenCV_objdetect)
       ENDIF()
     ENDIF()
+  ELSE()
+    LIST(APPEND gramods_DISA_lib_gmTrack "OpenCV")
   ENDIF()
+
+  LIST(APPEND gramods_FEAT_lib_gmTrack "OpenCV")
+ELSE()
+  LIST(APPEND gramods_MISS_lib_gmTrack "OpenCV")
 ENDIF()
 
 SET(gramods_DOCS_DEFINES ${gramods_DOCS_DEFINES} PARENT_SCOPE)
@@ -77,6 +91,9 @@ SOURCE_GROUP("headers" FILES ${HEADERS_ABSOLUTE})
 SOURCE_GROUP("sources" FILES ${SOURCES})
 
 ADD_LIBRARY(gmTrack SHARED)
+SET(gramods_FEAT_lib_gmTrack ${gramods_FEAT_lib_gmTrack} PARENT_SCOPE)
+SET(gramods_DISA_lib_gmTrack ${gramods_DISA_lib_gmTrack} PARENT_SCOPE)
+SET(gramods_MISS_lib_gmTrack ${gramods_MISS_lib_gmTrack} PARENT_SCOPE)
 
 TARGET_INCLUDE_DIRECTORIES(gmTrack
   PUBLIC

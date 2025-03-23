@@ -7,22 +7,31 @@ SET (PUBLIC_LIBS CACHE INTERNAL "Libraries with headers used in module header fi
 SET (PRIVATE_LIBS CACHE INTERNAL "Libraries *not* used in module header files.")
 SET (INTERNAL_LIBS CACHE INTERNAL "Internal targets and dependencies with full paths.")
 
+SET(gramods_PARTS
+  ${gramods_PARTS} lib_gmMisc PARENT_SCOPE)
 
 LIST (APPEND PUBLIC_LIBS gmCore)
 LIST (APPEND INTERNAL_LIBS gmCore_internal_deps)
 
-IF (NOT gramods_ENABLE_Eigen3)
-  MESSAGE (WARNING "Many feature in gmMisc missing since they require Eigen3")
+IF (gramods_ENABLE_Eigen3)
+  LIST(APPEND gramods_FEAT_lib_gmMisc "Eigen3")
+ELSE()
+  LIST(APPEND gramods_MISS_lib_gmMisc "Eigen3")
 ENDIF()
 
-FIND_PACKAGE(fftw)
+FIND_PACKAGE(fftw QUIET)
 IF (fftw_FOUND)
   SET (HAVE_fftw 1)
   LIST(APPEND gramods_DOCS_DEFINES HAVE_fftw)
   OPTION(gramods_ENABLE_fftw "Enable functionality that requires fftw" ON)
   IF (gramods_ENABLE_fftw)
     LIST (APPEND PUBLIC_LIBS fftw::fftw)
+    LIST(APPEND gramods_FEAT_lib_gmMisc "fftw")
+  ELSE()
+    LIST(APPEND gramods_DISA_lib_gmMisc "fftw")
   ENDIF()
+ELSE ()
+  LIST(APPEND gramods_MISS_lib_gmMisc "fftw")
 ENDIF ()
 
 FIND_PATH (LEHDARI_DELAUNAY_INCLUDE "Lehdari/Delaunay.hpp"
@@ -36,7 +45,11 @@ IF (LEHDARI_DELAUNAY_INCLUDE)
     SET_TARGET_PROPERTIES(lehdari::delaunay PROPERTIES
       INTERFACE_INCLUDE_DIRECTORIES ${LEHDARI_DELAUNAY_INCLUDE})
     LIST (APPEND PUBLIC_LIBS lehdari::delaunay)
+  ELSE()
+    LIST(APPEND gramods_DISA_lib_gmMisc "Lehdari/delaunay")
   ENDIF()
+ELSE ()
+  LIST(APPEND gramods_MISS_lib_gmMisc "Lehdari/delaunay")
 ENDIF()
 
 
@@ -58,6 +71,9 @@ SOURCE_GROUP("headers" FILES ${HEADERS_ABSOLUTE})
 SOURCE_GROUP("sources" FILES ${SOURCES})
 
 ADD_LIBRARY(gmMisc SHARED)
+SET(gramods_FEAT_lib_gmMisc ${gramods_FEAT_lib_gmMisc} PARENT_SCOPE)
+SET(gramods_DISA_lib_gmMisc ${gramods_DISA_lib_gmMisc} PARENT_SCOPE)
+SET(gramods_MISS_lib_gmMisc ${gramods_MISS_lib_gmMisc} PARENT_SCOPE)
 
 TARGET_INCLUDE_DIRECTORIES(gmMisc
   PUBLIC

@@ -7,6 +7,8 @@ SET (PUBLIC_LIBS CACHE INTERNAL "Libraries with headers used in module header fi
 SET (PRIVATE_LIBS CACHE INTERNAL "Libraries *not* used in module header files.")
 SET (INTERNAL_LIBS CACHE INTERNAL "Internal targets and dependencies with full paths.")
 
+SET(gramods_PARTS
+  ${gramods_PARTS} lib_gmSound PARENT_SCOPE)
 
 LIST (APPEND PUBLIC_LIBS gmTrack)
 LIST (APPEND INTERNAL_LIBS gmTrack_internal_deps)
@@ -15,24 +17,25 @@ LIST (APPEND PUBLIC_LIBS gmMisc)
 LIST (APPEND INTERNAL_LIBS gmMisc_internal_deps)
 
 IF (NOT gramods_ENABLE_Eigen3)
-  MESSAGE (WARNING "Not including gmSound - requires Eigen3")
+  SET(gramods_REQ_lib_gmSound "Eigen3" PARENT_SCOPE)
   RETURN()
 ENDIF()
 
-FIND_PACKAGE(OpenAL)
+FIND_PACKAGE(OpenAL QUIET)
 IF (OPENAL_FOUND)
   SET(HAVE_OpenAL 1)
   OPTION(gramods_ENABLE_OpenAL "Enable functionality that requires OpenAL" ON)
   IF (NOT gramods_ENABLE_OpenAL)
-    MESSAGE (WARNING "Not including gmSound - requires OpenAL (disabled)")
+    SET(gramods_REQ_lib_gmSound "OpenAL" PARENT_SCOPE)
     RETURN()
   ENDIF ()
 ELSE()
-  MESSAGE (WARNING "Not including gmSound - requires OpenAL")
+  SET(gramods_REQ_lib_gmSound "OpenAL" PARENT_SCOPE)
   RETURN()
 ENDIF ()
 LIST (APPEND PRIVATE_INCLUDE_DIRS ${OPENAL_INCLUDE_DIRS})
 LIST (APPEND PRIVATE_LIBS ${OPENAL_LIBRARY})
+LIST (APPEND gramods_FEAT_lib_gmSound "OpenAL")
 
 
 CONFIGURE_FILE(
@@ -50,6 +53,9 @@ SOURCE_GROUP("headers" FILES ${HEADERS_ABSOLUTE})
 SOURCE_GROUP("sources" FILES ${SOURCES})
 
 ADD_LIBRARY(gmSound SHARED)
+SET(gramods_FEAT_lib_gmSound ${gramods_FEAT_lib_gmSound} PARENT_SCOPE)
+SET(gramods_DISA_lib_gmSound ${gramods_DISA_lib_gmSound} PARENT_SCOPE)
+SET(gramods_MISS_lib_gmSound ${gramods_MISS_lib_gmSound} PARENT_SCOPE)
 
 TARGET_INCLUDE_DIRECTORIES(gmSound
   PUBLIC

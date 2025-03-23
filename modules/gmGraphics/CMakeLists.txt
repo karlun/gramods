@@ -7,12 +7,14 @@ SET (PUBLIC_LIBS CACHE INTERNAL "Libraries with headers used in module header fi
 SET (PRIVATE_LIBS CACHE INTERNAL "Libraries *not* used in module header files.")
 SET (INTERNAL_LIBS CACHE INTERNAL "Internal targets and dependencies with full paths.")
 
+LIST (APPEND gramods_PARTS lib_gmGraphics)
 
 LIST (APPEND PUBLIC_LIBS gmTrack)
 LIST (APPEND INTERNAL_LIBS gmTrack_internal_deps)
 
 IF (NOT gramods_ENABLE_Eigen3)
-  MESSAGE (WARNING "Not including gmGraphics - requires Eigen3")
+  SET(gramods_PARTS ${gramods_PARTS} PARENT_SCOPE)
+  SET(gramods_REQ_lib_gmGraphics "Eigen3" PARENT_SCOPE)
   RETURN()
 ENDIF()
 
@@ -20,43 +22,47 @@ IF (POLICY CMP0072)
   CMAKE_POLICY(SET CMP0072 NEW)
 ENDIF (POLICY CMP0072)
 
-FIND_PACKAGE(GLEW)
-FIND_PACKAGE(OpenGL)
+FIND_PACKAGE(GLEW QUIET)
+FIND_PACKAGE(OpenGL QUIET)
 IF (OPENGL_FOUND AND GLEW_FOUND)
   OPTION(gramods_ENABLE_OpenGL "Enable functionality that requires OpenGL" ON)
   IF (NOT gramods_ENABLE_OpenGL)
-    MESSAGE (STATUS "Not including gmGraphics - requires OpenGL (disabled)")
+    SET(gramods_PARTS ${gramods_PARTS} PARENT_SCOPE)
+    SET(gramods_REQ_lib_gmGraphics "OpenGL" PARENT_SCOPE)
     RETURN()
   ENDIF()
 ELSE()
   IF (NOT GLEW_FOUND)
-    MESSAGE (WARNING "Not including gmGraphics - requires GLEW")
+    SET(gramods_REQ_lib_gmGraphics "GLEW" PARENT_SCOPE)
   ENDIF()
   IF (NOT OPENGL_FOUND)
-    MESSAGE (WARNING "Not including gmGraphics - requires OpenGL")
+    SET(gramods_REQ_lib_gmGraphics "OpenGL" PARENT_SCOPE)
   ENDIF()
+  SET(gramods_PARTS ${gramods_PARTS} PARENT_SCOPE)
   RETURN()
 ENDIF()
 LIST (APPEND PUBLIC_LIBS GLEW::GLEW)
 LIST (APPEND PUBLIC_LIBS OpenGL::GL)
+LIST (APPEND gramods_FEAT_lib_gmGraphics "OpenGL")
 
 IF(NOT gramods_ENABLE_SDL2)
-  MESSAGE (WARNING "Not including SDL2 window support in gmGraphics - requires SDL2")
+  LIST (APPEND gramods_MISS_lib_gmGraphics "SDL2")
 ENDIF()
 
-FIND_PACKAGE (libuvc)
+FIND_PACKAGE (libuvc QUIET)
 IF(libuvc_FOUND)
   SET(HAVE_libuvc 1)
   OPTION(gramods_ENABLE_libuvc "Enable functionality that requires libuvc" ON)
   IF (gramods_ENABLE_libuvc)
     LIST (APPEND PRIVATE_INCLUDE_DIRS ${libuvc_INCLUDE_DIR})
     LIST (APPEND PRIVATE_LIBS ${libuvc_LIBRARIES})
+    LIST (APPEND gramods_FEAT_lib_gmGraphics "USB Video Class (UVC) devices (libuvc)")
   ELSE(gramods_ENABLE_libuvc)
-    MESSAGE (WARNING "Not including UVC support in gmGraphics - requires libuvc (disabled)")
+    LIST (APPEND gramods_DISA_lib_gmGraphics "USB Video Class (UVC) devices (libuvc)")
   ENDIF(gramods_ENABLE_libuvc)
   OPTION(gramods_ENABLE_libuvc_007 "Enable functionality that requires libuvc 0.0.7" OFF)
 ELSE(libuvc_FOUND)
-  MESSAGE (WARNING "Not including UVC support in gmGraphics - requires libuvc")
+  LIST (APPEND gramods_MISS_lib_gmGraphics "USB Video Class (UVC) devices (libuvc)")
 ENDIF(libuvc_FOUND)
 
 FIND_PACKAGE(tinyobjloader QUIET)
@@ -66,34 +72,37 @@ IF(tinyobjloader_FOUND)
   OPTION(TINYOBJLOADER_USE_MAPBOX_EARCUT "Load mapbox earcut functionality into tinyobjloader" OFF)
   IF (gramods_ENABLE_tinyobjloader)
     LIST (APPEND PRIVATE_LIBS tinyobjloader::tinyobjloader)
+    LIST (APPEND gramods_FEAT_lib_gmGraphics "Obj file support (tinyobjloader)")
   ELSE()
-    MESSAGE (WARNING "Not including Obj support in gmGraphics - requires tinyobjloader (disabled)")
+    LIST (APPEND gramods_DISA_lib_gmGraphics "Obj file support (tinyobjloader)")
   ENDIF()
 ELSE()
-  MESSAGE (WARNING "Not including Obj support in gmGraphics - requires tinyobjloader")
+  LIST (APPEND gramods_MISS_lib_gmGraphics "Obj file support (tinyobjloader)")
 ENDIF()
 
-FIND_PACKAGE(OpenSceneGraph COMPONENTS osgViewer)
+FIND_PACKAGE(OpenSceneGraph COMPONENTS osgViewer QUIET)
 IF (OPENSCENEGRAPH_FOUND)
   SET(HAVE_OpenSceneGraph 1)
   OPTION(gramods_ENABLE_OpenSceneGraph "Enable functionality that requires OpenSceneGraph" ON)
   IF (gramods_ENABLE_OpenSceneGraph)
     LIST (APPEND PRIVATE_INCLUDE_DIRS ${OPENSCENEGRAPH_INCLUDE_DIRS})
     LIST (APPEND PRIVATE_LIBS ${OPENSCENEGRAPH_LIBRARIES})
+    LIST (APPEND gramods_FEAT_lib_gmGraphics "OpenSceneGraph")
   ELSE()
-    MESSAGE (STATUS "Not including OpenSceneGraph support in gmGraphics - requires OpenSceneGraph (disabled)")
+    LIST (APPEND gramods_DISA_lib_gmGraphics "OpenSceneGraph")
   ENDIF()
 ELSE()
-  MESSAGE (STATUS "Not including OpenSceneGraph support in gmGraphics - requires OpenSceneGraph")
+  LIST (APPEND gramods_MISS_lib_gmGraphics "OpenSceneGraph")
 ENDIF()
 
-FIND_PACKAGE(Inkscape)
+LIST (APPEND gramods_PARTS lib_gmGraphics_svg)
+FIND_PACKAGE(Inkscape QUIET)
 IF(Inkscape_FOUND)
 
   SET (SVGPNG_RESOURCE_TARGETS CACHE INTERNAL "The list of png resources that can be built from svg.")
 
   FILE(GLOB_RECURSE SVG_RESOURCES ${CMAKE_CURRENT_SOURCE_DIR}/resources/*.svg)
-  SOURCE_GROUP("svg-resources" FILES ${SVG_RESOURCES})
+  SOURCE_GROUP("gmGraphics-svg" FILES ${SVG_RESOURCES})
 
   FOREACH (RESOURCE ${SVG_RESOURCES})
     STRING(REGEX REPLACE
@@ -105,22 +114,26 @@ IF(Inkscape_FOUND)
     LIST (APPEND SVGPNG_RESOURCE_TARGETS ${SVGPNG_RESOURCE})
   ENDFOREACH()
 
-  add_custom_target(svg-resources
+  add_custom_target(gmGraphics-svg
     ${gramods_RESOURCE_ALL}
     DEPENDS ${SVGPNG_RESOURCE_TARGETS})
 
-  MESSAGE (STATUS "Added 'svg-resources' target for converting SVG resources to PNG.")
+  MESSAGE (STATUS "Added 'gmGraphics-svg' target for converting SVG resources to PNG.")
+
+  LIST(LENGTH SVG_RESOURCES COUNT)
+  SET(gramods_FEAT_lib_gmGraphics_svg "${COUNT} resource(s)" PARENT_SCOPE)
 ELSE()
-  MESSAGE (STATUS "Not including 'svg-resources' target - requires Inkscape")
+  SET(gramods_REQ_lib_gmGraphics_svg "Inkscape" PARENT_SCOPE)
 ENDIF()
 
+LIST (APPEND gramods_PARTS lib_gmGraphics_py)
 INCLUDE(PythonResources)
 IF(PythonResources_FOUND)
 
   SET (PYPNG_RESOURCE_TARGETS CACHE INTERNAL "The list of png resources that can be built with python.")
 
   FILE(GLOB_RECURSE PY_RESOURCES ${CMAKE_CURRENT_SOURCE_DIR}/resources/*.py)
-  SOURCE_GROUP("python-resources" FILES ${PY_RESOURCES})
+  SOURCE_GROUP("gmGraphics-py" FILES ${PY_RESOURCES})
 
   SET(gramods_PNG_RESOURCE_SIZE 1024 CACHE STRING "The width of generated image resources, in pixels.")
 
@@ -134,13 +147,16 @@ IF(PythonResources_FOUND)
     LIST (APPEND PYPNG_RESOURCE_TARGETS ${PNG_RESOURCE})
   ENDFOREACH()
 
-  add_custom_target(python-resources
+  add_custom_target(gmGraphics-py
     ${gramods_RESOURCE_ALL}
     DEPENDS ${PYPNG_RESOURCE_TARGETS})
 
-  MESSAGE (STATUS "Added 'python-resources' target for creating PNG with python.")
+  MESSAGE (STATUS "Added 'gmGraphics-py' target for creating PNG with python.")
+
+  LIST(LENGTH PY_RESOURCES COUNT)
+  SET(gramods_FEAT_lib_gmGraphics_py "${COUNT} resource(s)" PARENT_SCOPE)
 ELSE()
-  MESSAGE (STATUS "Not including 'python-resources' target - requires Python3")
+  SET(gramods_REQ_lib_gmGraphics_py "Python" PARENT_SCOPE)
 ENDIF()
 
 IF (gramods_INSTALL_RESOURCES AND
@@ -166,6 +182,10 @@ SOURCE_GROUP("headers" FILES ${HEADERS_ABSOLUTE})
 SOURCE_GROUP("sources" FILES ${SOURCES})
 
 ADD_LIBRARY(gmGraphics SHARED)
+SET(gramods_PARTS ${gramods_PARTS} PARENT_SCOPE)
+SET(gramods_FEAT_lib_gmGraphics ${gramods_FEAT_lib_gmGraphics} PARENT_SCOPE)
+SET(gramods_DISA_lib_gmGraphics ${gramods_DISA_lib_gmGraphics} PARENT_SCOPE)
+SET(gramods_MISS_lib_gmGraphics ${gramods_MISS_lib_gmGraphics} PARENT_SCOPE)
 
 TARGET_INCLUDE_DIRECTORIES(gmGraphics
   PUBLIC

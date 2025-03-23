@@ -5,31 +5,32 @@ CMAKE_POLICY(VERSION 3.10)
 SET (APP_INCLUDE_DIRS CACHE INTERNAL "The list of include folders to search for the app.")
 SET (APP_LIBS CACHE INTERNAL "The list of libraries that the app should link against.")
 
+SET(gramods_PARTS
+  ${gramods_PARTS} app_gm_demo_end_fit PARENT_SCOPE)
 
-IF (NOT TARGET gmMisc)
-  MESSAGE (STATUS "Not including gm-demo-end-fit - requires gmMisc")
+
+IF (NOT TARGET gmCore)
+  SET(gramods_REQ_app_gm_demo_end_fit "gmCore" PARENT_SCOPE)
   RETURN()
 ENDIF ()
-LIST (APPEND APP_LIBS gmMisc)
+LIST (APPEND APP_LIBS gmCore_internal_deps)
+
+IF (NOT TARGET gmMisc)
+  SET(gramods_REQ_app_gm_demo_multimisc "gmMisc" PARENT_SCOPE)
+  RETURN()
+ENDIF ()
+LIST (APPEND APP_LIBS gmMisc_internal_deps)
+
 
 IF (NOT gramods_ENABLE_Eigen3)
-  MESSAGE (STATUS "Not including gm-demo-end-fit - requires Eigen3")
+  SET(gramods_REQ_app_gm_demo_end_fit "Eigen3" PARENT_SCOPE)
   RETURN()
-ENDIF()
+ENDIF ()
 
-FIND_PACKAGE(SDL2)
-IF(SDL2_FOUND)
-  SET(HAVE_SDL2 1)
-  OPTION(gramods_ENABLE_SDL2 "Enable functionality that requires SDL2" ON)
-  IF(NOT gramods_ENABLE_SDL2)
-    MESSAGE (STATUS "Not including gm-demo-end-fit - requires SDL2 (disabled)")
-    RETURN()
-  ENDIF()
-ELSE()
-  MESSAGE (STATUS "Not including gm-demo-end-fit - requires SDL2")
+IF (NOT gramods_ENABLE_SDL2)
+  SET(gramods_REQ_app_gm_demo_end_fit "SDL2" PARENT_SCOPE)
   RETURN()
-ENDIF()
-LIST (APPEND APP_LIBS SDL2::SDL2)
+ENDIF ()
 
 
 FILE(GLOB_RECURSE HEADERS ${CMAKE_CURRENT_SOURCE_DIR}/include/*.hh)

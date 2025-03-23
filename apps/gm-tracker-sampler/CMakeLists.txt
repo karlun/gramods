@@ -5,32 +5,35 @@ CMAKE_POLICY(VERSION 3.10)
 SET (APP_INCLUDE_DIRS CACHE INTERNAL "The list of include folders to search for the app.")
 SET (APP_LIBS CACHE INTERNAL "The list of libraries that the app should link against.")
 
+SET(gramods_PARTS
+  ${gramods_PARTS} app_gm_tracker_sampler PARENT_SCOPE)
+
 LIST (APPEND APP_INCLUDE_DIRS ${CMAKE_CURRENT_SOURCE_DIR}/include)
 LIST (APPEND APP_INCLUDE_DIRS ${CMAKE_CURRENT_BINARY_DIR}/include)
 
 IF (NOT TARGET gmCore)
-  MESSAGE (WARNING "Not including gm-tracker-sampler - requires gmCore")
+  SET(gramods_REQ_app_gm_tracker_sampler "gmCore" PARENT_SCOPE)
   RETURN()
 ENDIF ()
 LIST (APPEND APP_LIBS gmCore_internal_deps)
 
 IF (NOT TARGET gmTrack)
-  MESSAGE (WARNING "Not including gm-tracker-sampler - requires gmTrack")
+  SET(gramods_REQ_app_gm_tracker_sampler "gmTrack" PARENT_SCOPE)
   RETURN()
 ENDIF ()
 LIST (APPEND APP_LIBS gmTrack_internal_deps)
 
 
-FIND_PACKAGE (TCLAP)
+FIND_PACKAGE (TCLAP QUIET)
 IF (NOT TCLAP_FOUND)
-  MESSAGE (STATUS "Not including gm-tracker-sampler - requires TCLAP")
+  SET(gramods_REQ_app_gm_tracker_sampler "TCLAP" PARENT_SCOPE)
   RETURN()
 ENDIF ()
 LIST (APPEND APP_INCLUDE_DIRS ${TCLAP_INCLUDE_DIRS})
 
-FIND_PACKAGE(Threads)
+FIND_PACKAGE(Threads QUIET)
 IF (NOT Threads_FOUND)
-  MESSAGE (STATUS "Not including gm-tracker-sampler - requires Threads")
+  SET(gramods_REQ_app_gm_tracker_sampler "Threads" PARENT_SCOPE)
   RETURN()
 ENDIF ()
 LIST (APPEND APP_LIBS ${CMAKE_THREAD_LIBS_INIT})

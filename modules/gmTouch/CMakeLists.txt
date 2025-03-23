@@ -7,33 +7,45 @@ SET (PUBLIC_LIBS CACHE INTERNAL "Libraries with headers used in module header fi
 SET (PRIVATE_LIBS CACHE INTERNAL "Libraries *not* used in module header files.")
 SET (INTERNAL_LIBS CACHE INTERNAL "Internal targets and dependencies with full paths.")
 
+SET(gramods_PARTS
+  ${gramods_PARTS} lib_gmTouch PARENT_SCOPE)
 
 LIST (APPEND PUBLIC_LIBS gmMisc)
 LIST (APPEND INTERNAL_LIBS gmMisc_internal_deps)
 
 IF (NOT gramods_ENABLE_Eigen3)
-  MESSAGE (WARNING "Not including gmTouch - requires Eigen3")
+  SET(gramods_REQ_lib_gmTouch "Eigen3" PARENT_SCOPE)
   RETURN()
 ENDIF()
 
-FIND_PACKAGE(OpenSceneGraph)
+FIND_PACKAGE(OpenSceneGraph QUIET)
 IF (OPENSCENEGRAPH_FOUND)
   SET(HAVE_OpenSceneGraph 1)
   OPTION(gramods_ENABLE_OpenSceneGraph "Enable functionality that requires OpenSceneGraph" ON)
   IF (gramods_ENABLE_OpenSceneGraph)
     LIST (APPEND PRIVATE_INCLUDE_DIRS ${OPENSCENEGRAPH_INCLUDE_DIRS})
     LIST (APPEND PUBLIC_LIBS ${OPENSCENEGRAPH_LIBRARIES})
+    LIST(APPEND gramods_FEAT_lib_gmTouch OpenSceneGraph)
+  ELSE()
+    LIST(APPEND gramods_DISA_lib_gmTouch OpenSceneGraph)
   ENDIF ()
+ELSE()
+  LIST(APPEND gramods_MISS_lib_gmTouch OpenSceneGraph)
 ENDIF ()
 
-FIND_PACKAGE(TUIO)
+FIND_PACKAGE(TUIO QUIET)
 IF (TUIO_FOUND)
   SET(HAVE_TUIO 1)
   OPTION(gramods_ENABLE_TUIO "Enable functionality that requires TUIO" ON)
   IF (gramods_ENABLE_TUIO)
     LIST (APPEND PRIVATE_INCLUDE_DIRS ${TUIO_INCLUDE_DIRS})
     LIST (APPEND PRIVATE_LIBS ${TUIO_LIBRARY})
+    LIST(APPEND gramods_FEAT_lib_gmTouch TUIO)
+  ELSE()
+    LIST(APPEND gramods_DISA_lib_gmTouch TUIO)
   ENDIF ()
+ELSE()
+  LIST(APPEND gramods_MISS_lib_gmTouch TUIO)
 ENDIF ()
 
 
@@ -52,6 +64,9 @@ SOURCE_GROUP("headers" FILES ${HEADERS_ABSOLUTE})
 SOURCE_GROUP("sources" FILES ${SOURCES})
 
 ADD_LIBRARY(gmTouch SHARED)
+SET(gramods_FEAT_lib_gmTouch ${gramods_FEAT_lib_gmTouch} PARENT_SCOPE)
+SET(gramods_DISA_lib_gmTouch ${gramods_DISA_lib_gmTouch} PARENT_SCOPE)
+SET(gramods_MISS_lib_gmTouch ${gramods_MISS_lib_gmTouch} PARENT_SCOPE)
 
 TARGET_INCLUDE_DIRECTORIES(gmTouch
   PUBLIC

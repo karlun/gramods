@@ -42,6 +42,7 @@ ENDIF()
 SET(gramods_EXEC_TARGET_FILES "")
 SET(gramods_LIB_TARGET_FILES "")
 SET(gramods_DOCS_DEFINES "")
+SET(gramods_PARTS "")
 
 FOREACH (MODULE gmCore gmMisc gmTrack gmGraphics gmNetwork gmTouch gmSound)
 
@@ -52,7 +53,7 @@ FOREACH (MODULE gmCore gmMisc gmTrack gmGraphics gmNetwork gmTouch gmSound)
   ENDIF()
 
   IF (NOT EXISTS ${gramods_SOURCE_DIR}/modules/${MODULE}/CMakeLists.txt)
-    MESSAGE (STATUS "Could not find build configuration modules/${MODULE}/CMakeLists.txt")
+    MESSAGE (WARNING "Could not find build configuration modules/${MODULE}/CMakeLists.txt")
     CONTINUE()
   ENDIF ()
 
@@ -73,7 +74,7 @@ FOREACH (APP ${gramods_APPS})
   ENDIF()
 
   IF (NOT EXISTS ${gramods_SOURCE_DIR}/apps/${APP}/CMakeLists.txt)
-    MESSAGE (STATUS "Could not find build configuration apps/${APP}/CMakeLists.txt")
+    MESSAGE (WARNING "Could not find build configuration apps/${APP}/CMakeLists.txt")
     CONTINUE()
   ENDIF ()
 
@@ -132,7 +133,7 @@ INSTALL(FILES cmake_modules/gramods.urn
 
 # --- TESTING ---
 
-FIND_PACKAGE(GTest)
+FIND_PACKAGE(GTest QUIET)
 IF (GTest_FOUND)
   ENABLE_TESTING()
 
@@ -164,11 +165,11 @@ ENDIF ()
 LIST(REMOVE_DUPLICATES gramods_DOCS_DEFINES)
 LIST(JOIN gramods_DOCS_DEFINES "," DOCS_DEFINES_STRING)
 
-FIND_PACKAGE(Doxygen)
+FIND_PACKAGE(Doxygen QUIET)
 IF (DOXYGEN_FOUND)
 
-  FIND_PACKAGE(PlantUML)
-  FIND_PACKAGE(Python3)
+  FIND_PACKAGE(PlantUML QUIET)
+  FIND_PACKAGE(Python3 QUIET)
 
   OPTION(gramods_BUILD_DOCUMENTATION "Include building documentation in the ALL target." ON)
   IF (gramods_BUILD_DOCUMENTATION)
@@ -214,4 +215,37 @@ IF (DOXYGEN_FOUND)
 ELSE ()
   MESSAGE ("Include Doxygen to enable building documentation")
 ENDIF (DOXYGEN_FOUND)
+
+# --- Print Information About Support and Features ---
+
+MESSAGE (NOTICE)
+MESSAGE (NOTICE "--------------- Support and features ---------------")
+MESSAGE (NOTICE "Components and, when optional, if features are")
+MESSAGE (NOTICE "included (+), disabled (x) or missing (-)")
+MESSAGE (NOTICE)
+FOREACH (PART ${gramods_PARTS})
+  IF (gramods_REQ_${PART})
+    MESSAGE (NOTICE "(${PART} NOT included; requires ${gramods_REQ_${PART}})")
+    MESSAGE (NOTICE)
+    CONTINUE()
+  ENDIF ()
+
+  MESSAGE (NOTICE "${PART}" )
+
+  FOREACH (FEAT ${gramods_FEAT_${PART}})
+    MESSAGE (NOTICE "  + ${FEAT}" )
+  ENDFOREACH ()
+
+  FOREACH (FEAT ${gramods_DISA_${PART}})
+    MESSAGE (NOTICE "  x ${FEAT}" )
+  ENDFOREACH ()
+
+  FOREACH (FEAT ${gramods_MISS_${PART}})
+    MESSAGE (NOTICE "  - ${FEAT}" )
+  ENDFOREACH ()
+
+  MESSAGE (NOTICE)
+ENDFOREACH ()
+MESSAGE (NOTICE "----------------------------------------------------")
+MESSAGE (NOTICE)
 
