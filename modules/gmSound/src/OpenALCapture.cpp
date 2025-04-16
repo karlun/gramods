@@ -150,7 +150,7 @@ std::vector<float> OpenALCapture::getAvailableSamples() {
   std::vector<float> samples;
   samples.reserve(bytes.size());
   for (auto val : bytes)
-    samples.push_back(val / std::numeric_limits<std::int16_t>::max());
+    samples.push_back(val / (float)std::numeric_limits<std::int16_t>::max());
 
   return samples;
 }
