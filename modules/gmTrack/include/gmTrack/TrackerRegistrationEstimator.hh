@@ -1,13 +1,13 @@
 
-#ifndef GM_TRACK_POSEREGISTRATIONESTIMATOR
-#define GM_TRACK_POSEREGISTRATIONESTIMATOR
+#ifndef GM_TRACK_TRACKERREGISTRATIONESTIMATOR
+#define GM_TRACK_TRACKERREGISTRATIONESTIMATOR
 
-#include <gmTrack/SampleCollector.hh>
+#include <gmTrack/PoseSampleCollector.hh>
 
 BEGIN_NAMESPACE_GMTRACK;
 
 /**
-   The PoseRegistrationEstimator is a utility for estimating the base
+   The TrackerRegistrationEstimator is a utility for estimating the base
    of a tracking system's coordinates, i e registration of the
    tracking system into room or display system coordinates.
 
@@ -15,18 +15,18 @@ BEGIN_NAMESPACE_GMTRACK;
    position of known, pre-specified positions in the room or display
    system.
 */
-class PoseRegistrationEstimator
-  : public SampleCollector {
+class TrackerRegistrationEstimator
+  : public PoseSampleCollector {
 
 public:
 
-  PoseRegistrationEstimator();
-  ~PoseRegistrationEstimator();
+  TrackerRegistrationEstimator();
+  ~TrackerRegistrationEstimator();
 
   /**
      Adds a known calibration point, in room coordinates.
 
-     \gmXmlTag{gmTrack,PoseRegistrationEstimator,actualPosition}
+     \gmXmlTag{gmTrack,TrackerRegistrationEstimator,actualPosition}
   */
   void addActualPosition(Eigen::Vector3f p);
 

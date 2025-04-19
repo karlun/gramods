@@ -18,15 +18,14 @@ TEST(gmMiscNelderMead, Rosenbrock) {
     Eigen::Vector2f x0c(0, 1);
     std::vector<Eigen::Vector2f> x0({x0a, x0b, x0c});
 
-    size_t iterations = 0;
-
-    Eigen::Vector2f res = gmMisc::NelderMead::solve<float>(
-        x0,
+    gmMisc::NelderMead<float, Eigen::Vector2f> solver(
         [a, b](const Eigen::Vector2f &x) {
           return (a - x[0]) * (a - x[0]) +
                  b * (x[1] - x[0] * x[0]) * (x[1] - x[0] * x[0]);
-        },
-        iterations);
+        });
+
+    size_t iterations = 0;
+    Eigen::Vector2f res = solver.solve(x0, iterations);
 
     EXPECT_NEAR(res[0], a, 1e-3);
     EXPECT_NEAR(res[1], a * a, 1e-3);
@@ -40,15 +39,14 @@ TEST(gmMiscNelderMead, Booth) {
   Eigen::Vector2f x0c(0, 1);
   std::vector<Eigen::Vector2f> x0({x0a, x0b, x0c});
 
-  size_t iterations = 0;
-
-  Eigen::Vector2f res = gmMisc::NelderMead::solve<float>(
-      x0,
-      [](const Eigen::Vector2f &x) {
+  gmMisc::NelderMead<float, Eigen::Vector2f> solver(
+      [](const Eigen::Vector2f &x) -> float {
         return (x[0] + 2 * x[1] - 7) * (x[0] + 2 * x[1] - 7) +
                (2 * x[0] + x[1] - 5) * (2 * x[0] + x[1] - 5);
-      },
-      iterations);
+      });
+
+  size_t iterations = 0;
+  Eigen::Vector2f res = solver.solve(x0, iterations);
 
   EXPECT_EQ(iterations, 57);
   EXPECT_NEAR(res[0], 1, 1e-3);
@@ -119,9 +117,7 @@ TEST(gmMiscNelderMead, Multilateration4D) {
     // What is known about time-of-arrival, expressed in distance since velocity is known:
     d_toa.array() -= d_toa.minCoeff();
 
-    size_t iterations = 0;
-    Eigen::Vector4f res4 = gmMisc::NelderMead::solve<float>(
-        x0,
+    gmMisc::NelderMead<float, Eigen::Vector4f> solver(
         [&mic_pts_err, &d_toa](const Eigen::Vector4f &x) {
           Eigen::Vector3f p = x.block<3, 1>(0, 0);
           Eigen::Vector4f d((mic_pts_err[0] - p).norm(),
@@ -130,8 +126,10 @@ TEST(gmMiscNelderMead, Multilateration4D) {
                             (mic_pts_err[3] - p).norm());
           d.array() -= x[3]; // Instead of d_toa + d0
           return (d - d_toa).squaredNorm();
-        },
-        iterations);
+        });
+
+    size_t iterations = 0;
+    Eigen::Vector4f res4 = solver.solve(x0, iterations);
 
     Eigen::Vector3f res = res4.block<3, 1>(0, 0);
 
@@ -205,9 +203,7 @@ TEST(gmMiscNelderMead, MultilaterationSpacetimeCone) {
       x0.push_back(h_pt);
     }
 
-    size_t iterations = 0;
-    Eigen::Vector4f res4 = gmMisc::NelderMead::solve<float>(
-        x0,
+    gmMisc::NelderMead<float, Eigen::Vector4f> solver(
         [&h_mic_pts, mic_R](const Eigen::Vector4f &X) {
 
           // Sound cannot have been emitted in the future
@@ -237,8 +233,10 @@ TEST(gmMiscNelderMead, MultilaterationSpacetimeCone) {
           }
 
           return err2;
-        },
-        iterations);
+        });
+
+    size_t iterations = 0;
+    Eigen::Vector4f res4 = solver.solve(x0, iterations);
 
     Eigen::Vector3f res = res4.block<3, 1>(0, 0);
 

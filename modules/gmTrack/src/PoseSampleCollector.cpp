@@ -1,6 +1,6 @@
 
-#include <gmTrack/SampleCollector.hh>
-#include <gmTrack/SampleCollector.impl.hh>
+#include <gmTrack/PoseSampleCollector.hh>
+#include <gmTrack/PoseSampleCollector.impl.hh>
 
 #include <gmTrack/ButtonsMapper.hh>
 
@@ -14,62 +14,62 @@
 
 BEGIN_NAMESPACE_GMTRACK;
 
-GM_OFI_DEFINE(SampleCollector);
-GM_OFI_PARAM(SampleCollector, samplesPerSecond, float, SampleCollector::setSamplesPerSecond);
-GM_OFI_PARAM(SampleCollector, warningThreshold, float, SampleCollector::setWarningThreshold);
-GM_OFI_PARAM(SampleCollector, orientationWarningThreshold, float, SampleCollector::setOrientationWarningThreshold);
-GM_OFI_PARAM(SampleCollector, trackerPosition, Eigen::Vector3f, SampleCollector::addTrackerPosition);
-GM_OFI_PARAM(SampleCollector, trackerOrientation, Eigen::Quaternionf, SampleCollector::addTrackerOrientation);
-GM_OFI_POINTER(SampleCollector, controller, Controller, SampleCollector::setController);
+GM_OFI_DEFINE(PoseSampleCollector);
+GM_OFI_PARAM(PoseSampleCollector, samplesPerSecond, float, PoseSampleCollector::setSamplesPerSecond);
+GM_OFI_PARAM(PoseSampleCollector, warningThreshold, float, PoseSampleCollector::setWarningThreshold);
+GM_OFI_PARAM(PoseSampleCollector, orientationWarningThreshold, float, PoseSampleCollector::setOrientationWarningThreshold);
+GM_OFI_PARAM(PoseSampleCollector, trackerPosition, Eigen::Vector3f, PoseSampleCollector::addTrackerPosition);
+GM_OFI_PARAM(PoseSampleCollector, trackerOrientation, Eigen::Quaternionf, PoseSampleCollector::addTrackerOrientation);
+GM_OFI_POINTER(PoseSampleCollector, controller, Controller, PoseSampleCollector::setController);
 
 
-SampleCollector::SampleCollector(Impl *_impl)
-  : Updateable(-1000), _impl(_impl) {
+PoseSampleCollector::PoseSampleCollector(Impl *_impl)
+  : Updateable(-200), _impl(_impl) {
   if (!this->_impl) this->_impl = std::make_unique<Impl>();
 }
 
-SampleCollector::~SampleCollector() {}
+PoseSampleCollector::~PoseSampleCollector() {}
 
-void SampleCollector::update(clock::time_point time, size_t frame) {
+void PoseSampleCollector::update(clock::time_point time, size_t frame) {
   _impl->update(time);
 }
 
-void SampleCollector::setController(std::shared_ptr<gramods::gmTrack::Controller> controller) {
+void PoseSampleCollector::setController(std::shared_ptr<gramods::gmTrack::Controller> controller) {
   _impl->controller = controller;
 }
 
-void SampleCollector::addTrackerPosition(Eigen::Vector3f p) {
+void PoseSampleCollector::addTrackerPosition(Eigen::Vector3f p) {
   _impl->tracker_positions.push_back(p);
 }
 
-void SampleCollector::addTrackerOrientation(Eigen::Quaternionf o) {
+void PoseSampleCollector::addTrackerOrientation(Eigen::Quaternionf o) {
   _impl->tracker_orientations.push_back(o);
 }
 
-void SampleCollector::setSamplesPerSecond(float n) {
+void PoseSampleCollector::setSamplesPerSecond(float n) {
   _impl->samples_per_second = n;
 }
 
-void SampleCollector::setWarningThreshold(float d) {
+void PoseSampleCollector::setWarningThreshold(float d) {
   _impl->warning_threshold = d;
 }
 
-void SampleCollector::setInlierThreshold(float d) {
+void PoseSampleCollector::setInlierThreshold(float d) {
   _impl->inlier_threshold = d;
 }
 
-void SampleCollector::setOrientationWarningThreshold(float d) {
+void PoseSampleCollector::setOrientationWarningThreshold(float d) {
   _impl->orientation_warning_threshold = d;
 }
 
-void SampleCollector::setOrientationInlierThreshold(float d) {
+void PoseSampleCollector::setOrientationInlierThreshold(float d) {
   _impl->orientation_inlier_threshold = d;
 }
 
-void SampleCollector::Impl::update(clock::time_point now) {
+void PoseSampleCollector::Impl::update(clock::time_point now) {
 
   if (!controller && tracker_positions.empty() && tracker_orientations.empty()) {
-    GM_RUNONCE(GM_ERR("SampleCollector", "No tracker positions or orientations specified and no controller to read tracker data from"));
+    GM_RUNONCE(GM_ERR("PoseSampleCollector", "No tracker positions or orientations specified and no controller to read tracker data from"));
     return;
   }
 
@@ -81,7 +81,7 @@ void SampleCollector::Impl::update(clock::time_point now) {
   if (!collecting) {
     if (buttons.buttons[ButtonsMapper::ButtonIdx::MAIN]) {
       collecting = true;
-      GM_INF("SampleCollector", "going into collect mode");
+      GM_INF("PoseSampleCollector", "going into collect mode");
     } else {
       return;
     }
@@ -90,14 +90,14 @@ void SampleCollector::Impl::update(clock::time_point now) {
   if (buttons.buttons[ButtonsMapper::ButtonIdx::MAIN]){
     gramods::gmTrack::PoseTracker::PoseSample pose;
     if (! controller->getPose(pose)) {
-      GM_RUNONCE(GM_ERR("SampleCollector", "Cannot read controller pose"));
+      GM_RUNONCE(GM_ERR("PoseSampleCollector", "Cannot read controller pose"));
       return;
     }
 
     // Zero or less samples per second results in taking only one sample per click
     if (samples_per_second < std::numeric_limits<float>::epsilon()) {
       if (last_sample_time == clock::time_point::min()) {
-        GM_DBG1("SampleCollector", "collecting a single sample");
+        GM_DBG1("PoseSampleCollector", "collecting a single sample");
         sample_positions.push_back(pose.position);
         sample_orientations.push_back(pose.orientation);
       }
@@ -110,7 +110,7 @@ void SampleCollector::Impl::update(clock::time_point now) {
         (now - last_sample_time) < std::chrono::milliseconds(int(1000.f/samples_per_second)))
       return;
 
-    GM_DBG1("SampleCollector", "collecting sample");
+    GM_DBG1("PoseSampleCollector", "collecting sample");
     sample_positions.push_back(pose.position);
     sample_orientations.push_back(pose.orientation);
     last_sample_time = now;
@@ -124,7 +124,7 @@ void SampleCollector::Impl::update(clock::time_point now) {
   last_sample_time = clock::time_point::min();
 
   if (sample_positions.empty()) {
-    GM_RUNONCE(GM_ERR("SampleCollector", "No samples collected"));
+    GM_RUNONCE(GM_ERR("PoseSampleCollector", "No samples collected"));
     return;
   }
 
@@ -135,13 +135,13 @@ void SampleCollector::Impl::update(clock::time_point now) {
   tracker_positions.push_back(pos);
 
   if (maxdev > warning_threshold) {
-    GM_WRN("SampleCollector",
+    GM_WRN("PoseSampleCollector",
            "Estimated mean, " << pos.transpose() << " (stddev " << stddev
                               << "), has worst offset " << maxdev << " in "
                               << inlier_count << " of "
                               << sample_positions.size() << " samples.");
   } else {
-    GM_INF("SampleCollector",
+    GM_INF("PoseSampleCollector",
            "Estimated mean: " << pos.transpose() << " (stddev " << stddev
                               << ", worst offset " << maxdev << ") from "
                               << inlier_count << " of "
@@ -157,13 +157,13 @@ void SampleCollector::Impl::update(clock::time_point now) {
   tracker_orientations.push_back(ori);
 
   if (maxdev > orientation_warning_threshold) {
-    GM_WRN("SampleCollector",
+    GM_WRN("PoseSampleCollector",
            "Estimated orientation (stddev "
                << stddev << "), has worst offset " << maxdev << " in "
                << inlier_count << " of " << sample_orientations.size()
                << " samples.");
   } else {
-    GM_INF("SampleCollector",
+    GM_INF("PoseSampleCollector",
            "Estimated orientation (stddev "
                << stddev << ", worst offset " << maxdev << ") from "
                << inlier_count << " of " << sample_orientations.size()
@@ -173,7 +173,7 @@ void SampleCollector::Impl::update(clock::time_point now) {
 }
 
 Eigen::Vector3f
-SampleCollector::getAverage(std::vector<Eigen::Vector3f> samples,
+PoseSampleCollector::getAverage(std::vector<Eigen::Vector3f> samples,
                             float *stddev,
                             float *maxdev,
                             float inlier_dist,
@@ -191,7 +191,7 @@ SampleCollector::getAverage(std::vector<Eigen::Vector3f> samples,
 
   Eigen::Vector3f x;
 
-  if (inlier_dist == std::numeric_limits<float>::max()) {
+  if (inlier_dist <= 0.f || inlier_dist == std::numeric_limits<float>::max()) {
     x = Eigen::Vector3f::Zero();
     for (auto p : samples) x += p;
     x *= (1.0 / samples.size());
@@ -217,7 +217,7 @@ SampleCollector::getAverage(std::vector<Eigen::Vector3f> samples,
 
       if (worst_distance < inl_d2) break;
 
-      GM_DBG2("SampleCollector",
+      GM_DBG2("PoseSampleCollector",
               "dropped positional outlier for position average ("
                   << std::sqrt(worst_distance) << " > " << inlier_dist << " @ "
                   << samples[worst_idx].transpose() << ")");
@@ -243,7 +243,7 @@ SampleCollector::getAverage(std::vector<Eigen::Vector3f> samples,
 }
 
 Eigen::Quaternionf
-SampleCollector::getAverage(std::vector<Eigen::Quaternionf> samples,
+PoseSampleCollector::getAverage(std::vector<Eigen::Quaternionf> samples,
                             float *stddev,
                             float *maxdev,
                             float inlier_dist,
@@ -261,14 +261,12 @@ SampleCollector::getAverage(std::vector<Eigen::Quaternionf> samples,
 
   Eigen::Quaternionf x;
   while (true) {
-    float s = 1.f / samples.size();
-
     Eigen::MatrixXf Qm(4, samples.size());
     for (size_t idx = 0; idx < samples.size(); ++idx) {
       Eigen::MatrixXf Q(4, 1);
       Q << samples[idx].w(), samples[idx].x(), samples[idx].y(),
           samples[idx].z();
-      Qm.col(idx) = s * Q;
+      Qm.col(idx) = Q;
     }
 
     Eigen::EigenSolver<Eigen::MatrixXf> solver(Qm * Qm.transpose());
@@ -290,7 +288,8 @@ SampleCollector::getAverage(std::vector<Eigen::Quaternionf> samples,
 
     x = Eigen::Quaternionf(V[0], V[1], V[2], V[3]);
 
-    if (inlier_dist <= 0.f) break;
+    if (inlier_dist <= 0.f || inlier_dist == std::numeric_limits<float>::max())
+      break;
     if (samples.size() == 1) break;
 
     size_t worst_idx = 0;
@@ -306,7 +305,7 @@ SampleCollector::getAverage(std::vector<Eigen::Quaternionf> samples,
 
     if (worst_angle < inlier_dist) break;
 
-    GM_DBG2("SampleCollector",
+    GM_DBG2("PoseSampleCollector",
             "dropped orientational outlier for position average ("
                 << worst_angle << " > " << inlier_dist << " @ "
                 << Eigen::AngleAxisf(samples[worst_idx]).axis().transpose()
@@ -339,16 +338,16 @@ SampleCollector::getAverage(std::vector<Eigen::Quaternionf> samples,
 }
 
 const std::vector<Eigen::Vector3f> &
-SampleCollector::getTrackerPositions() const {
+PoseSampleCollector::getTrackerPositions() const {
   return _impl->tracker_positions;
 }
 
 const std::vector<Eigen::Quaternionf> &
-SampleCollector::getTrackerOrientations() const {
+PoseSampleCollector::getTrackerOrientations() const {
   return _impl->tracker_orientations;
 }
 
-void SampleCollector::traverse(Visitor *visitor) {
+void PoseSampleCollector::traverse(Visitor *visitor) {
   if (_impl->controller) _impl->controller->accept(visitor);
 }
 

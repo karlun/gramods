@@ -1,6 +1,6 @@
 
-#include <gmTrack/PoseRegistrationEstimator.hh>
-#include <gmTrack/SampleCollector.impl.hh>
+#include <gmTrack/TrackerRegistrationEstimator.hh>
+#include <gmTrack/PoseSampleCollector.impl.hh>
 
 #include <gmTrack/ButtonsMapper.hh>
 
@@ -14,10 +14,10 @@
 
 BEGIN_NAMESPACE_GMTRACK;
 
-GM_OFI_DEFINE_SUB(PoseRegistrationEstimator, SampleCollector);
-GM_OFI_PARAM2(PoseRegistrationEstimator, actualPosition, Eigen::Vector3f, addActualPosition);
+GM_OFI_DEFINE_SUB(TrackerRegistrationEstimator, PoseSampleCollector);
+GM_OFI_PARAM2(TrackerRegistrationEstimator, actualPosition, Eigen::Vector3f, addActualPosition);
 
-struct PoseRegistrationEstimator::Impl : SampleCollector::Impl {
+struct TrackerRegistrationEstimator::Impl : PoseSampleCollector::Impl {
 
   typedef gmCore::Updateable::clock clock;
 
@@ -66,18 +66,18 @@ struct PoseRegistrationEstimator::Impl : SampleCollector::Impl {
   size_t position_to_collect = std::numeric_limits<size_t>::max();
 };
 
-PoseRegistrationEstimator::PoseRegistrationEstimator()
-  : SampleCollector(new Impl) {}
+TrackerRegistrationEstimator::TrackerRegistrationEstimator()
+  : PoseSampleCollector(new Impl) {}
 
-PoseRegistrationEstimator::~PoseRegistrationEstimator() {}
+TrackerRegistrationEstimator::~TrackerRegistrationEstimator() {}
 
-void PoseRegistrationEstimator::addActualPosition(Eigen::Vector3f p) {
-  auto _impl = static_cast<PoseRegistrationEstimator::Impl *>(this->_impl.get());
+void TrackerRegistrationEstimator::addActualPosition(Eigen::Vector3f p) {
+  auto _impl = static_cast<TrackerRegistrationEstimator::Impl *>(this->_impl.get());
   _impl->actual_positions.push_back(p);
 }
 
-bool PoseRegistrationEstimator::getRegistration(Eigen::Matrix4f * RAW, Eigen::Matrix4f * UNIT) {
-  auto _impl = static_cast<PoseRegistrationEstimator::Impl *>(this->_impl.get());
+bool TrackerRegistrationEstimator::getRegistration(Eigen::Matrix4f * RAW, Eigen::Matrix4f * UNIT) {
+  auto _impl = static_cast<TrackerRegistrationEstimator::Impl *>(this->_impl.get());
 
   if (!_impl->successful_registration)
     return false;
@@ -91,37 +91,37 @@ bool PoseRegistrationEstimator::getRegistration(Eigen::Matrix4f * RAW, Eigen::Ma
   return true;
 }
 
-void PoseRegistrationEstimator::Impl::update(clock::time_point now) {
+void TrackerRegistrationEstimator::Impl::update(clock::time_point now) {
 
   if (actual_positions.empty())
     return;
 
-  SampleCollector::Impl::update(now);
+  PoseSampleCollector::Impl::update(now);
 
   if (tracker_positions.size() < actual_positions.size()) {
     if (tracker_positions.size() != position_to_collect) {
       position_to_collect = tracker_positions.size();
-      GM_INF("PoseRegistrationEstimator",
+      GM_INF("TrackerRegistrationEstimator",
              "Point to collect: "
                  << actual_positions[position_to_collect].transpose());
     }
     return;
   }
 
-  GM_INF("PoseRegistrationEstimator", "have all " << actual_positions.size() << " samples");
+  GM_INF("TrackerRegistrationEstimator", "have all " << actual_positions.size() << " samples");
   performRegistration();
 }
 
-void PoseRegistrationEstimator::performRegistration() {
-  auto _impl = static_cast<PoseRegistrationEstimator::Impl *>(this->_impl.get());
+void TrackerRegistrationEstimator::performRegistration() {
+  auto _impl = static_cast<TrackerRegistrationEstimator::Impl *>(this->_impl.get());
   _impl->performRegistration();
 }
 
-void PoseRegistrationEstimator::Impl::performRegistration() {
+void TrackerRegistrationEstimator::Impl::performRegistration() {
 
   if (actual_positions.size() < 3 ||
       tracker_positions.size() != actual_positions.size()) {
-    GM_ERR("PoseRegistrationEstimator",
+    GM_ERR("TrackerRegistrationEstimator",
            "Registration triggered with incorrect number of samples available: "
                << actual_positions.size() << " and " << tracker_positions.size()
                << " actual and tracker positions, respectively");
@@ -132,9 +132,9 @@ void PoseRegistrationEstimator::Impl::performRegistration() {
   float actual_data_sph = estimateSphericity(actual_positions);
 
   if ((tracker_data_sph <= planar_sphericity) && (actual_data_sph > planar_sphericity)) {
-    GM_WRN("PoseRegistrationEstimator", "sphericity inconsistency - tracker positions are in a plane but not actual positions");
+    GM_WRN("TrackerRegistrationEstimator", "sphericity inconsistency - tracker positions are in a plane but not actual positions");
   } else if ((tracker_data_sph > planar_sphericity) && (actual_data_sph <= planar_sphericity)) {
-    GM_WRN("PoseRegistrationEstimator", "sphericity inconsistency - actual positions are planar but not tracker positions");
+    GM_WRN("TrackerRegistrationEstimator", "sphericity inconsistency - actual positions are planar but not tracker positions");
   }
 
   std::vector<Eigen::Vector3f> tracker_data = tracker_positions;
@@ -142,7 +142,7 @@ void PoseRegistrationEstimator::Impl::performRegistration() {
 
   if (std::min(tracker_data_sph, actual_data_sph) <= planar_sphericity) {
 
-    GM_WRN("PoseRegistrationEstimator",
+    GM_WRN("TrackerRegistrationEstimator",
            "Samples will be manipulated to compensate for poor sphericity ("
                << tracker_data_sph << " and " << actual_data_sph
                << " for tracker data and actual data, respectively)");
@@ -159,20 +159,20 @@ void PoseRegistrationEstimator::Impl::performRegistration() {
   registration_raw = M_reg;
   successful_registration = true;
 
-  GM_DBG1("PoseRegistrationEstimator", "Raw registration matrix:\n" << M_reg);
+  GM_DBG1("TrackerRegistrationEstimator", "Raw registration matrix:\n" << M_reg);
   checkResult(tracker_data, actual_data, M_reg, "perfect");
 
   Eigen::Matrix4f M_unit;
   estimateUnitRegistration(tracker_data, actual_data, M_reg, M_unit);
   registration_unit = M_unit;
 
-  GM_DBG1("PoseRegistrationEstimator", "Unit registration matrix:\n" << M_unit);
+  GM_DBG1("TrackerRegistrationEstimator", "Unit registration matrix:\n" << M_unit);
   checkResult(tracker_data, actual_data, M_unit, "unit");
 
   tracker_positions.clear();
 }
 
-float PoseRegistrationEstimator::Impl::estimateSphericity(std::vector<Eigen::Vector3f> data) {
+float TrackerRegistrationEstimator::Impl::estimateSphericity(std::vector<Eigen::Vector3f> data) {
 
   Eigen::Vector3f cp = Eigen::Vector3f::Zero();
   for (auto pt : data)
@@ -189,22 +189,22 @@ float PoseRegistrationEstimator::Impl::estimateSphericity(std::vector<Eigen::Vec
   auto singular_values = svd.singularValues();
   assert(singular_values.rows() == 3);
 
-  GM_DBG1("PoseRegistrationEstimator", "data matrix:\n" << data_matrix);
-  GM_DBG1("PoseRegistrationEstimator", "singular values: " << singular_values.transpose());
+  GM_DBG1("TrackerRegistrationEstimator", "data matrix:\n" << data_matrix);
+  GM_DBG1("TrackerRegistrationEstimator", "singular values: " << singular_values.transpose());
 
   if (singular_values[1] <= std::numeric_limits<std::remove_reference<decltype(singular_values[1])>::type>::epsilon()) {
-    GM_ERR("PoseRegistrationEstimator", "Points are too linearly dependent for any further processing");
+    GM_ERR("TrackerRegistrationEstimator", "Points are too linearly dependent for any further processing");
     throw std::runtime_error("Points are too linearly dependent for any further processing");
   } else if (singular_values[1] / singular_values[0] < 0.3f) {
     // Arbitrarily choosen sphericity limit for warning only
-    GM_WRN("PoseRegistrationEstimator", "Poor second axis sphericity (" << (singular_values[1] / singular_values[0]) << ") - points may be too linearly dependent for a good registration estimation");
+    GM_WRN("TrackerRegistrationEstimator", "Poor second axis sphericity (" << (singular_values[1] / singular_values[0]) << ") - points may be too linearly dependent for a good registration estimation");
   }
 
   return singular_values[2] / singular_values[0];
 }
 
 
-void PoseRegistrationEstimator::Impl::expandPlanar(std::vector<Eigen::Vector3f> &data,
+void TrackerRegistrationEstimator::Impl::expandPlanar(std::vector<Eigen::Vector3f> &data,
                                                    int &idx0, int &idx1) {
   assert(data.size() >= 3);
 
@@ -227,8 +227,8 @@ void PoseRegistrationEstimator::Impl::expandPlanar(std::vector<Eigen::Vector3f> 
   Eigen::Vector3f data_Y = U.col(1);
   Eigen::Vector3f data_normal = U.col(2);
   float data_scale = S[0];
-  GM_DBG1("PoseRegistrationEstimator", "Estimated data normal: " << data_normal.transpose());
-  GM_DBG1("PoseRegistrationEstimator", "Estimated data scale: " << data_scale);
+  GM_DBG1("TrackerRegistrationEstimator", "Estimated data normal: " << data_normal.transpose());
+  GM_DBG1("TrackerRegistrationEstimator", "Estimated data scale: " << data_scale);
 
   if (idx0 < 0) {
 
@@ -251,14 +251,14 @@ void PoseRegistrationEstimator::Impl::expandPlanar(std::vector<Eigen::Vector3f> 
       }
     }
 
-    GM_DBG1("PoseRegistrationEstimator",
+    GM_DBG1("TrackerRegistrationEstimator",
             "Estimated primary samples: " << idx0 << " (" << best_value0
                                           << ") and " << idx1 << "("
                                           << best_value1 << ")");
   }
 
   if ((data[idx0] - cp).cross(data[idx1] - cp).dot(data_normal) < 0) {
-    GM_DBG1("PoseRegistrationEstimator", "Flipping");
+    GM_DBG1("TrackerRegistrationEstimator", "Flipping");
     data_normal = -data_normal;
   }
 
@@ -271,14 +271,14 @@ void PoseRegistrationEstimator::Impl::expandPlanar(std::vector<Eigen::Vector3f> 
   for (auto pt : data)
     new_data.push_back(pt - offset);
 
-  GM_DBG3("PoseRegistrationEstimator", "New data:");
+  GM_DBG3("TrackerRegistrationEstimator", "New data:");
   for (auto pt : new_data)
-    GM_DBG3("PoseRegistrationEstimator", "" << pt.transpose());
+    GM_DBG3("TrackerRegistrationEstimator", "" << pt.transpose());
 
   data.swap(new_data);
 }
 
-bool PoseRegistrationEstimator::Impl::estimateRegistration
+bool TrackerRegistrationEstimator::Impl::estimateRegistration
 (const std::vector<Eigen::Vector3f> &tracker_data,
  const std::vector<Eigen::Vector3f> &actual_data,
  Eigen::Matrix4f &M) {
@@ -296,7 +296,7 @@ bool PoseRegistrationEstimator::Impl::estimateRegistration
 
   if (N == 4) {
 
-    GM_DBG1("PoseRegistrationEstimator", "Solving complete system by inverse multiplication");
+    GM_DBG1("TrackerRegistrationEstimator", "Solving complete system by inverse multiplication");
 
     // ACTUAL = M_REG  TRACKER
     // M_REG = ACTUAL / TRACKER
@@ -309,7 +309,7 @@ bool PoseRegistrationEstimator::Impl::estimateRegistration
 
   } else {
 
-    GM_DBG1("PoseRegistrationEstimator", "Solving overdetermined system by inverse multiplication");
+    GM_DBG1("TrackerRegistrationEstimator", "Solving overdetermined system by inverse multiplication");
 
     // M_REG  TRACKER = ACTUAL
     // TRACKER^t M_REG^t = ACTUAL^t
@@ -323,13 +323,13 @@ bool PoseRegistrationEstimator::Impl::estimateRegistration
     M = x.transpose();
   }
 
-  GM_DBG1("PoseRegistrationEstimator", "Raw registration error: " << ((M * tracker_set) - actual_set).norm());
+  GM_DBG1("TrackerRegistrationEstimator", "Raw registration error: " << ((M * tracker_set) - actual_set).norm());
 
   return true;
 }
 
 
-void PoseRegistrationEstimator::Impl::estimateUnitRegistration
+void TrackerRegistrationEstimator::Impl::estimateUnitRegistration
 (const std::vector<Eigen::Vector3f> &tracker_data,
  const std::vector<Eigen::Vector3f> &actual_data,
  const Eigen::Matrix4f &M_raw,
@@ -364,7 +364,7 @@ void PoseRegistrationEstimator::Impl::estimateUnitRegistration
   M_unit.block<3,1>(0,3) = offset;
 }
 
-void PoseRegistrationEstimator::Impl::checkResult(
+void TrackerRegistrationEstimator::Impl::checkResult(
     const std::vector<Eigen::Vector3f> &tracker_data,
     const std::vector<Eigen::Vector3f> &actual_data,
     const Eigen::Matrix4f &M_unit,
@@ -382,11 +382,11 @@ void PoseRegistrationEstimator::Impl::checkResult(
 
   float worst_offset = std::sqrt(worst_sqr_offset);
   if (worst_offset > warning_threshold) {
-    GM_WRN("PoseRegistrationEstimator",
+    GM_WRN("TrackerRegistrationEstimator",
            "Worst " << type << " reprojected tracker-point has an offset of "
                     << worst_offset << " m!");
   } else {
-    GM_DBG1("PoseRegistrationEstimator",
+    GM_DBG1("TrackerRegistrationEstimator",
             "Worst " << type << " reprojected tracker-point has an offset of "
                      << worst_offset << " m.");
   }

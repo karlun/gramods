@@ -9,7 +9,7 @@
 // Required before gmCore/OFactory.hh for some compilers
 #include <gmCore/io_size.hh>
 
-#include <gmTrack/SampleCollector.hh>
+#include <gmTrack/PoseSampleCollector.hh>
 
 #include <filesystem>
 
@@ -24,7 +24,7 @@ BEGIN_NAMESPACE_GMTRACK;
    system.
 */
 class ProjectionTextureGenerator
-  : public SampleCollector {
+  : public PoseSampleCollector {
 
 public:
 

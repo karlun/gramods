@@ -119,11 +119,8 @@ void Multilateration::Impl::estimatePose(std::vector<float> &offsets,
     x0.push_back({pt[0], pt[1], pt[2], 0.8f * max_mic_dist});
   }
 
-  size_t iterations = 0;
-
-  auto res4 = gmMisc::NelderMead::solve<float>(
-      x0,
-      [&, this](const Eigen::Vector4f &x) {
+  gmMisc::NelderMead<float, Eigen::Vector4f> solver(
+      [&, this](const Eigen::Vector4f &x) -> float {
         Eigen::Vector3f p = x.block<3, 1>(0, 0);
         float d0 = x[3];
 
@@ -135,8 +132,10 @@ void Multilateration::Impl::estimatePose(std::vector<float> &offsets,
           err2 += err * err;
         }
         return err2;
-      },
-      iterations);
+      });
+
+  size_t iterations = 0;
+  auto res4 = solver.solve(x0, iterations);
 
   const auto pt = res4.block<3, 1>(0, 0); // Microphone position
   const auto d0 = res4[3]; // Distance from source to first microphone

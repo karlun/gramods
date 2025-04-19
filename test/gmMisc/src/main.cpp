@@ -1,12 +1,14 @@
 
 #include <gtest/gtest.h>
 
+#include "accumulative_mean.cpp"
 #include "end-fit.cpp"
 #include "fftw.cpp"
 #include "polyfit.cpp"
 #include "neldermead.cpp"
 #include "delaunay.cpp"
 
+#include <gmCore/Console.hh>
 #include <gmCore/OStreamMessageSink.hh>
 #include <gmCore/LogFileMessageSink.hh>
 #include <gmCore/NullMessageSink.hh>
