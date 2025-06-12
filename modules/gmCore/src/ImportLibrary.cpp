@@ -4,6 +4,12 @@
 #include <gmCore/Console.hh>
 #include <gmCore/FileResolver.hh>
 
+#ifdef _WIN32
+# include <Windows.h>
+#else
+# include <dlfcn.h>
+#endif
+
 BEGIN_NAMESPACE_GMCORE;
 
 GM_OFI_DEFINE(ImportLibrary);

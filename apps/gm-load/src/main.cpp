@@ -204,7 +204,9 @@ int main(int argc, char *argv[]) {
 
   signal(SIGINT, signal_handler);
   signal(SIGTERM, signal_handler);
+#ifndef _WIN32
   signal(SIGQUIT, signal_handler);
+#endif
 
   try {
     while (alive) {

@@ -9,12 +9,6 @@
 #include <string>
 #include <memory>
 
-#ifdef WIN32
-# include <Windows.h>
-#else
-# include <dlfcn.h>
-#endif
-
 BEGIN_NAMESPACE_GMCORE;
 
 /**
