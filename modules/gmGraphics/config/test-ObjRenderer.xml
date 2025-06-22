@@ -12,15 +12,16 @@
         useVideo="1"/>
 
     <ObjRenderer
-        recenter="true"
         file="urn:gramods:gmGraphics/resources/axes.obj"/>
+    <ObjRenderer
+        file="urn:gramods:gmGraphics/resources/floor-coordinates.obj"/>
 
     <TiledView>
 
       <param name="tileLocation" value="0 0 1 1"/>
       <SpatialPlanarView
-          topLeftCorner="-0.100 0.100 0.0"
-          bottomRightCorner="0.100 -0.100 0.0"
+          topLeftCorner="-1.100 1.100 0.0"
+          bottomRightCorner="1.100 -1.100 0.0"
           upDirection="0.0 1.0 0.0">
         <Viewpoint
             position="0.0 0.0 30.0"/>
@@ -28,8 +29,8 @@
 
       <param name="tileLocation" value="0 1 1 1"/>
       <SpatialPlanarView
-          topLeftCorner="0.0 0.100 -0.100"
-          bottomRightCorner="0.0 -0.100 0.100"
+          topLeftCorner="0.0 1.100 -1.100"
+          bottomRightCorner="0.0 -1.100 1.100"
           upDirection="0.0 1.0 0.0">
         <Viewpoint
             position="-30.0 0.0 0.0"/>
@@ -37,8 +38,8 @@
 
       <param name="tileLocation" value="1 0 1 1"/>
       <SpatialPlanarView
-          topLeftCorner="-0.100 0.0 -0.100"
-          bottomRightCorner="0.100 0.0 0.100"
+          topLeftCorner="-1.100 0.0 -1.100"
+          bottomRightCorner="1.100 0.0 1.100"
           upDirection="0.0 0.0 -1.0">
         <Viewpoint
             position="0.0 30.0 0.0"/>
@@ -49,7 +50,7 @@
           fieldOfView="1 -1">
         <VelocityViewpoint
             velocity="-0.05 -0.02 -0.04"
-            position="0.100 0.100 0.100"
+            position="1.100 1.100 1.100"
             lookAt="0.0 0.0 0.0"/>
       </PosedPlanarView>
    </TiledView>
