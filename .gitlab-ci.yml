@@ -48,7 +48,7 @@ BuildMaxi:
     - ./build/test/gmCore/test_gmCore --gtest_output=xml:report-gmCore.xml
     - ./build/test/gmMisc/test_gmMisc --gtest_output=xml:report-gmMisc.xml
     - ./build/test/gmNetwork/test_gmNetwork --gtest_output=xml:report-gmNetwork.xml
-    - ./build/test/gmTouch/test_gmTouch --gtest_output=xml:report-gmTouch .xml
+    - ./build/test/gmTouch/test_gmTouch --gtest_output=xml:report-gmTouch.xml
     - ./build/test/gmTrack/test_gmTrack --gtest_output=xml:report-gmTrack.xml
     - ninja -C build test
     - ninja -C build package
