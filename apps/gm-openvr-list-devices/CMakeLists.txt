@@ -43,7 +43,7 @@ ADD_EXECUTABLE(gm-openvr-list-devices src/main.cpp)
 TARGET_INCLUDE_DIRECTORIES(gm-openvr-list-devices PUBLIC ${APP_INCLUDE_DIRS})
 TARGET_LINK_LIBRARIES(gm-openvr-list-devices ${APP_LIBS})
 
-SET_PROPERTY(TARGET gm-openvr-list-devices PROPERTY CXX_STANDARD 17)
+SET_PROPERTY(TARGET gm-openvr-list-devices PROPERTY CXX_STANDARD 20)
 SET_PROPERTY(TARGET gm-openvr-list-devices PROPERTY DEBUG_POSTFIX ${CMAKE_DEBUG_POSTFIX})
 
 INSTALL(TARGETS gm-openvr-list-devices

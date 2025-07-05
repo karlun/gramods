@@ -50,7 +50,7 @@ ADD_EXECUTABLE(gm-microphone-registration src/main.cpp)
 TARGET_INCLUDE_DIRECTORIES(gm-microphone-registration PUBLIC ${APP_INCLUDE_DIRS})
 TARGET_LINK_LIBRARIES(gm-microphone-registration ${APP_LIBS})
 
-SET_PROPERTY(TARGET gm-microphone-registration PROPERTY CXX_STANDARD 17)
+SET_PROPERTY(TARGET gm-microphone-registration PROPERTY CXX_STANDARD 20)
 SET_PROPERTY(TARGET gm-microphone-registration PROPERTY DEBUG_POSTFIX ${CMAKE_DEBUG_POSTFIX})
 
 INSTALL(TARGETS gm-microphone-registration

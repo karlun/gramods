@@ -44,7 +44,7 @@ ADD_EXECUTABLE(gm-projection-registration src/main.cpp)
 TARGET_INCLUDE_DIRECTORIES(gm-projection-registration PUBLIC ${APP_INCLUDE_DIRS})
 TARGET_LINK_LIBRARIES(gm-projection-registration ${APP_LIBS})
 
-SET_PROPERTY(TARGET gm-projection-registration PROPERTY CXX_STANDARD 17)
+SET_PROPERTY(TARGET gm-projection-registration PROPERTY CXX_STANDARD 20)
 SET_PROPERTY(TARGET gm-projection-registration PROPERTY DEBUG_POSTFIX ${CMAKE_DEBUG_POSTFIX})
 
 INSTALL(TARGETS gm-projection-registration

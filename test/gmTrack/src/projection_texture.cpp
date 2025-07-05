@@ -164,8 +164,8 @@ TEST(gmTrackProjectionTexture, CurvatureWRegions) {
 
   std::shared_ptr<gmCore::FreeImage> free_image = gmCore::FreeImage::get();
 
-  FREE_IMAGE_FORMAT image_format = FreeImage_GetFileType(file.u8string().c_str(), 0);
-  FIBITMAP *image = FreeImage_Load(image_format, file.u8string().c_str());
+  FREE_IMAGE_FORMAT image_format = FreeImage_GetFileType(file.string().c_str(), 0);
+  FIBITMAP *image = FreeImage_Load(image_format, file.string().c_str());
   ASSERT_TRUE(image);
   ASSERT_EQ(FreeImage_GetImageType(image), FIT_RGBF);
 

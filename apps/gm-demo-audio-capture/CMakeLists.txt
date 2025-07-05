@@ -31,7 +31,7 @@ ADD_EXECUTABLE(gm-demo-audio-capture src/main.cpp)
 TARGET_INCLUDE_DIRECTORIES(gm-demo-audio-capture PUBLIC ${APP_INCLUDE_DIRS})
 TARGET_LINK_LIBRARIES(gm-demo-audio-capture ${APP_LIBS})
 
-SET_PROPERTY(TARGET gm-demo-audio-capture PROPERTY CXX_STANDARD 17)
+SET_PROPERTY(TARGET gm-demo-audio-capture PROPERTY CXX_STANDARD 20)
 SET_PROPERTY(TARGET gm-demo-audio-capture PROPERTY DEBUG_POSTFIX ${CMAKE_DEBUG_POSTFIX})
 
 

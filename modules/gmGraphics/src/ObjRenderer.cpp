@@ -394,9 +394,9 @@ bool ObjRenderer::Impl::read_obj(std::vector<GLfloat> &vertices,
     tinyobj::ObjReaderConfig reader_config;
     reader_config.triangulate = true;
     reader_config.vertex_color = false;
-    reader_config.mtl_search_path = filepath.parent_path().u8string();
+    reader_config.mtl_search_path = filepath.parent_path().string();
 
-    if (!objreader.ParseFromFile(filepath.u8string(), reader_config)) {
+    if (!objreader.ParseFromFile(filepath.string(), reader_config)) {
       const auto err = objreader.Error();
       if (err.empty())
         GM_ERR("ObjRenderer",
