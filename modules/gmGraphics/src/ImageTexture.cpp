@@ -26,6 +26,7 @@ GM_OFI_PARAM2(ImageTexture, autoRange, bool, setAutoRange);
 GM_OFI_PARAM2(ImageTexture, loop, bool, setLoop);
 GM_OFI_PARAM2(ImageTexture, exit, bool, setExit);
 GM_OFI_PARAM2(ImageTexture, logProgress, bool, setLogProgress);
+GM_OFI_PARAM2(ImageTexture, mipmaps, bool, setMipmaps);
 
 struct ImageTexture::Impl {
 
@@ -50,6 +51,7 @@ struct ImageTexture::Impl {
   bool animate = false;
   bool do_loop = false;
   bool do_exit = false;
+  bool do_create_mipmaps = true;
 
   typedef std::chrono::steady_clock clock;
   typedef std::chrono::duration<double, std::ratio<1>> d_seconds;
@@ -114,6 +116,10 @@ void ImageTexture::setExit(bool on) {
 
 void ImageTexture::setLogProgress(bool on) {
   _impl->do_log_progress = on;
+}
+
+void ImageTexture::setMipmaps(bool on) {
+  _impl->do_create_mipmaps = on;
 }
 
 ImageTexture::Impl::Impl() {
@@ -482,7 +488,14 @@ bool ImageTexture::Impl::setTexture(FIBITMAP *image, std::string filename) {
                0, GL_RGBA, image_width, image_height,
                0, gl_format, gl_type, image_data);
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+  if (do_create_mipmaps) {
+    GM_DBG2("ImageTexture", "Enabled MIP mapping");
+    glGenerateMipmap(GL_TEXTURE_2D);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+  } else {
+    GM_DBG2("ImageTexture", "Disabled MIP mapping");
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+  }
   glBindTexture(GL_TEXTURE_2D, 0);
 
   FreeImage_Unload(image);

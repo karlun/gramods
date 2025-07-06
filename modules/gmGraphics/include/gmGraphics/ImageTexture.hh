@@ -109,6 +109,14 @@ public:
   */
   void setExit(bool on);
 
+  /**
+     Activates or deactivates generations of MIP mapping data for the
+     texture. Default is true.
+
+     \gmXmlTag{gmGraphics,ImageTexture,mipmaps}
+  */
+  void setMipmaps(bool on);
+
   GM_OFI_DECLARE;
 
 private:

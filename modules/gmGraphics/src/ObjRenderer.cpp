@@ -25,6 +25,7 @@ BEGIN_NAMESPACE_GMGRAPHICS;
 GM_OFI_DEFINE_SUB(ObjRenderer, Renderer);
 GM_OFI_PARAM2(ObjRenderer, file, std::filesystem::path, setFile);
 GM_OFI_PARAM2(ObjRenderer, recenter, bool, setRecenter);
+GM_OFI_PARAM2(ObjRenderer, mipmaps, bool, setMipmaps);
 
 struct ObjRenderer::Impl {
 
@@ -104,6 +105,7 @@ struct ObjRenderer::Impl {
   std::filesystem::path file;
   std::filesystem::path tex_root_path;
   bool recenter = false;
+  bool mipmaps = true;
 
   bool is_setup = false;
   bool is_functional = false;
@@ -569,6 +571,7 @@ ObjRenderer::Impl::makeMaterial(const tinyobj::material_t &mat) {
     } else {                                                                   \
       auto tex = std::make_shared<ImageTexture>();                             \
       tex->setFile(tex_root_path / str);                                       \
+      tex->setMipmaps(mipmaps);                                                \
       tex->initialize();                                                       \
       res.texture_##XXX = tex;                                                 \
       if (res.color_##XXX.sum() < std::numeric_limits<float>::epsilon())       \
@@ -730,6 +733,10 @@ void ObjRenderer::setFile(std::filesystem::path file) {
 void ObjRenderer::setRecenter(bool on) {
   if (_impl->recenter == on) return;
   _impl->recenter = on;
+}
+
+void ObjRenderer::setMipmaps(bool on) {
+  _impl->mipmaps = on;
 }
 
 std::vector<ObjRenderer::Material> ObjRenderer::getMaterials() const {
