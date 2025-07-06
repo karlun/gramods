@@ -389,7 +389,7 @@ bool ImageTexture::Impl::setTexture(FIBITMAP *image, std::string filename) {
   case FIT_BITMAP:
     switch (FreeImage_GetBPP(image)) {
     case 8:
-      gl_format = GL_RED;
+      gl_format = GL_LUMINANCE;
       gl_type = GL_UNSIGNED_BYTE;
       str_format = "u8 gray";
       break;
@@ -413,27 +413,27 @@ bool ImageTexture::Impl::setTexture(FIBITMAP *image, std::string filename) {
     }
     break;
   case FIT_UINT16:
-    gl_format = GL_RED;
+    gl_format = GL_LUMINANCE;
     gl_type = GL_UNSIGNED_SHORT;
     str_format = "u16 gray";
     break;
   case FIT_INT16:
-    gl_format = GL_RED;
+    gl_format = GL_LUMINANCE;
     gl_type = GL_SHORT;
     str_format = "s16 gray";
     break;
   case FIT_UINT32:
-    gl_format = GL_RED;
+    gl_format = GL_LUMINANCE;
     gl_type = GL_UNSIGNED_INT;
     str_format = "u32 gray";
     break;
   case FIT_INT32:
-    gl_format = GL_RED;
+    gl_format = GL_LUMINANCE;
     gl_type = GL_INT;
     str_format = "s32 gray";
     break;
   case FIT_FLOAT:
-    gl_format = GL_RED;
+    gl_format = GL_LUMINANCE;
     gl_type = GL_FLOAT;
     str_format = "f32 gray";
     break;
