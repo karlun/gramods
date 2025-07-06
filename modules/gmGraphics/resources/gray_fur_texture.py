@@ -52,6 +52,7 @@ def main(argv):
 
   data = np.floor(scale * (data - offset)).astype(np.uint8)
   img = Image.fromarray(data)
+  img = img.crop((1, 1, 1 + args.resolution, 1 + args.resolution))
 
   img.save(args.output)
 
