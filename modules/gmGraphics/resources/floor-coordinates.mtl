@@ -1,0 +1,8 @@
+newmtl mat_floor
+Ka 0.2 0.2 0.2 1
+Kd 1.0 1.0 1.0 1
+Ks 1.0 1.0 1.0 1
+Ke 1.0 1.0 1.0 1
+Ns 100
+map_Ke floor-coordinates.png
+map_Kd gray_fur_texture.png

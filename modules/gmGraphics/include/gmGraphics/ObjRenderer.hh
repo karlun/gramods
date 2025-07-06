@@ -90,6 +90,14 @@ public:
   void setRecenter(bool on);
 
   /**
+     Activates or deactivates generations of MIP mapping data for
+     textures. Default is true.
+
+     \gmXmlTag{gmGraphics,ObjRenderer,mipmaps}
+  */
+  void setMipmaps(bool on);
+
+  /**
      Returns the currently loaded materials.
   */
   std::vector<Material> getMaterials() const;

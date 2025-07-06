@@ -1,5 +1,5 @@
 
-import sys, getopt
+import sys, argparse
 
 import noise
 import numpy as np
@@ -8,29 +8,15 @@ from PIL import Image, ImageFilter
 
 def main(argv):
 
-  try:
-    opts, args = getopt.getopt(argv,"hr:o:",["resolution=","output="])
-  except getopt.GetoptError:
-    print('gray_fur_texture.py -r <resolution> -o <outputfile>')
-    sys.exit(2)
+  parser = argparse.ArgumentParser()
+  parser.add_argument('-r', '--resolution',
+                      type = int,
+                      default = 1024)
+  parser.add_argument('-o', '--output',
+                      required = True)
+  args = parser.parse_args()
 
-  resolution = 1024
-  outputfile = None
-
-  for opt, arg in opts:
-    if opt == '-h':
-      print('gray_fur_texture.py -r <resolution> -o <outputfile>')
-      sys.exit()
-    elif opt in ("-r", "--resolution"):
-      resolution = int(arg)
-    elif opt in ("-o", "--output"):
-      outputfile = arg
-
-  if outputfile is None:
-    print('gray_fur_texture.py -r <resolution> -o <outputfile>')
-    sys.exit(2)
-
-  shape = (resolution, resolution)
+  shape = (args.resolution, args.resolution)
   scale = 0.05
 
   x_idx = np.linspace(0, 1, shape[0])
@@ -40,8 +26,8 @@ def main(argv):
   data = np.vectorize(noise.pnoise2)(world_x / scale,
                                      world_y / scale,
                                      octaves = 5,
-                                     repeatx = 1/scale,
-                                     repeaty = 1/scale)
+                                     repeatx = 1.0 / scale,
+                                     repeaty = 1.0 / scale)
 
   offset = np.min(data)
   scale = 255.0 / (np.max(data) - np.min(data))
@@ -65,9 +51,9 @@ def main(argv):
   scale = 255.0 / (np.max(data) - np.min(data))
 
   data = np.floor(scale * (data - offset)).astype(np.uint8)
-  img = Image.fromarray(data, mode='L')
+  img = Image.fromarray(data)
 
-  img.save(outputfile)
+  img.save(args.output)
 
 
 if __name__ == "__main__":
