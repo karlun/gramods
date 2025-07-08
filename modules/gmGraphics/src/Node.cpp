@@ -30,7 +30,7 @@ void Node::NearFarVisitor::apply(gmCore::Object *node) {
 
 std::optional<std::pair<float, float>>
 Node::NearFarVisitor::getNearFar() const {
-  if (far <= near) return std::nullopt;
+  if (far < near) return std::nullopt;
   if (far < std::numeric_limits<float>::epsilon()) return std::nullopt;
 
   // Expanding near-far span by 1% to accomodate for numerical errors

@@ -84,12 +84,14 @@ struct ObjRenderer::Impl {
     GLint texture_diffuse = 0;
     GLint texture_specular = 0;
     GLint texture_emissive = 0;
+    GLint texture_alpha = 0;
 
     GLint color_ambient = 0;
     GLint color_diffuse = 0;
     GLint color_specular = 0;
     GLint color_emissive = 0;
     GLint shininess = 0;
+    GLint dissolve = 0;
   };
 
   std::unordered_map<GLint, uniforms> loc;
@@ -235,6 +237,7 @@ uniform sampler2D texture_ambient;
 uniform sampler2D texture_diffuse;
 uniform sampler2D texture_specular;
 uniform sampler2D texture_emissive;
+uniform sampler2D texture_alpha;
 
 uniform vec3 color_ambient;
 uniform vec3 color_diffuse;
@@ -242,6 +245,7 @@ uniform vec3 color_specular;
 uniform vec3 color_emissive;
 
 uniform float shininess;
+uniform float dissolve;
 
 in vec3 frag_pos;
 in vec3 frag_normal;
@@ -303,12 +307,19 @@ vec3 emission() {
   return rgb;
 }
 
+float get_dissolve() {
+  if (!isnan(frag_tcoord.s) && (0 != (texture_active & 0x10)))
+    return dissolve * texture(texture_alpha, frag_tcoord).r;
+  else
+    return dissolve;
+}
+
 void main() {
   if (frag_mtl < 0) {
     fragColor = vec4(1,0,1,1);
   } else {
     vec3 rgb = min(vec3(1,1,1), ambient() + diffuse() + specular() + emission());
-    fragColor = vec4(rgb, 1);
+    fragColor = vec4(rgb, get_dissolve());
   }
 }
 )lang=glsl";
@@ -553,11 +564,13 @@ void ObjRenderer::Impl::addTriangle(std::vector<GLfloat> &vertices,
 ObjRenderer::Material
 ObjRenderer::Impl::makeMaterial(const tinyobj::material_t &mat) {
 
-  Material res = {{mat.ambient[0], mat.ambient[1], mat.ambient[2]},
-                  {mat.diffuse[0], mat.diffuse[1], mat.diffuse[2]},
-                  {mat.specular[0], mat.specular[1], mat.specular[2]},
-                  {mat.emission[0], mat.emission[1], mat.emission[2]},
-                  mat.shininess};
+  Material res = {
+      .color_ambient = {mat.ambient[0], mat.ambient[1], mat.ambient[2]},
+      .color_diffuse = {mat.diffuse[0], mat.diffuse[1], mat.diffuse[2]},
+      .color_specular = {mat.specular[0], mat.specular[1], mat.specular[2]},
+      .color_emissive = {mat.emission[0], mat.emission[1], mat.emission[2]},
+      .shininess = mat.shininess,
+      .dissolve = mat.dissolve};
 
 #define LOAD_TEXTURE(XXX)                                                      \
   if (!mat.XXX##_texname.empty()) {                                            \
@@ -586,6 +599,23 @@ ObjRenderer::Impl::makeMaterial(const tinyobj::material_t &mat) {
   LOAD_TEXTURE(specular);
   LOAD_TEXTURE(emissive);
 
+  if (!mat.alpha_texname.empty()) {
+    auto str = mat.alpha_texname;
+    auto tmp = std::find_if(
+        materials.begin(), materials.end(), [&str](const Material &mat) {
+          return str == mat.texture_alpha->getFile();
+        });
+    if (tmp != materials.end()) {
+      res.texture_alpha = tmp->texture_alpha;
+    } else {
+      auto tex = std::make_shared<ImageTexture>();
+      tex->setFile(tex_root_path / str);
+      tex->setMipmaps(mipmaps);
+      tex->initialize();
+      res.texture_alpha = tex;
+    }
+  }
+
   GM_DBG2("ObjRenderer",
           "Colors: amb=(" << mat.ambient[0] << ", " << mat.ambient[1] << ", "
                           << mat.ambient[2] << "), diff=(" << mat.diffuse[0]
@@ -594,7 +624,8 @@ ObjRenderer::Impl::makeMaterial(const tinyobj::material_t &mat) {
                           << mat.specular[1] << ", " << mat.specular[2]
                           << "), emis=(" << mat.emission[0] << ", "
                           << mat.emission[1] << ", " << mat.emission[2]
-                          << ") and shininess=" << mat.shininess);
+                          << "), shininess=" << mat.shininess
+                          << ", dissolve=" << mat.dissolve);
   GM_DBG2("ObjRenderer",
           "Textures: amb='"
               << mat.ambient_texname << "', diff='" << mat.diffuse_texname
@@ -634,6 +665,7 @@ void ObjRenderer::Impl::render(const Camera &camera, const Eigen::Affine3f &Mm) 
   glUniform1i(LOC(texture_diffuse), 1);
   glUniform1i(LOC(texture_specular), 2);
   glUniform1i(LOC(texture_emissive), 3);
+  glUniform1i(LOC(texture_alpha), 4);
 
   GLint texture_active = 0;
   if (!materials.empty()) {
@@ -644,6 +676,7 @@ void ObjRenderer::Impl::render(const Camera &camera, const Eigen::Affine3f &Mm) 
     glUniform3fv(LOC(color_specular), 1, mat.color_specular.data());
     glUniform3fv(LOC(color_emissive), 1, mat.color_emissive.data());
     glUniform1f(LOC(shininess), mat.shininess);
+    glUniform1f(LOC(dissolve), mat.dissolve);
 
     if (mat.texture_ambient) {
       texture_active |= 0x1;
@@ -673,6 +706,13 @@ void ObjRenderer::Impl::render(const Camera &camera, const Eigen::Affine3f &Mm) 
                     mat.texture_emissive->updateTexture(camera.frame_number,
                                                         camera.getEye()));
     }
+    if (mat.texture_alpha) {
+      texture_active |= 0x1 << 4;
+      glActiveTexture(GL_TEXTURE4);
+      glBindTexture(GL_TEXTURE_2D,
+                    mat.texture_alpha->updateTexture(camera.frame_number,
+                                                     camera.getEye()));
+    }
   } else {
     static Eigen::Vector3f black = Eigen::Vector3f::Zero();
     static Eigen::Vector3f gray = Eigen::Vector3f(0.8f, 0.8f, 0.8f);
@@ -681,6 +721,7 @@ void ObjRenderer::Impl::render(const Camera &camera, const Eigen::Affine3f &Mm) 
     glUniform3fv(LOC(color_specular), 1, black.data());
     glUniform3fv(LOC(color_emissive), 1, black.data());
     glUniform1f(LOC(shininess), 32);
+    glUniform1f(LOC(dissolve), 1);
   }
 
   glUniform1i(LOC(texture_active), texture_active);
@@ -691,7 +732,7 @@ void ObjRenderer::Impl::render(const Camera &camera, const Eigen::Affine3f &Mm) 
     glDrawElements(GL_TRIANGLES, ind.size(), GL_UNSIGNED_INT, ind.data());
   }
 
-  for (GLint idx = 0; idx < 4; ++idx) {
+  for (GLint idx = 0; idx < 5; ++idx) {
     glActiveTexture(GL_TEXTURE0 + idx);
     glBindTexture(GL_TEXTURE_2D, 0);
   }

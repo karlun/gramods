@@ -1,0 +1,25 @@
+# (c)2025 Karljohan Lundin Palmerius
+#
+# Object for drawing a fur surface
+
+mtllib fur.mtl
+usemtl mat_fur
+
+vn 0 1 0
+vt 11 11 0
+v 4.1 0 4.1
+
+vn 0 1 0
+vt 11 0 0
+v 4.1 0 -4.1
+
+vn 0 1 0
+vt 0 0 0
+v -4.1 0 -4.1
+
+vn 0 1 0
+vt 0 11 0
+v -4.1 0 4.1
+
+f 1/1/1 2/2/2 3/3/3
+f 1/1/1 3/3/3 4/4/4

@@ -11,7 +11,7 @@
 BEGIN_NAMESPACE_GMGRAPHICS;
 
 /**
-   A renderer that draws an obj file.
+   A renderer that draws a Wavefront obj file.
 */
 class ObjRenderer
   : public Renderer {
@@ -40,6 +40,11 @@ public:
     */
     float shininess;
 
+    /**
+       Dissolve, i.e. transparency. Default is 1.0, full opacity.
+    */
+    float dissolve;
+
     // Ambient texture
     std::shared_ptr<gmGraphics::ImageTexture> texture_ambient = 0;
     // Diffuse texture
@@ -48,6 +53,8 @@ public:
     std::shared_ptr<gmGraphics::ImageTexture> texture_specular = 0;
     // Emissive texture
     std::shared_ptr<gmGraphics::ImageTexture> texture_emissive = 0;
+    // Alpha texture (map_d)
+    std::shared_ptr<gmGraphics::ImageTexture> texture_alpha = 0;
   };
 
   ObjRenderer();
