@@ -2,7 +2,7 @@ import sys, argparse
 
 import numpy as np
 from PIL import Image
-from noise import pnoise2
+import noise
 import math
 
 def main(argv):
@@ -19,28 +19,24 @@ def main(argv):
     args = parser.parse_args()
 
     shape = (args.resolution, args.resolution)
+    scale = 0.2
 
-    image = Image.new('L', shape)
-    pixels = image.load()
+    x_idx = np.linspace(0, 1, shape[0])
+    y_idx = np.linspace(0, 1, shape[1])
+    world_x, world_y = np.meshgrid(x_idx, y_idx)
 
-    for y in range(args.resolution):
-        for x in range(args.resolution):
-            nx = x / args.resolution
-            ny = y / args.resolution
-            
-            noise_val = 0
-            freq = 10.0
-            amp = 1.0
-            for _ in range(args.octaves):
-                noise_val += amp * pnoise2(freq * nx, freq * ny)
-                freq *= 2
-                amp *= 0.5
+    data = np.vectorize(noise.pnoise2)(world_x / scale,
+                                       world_y / scale,
+                                       octaves = args.octaves,
+                                       repeatx = 1.0 / scale,
+                                       repeaty = 1.0 / scale)
 
-            value = max(0, min(1, 1.5 * noise_val))
-            gray = 255 - int(255 * pow(value, 2))
-            pixels[x, y] = gray
+    offset = np.min(data)
+    scale = 255.0 / (np.max(data) - np.min(data))
+    data = np.clip(np.floor(4 * scale * (data - 0.5 * offset)), a_min = 0, a_max = 255).astype(np.uint8)
 
-    image.save(args.output)
+    img = Image.fromarray(data)
+    img.save(args.output)
 
 if __name__ == "__main__":
     main(sys.argv[1:])
