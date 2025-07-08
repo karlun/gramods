@@ -1,0 +1,4 @@
+newmtl mat_fur
+Kd 1.0 1.0 1.0
+Ns 100
+map_Kd fur.png

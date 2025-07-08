@@ -16,7 +16,7 @@
       <Viewpoint/>
       <TextureRenderer>
         <ImageTexture
-            file="urn:gramods:gmGraphics/resources/gray_fur_texture.png"/>
+            file="urn:gramods:gmGraphics/resources/fur.png"/>
       </TextureRenderer>
     </PosedPlanarView>
 
