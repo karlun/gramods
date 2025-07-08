@@ -11,7 +11,7 @@
 BEGIN_NAMESPACE_GMGRAPHICS;
 
 /**
-   A renderer that draws an obj file.
+   A renderer that draws a Wavefront obj file.
 */
 class ObjRenderer
   : public Renderer {
