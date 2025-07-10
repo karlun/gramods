@@ -120,9 +120,13 @@ def main(argv):
   type_base = {}
   for dirName, subdirList, fileList in os.walk(args.modules):
     for filename in fileList:
-      for suffix in suffices:
-        if filename.rfind(suffix) - len(filename) + len(suffix) == 0:
-          extract_tags(dirName, filename, attrs, type_base, defines)
+      try:
+        for suffix in suffices:
+          if filename.rfind(suffix) - len(filename) + len(suffix) == 0:
+            extract_tags(dirName, filename, attrs, type_base, defines)
+      except Exception as e:
+        e.add_node(f"Processing {filename}")
+        raise e
 
   # attrs[(mod, class)][N][0-2] (attr, type, method)
   for mod in attrs:
