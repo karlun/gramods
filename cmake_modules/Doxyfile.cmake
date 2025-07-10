@@ -2419,10 +2419,17 @@ INCLUDE_PATH           = @CMAKE_CURRENT_BINARY_DIR@/modules/gmCore/include \
                          @CMAKE_CURRENT_SOURCE_DIR@/modules/gmCore/include \
                          @CMAKE_CURRENT_BINARY_DIR@/modules/gmGraphics/include \
                          @CMAKE_CURRENT_SOURCE_DIR@/modules/gmGraphics/include \
+                         @CMAKE_CURRENT_BINARY_DIR@/modules/gmMisc/include \
+                         @CMAKE_CURRENT_SOURCE_DIR@/modules/gmMisc/include \
                          @CMAKE_CURRENT_BINARY_DIR@/modules/gmNetwork/include \
                          @CMAKE_CURRENT_SOURCE_DIR@/modules/gmNetwork/include \
+                         @CMAKE_CURRENT_BINARY_DIR@/modules/gmSound/include \
+                         @CMAKE_CURRENT_SOURCE_DIR@/modules/gmSound/include \
+                         @CMAKE_CURRENT_BINARY_DIR@/modules/gmTouch/include \
+                         @CMAKE_CURRENT_SOURCE_DIR@/modules/gmTouch/include \
                          @CMAKE_CURRENT_BINARY_DIR@/modules/gmTrack/include \
                          @CMAKE_CURRENT_SOURCE_DIR@/modules/gmTrack/include
+
 
 # You can use the INCLUDE_FILE_PATTERNS tag to specify one or more wildcard
 # patterns (like *.h and *.hpp) to filter out the header-files in the
