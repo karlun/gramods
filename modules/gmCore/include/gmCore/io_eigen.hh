@@ -13,6 +13,14 @@
 BEGIN_NAMESPACE_GRAMODS;
 
 /**
+   Type for reading both position and orientation.
+*/
+struct Pose {
+  Eigen::Vector3f position = Eigen::Vector3f::Zero();
+  Eigen::Quaternionf orientation = Eigen::Quaternionf::Identity();
+};
+
+/**
    Stream operator reading two values into an Eigen::Vector2f. This
    is typically used to read XML position and vector attributes. This
    will read three values (x y) from the stream.
@@ -68,6 +76,22 @@ std::istream& operator>> (std::istream &in, Eigen::Matrix3f &m);
    matrix attributes. This will read 16 values from the stream.
 */
 std::istream& operator>> (std::istream &in, Eigen::Matrix4f &m);
+
+/**
+   Stream operator reading a pose as position and orientation
+   separated by a semicolon.
+
+   \sa operator>>(std::istream &, Eigen::Vector3f &)
+   \sa operator>>(std::istream &, Eigen::Quaternionf &)
+*/
+std::istream &operator>>(std::istream &in, Pose &p);
+
+/**
+   Stream operator reading multiple poses, separated by comma.
+
+   \sa operator>>(std::istream &, Pose &)
+*/
+std::istream &operator>>(std::istream &in, std::vector<Pose> &p);
 
 END_NAMESPACE_GRAMODS;
 
