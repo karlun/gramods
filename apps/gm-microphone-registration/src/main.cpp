@@ -127,7 +127,7 @@ int main(int argc, char *argv[]) {
   float speed_of_sound =
       arg_speed_of_sound.isSet()
           ? arg_speed_of_sound.getValue()
-          : SPEED_OF_SOUND.getValue(arg_air_temperature.getValue());
+          : SPEED_OF_SOUND.getSingle(arg_air_temperature.getValue());
 
   std::optional<std::ofstream> file_out;
   if (arg_outputfile.isSet()) {

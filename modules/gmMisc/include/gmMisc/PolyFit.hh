@@ -84,7 +84,7 @@ public:
      Convenience method for 1D polynomials.
      \sa getValue(const std::vector<double>&)
   */
-  double getValue(double inval) const;
+  double getSingle(double inval) const;
 
   /**
      Resets the contents of this object.
