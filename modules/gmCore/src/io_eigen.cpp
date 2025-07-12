@@ -191,6 +191,44 @@ std::istream& operator>> (std::istream &in, Eigen::Matrix4f &m) {
   return in;
 }
 
+std::istream &operator>>(std::istream &in, Pose &p) {
+  {
+    Eigen::Vector3f val;
+    if (!(in >> val)) return in;
+    p.position = val;
+  }
+  if (!in) return in;
+
+  while (in && in.peek() == ' ') in.get();
+
+  if (in && in.peek() == ';') {
+    in.get();
+    Eigen::Quaternionf val;
+    if (!(in >> val)) return in;
+    p.orientation = val;
+  } else {
+    in.clear();
+  }
+
+  return in;
+}
+
+std::istream &operator>>(std::istream &in, std::vector<Pose> &p) {
+  for (std::string line; std::getline(in, line, ',');) {
+    Pose val;
+    if (std::stringstream(line) >> val) {
+      p.push_back(val);
+      continue;
+    }
+
+    in.setstate(std::ios_base::failbit);
+    return in;
+  }
+
+  in.clear();
+  return in;
+}
+
 END_NAMESPACE_GRAMODS;
 
 #endif

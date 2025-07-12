@@ -53,11 +53,8 @@ protected:
   SDL_Window *sdl_window;
   SDL_Renderer *sdl_renderer;
 
+  size_t order;
   std::vector<Point> points;
-
-  size_t poly_order;
-  size_t history_count;
-  double poly_error;
 
   bool alive;
   bool dirty;

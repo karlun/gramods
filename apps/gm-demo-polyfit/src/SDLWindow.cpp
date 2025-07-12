@@ -1,8 +1,7 @@
 
-
 #include "SDLWindow.hh"
 
-#include <gmMisc/EFHOAW.hh>
+#include <gmMisc/PolyFit.hh>
 #include <gmCore/InvalidArgument.hh>
 #include <gmCore/Stringify.hh>
 
@@ -11,30 +10,16 @@
 #include <iostream>
 #include <sstream>
 
+using namespace std::string_literals;
+
 SDLWindow::SDLWindow(int argc, char *argv[]) : sdl_context(SDLContext::get()) {
 
   TCLAP::CmdLine cmd(
       "Demo for PolyFit (1D -> 2D). Click with mouse or touch to add samples. Input will be the input sample's index and output will be its position. Use 'c' or space to clear points and escape to exit.");
 
   TCLAP::ValueArg<size_t> arg_order(
-      "o", "order", "Order of the polygonal approximation. Default is 2.", false, 2, "N");
+      "o", "order", "Order of the polygonal approximation.", false, 2, "N");
   cmd.add(arg_order);
-  TCLAP::ValueArg<size_t> arg_history_count(
-      "c",
-      "history-count",
-      "Number of historical samples to take into consideration. Default is 10.",
-      false,
-      10,
-      "N");
-  cmd.add(arg_history_count);
-  TCLAP::ValueArg<double> arg_poly_error(
-      "e",
-      "error",
-      "Allowed error in the polygonal approximation. Default is 20.",
-      false,
-      20.0,
-      "N");
-  cmd.add(arg_poly_error);
 
   try {
     cmd.parse(argc, argv);
@@ -43,11 +28,9 @@ SDLWindow::SDLWindow(int argc, char *argv[]) : sdl_context(SDLContext::get()) {
         GM_STR("error: " << e.error() << " for arg " << e.argId()));
   }
 
-  poly_order = arg_order.getValue();
-  history_count = arg_history_count.getValue();
-  poly_error = arg_poly_error.getValue();
+  order = arg_order.getValue();
 
-  sdl_window = SDL_CreateWindow("gm-demo-end-fit", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, 640, 480, SDL_WINDOW_RESIZABLE);
+  sdl_window = SDL_CreateWindow("gm-demo-polyfit", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, 640, 480, SDL_WINDOW_RESIZABLE);
   sdl_renderer = SDL_CreateRenderer(sdl_window, -1, SDL_RENDERER_ACCELERATED);
 
   alive = true;
@@ -81,36 +64,35 @@ void SDLWindow::update() {
   SDL_RenderClear(sdl_renderer);
 
   SDL_SetRenderDrawColor(sdl_renderer, 170, 170, 170, 255);
-  for (auto pt : points)
-    drawPoint(pt.x, pt.y);
+  for (auto pt : points) drawPoint(pt.x, pt.y);
 
-  gramods::gmMisc::EFHOAW ef;
-  ef.setHistoryLength(history_count);
-  ef.setHistoryDuration(points.size());
+  if (points.size() < 2) {
+    SDL_RenderPresent(sdl_renderer);
+    return;
+  }
 
-  size_t idx = 0;
-  for (auto pt : points)
-    ef.addSample(0, Eigen::Vector3d(pt.x, pt.y, 0), idx++);
+  gramods::gmMisc::PolyFit polyfit(1, 2, order);
+
+  for (size_t idx = 0; idx < points.size(); ++idx)
+    polyfit.addSample({double(idx)},
+                      {double(points[idx].x), double(points[idx].y)});
 
   try {
-    size_t sample_count;
-    auto coeffs = ef.estimateCoefficients(0, poly_error, poly_order, &sample_count);
-
     SDL_SetRenderDrawColor(sdl_renderer, 190, 190, 190, 255);
 
-    auto pt = ef.getPolynomialPosition(0, points.size() - sample_count);
+    auto pt = polyfit.getValue({-1.0});
     int x0 = int(pt[0]);
     int y0 = int(pt[1]);
 
-    for (size_t idx = points.size() - sample_count; idx < points.size() + 2; ++idx) {
+    for (int idx = -1; idx < int(points.size()); ++idx) {
 
-      if (idx + 1 < points.size())
-        SDL_SetRenderDrawColor(sdl_renderer, 190, 255, 190, 255);
-      else
+      if (idx < 0)
         SDL_SetRenderDrawColor(sdl_renderer, 190, 190, 255, 255);
+      else
+        SDL_SetRenderDrawColor(sdl_renderer, 190, 255, 190, 255);
 
-      {
-        auto pt = ef.getPolynomialPosition(0, idx);
+      if (idx >= 0) {
+        auto pt = polyfit.getValue({double(idx)});
 
         SDL_Rect rect;
         rect.x = int(pt[0]) - 2;
@@ -120,10 +102,12 @@ void SDLWindow::update() {
         SDL_RenderDrawRect(sdl_renderer, &rect);
       }
 
+      if (idx + 1 == points.size())
+        SDL_SetRenderDrawColor(sdl_renderer, 190, 190, 255, 255);
       for (int c = 1; c <= 10; ++c) {
 
         double t = idx + 0.1 * c;
-        auto pt = ef.getPolynomialPosition(0, t);
+        auto pt = polyfit.getValue({t});
 
         int x1 = int(pt[0]);
         int y1 = int(pt[1]);
@@ -134,14 +118,9 @@ void SDLWindow::update() {
         y0 = y1;
       }
     }
-
-    SDL_SetRenderDrawColor(sdl_renderer, 0, 255, 0, 255);
-    for (size_t idx = points.size() - sample_count; idx < points.size(); ++idx)
-      drawPoint(points[idx].x, points[idx].y);
-
   }
   catch (const gramods::gmCore::InvalidArgument &e) {
-    std::cerr << "Error: " << e.what << std::endl;
+    std::cerr << e.what << std::endl;
   }
 
   SDL_RenderPresent(sdl_renderer);
@@ -172,6 +151,15 @@ bool SDLWindow::handleEvent(SDL_Event &event, int, int) {
   case SDL_KEYDOWN:
     if (event.key.keysym.sym == SDLK_ESCAPE) {
       alive = false;
+      return true;
+    }
+    return false;
+
+  case SDL_TEXTINPUT:
+    if (std::string(event.text.text) == "c"s ||
+        std::string(event.text.text) == " "s) {
+      points.clear();
+      dirty = true;
       return true;
     }
     return false;

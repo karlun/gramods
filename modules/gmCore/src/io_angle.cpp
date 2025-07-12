@@ -47,7 +47,7 @@ std::istream& operator>> (std::istream &in, gmCore::angle &v) {
     if (idx == 0 && fabsf(value) > 5 * GM_PI)
       GM_WRN("operator>>(std::istream, str_angle)",
              "Parsed angle (" << value << ") is large to be in radians"
-             " - did yoy mean degrees ('d" << str_angle << "')? Otherwise"
+             " - did you mean degrees ('d" << str_angle << "')? Otherwise"
              " use 'r" << str_angle << "' to disable this warning.");
   }
 

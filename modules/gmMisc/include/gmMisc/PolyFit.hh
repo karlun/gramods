@@ -61,7 +61,10 @@ public:
 
   /**
      Estimate and return the coefficients of the polynomial that best
-     fits the data.
+     fits the data. The order for these components matches the
+     recursive expansion of `[ 1, x, x², ... ] × [ 1, y, y², ... ] ×
+     ...` into `[ 1, x, x², ..., yx, yx², ..., y²x, y²x², ... ]`
+     (column wise) for each output (row wise).
 
      This method will cache the coefficients until new samples have
      been added.
@@ -81,10 +84,43 @@ public:
   std::vector<double> getValue(const std::vector<double> &inval) const;
 
   /**
+     Estimates the polynomial Jacobian from the specified input.
+
+     This method calls estimateCoefficients (if necessary) and
+     calculates the Jacobian of the polynomial with the specified
+     input. For n input variables, x₀ to xₙ, and m output variables,
+     y₀ to yₘ, the returned matrix follows the convention
+
+     \f[
+     \left(
+       \begin{array}{cccc}
+         \frac{\partial y_0}{\partial x_0} & \frac{\partial y_0}{\partial x_1} & \dots & \frac{\partial y_0}{\partial x_n} \\
+         \frac{\partial y_1}{\partial x_0} & \frac{\partial y_1}{\partial x_1} & \dots & \frac{\partial y_1}{\partial x_n} \\
+         \vdots \\
+         \frac{\partial y_m}{\partial x_0} & \frac{\partial y_m}{\partial x_1} & \dots & \frac{\partial y_m}{\partial x_n}
+       \end{array}
+     \right)
+     \f]
+
+     The dimensions of the input must match the dimensionality of the
+     object or exception will be thrown.
+  */
+  Eigen::MatrixXd getJacobian(const std::vector<double> &in_values) const;
+
+  /**
      Convenience method for 1D polynomials.
      \sa getValue(const std::vector<double>&)
   */
-  double getValue(double inval) const;
+  double getSingle(double inval) const;
+
+  /**
+     Estimates the polynomial derivative from the specified input for
+     1D polynomials.
+
+     This method calls estimateCoefficients (if necessary) and
+     calculates the resulting polynomial with the specified input.
+  */
+  double getDerivative(double inval) const;
 
   /**
      Resets the contents of this object.

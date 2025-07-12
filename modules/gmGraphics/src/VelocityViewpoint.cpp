@@ -22,8 +22,6 @@ struct VelocityViewpoint::Impl {
   void update(Eigen::Vector3f &position,
               Eigen::Quaternionf &orientation,
               clock::time_point now);
-  void updatePosition(Eigen::Vector3f &position, d_seconds dt);
-  void updateOrientation(Eigen::Quaternionf &orientation, d_seconds dt);
 };
 
 VelocityViewpoint::VelocityViewpoint()
