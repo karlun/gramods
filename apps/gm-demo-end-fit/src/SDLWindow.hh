@@ -25,7 +25,7 @@ public:
   /**
    * Creates a default window.
    */
-  SDLWindow();
+  SDLWindow(int argc, char *argv[]);
 
   /** Cleanup. */
   virtual ~SDLWindow();
@@ -54,6 +54,10 @@ protected:
   SDL_Renderer *sdl_renderer;
 
   std::vector<Point> points;
+
+  size_t poly_order;
+  size_t history_count;
+  double poly_error;
 
   bool alive;
   bool dirty;

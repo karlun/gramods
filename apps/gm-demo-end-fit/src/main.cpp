@@ -6,9 +6,9 @@
 #undef main
 #endif
 
-int main(int, char **) {
+int main(int argc, char *argv[]) {
 
-  SDLWindow window;
+  SDLWindow window(argc, argv);
 
   while (!window.isDone()) {
     window.process();

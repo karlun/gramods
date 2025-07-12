@@ -4,19 +4,50 @@
 
 #include <gmMisc/EFHOAW.hh>
 #include <gmCore/InvalidArgument.hh>
+#include <gmCore/Stringify.hh>
+
+#include <tclap/CmdLine.h>
 
 #include <iostream>
 #include <sstream>
 
-#define POLY_ORDER  3
-#define POLY_COUNT 10
-#define POLY_ERROR 20
+SDLWindow::SDLWindow(int argc, char *argv[]) : sdl_context(SDLContext::get()) {
 
-SDLWindow::SDLWindow() :
-  sdl_context(SDLContext::get()) {
+  TCLAP::CmdLine cmd(
+      "Demo for PolyFit (1D -> 2D). Click with mouse or touch to add samples. Input will be the input sample's index and output will be its position. Use 'c' or space to clear points and escape to exit.");
+
+  TCLAP::ValueArg<size_t> arg_order(
+      "o", "order", "Order of the polygonal approximation. Default is 2.", false, 2, "N");
+  cmd.add(arg_order);
+  TCLAP::ValueArg<size_t> arg_history_count(
+      "c",
+      "history-count",
+      "Number of historical samples to take into consideration. Default is 10.",
+      false,
+      10,
+      "N");
+  cmd.add(arg_history_count);
+  TCLAP::ValueArg<double> arg_poly_error(
+      "e",
+      "error",
+      "Allowed error in the polygonal approximation. Default is 20.",
+      false,
+      20.0,
+      "N");
+  cmd.add(arg_poly_error);
+
+  try {
+    cmd.parse(argc, argv);
+  } catch (TCLAP::ArgException &e) {
+    throw gramods::gmCore::InvalidArgument(
+        GM_STR("error: " << e.error() << " for arg " << e.argId()));
+  }
+
+  poly_order = arg_order.getValue();
+  history_count = arg_history_count.getValue();
+  poly_error = arg_poly_error.getValue();
 
   sdl_window = SDL_CreateWindow("gm-demo-end-fit", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, 640, 480, SDL_WINDOW_RESIZABLE);
-
   sdl_renderer = SDL_CreateRenderer(sdl_window, -1, SDL_RENDERER_ACCELERATED);
 
   alive = true;
@@ -54,7 +85,7 @@ void SDLWindow::update() {
     drawPoint(pt.x, pt.y);
 
   gramods::gmMisc::EFHOAW ef;
-  ef.setHistoryLength(POLY_COUNT);
+  ef.setHistoryLength(history_count);
   ef.setHistoryDuration(points.size());
 
   size_t idx = 0;
@@ -63,7 +94,7 @@ void SDLWindow::update() {
 
   try {
     size_t sample_count;
-    auto coeffs = ef.estimateCoefficients(0, POLY_ERROR, POLY_ORDER, &sample_count);
+    auto coeffs = ef.estimateCoefficients(0, poly_error, poly_order, &sample_count);
 
     SDL_SetRenderDrawColor(sdl_renderer, 190, 190, 190, 255);
 
@@ -89,7 +120,7 @@ void SDLWindow::update() {
         SDL_RenderDrawRect(sdl_renderer, &rect);
       }
 
-      for (int c = 0; c < 10; ++c) {
+      for (int c = 1; c <= 10; ++c) {
 
         double t = idx + 0.1 * c;
         auto pt = ef.getPolynomialPosition(0, t);
@@ -110,7 +141,7 @@ void SDLWindow::update() {
 
   }
   catch (const gramods::gmCore::InvalidArgument &e) {
-    std::cerr << e.what << std::endl;
+    std::cerr << "Error: " << e.what << std::endl;
   }
 
   SDL_RenderPresent(sdl_renderer);
