@@ -247,7 +247,7 @@ void Configuration::load(tinyxml2::XMLNode *node,
           } catch (const gmCore::InvalidArgument &e) {
             GM_WRN("Configuration", "While setting parameter: " << e.what);
             if (error_list) error_list->push_back(e.what);
-            else throw e;
+            else throw;
           }
         }
 
@@ -270,7 +270,7 @@ void Configuration::load(tinyxml2::XMLNode *node,
         } catch (const gmCore::InvalidArgument &e) {
           GM_WRN("Configuration", e.what);
           if (error_list) error_list->push_back(e.what);
-          else throw e;
+          else throw;
         }
       }
     }
@@ -294,7 +294,7 @@ void Configuration::load(tinyxml2::XMLNode *node,
         } catch (const gmCore::InvalidArgument &e) {
           GM_WRN("Configuration", e.what);
           if (error_list) error_list->push_back(e.what);
-          else throw e;
+          else throw;
         }
       }
     }
