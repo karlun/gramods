@@ -43,6 +43,11 @@ void TiledView::Impl::renderFullPipeline(ViewSettings settings) {
     total_cols = std::max(total_cols, tile.location[1] + tile.location[3]);
   }
 
+  if (total_rows == 0 || total_cols == 0) {
+    GM_ERR("TiledView", "Cannot set up without rows and columns");
+    return;
+  }
+
   GLint cvp[4] = { 0, 0, 0, 0 };
   glGetIntegerv(GL_VIEWPORT, cvp);
   float col_width = float(cvp[2]) / float(total_cols);
