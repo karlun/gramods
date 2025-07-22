@@ -59,16 +59,13 @@ void TiledView::Impl::renderFullPipeline(ViewSettings settings) {
   }
 
   GM_DBG2("TiledView",
-          "Tiling "
-          << "[" << total_rows
-          << " " << total_cols
-          << "] in ");
-  GM_DBG2("TiledView",
-          "Tiling "
-          << "(" << cvp[0]
-          << " " << cvp[1]
-          << " " << cvp[2]
-          << " " << cvp[3] << ")");
+          "Tiling " << "[" << total_rows //
+                    << " " << total_cols //
+                    << "] in "
+                    << "(" << cvp[0] //
+                    << " " << cvp[1] //
+                    << " " << cvp[2] //
+                    << " " << cvp[3] << ")");
 
   for (auto tile : tiles) {
     GLint tile_location_0 = total_rows - tile.location[2] - tile.location[0];
@@ -82,16 +79,15 @@ void TiledView::Impl::renderFullPipeline(ViewSettings settings) {
                          : GLsizei(cvp[3] - tile_location_0 * row_height);
 
     GM_DBG3("TiledView",
-             "Tile @ "
-             << "[" << tile.location[0]
-             << " " << tile.location[1]
-             << " " << tile.location[2]
-             << " " << tile.location[3]
-             << "] -> "
-             << "(" << x
-             << " " << y
-             << " " << width
-             << " " << height << ")");
+            "Tile @ " << "[" << tile.location[0] //
+                      << " " << tile.location[1] //
+                      << " " << tile.location[2] //
+                      << " " << tile.location[3] //
+                      << "] -> "                 //
+                      << "(" << x                //
+                      << " " << y                //
+                      << " " << width            //
+                      << " " << height << ")");
 
     glViewport(x, y, width, height);
     tile.view->renderFullPipeline(settings);
