@@ -43,8 +43,8 @@ int main(int argc, char *argv[]) {
   TCLAP::ValueArg<size_t> arg_count(
       "n", "count",
       "Number of samples to wait for before estimating the pivot"
-      " point. Default is the minimum, 3.",
-      false, 3, "N");
+      " point. Default is the minimum, 2.",
+      false, 2, "N");
   cmd.add(arg_count);
 
   TCLAP::ValueArg<float> arg_pos_inlier(
@@ -73,9 +73,9 @@ int main(int argc, char *argv[]) {
   if (arg_config_dummy.getValue().empty() && arg_xml_dummy.getValue().empty())
     return 2;
 
-  if (arg_count.getValue() < 3) {
+  if (arg_count.getValue() < 2) {
     std::cerr << "Incorrect number of samples to collect: "
-              << arg_count.getValue() << " < 3\n";
+              << arg_count.getValue() << " < 2\n";
     return 3;
   }
 
