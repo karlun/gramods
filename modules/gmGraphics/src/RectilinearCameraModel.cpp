@@ -11,6 +11,7 @@ GM_OFI_PARAM2(RectilinearCameraModel, kDistortion, gmCore::float3, setKDistortio
 GM_OFI_PARAM2(RectilinearCameraModel, pDistortion, gmCore::float2, setPDistortion);
 GM_OFI_PARAM2(RectilinearCameraModel, focalDistance, gmCore::float2, setFocalDistance);
 GM_OFI_PARAM2(RectilinearCameraModel, focalOffset, gmCore::float2, setFocalOffset);
+GM_OFI_PARAM2(RectilinearCameraModel, clipAngles, gmCore::angle4, setClipAngles);
 
 struct RectilinearCameraModel::Impl {
 
@@ -145,6 +146,13 @@ void RectilinearCameraModel::setFocalDistance(gmCore::float2 f) {
 
 void RectilinearCameraModel::setFocalOffset(gmCore::float2 c) {
   _impl->offset = c;
+}
+
+void RectilinearCameraModel::setClipAngles(gmCore::angle4 fov) {
+  _impl->focal = {1.f / (std::tan(fov[0]) + std::tan(fov[1])), //
+                  1.f / (std::tan(fov[2]) + std::tan(fov[3]))};
+  _impl->offset = {std::tan(fov[0]) / (std::tan(fov[0]) + std::tan(fov[1])), //
+                   std::tan(fov[2]) / (std::tan(fov[2]) + std::tan(fov[3]))};
 }
 
 END_NAMESPACE_GMGRAPHICS;

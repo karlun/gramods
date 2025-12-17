@@ -4,6 +4,7 @@
 
 // Required before gmCore/OFactory.hh for some compilers
 #include <gmCore/io_float.hh>
+#include <gmCore/io_angle.hh>
 
 #include <gmGraphics/CoordinatesMapper.hh>
 
@@ -97,6 +98,15 @@ public:
      \gmXmlTag{gmGraphics,RectilinearCameraModel,focalOffset}
   */
   void setFocalOffset(gmCore::float2 c);
+
+  /**
+     Set the focal distance and focal offset based on left, right,
+     bottom and top field-of-view. The left field-of-view increase
+     left-wise while the right field-of-view increase right-wise.
+
+     \gmXmlTag{gmGraphics,RectilinearCameraModel,clipAngles}
+  */
+  void setClipAngles(gmCore::angle4 f);
 
   GM_OFI_DECLARE;
 
