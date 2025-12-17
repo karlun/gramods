@@ -56,13 +56,13 @@ bool mapTo2D(vec3 pos3, out vec2 pos2) {
   if (r < 1e-10) r = 1;
   
   float th = atan(r);
-  float thd = th * (1 + k.x * pow(th,2) + k.y * pow(th,4) + k.z * pow(th,6) + k.w * pow(th,8));
+  float thd = th * (1 + ID_k.x * pow(th,2) + ID_k.y * pow(th,4) + ID_k.z * pow(th,6) + ID_k.w * pow(th,8));
   
   float xp = (thd/r)*a;
   float yp = (thd/r)*b;
 
-  float u = fx * xp + cx;
-  float v = fy * yp + cy;
+  float u = ID_fx * xp + ID_cx;
+  float v = ID_fy * yp + ID_cy;
 
   if (u < 0 || 1 < u ||
       v < 0 || 1 < v)
