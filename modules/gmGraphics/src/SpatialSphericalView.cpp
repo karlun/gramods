@@ -85,7 +85,7 @@ void main() {
   bool good = mapTo3D(pos, pix_dir);
 
   if (!good) {
-    fragColor = vec4(0, 0, 0, 0);
+    discard;
     return;
   }
 

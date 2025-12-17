@@ -98,7 +98,7 @@ void main() {
   vec3 p = getIntersection(p0, dir);
 
   if (p.x == 0 && p.y == 0 && p.z == 0) {
-    fragColor = vec4(0, 0, 0, 0);
+    discard;
     return;
   }
 
@@ -110,7 +110,7 @@ void main() {
       uv.y >= 0 && uv.y <= 1)
     fragColor = texture(tex, uv);
   else
-    fragColor = vec4(0, 0, 0, 0);
+    discard;
 }
 )lang=glsl";
 

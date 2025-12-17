@@ -117,7 +117,7 @@ void main() {
   if (good)
     fragColor = texture(tex, 0.5 + 0.5 * v_uv);
   else
-    fragColor = vec4(0, 0, 0, 0);
+    discard;
 }
 )lang=glsl";
 
