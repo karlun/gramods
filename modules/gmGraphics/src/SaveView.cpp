@@ -316,7 +316,7 @@ void SaveView::setFile(std::filesystem::path file) {
     _impl->float_support = false;
     _impl->file_template = file;
     _impl->fi_format = FIF_JPEG;
-    _impl->fi_options = JPEG_QUALITYGOOD;
+    _impl->fi_options = 95;
 
     return;
 
