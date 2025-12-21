@@ -16,25 +16,17 @@ std::map<std::string,OFactory::OFactoryInformation*>& OFactory::getOFIByNameMap(
 }
 
 void OFactory::registerOFI(std::string name, OFactoryInformation *info){
-  GM_DBG1("OFactory", "Registering " << name);
-
-  if (getOFIByNameMap().count(name) != 0) {
-    GM_ERR("OFactory", "Attempt to re-register with same name '" << name << "'");
+  if (getOFIByNameMap().count(name) != 0)
     throw RuntimeException(GM_STR(
         "Cannot register OFI for already registered name '" << name << "'"));
-  }
 
   getOFIByNameMap()[name] = info;
 }
 
 void OFactory::unregisterOFI(std::string name){
-  GM_DBG1("OFactory", "Unregistering " << name);
-
-  if (getOFIByNameMap().count(name) != 1) {
-    GM_WRN("OFactory", "Attempt to un-register an un-registered name '" << name << "'");
+  if (getOFIByNameMap().count(name) != 1)
     throw RuntimeException(GM_STR(
         "Cannot unregister OFI, cannot find name '" << name << "'"));
-  }
 
   if (getOFIByNameMap().count(name) == 1)
     getOFIByNameMap().erase(name);
