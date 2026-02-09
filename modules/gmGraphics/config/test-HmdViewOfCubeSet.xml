@@ -24,20 +24,25 @@
         <CubeSceneRenderer
             cubeSize="0.1"
             cubeSetSize="2.0"/>
+        <ObjRenderer file="urn:gramods:gmGraphics/resources/floor-coordinates.obj"/>
       </HmdView>
 
       <param name="tileLocation" value="0 1 1 1"/>
       <PosedSphericalView>
         <EquirectangularCoordinatesMapper/>
-        <SphereRenderer>
-          <RectilinearCameraModel focalDistance="0.6 1.0"/>
+
+        <TrackedTransform>
           <OpenVRPoseTracker type="HMD">
             <OpenVR USE="OPENVR"/>
           </OpenVRPoseTracker>
-          <ViewTexture>
-            <View USE="HMD"/>
-          </ViewTexture>
-        </SphereRenderer>
+
+          <SphereRenderer>
+            <RectilinearCameraModel focalDistance="0.6 1.0"/>
+            <ViewTexture>
+              <View USE="HMD"/>
+            </ViewTexture>
+          </SphereRenderer>
+        </TrackedTransform>
       </PosedSphericalView>
 
     </TiledView>
