@@ -21,10 +21,21 @@
             useVideo="true"
             manifestPath="urn:gramods:config/openvr_manifest/standard_actionset.json"
             actionSet="/actions/std"/>
-        <CubeSceneRenderer
-            cubeSize="0.1"
-            cubeSetSize="2.0"/>
-        <ObjRenderer file="urn:gramods:gmGraphics/resources/floor-coordinates.obj"/>
+
+        <PoseTransform position="0 2.1 0">
+          <CubeSceneRenderer
+              cubeSize="0.1"
+              cubeSetSize="2.0"/>
+        </PoseTransform>
+
+        <ObjRenderer
+            file="urn:gramods:gmGraphics/resources/axes.obj"/>
+        <PoseTransform position="0 -0.01 0">
+          <ObjRenderer
+              file="urn:gramods:gmGraphics/resources/fur.obj"/>
+        </PoseTransform>
+        <ObjRenderer
+            file="urn:gramods:gmGraphics/resources/floor-coordinates.obj"/>
       </HmdView>
 
       <param name="tileLocation" value="0 1 1 1"/>
