@@ -28,7 +28,22 @@ public:
   /**
      @see CoordinatesMapper
   */
+  std::string getCommonCode() override;
+
+  /**
+     @see CoordinatesMapper
+  */
+  std::string getTo3DCode() override;
+
+  /**
+     @see CoordinatesMapper
+  */
   std::string getTo2DCode() override;
+
+  /**
+     @see CoordinatesMapper
+  */
+  void setCommonUniforms(GLuint program_id) override;
 
   /**
      @see CoordinatesMapper

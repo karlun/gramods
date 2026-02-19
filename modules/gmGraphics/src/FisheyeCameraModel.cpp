@@ -1,6 +1,8 @@
 
 #include <gmGraphics/FisheyeCameraModel.hh>
 
+#include <gmCore/RunOnce.hh>
+
 BEGIN_NAMESPACE_GMGRAPHICS;
 
 GM_OFI_DEFINE(FisheyeCameraModel);
@@ -30,15 +32,51 @@ FisheyeCameraModel::FisheyeCameraModel()
   : _impl(std::make_unique<Impl>()) {}
 FisheyeCameraModel::~FisheyeCameraModel() {}
 
-std::string FisheyeCameraModel::getTo2DCode() {
+std::string FisheyeCameraModel::getCommonCode() {
   return withVarId(R"lang=glsl(
-
-uniform vec4 ID_k;
-
 uniform float ID_fx;
 uniform float ID_fy;
 uniform float ID_cx;
 uniform float ID_cy;
+)lang=glsl");
+}
+
+std::string FisheyeCameraModel::getTo3DCode() {
+  GM_RUNONCE_BEGIN;
+  if (_impl->k_dist[0] != 0.f || _impl->k_dist[1] != 0.f ||
+      _impl->k_dist[2] != 0.f || _impl->k_dist[3] != 0.f)
+    GM_WRN("FisheyeCameraModel",
+           "Reverse mapping does not support distortion");
+  GM_RUNONCE_END;
+
+  return withVarId(R"lang=glsl(
+bool mapTo3D(vec2 pos2, out vec3 pos3) {
+
+  vec2 uv = 0.5 * (pos2 + 1);
+  float x = (uv.x - ID_cx) / ID_fx;
+  float y = (uv.y - ID_cy) / ID_fy;
+  float r = sqrt(x*x + y*y);
+
+  if (r > 1e-10) {
+    x = (tan(r) / r) * x;
+    y = (tan(r) / r) * y;
+  } else {
+    x = 0.0;
+    y = 0.0;
+  }
+
+  // Go from OpenCV to OpenGL coordinates
+  pos3 = normalize(vec3(x, y, -1));
+
+  return true;
+}
+)lang=glsl");
+}
+
+std::string FisheyeCameraModel::getTo2DCode() {
+  return withVarId(R"lang=glsl(
+
+uniform vec4 ID_k;
 
 bool mapTo2D(vec3 pos3, out vec2 pos2) {
 
@@ -81,12 +119,15 @@ bool mapTo2D(vec3 pos3, out vec2 pos2) {
        : (_impl->loc[program_id].VAR =                                         \
               glGetUniformLocation(program_id, withVarId(NAME).c_str())))
 
-void FisheyeCameraModel::setTo2DUniforms(GLuint program_id) {
-  glUniform4fv(LOC(k, "ID_k"), 1, _impl->k_dist.data());
+void FisheyeCameraModel::setCommonUniforms(GLuint program_id) {
   glUniform1f(LOC(fx, "ID_fx"), _impl->focal[0]);
   glUniform1f(LOC(fy, "ID_fy"), _impl->focal[1]);
   glUniform1f(LOC(cx, "ID_cx"), _impl->offset[0]);
   glUniform1f(LOC(cy, "ID_cy"), _impl->offset[1]);
+}
+
+void FisheyeCameraModel::setTo2DUniforms(GLuint program_id) {
+  glUniform4fv(LOC(k, "ID_k"), 1, _impl->k_dist.data());
 }
 
 void FisheyeCameraModel::setDistortion(gmCore::float4 k) {
