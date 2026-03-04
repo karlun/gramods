@@ -392,8 +392,11 @@ bool ImageTexture::Impl::setTexture(FIBITMAP *image, std::string filename) {
   GLenum gl_type;
   std::string str_format = "";
   switch (image_type) {
-  case FIT_BITMAP:
-    switch (FreeImage_GetBPP(image)) {
+  case FIT_BITMAP:{
+    GM_DBG2("ImageTexture", "image_type = FIT_BITMAP");
+    const auto bpp = FreeImage_GetBPP(image);
+    GM_DBG2("ImageTexture", "BPP = " << bpp);
+    switch (bpp) {
     case 8:
       gl_format = GL_LUMINANCE;
       gl_type = GL_UNSIGNED_BYTE;
@@ -418,47 +421,57 @@ bool ImageTexture::Impl::setTexture(FIBITMAP *image, std::string filename) {
       return false;
     }
     break;
+  }
   case FIT_UINT16:
+    GM_DBG2("ImageTexture", "image_type = FIT_UINT16");
     gl_format = GL_LUMINANCE;
     gl_type = GL_UNSIGNED_SHORT;
     str_format = "u16 gray";
     break;
   case FIT_INT16:
+    GM_DBG2("ImageTexture", "image_type = FIT_INT16");
     gl_format = GL_LUMINANCE;
     gl_type = GL_SHORT;
     str_format = "s16 gray";
     break;
   case FIT_UINT32:
+    GM_DBG2("ImageTexture", "image_type = FIT_UINT32");
     gl_format = GL_LUMINANCE;
     gl_type = GL_UNSIGNED_INT;
     str_format = "u32 gray";
     break;
   case FIT_INT32:
+    GM_DBG2("ImageTexture", "image_type = FIT_INT32");
     gl_format = GL_LUMINANCE;
     gl_type = GL_INT;
     str_format = "s32 gray";
     break;
   case FIT_FLOAT:
+    GM_DBG2("ImageTexture", "image_type = FIT_FLOAT");
     gl_format = GL_LUMINANCE;
     gl_type = GL_FLOAT;
     str_format = "f32 gray";
     break;
   case FIT_RGB16:
+    GM_DBG2("ImageTexture", "image_type = FIT_RGB16");
     gl_format = GL_RGB;
-    gl_type = GL_SHORT;
+    gl_type = GL_UNSIGNED_SHORT;
     str_format = "s16 RGB";
     break;
   case FIT_RGBA16:
+    GM_DBG2("ImageTexture", "image_type = FIT_RGBA16");
     gl_format = GL_RGBA;
-    gl_type = GL_SHORT;
+    gl_type = GL_UNSIGNED_SHORT;
     str_format = "s16 RGBA";
     break;
   case FIT_RGBF:
+    GM_DBG2("ImageTexture", "image_type = FIT_RGBF");
     gl_format = GL_RGB;
     gl_type = GL_FLOAT;
     str_format = "f32 RGB";
     break;
   case FIT_RGBAF:
+    GM_DBG2("ImageTexture", "image_type = FIT_RGBAF");
     gl_format = GL_RGBA;
     gl_type = GL_FLOAT;
     str_format = "f32 RGBA";
