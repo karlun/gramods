@@ -39,19 +39,15 @@ int main(int argc, char *argv[]) {
   std::vector<std::shared_ptr<gmNetwork::SyncNode>> sync_nodes;
   config->getAllObjects(sync_nodes);
 
-  // Extract Controller (Wand) to hand over to MyApp
-  std::vector<std::shared_ptr<gmTrack::Controller>> controllers;
-  config->getAllObjects(controllers);
-
-  // Extract head tracker to hand over to MyApp
-  std::shared_ptr<gmTrack::SinglePoseTracker> head;
-  config->getObjectByDef("head", head);
+  // Extract trackers to hand over to MyApp
+  std::shared_ptr<gmTrack::TrackerSet> tracker_set;
+  config->getObject(tracker_set);
 
   // Instantiate MyApp and hand over SyncNode and Controller. We do
   // not care if the lists are empty or not, that is for MyApp to take
   // into consideration.
   std::shared_ptr<MyApp> myapp =
-    std::make_shared<MyApp>(sync_nodes, controllers, head);
+    std::make_shared<MyApp>(sync_nodes, tracker_set);
 
   // Extract Window, because we need to call them to process events,
   // render and swap buffers.
@@ -153,10 +149,10 @@ int main(int argc, char *argv[]) {
   } catch (const gmCore::ExitException &e) {
     exit_code = e.exit_code;
   } catch (const gmCore::RuntimeException &e) {
-    GM_ERR("gm-demo-org", "Terminated by runtime exception: " << e.what);
+    GM_ERR("gm-demo-osg", "Terminated by runtime exception: " << e.what);
     exit_code = -2;
   } catch (...) {
-    GM_ERR("gm-demo-org", "Terminated by unknown exception");
+    GM_ERR("gm-demo-osg", "Terminated by unknown exception");
     exit_code = -255;
   }
 

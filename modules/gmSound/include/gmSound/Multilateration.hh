@@ -8,7 +8,7 @@
 #include <gmSound/SoundDetector.hh>
 
 #include <gmCore/Updateable.hh>
-#include <gmTrack/SinglePoseTracker.hh>
+#include <gmTrack/TrackerBase.hh>
 
 namespace gramods {
 namespace gmSound {
@@ -16,8 +16,7 @@ namespace gmSound {
 /**
    Estimates the position of sound.
 */
-class Multilateration : public gmTrack::SinglePoseTracker,
-                        public gmCore::Updateable {
+class Multilateration : public gmTrack::PoseTracker {
 
 public:
   typedef gmCore::Updateable::clock clock;
@@ -53,16 +52,9 @@ public:
   void setSoundDetector(std::shared_ptr<SoundDetector>);
 
   /**
-     Replaces the contents of p with pose data. Use sample time to check if
-     data are fresh.
+     @see PoseTracker::get
   */
-  bool getPose(PoseSample &p) override;
-
-  /**
-     Called by updateAll to perform the multilateration and set the
-     most current position, if one is detected.
-  */
-  void update(clock::time_point t, size_t frame) override;
+  std::optional<State> get() override;
 
   void initialize() override;
 

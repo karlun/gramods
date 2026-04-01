@@ -22,7 +22,7 @@ using namespace gramods;
 int main(int argc, char *argv[]) {
 
   TCLAP::CmdLine cmd
-    ("This is a tracker sampler for gramods. A configuration file or string must be specified and this must contain the definition of a controller (gmTrack::Controller).");
+    ("This is a tracker sampler for gramods. A configuration file or string must be specified and this must contain the definition of a tracker set (gmTrack::TrackerSet).");
 
   TCLAP::MultiArg<std::string> arg_config_dummy
     ("", "config",
@@ -85,15 +85,15 @@ int main(int argc, char *argv[]) {
 
   if (!config) return 2;
 
-  std::shared_ptr<gmTrack::Controller> controller;
-  if (!config->getObject(controller)) {
-    std::cerr << "Error: No controller found." << std::endl;
+  std::shared_ptr<gmTrack::TrackerSet> tracker_set;
+  if (!config->getObject(tracker_set)) {
+    std::cerr << "Error: No tracker set found." << std::endl;
     return 3;
   }
 
   std::shared_ptr<gmTrack::PoseSampleCollector> collector =
       std::make_shared<gmTrack::PoseSampleCollector>();
-  collector->setController(controller);
+  collector->setTrackerSet(tracker_set);
   collector->setInlierThreshold(arg_pos_inlier.getValue());
   collector->setOrientationInlierThreshold(arg_ori_inlier.getValue());
 

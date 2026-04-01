@@ -8,39 +8,37 @@
 
 #include <gmCore/Object.hh>
 #include <gmCore/OFactory.hh>
-#include <gmCore/Updateable.hh>
 
-#include <gmTrack/AnalogsTracker.hh>
-#include <gmTrack/ButtonsTracker.hh>
-#include <gmTrack/MultiPoseTracker.hh>
-#include <gmTrack/SinglePoseTracker.hh>
+#include <gmTrack/TrackerBase.hh>
 
 BEGIN_NAMESPACE_GMTRACK;
 
 /**
-   This class sets up a VRPN server that post data from
-   AnalogsTracker, ButtonsTracker, SinglePoseTracker and
-   MultiPoseTracker instances.
+   This class sets up a VRPN server that post data from BinaryTracker,
+   FloatTracker, Float2Tracker, and PoseTracker instances.
+
+   The keys of the tracker states available from each tracker are used
+   as VRPN tracker names and sensor indices, so for a key "wand/5" in
+   a PoseTracker the VrpnServer will set up a VRPN pose remote named
+   "wand" and report that pose as channel 5. VRPN does not provide a
+   separate type for 2D data, so Float2Tracker must be explicitly
+   structured. For keys that do not end with numbers, x and y are
+   encoded into channels 0 and 1, respectively. For keys that do end
+   with numbers, the x and y data are split up into separate analog
+   server with keys appending "/x" and "/y", respecively, with
+   channels determined by those numbers.
 
    This class configures as an Updateable with a priority of
    -100. Either Updateable::updateAll or update must be called at
    even intervals. This is done automatically by gm-load.
 */
 class VrpnServer
-  : public gmCore::Object,
-    public gmCore::Updateable {
+  : public gmCore::Object {
 
 public:
 
   VrpnServer();
   ~VrpnServer();
-
-  /**
-     Reads off analogs, buttons and pose data, and send these through
-     the VRPN server.
-  */
-  void update(gmCore::Updateable::clock::time_point time,
-              size_t frame) override;
 
   /**
      Sets up the server. This should be called once only!
@@ -55,34 +53,24 @@ public:
   void setPort(int port);
 
   /**
-     Add a name to associate with a tracker in this VRPN server. There
-     must be exactly one name for each tracker served.
+     Add a BinaryTracker to serve from this VRPN server.
   */
-  void addTrackerName(std::string name);
+  void addBinaryTracker(std::shared_ptr<BinaryTracker> t);
 
   /**
-     Add an AnalogsTracker to serve from this VRPN server. There must
-     be exactly one name for each tracker served.
+     Add a FloatTracker to serve from this VRPN server.
   */
-  void addAnalogsTracker(std::shared_ptr<AnalogsTracker> t);
+  void addFloatTracker(std::shared_ptr<FloatTracker> t);
 
   /**
-     Add a ButtonsTracker to serve from this VRPN server. There must
-     be exactly one name for each tracker served.
+     Add a Float2Tracker to serve from this VRPN server.
   */
-  void addButtonsTracker(std::shared_ptr<ButtonsTracker> t);
+  void addFloat2Tracker(std::shared_ptr<Float2Tracker> t);
 
   /**
-     Add a MultiPoseTracker to serve from this VRPN server. There must be
-     exactly one name for each tracker served.
+     Add a PoseTracker to serve from this VRPN server.
   */
-  void addMultiPoseTracker(std::shared_ptr<MultiPoseTracker> t);
-
-  /**
-     Add a SinglePoseTracker to serve from this VRPN server. There must be
-     exactly one name for each tracker served.
-  */
-  void addSinglePoseTracker(std::shared_ptr<SinglePoseTracker> t);
+  void addPoseTracker(std::shared_ptr<PoseTracker> t);
 
   /**
      Propagates the specified visitor.

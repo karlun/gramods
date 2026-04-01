@@ -7,9 +7,8 @@
 #ifdef gramods_ENABLE_OpenCV_objdetect
 
 #include <gmCore/OFactory.hh>
-#include <gmCore/Updateable.hh>
 
-#include <gmTrack/MultiPoseTracker.hh>
+#include <gmTrack/TrackerBase.hh>
 
 #include <gmTrack/ArucoBoard.hh>
 #include <gmTrack/OpenCvVideoCapture.hh>
@@ -23,18 +22,11 @@ BEGIN_NAMESPACE_GMTRACK;
    10. Either Updateable::updateAll or update must be called at even
    intervals. This is done automatically by gm-load.
 */
-class ArucoPoseTracker
-  : public MultiPoseTracker,
-    public gmCore::Updateable {
+class ArucoPoseTracker : public PoseTracker {
 
 public:
 
   ArucoPoseTracker();
-
-  /**
-     Updates the animation.
-  */
-  void update(gmCore::Updateable::clock::time_point time, size_t frame);
 
   //void setCornerRefineMethod(std::string m);
   //void setCornerRefineMethod(cv::aruco::CornerRefineMethod m);
@@ -62,9 +54,18 @@ public:
      relative the markers. When false the markers' poses are
      estimated. Default is false.
 
-     \gmXmlTag{gmTrack,ArucoPoseTracker,inverted}
+     \gmXmlTag{gmTrack,ArucoPoseTracker,trackCamera}
   */
-  void setInverted(bool on);
+  void setTrackCamera(bool on);
+
+  /**
+     Set the key to use for the data produced by this tracker. Board
+     index will be appended. Default is "/aruco/T" where T is the
+     current trackers' index.
+
+     \gmXmlTag{gmTrack,ArucoPoseTracker,key}
+  */
+  void setKey(std::string key);
 
   /**
      Set to true to activate debug graphics.
@@ -92,9 +93,9 @@ public:
   void setCameraConfigurationFile(std::filesystem::path file);
 
   /**
-     Replaces the contents of p with pose data.
+     @see TrackerBase::get
   */
-  bool getPose(std::map<int, PoseSample> &p) override;
+  std::optional<State> get() override;
 
   /**
      Propagates the specified visitor.

@@ -1,15 +1,17 @@
 
+#include <gmCore/Pose.hh>
+#include <gmTrack/TrackerBase.hh>
+#include <gmTrack/StdKey.hh>
+
 #include "MyApp.hh"
 
 #include <gmCore/TimeTools.hh>
 #include <gmCore/FileResolver.hh>
 
-#include <gmTrack/ButtonsMapper.hh>
-
 #include <gmNetwork/RunSync.hh>
 #include <gmNetwork/DataSync.hh>
 #include <gmNetwork/SyncSData.hh>
-#include <gmNetwork/SyncMData.hh>
+#include <gmNetwork/SyncJData.hh>
 
 #include <osgViewer/Viewer>
 #include <osgDB/ReadFile>
@@ -23,20 +25,19 @@
 
 using namespace gramods;
 
-typedef gmNetwork::SyncSData<Eigen::Vector3f> SyncSVec;
-typedef gmNetwork::SyncSData<Eigen::Quaternionf> SyncSQuat;
+typedef gmNetwork::SyncJData<gmTrack::PoseTracker::State> SyncJPose;
+typedef gmNetwork::SyncJData<gmTrack::BinaryTracker::State> SyncJBinary;
+typedef gmNetwork::SyncJData<gmTrack::FloatTracker::State> SyncJFloat;
+typedef gmNetwork::SyncJData<gmTrack::Float2Tracker::State> SyncJFloat2;
 
 /**
  * Definition of the internal code of MyApp
  */
 struct MyApp::Impl {
   Impl(std::vector<std::shared_ptr<gmNetwork::SyncNode>> sync_nodes,
-       std::vector<std::shared_ptr<gmTrack::Controller>> controllers,
-       std::shared_ptr<gmTrack::SinglePoseTracker> head);
+       std::shared_ptr<gmTrack::TrackerSet> trackers);
 
   void setup_sync(std::vector<std::shared_ptr<gmNetwork::SyncNode>> sync_nodes);
-
-  void setup_wand(std::vector<std::shared_ptr<gmTrack::Controller>> controllers);
 
   void update(gmCore::Updateable::clock::time_point time);
 
@@ -50,11 +51,8 @@ struct MyApp::Impl {
   std::shared_ptr<gmNetwork::SyncNode> sync_node;
   bool is_primary = true;
 
-  // Wand (if this exists in the configuration)
-  std::shared_ptr<gmTrack::Controller> wand;
-
-  // Head (if this exists in the configuration)
-  std::shared_ptr<gmTrack::SinglePoseTracker> head;
+  // Tracker data, if they exist
+  std::shared_ptr<gmTrack::TrackerSet> trackers;
 
   // The renderer calls OpenSceneGraph for us
   std::shared_ptr<gmGraphics::OsgRenderer> osg_renderer =
@@ -70,51 +68,35 @@ struct MyApp::Impl {
   std::shared_ptr<gmNetwork::SyncSUInt64> sync_frame_number =
       std::make_shared<gmNetwork::SyncSUInt64>(0);
 
-  // wand analogs
-  std::shared_ptr<gmNetwork::SyncMFloat32> sync_analogs =
-      std::make_shared<gmNetwork::SyncMFloat32>();
+  // Pose tracker data
+  std::shared_ptr<SyncJPose> sync_pose = std::make_shared<SyncJPose>();
 
-  // wand main button
-  std::shared_ptr<gmNetwork::SyncSBool> sync_main_button =
-      std::make_shared<gmNetwork::SyncSBool>();
+  // Binary tracker data
+  std::shared_ptr<SyncJBinary> sync_binary = std::make_shared<SyncJBinary>();
 
-  // wand second button
-  std::shared_ptr<gmNetwork::SyncSBool> sync_second_button =
-      std::make_shared<gmNetwork::SyncSBool>();
+  // Float tracker data
+  std::shared_ptr<SyncJFloat> sync_float = std::make_shared<SyncJFloat>();
 
-  // wand menu button
-  std::shared_ptr<gmNetwork::SyncSBool> sync_menu_button =
-      std::make_shared<gmNetwork::SyncSBool>();
-
-  // wand pose (position + orientation)
-  std::shared_ptr<SyncSVec> sync_wand_position = std::make_shared<SyncSVec>();
-  std::shared_ptr<SyncSQuat> sync_wand_orientation =
-      std::make_shared<SyncSQuat>(Eigen::Quaternionf::Identity());
-
-  // head pose (position + orientation)
-  std::shared_ptr<SyncSVec> sync_head_position = std::make_shared<SyncSVec>();
-  std::shared_ptr<SyncSQuat> sync_head_orientation =
-      std::make_shared<SyncSQuat>(Eigen::Quaternionf::Identity());
+  // Float2 tracker data
+  std::shared_ptr<SyncJFloat2> sync_float2 = std::make_shared<SyncJFloat2>();
 
   /// ----- OSG Stuff -----
 
   void initOSG();
-
-  osg::ref_ptr<osg::Node> createWand();
-
-  osg::ref_ptr<osg::Material> wand_material = new osg::Material;
+  void initWand();
 
   osg::ref_ptr<osg::Group> scenegraph_root = new osg::Group;
-  osg::ref_ptr<osg::MatrixTransform> wand_transform = new osg::MatrixTransform;
+
+  osg::ref_ptr<osg::MatrixTransform> wand_transform = nullptr;
+  osg::ref_ptr<osg::Material> wand_material = new osg::Material;
 };
 
 
 /// ----- External interface implementation -----
 
 MyApp::MyApp(std::vector<std::shared_ptr<gmNetwork::SyncNode>> sync_nodes,
-             std::vector<std::shared_ptr<gmTrack::Controller>> controllers,
-             std::shared_ptr<gmTrack::SinglePoseTracker> head)
-  : _impl(std::make_unique<Impl>(sync_nodes, controllers, head)) {}
+             std::shared_ptr<gmTrack::TrackerSet> trackers)
+  : _impl(std::make_unique<Impl>(sync_nodes, trackers)) {}
 
 MyApp::~MyApp() {}
 
@@ -129,15 +111,11 @@ std::shared_ptr<gmGraphics::OsgRenderer> MyApp::getRenderer() {
 
 /// ----- Internal implementation -----
 
-
-MyApp::Impl::Impl(
-    std::vector<std::shared_ptr<gmNetwork::SyncNode>> sync_nodes,
-    std::vector<std::shared_ptr<gmTrack::Controller>> controllers,
-    std::shared_ptr<gmTrack::SinglePoseTracker> head)
-  : head(head) {
+MyApp::Impl::Impl(std::vector<std::shared_ptr<gmNetwork::SyncNode>> sync_nodes,
+                  std::shared_ptr<gmTrack::TrackerSet> trackers)
+  : trackers(trackers) {
 
   setup_sync(sync_nodes);
-  setup_wand(controllers);
   
   initOSG();
 }
@@ -160,7 +138,7 @@ void MyApp::Impl::setup_sync(
     sync_node->initialize();
   }
 
-  if (sync_node->getLocalPeerIdx() != 0) is_primary = false;
+  is_primary = (sync_node->getLocalPeerIdx() == 0);
 
   // It is good practice to limit the use of raw pointers to the scope
   // in which you got it, however gmNetwork will keep the raw pointers
@@ -171,30 +149,10 @@ void MyApp::Impl::setup_sync(
   // Do not forget to add all containers to the synchronization queue
   data_sync->addData(sync_time);
   data_sync->addData(sync_frame_number);
-  data_sync->addData(sync_analogs);
-  data_sync->addData(sync_main_button);
-  data_sync->addData(sync_second_button);
-  data_sync->addData(sync_menu_button);
-  data_sync->addData(sync_head_position);
-  data_sync->addData(sync_head_orientation);
-  data_sync->addData(sync_wand_position);
-  data_sync->addData(sync_wand_orientation);
-}
-
-void MyApp::Impl::setup_wand(
-    std::vector<std::shared_ptr<gmTrack::Controller>> controllers) {
-
-  if (controllers.empty())
-    // With no wand we are done setting up wands
-    return;
-
-  // Only the primary node should handle wand (the replica get the
-  // data via network synchronization) but we keep a reference anyways
-  // just so that we know to expect wand data.
-  // if (!is_primary) return;
-
-  // We could save away more than one wand, but one is enough for now
-  wand = controllers[0];
+  data_sync->addData(sync_pose);
+  data_sync->addData(sync_binary);
+  data_sync->addData(sync_float);
+  data_sync->addData(sync_float2);
 }
 
 void MyApp::Impl::update(gmCore::Updateable::clock::time_point time) {
@@ -231,49 +189,11 @@ void MyApp::Impl::update_data(gmCore::Updateable::clock::time_point time) {
   *sync_time = gmCore::TimeTools::timePointToSeconds(time);
   *sync_frame_number = *sync_frame_number + 1;
 
-  if (head) {
-    gmTrack::PoseTracker::PoseSample pose;
-    if (head->getPose(pose)) {
-      *sync_head_position = pose.position;
-      *sync_head_orientation = pose.orientation;
-    }
-  }
-
-  if (!wand)
-    // Only wand stuff below this point, so terminate early if we do
-    // not have a wand
-    return;
-
-  gmTrack::AnalogsTracker::AnalogsSample analogs;
-  if (wand->getAnalogs(analogs))
-    *sync_analogs = analogs.analogs;
-
-  gmTrack::ButtonsTracker::ButtonsSample buttons;
-  if (wand->getButtons(buttons)) {
-
-    typedef gmTrack::ButtonsMapper::ButtonIdx ButtonIdx;
-
-    if (buttons.buttons.count(ButtonIdx::MAIN))
-      *sync_main_button = buttons.buttons[ButtonIdx::MAIN];
-    else
-      *sync_main_button = false;
-
-    if (buttons.buttons.count(ButtonIdx::SECONDARY))
-      *sync_second_button = buttons.buttons[ButtonIdx::SECONDARY];
-    else
-      *sync_second_button = false;
-
-    if (buttons.buttons.count(ButtonIdx::MENU))
-      *sync_menu_button = buttons.buttons[ButtonIdx::MENU];
-    else
-      *sync_menu_button = false;
-  }
-
-  gmTrack::PoseTracker::PoseSample pose;
-  if (wand->getPose(pose)) {
-    *sync_wand_position = pose.position;
-    *sync_wand_orientation = pose.orientation;
-  }
+  // Read off and synchronize all tracker data
+  if (auto s = trackers->getPose()) *sync_pose = *s;
+  if (auto s = trackers->getBinary()) *sync_binary = *s;
+  if (auto s = trackers->getFloat()) *sync_float = *s;
+  if (auto s = trackers->getFloat2()) *sync_float2 = *s;
 }
 
 std::shared_ptr<gmGraphics::OsgRenderer> MyApp::Impl::getRenderer() {
@@ -282,12 +202,24 @@ std::shared_ptr<gmGraphics::OsgRenderer> MyApp::Impl::getRenderer() {
 
 void MyApp::Impl::update_states(gmCore::Updateable::clock::time_point) {
 
-  if (!wand_transform)
-    // Cannot update wand transform since we have no wand transform
+  const auto pose_states = **sync_pose;
+  const auto binary_states = **sync_binary;
+  const auto float_states = **sync_float;
+  const auto float2_states = **sync_float2;
+
+  if (!wand_transform &&
+      pose_states.contains(gmTrack::StdKey::PRIMARY_WAND))
+      [[unlikely]]
+    initWand();
+
+  if (!wand_transform) [[unlikely]]
+    // Cannot update wand without wand transform or data
     return;
 
-  Eigen::Vector3f eP = *sync_wand_position;
-  Eigen::Quaternionf eQ = *sync_wand_orientation;
+  gmCore::Pose wand_pose =
+      pose_states.at(gmTrack::StdKey::PRIMARY_WAND).value;
+  Eigen::Vector3f eP = wand_pose.position;
+  Eigen::Quaternionf eQ = wand_pose.orientation;
 
   osg::Vec3 oP(eP.x(), eP.y(), eP.z());
   osg::Quat oQ(eQ.x(), eQ.y(), eQ.z(), eQ.w());
@@ -297,26 +229,22 @@ void MyApp::Impl::update_states(gmCore::Updateable::clock::time_point) {
                             osg::Matrix::translate(oP));
 
   double R = 0.4, G = 0.4, B = 0.4;
-  if (*sync_main_button) R = 0.8;
-  if (*sync_second_button) G = 0.8;
-  if (*sync_menu_button) B = 0.8;
-  wand_material->setEmission(osg::Material::FRONT_AND_BACK, osg::Vec4(R, G, B, 1.0));
+  if (binary_states.contains(gmTrack::StdKey::MAIN_BUTTON) &&
+      binary_states.at(gmTrack::StdKey::MAIN_BUTTON).value)
+    R = 0.8;
+  if (binary_states.contains(gmTrack::StdKey::SECOND_BUTTON) &&
+      binary_states.at(gmTrack::StdKey::SECOND_BUTTON).value)
+    G = 0.8;
+  if (binary_states.contains(gmTrack::StdKey::MENU_BUTTON) &&
+      binary_states.at(gmTrack::StdKey::MENU_BUTTON).value)
+    B = 0.8;
+  wand_material->setEmission(osg::Material::FRONT_AND_BACK,
+                             osg::Vec4(R, G, B, 1.0));
 }
 
 void MyApp::Impl::initOSG() {
 
   osg_renderer->setSceneData(scenegraph_root);
-
-  if (wand) {
-    // We just have to assume that if a replica should render a wand,
-    // because wand data come from the primary, then also the replica
-    // will have a wand defined in their config, even if its data are
-    // not used. How can we otherwise know if we should render a wand
-    // or not?
-    osg::ref_ptr<osg::Node> wand_node = createWand();
-    wand_transform->addChild(wand_node);
-    scenegraph_root->addChild(wand_transform);
-  }
 
   std::string url = "urn:gramods:resources/box.osgt";
   std::filesystem::path path = gmCore::FileResolver::getDefault()->resolve(url);
@@ -359,7 +287,7 @@ void MyApp::Impl::initOSG() {
       GL_CULL_FACE, osg::StateAttribute::OFF | osg::StateAttribute::OVERRIDE);
 }
 
-osg::ref_ptr<osg::Node> MyApp::Impl::createWand() {
+void MyApp::Impl::initWand() {
 
   osg::ref_ptr<osg::Geometry> geometry = new osg::Geometry;
 
@@ -379,5 +307,7 @@ osg::ref_ptr<osg::Node> MyApp::Impl::createWand() {
   geometry->getOrCreateStateSet()->setAttributeAndModes(
       wand_material, osg::StateAttribute::PROTECTED);
 
-  return geometry;
+  wand_transform = new osg::MatrixTransform;
+  wand_transform->addChild(geometry);
+  scenegraph_root->addChild(wand_transform);
 }

@@ -1,8 +1,9 @@
 
 #include <gmTrack/ProjectionTextureGenerator.hh>
 
-#include <gmTrack/TimeSamplePoseTracker.hh>
-#include <gmTrack/TimeSampleButtonsTracker.hh>
+#include <gmTrack/PoseTimeSampleTracker.hh>
+#include <gmTrack/BinaryTimeSampleTracker.hh>
+#include <gmTrack/StdKey.hh>
 
 #include <gmCore/Updateable.hh>
 #include <gmCore/FreeImage.hh>
@@ -27,46 +28,50 @@ TEST(gmTrackProjectionTexture, SimpleFlat) {
   nullsink->initialize();
 #endif
 
+  const std::string ACTION_MAIN = "/actions/std/in/MainButton";
+
   auto ts_buttons_tracker =
-      std::make_shared<gmTrack::TimeSampleButtonsTracker>();
-  ts_buttons_tracker->addButtons(0);
-  ts_buttons_tracker->addButtons(1);
-  ts_buttons_tracker->addButtons(0);
-  ts_buttons_tracker->addButtons(1);
-  ts_buttons_tracker->addButtons(0);
-  ts_buttons_tracker->addButtons(1);
-  ts_buttons_tracker->addButtons(0);
-  ts_buttons_tracker->addButtons(1);
-  ts_buttons_tracker->addButtons(0);
+      std::make_shared<gmTrack::BinaryTimeSampleTracker>();
+  ts_buttons_tracker->addKeyValue(ACTION_MAIN, false);
+  ts_buttons_tracker->addKeyValue(ACTION_MAIN, true);
+  ts_buttons_tracker->addKeyValue(ACTION_MAIN, false);
+  ts_buttons_tracker->addKeyValue(ACTION_MAIN, true);
+  ts_buttons_tracker->addKeyValue(ACTION_MAIN, false);
+  ts_buttons_tracker->addKeyValue(ACTION_MAIN, true);
+  ts_buttons_tracker->addKeyValue(ACTION_MAIN, false);
+  ts_buttons_tracker->addKeyValue(ACTION_MAIN, true);
+  ts_buttons_tracker->addKeyValue(ACTION_MAIN, false);
   ts_buttons_tracker->initialize();
 
-  auto ts_pose_tracker = std::make_shared<gmTrack::TimeSamplePoseTracker>();
+  auto ts_pose_tracker = std::make_shared<gmTrack::PoseTimeSampleTracker>();
   ts_pose_tracker->initialize();
 
-  auto controller = std::make_shared<gmTrack::Controller>();
-  controller->setSinglePoseTracker(ts_pose_tracker);
-  controller->setButtonsTracker(ts_buttons_tracker);
-  controller->initialize();
+  auto tracker_set = std::make_shared<gmTrack::TrackerSet>();
+  tracker_set->setPoseTracker(ts_pose_tracker);
+  tracker_set->setBinaryTracker(ts_buttons_tracker);
+  tracker_set->initialize();
 
   auto file = std::filesystem::temp_directory_path() /
               (std::string(tmpnam(nullptr)) + ".tif");
   auto generator = std::make_shared<gmTrack::ProjectionTextureGenerator>();
-  generator->setController(controller);
+  generator->setTrackerSet(tracker_set);
   generator->setResolution({64, 64});
   generator->setFile(file);
+
+  const auto WAND = gmTrack::StdKey::PRIMARY_WAND;
 
   generator->addBufferPosition({0.f, 0.f});
   generator->addBufferPosition({1.f, 0.f});
   generator->addBufferPosition({0.f, 1.f});
   generator->addBufferPosition({1.f, 1.f});
-  ts_pose_tracker->addPosition({1.f, 1.f, 5.f});
-  ts_pose_tracker->addPosition({1.f, 1.f, 5.f});
-  ts_pose_tracker->addPosition({2.f, 1.f, 5.f});
-  ts_pose_tracker->addPosition({2.f, 1.f, 5.f});
-  ts_pose_tracker->addPosition({1.f, 3.f, 5.f});
-  ts_pose_tracker->addPosition({1.f, 3.f, 5.f});
-  ts_pose_tracker->addPosition({2.f, 3.f, 5.f});
-  ts_pose_tracker->addPosition({2.f, 3.f, 5.f});
+  ts_pose_tracker->addKeyValue(WAND, {.position = {1.f, 1.f, 5.f}});
+  ts_pose_tracker->addKeyValue(WAND, {.position = {1.f, 1.f, 5.f}});
+  ts_pose_tracker->addKeyValue(WAND, {.position = {2.f, 1.f, 5.f}});
+  ts_pose_tracker->addKeyValue(WAND, {.position = {2.f, 1.f, 5.f}});
+  ts_pose_tracker->addKeyValue(WAND, {.position = {1.f, 3.f, 5.f}});
+  ts_pose_tracker->addKeyValue(WAND, {.position = {1.f, 3.f, 5.f}});
+  ts_pose_tracker->addKeyValue(WAND, {.position = {2.f, 3.f, 5.f}});
+  ts_pose_tracker->addKeyValue(WAND, {.position = {2.f, 3.f, 5.f}});
 
   generator->initialize();
 
@@ -94,8 +99,10 @@ TEST(gmTrackProjectionTexture, CurvatureWRegions) {
   generator->setResolution({64, 64});
   generator->setFile(file);
 
-  auto ts_pose_tracker = std::make_shared<gmTrack::TimeSamplePoseTracker>();
-  auto ts_buttons_tracker = std::make_shared<gmTrack::TimeSampleButtonsTracker>();
+  const auto MAIN_BUTTON = gmTrack::StdKey::MAIN_BUTTON;
+
+  auto ts_pose_tracker = std::make_shared<gmTrack::PoseTimeSampleTracker>();
+  auto ts_buttons_tracker = std::make_shared<gmTrack::BinaryTimeSampleTracker>();
 
 #define RES_X 8
 #define RES_Y 8
@@ -104,16 +111,20 @@ TEST(gmTrackProjectionTexture, CurvatureWRegions) {
 #define FUN1_Y(X, Y) (-1.f + 2.f * (Y) + 0.1f * (X))
 #define FUN1_Z(X, Y) (1.f + 0.2f * (X) + -0.6f * (Y))
 
+  const auto WAND = gmTrack::StdKey::PRIMARY_WAND;
+
   generator->addRegion(1);
   for (size_t idx_y = 0; idx_y < RES_Y; ++idx_y)
     for (size_t idx_x = 0; idx_x <= RES_X / 2; ++idx_x) {
       auto x = idx_x / (float)RES_X;
       auto y = idx_y / (float)RES_Y;
       generator->addBufferPosition({x, y});
-      ts_pose_tracker->addPosition({FUN1_X(x, y), FUN1_Y(x, y), FUN1_Z(x, y)});
-      ts_pose_tracker->addPosition({FUN1_X(x, y), FUN1_Y(x, y), FUN1_Z(x, y)});
-      ts_buttons_tracker->addButtons(0);
-      ts_buttons_tracker->addButtons(1);
+      ts_pose_tracker->addKeyValue(
+          WAND, {.position = {FUN1_X(x, y), FUN1_Y(x, y), FUN1_Z(x, y)}});
+      ts_pose_tracker->addKeyValue(
+          WAND, {.position = {FUN1_X(x, y), FUN1_Y(x, y), FUN1_Z(x, y)}});
+      ts_buttons_tracker->addKeyValue(MAIN_BUTTON, false);
+      ts_buttons_tracker->addKeyValue(MAIN_BUTTON, true);
     }
 
   generator->addHullPosition({0.0f, 0.0f});
@@ -132,10 +143,12 @@ TEST(gmTrackProjectionTexture, CurvatureWRegions) {
       auto x = idx_x / (float)RES_X;
       auto y = idx_y / (float)RES_Y;
       generator->addBufferPosition({x, y});
-      ts_pose_tracker->addPosition({FUN2_X(x, y), FUN2_Y(x, y), FUN2_Z(x, y)});
-      ts_pose_tracker->addPosition({FUN2_X(x, y), FUN2_Y(x, y), FUN2_Z(x, y)});
-      ts_buttons_tracker->addButtons(0);
-      ts_buttons_tracker->addButtons(1);
+      ts_pose_tracker->addKeyValue(
+          WAND, {.position = {FUN2_X(x, y), FUN2_Y(x, y), FUN2_Z(x, y)}});
+      ts_pose_tracker->addKeyValue(
+          WAND, {.position = {FUN2_X(x, y), FUN2_Y(x, y), FUN2_Z(x, y)}});
+      ts_buttons_tracker->addKeyValue(MAIN_BUTTON, false);
+      ts_buttons_tracker->addKeyValue(MAIN_BUTTON, true);
     }
 
   generator->addHullPosition({0.5f, 0.0f});
@@ -143,11 +156,11 @@ TEST(gmTrackProjectionTexture, CurvatureWRegions) {
   generator->addHullPosition({1.0f, 1.0f});
   generator->addHullPosition({0.5f, 1.0f});
 
-  auto controller = std::make_shared<gmTrack::Controller>();
-  controller->setSinglePoseTracker(ts_pose_tracker);
-  controller->setButtonsTracker(ts_buttons_tracker);
-  controller->initialize();
-  generator->setController(controller);
+  auto tracker_set = std::make_shared<gmTrack::TrackerSet>();
+  tracker_set->setPoseTracker(ts_pose_tracker);
+  tracker_set->setBinaryTracker(ts_buttons_tracker);
+  tracker_set->initialize();
+  generator->setTrackerSet(tracker_set);
 
   generator->initialize();
   ts_pose_tracker->initialize();

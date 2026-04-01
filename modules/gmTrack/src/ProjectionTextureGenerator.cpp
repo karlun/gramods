@@ -5,8 +5,6 @@
 
 #include <gmTrack/PoseSampleCollector.impl.hh>
 
-#include <gmTrack/ButtonsMapper.hh>
-
 #include <gmCore/RunOnce.hh>
 #include <gmCore/Console.hh>
 #include <gmCore/PreConditionViolation.hh>

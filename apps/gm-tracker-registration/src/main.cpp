@@ -8,7 +8,7 @@
 #include <gmCore/FileResolver.hh>
 
 #include <gmCore/io_eigen.hh>
-#include <gmTrack/Controller.hh>
+#include <gmTrack/TrackerSet.hh>
 #include <gmTrack/TrackerRegistrationEstimator.hh>
 
 #include <tclap/CmdLine.h>
@@ -195,7 +195,7 @@ namespace {
 int main(int argc, char *argv[]) {
 
   TCLAP::CmdLine cmd
-    ("This is a tracker registration estimator for gramods. A configuration file or string must be specified and this must contain the definition of a controller (gmTrack::Controller).");
+    ("This is a tracker registration estimator for gramods. A configuration file or string must be specified and this must contain the definition of a tracker set (gmTrack::TrackerSet).");
 
   TCLAP::MultiArg<std::string> arg_config_dummy
     ("", "config",
@@ -300,9 +300,9 @@ int main(int argc, char *argv[]) {
   registrator->setInlierThreshold(arg_pos_inlier.getValue());
   registrator->setOrientationInlierThreshold(arg_ori_inlier.getValue());
 
-  std::shared_ptr<gmTrack::Controller> controller;
-  if (config && config->getObject(controller))
-    registrator->setController(controller);
+  std::shared_ptr<gmTrack::TrackerSet> tracker_set;
+  if (config && config->getObject(tracker_set))
+    registrator->setTrackerSet(tracker_set);
 
   if (! arg_apoint.getValue().empty()) {
 

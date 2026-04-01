@@ -22,7 +22,7 @@ using namespace gramods;
 int main(int argc, char *argv[]) {
 
   TCLAP::CmdLine cmd(
-      "This is a projection registration tool for gramods. A configuration file or string must be specified and this must contain the definition of a controller (gmTrack::Controller). To simplify registration it is preferred to also load a configuration file that provide visual indications of the registration points.");
+      "This is a projection registration tool for gramods. A configuration file or string must be specified and this must contain the definition of a tracker set (gmTrack::TrackerSet). To simplify registration it is preferred to also load a configuration file that provide visual indications of the registration points.");
 
   TCLAP::MultiArg<std::string> arg_config_dummy(
       "", "config", "Configuration file(s) load.", false, "file");
@@ -103,15 +103,15 @@ int main(int argc, char *argv[]) {
 
   if (!config) return 2;
 
-  std::shared_ptr<gmTrack::Controller> controller;
-  if (!config->getObject(controller)) {
-    std::cerr << "Error: No controller found." << std::endl;
+  std::shared_ptr<gmTrack::TrackerSet> tracker_set;
+  if (!config->getObject(tracker_set)) {
+    std::cerr << "Error: No tracker set found." << std::endl;
     return 3;
   }
 
   std::shared_ptr<gmTrack::ProjectionTextureGenerator> generator =
       std::make_shared<gmTrack::ProjectionTextureGenerator>();
-  generator->setController(controller);
+  generator->setTrackerSet(tracker_set);
   generator->setInlierThreshold(arg_pos_inlier.getValue());
   generator->setOrientationInlierThreshold(arg_ori_inlier.getValue());
 

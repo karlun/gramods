@@ -111,8 +111,8 @@ TEST(gmSoundMultilateration, Positioning) {
   samples_left -= 5 * SAMPLES_PER_FRAME;
 
   EXPECT_TRUE(capture->is_started);
-  gmTrack::PoseTracker::PoseSample pose;
-  EXPECT_FALSE(proc.getPose(pose));
+  std::optional<gmTrack::PoseTracker::State> state = proc.get();
+  EXPECT_FALSE(state);
 
   auto time = gmCore::Updateable::clock::now();
   for (size_t idx = 0; idx < 2 * samples_left / SAMPLES_PER_FRAME; ++idx) {
@@ -122,11 +122,12 @@ TEST(gmSoundMultilateration, Positioning) {
 
   double pose_time_ago = (TOTAL_SECONDS - T0_SECONDS);
 
-  EXPECT_TRUE(proc.getPose(pose));
-  EXPECT_LE((pose.position - p).norm(),1e-2);
-  EXPECT_LE(std::fabs(gmCore::TimeTools::durationToSeconds(time - pose.time) -
+  ASSERT_TRUE(state = proc.get());
+  const auto sample = state->begin()->second;
+  EXPECT_LE((sample.value.position - p).norm(), 1e-2);
+  EXPECT_LE(std::fabs(gmCore::TimeTools::durationToSeconds(time - sample.time) -
                       pose_time_ago),
             1e-2)
-      << gmCore::TimeTools::durationToSeconds(time - pose.time) << " - "
+      << gmCore::TimeTools::durationToSeconds(time - sample.time) << " - "
       << pose_time_ago;
 }

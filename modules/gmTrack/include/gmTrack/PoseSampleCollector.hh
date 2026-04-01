@@ -6,7 +6,7 @@
 
 #include <gmCore/io_eigen.hh>
 #include <gmCore/Object.hh>
-#include <gmTrack/Controller.hh>
+#include <gmTrack/TrackerSet.hh>
 #include <gmCore/Updateable.hh>
 
 BEGIN_NAMESPACE_GMTRACK;
@@ -33,11 +33,11 @@ public:
   void update(clock::time_point time, size_t frame);
 
   /**
-     Sets the controller to use for reading tracker samples.
+     Sets the tracker set to use for reading tracker samples.
 
-     \gmXmlTag{gmTrack,PoseSampleCollector,controller}
+     \gmXmlTag{gmTrack,PoseSampleCollector,trackerSet}
   */
-  void setController(std::shared_ptr<Controller> controller);
+  void setTrackerSet(std::shared_ptr<TrackerSet> trackerSet);
 
   /**
      Adds a tracker position.
@@ -54,9 +54,9 @@ public:
   void addTrackerOrientation(Eigen::Quaternionf o);
 
   /**
-     Sets the frequency at which samples are collected when the
-     controller button is pressed. Default is 1. At most one sample
-     per frame will be used regardless of this value.
+     Sets the frequency at which samples are collected when the button
+     is pressed. Default is 1. At most one sample per frame will be
+     used regardless of this value.
 
      \gmXmlTag{gmTrack,PoseSampleCollector,samplesPerSecond}
   */

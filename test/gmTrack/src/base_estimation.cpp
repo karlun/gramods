@@ -1,8 +1,9 @@
 
 #include <gmTrack/TrackerRegistrationEstimator.hh>
 
-#include <gmTrack/TimeSamplePoseTracker.hh>
-#include <gmTrack/TimeSampleButtonsTracker.hh>
+#include <gmTrack/PoseTimeSampleTracker.hh>
+#include <gmTrack/BinaryTimeSampleTracker.hh>
+#include <gmTrack/StdKey.hh>
 
 #include <gmCore/Updateable.hh>
 
@@ -29,28 +30,30 @@ TEST(gmTrackBaseEstimation, FullSamplesByInverse) {
 
   {
 
-    auto ts_buttons_tracker = std::make_shared<gmTrack::TimeSampleButtonsTracker>();
-    ts_buttons_tracker->addButtons(0);
-    ts_buttons_tracker->addButtons(1);
-    ts_buttons_tracker->addButtons(0);
-    ts_buttons_tracker->addButtons(1);
-    ts_buttons_tracker->addButtons(0);
-    ts_buttons_tracker->addButtons(1);
-    ts_buttons_tracker->addButtons(0);
-    ts_buttons_tracker->addButtons(1);
-    ts_buttons_tracker->addButtons(0);
+    const auto MAIN_BUTTON = gmTrack::StdKey::MAIN_BUTTON;
+
+    auto ts_buttons_tracker = std::make_shared<gmTrack::BinaryTimeSampleTracker>();
+    ts_buttons_tracker->addKeyValue(MAIN_BUTTON, false);
+    ts_buttons_tracker->addKeyValue(MAIN_BUTTON, true);
+    ts_buttons_tracker->addKeyValue(MAIN_BUTTON, false);
+    ts_buttons_tracker->addKeyValue(MAIN_BUTTON, true);
+    ts_buttons_tracker->addKeyValue(MAIN_BUTTON, false);
+    ts_buttons_tracker->addKeyValue(MAIN_BUTTON, true);
+    ts_buttons_tracker->addKeyValue(MAIN_BUTTON, false);
+    ts_buttons_tracker->addKeyValue(MAIN_BUTTON, true);
+    ts_buttons_tracker->addKeyValue(MAIN_BUTTON, false);
     ts_buttons_tracker->initialize();
 
-    auto ts_pose_tracker = std::make_shared<gmTrack::TimeSamplePoseTracker>();
+    auto ts_pose_tracker = std::make_shared<gmTrack::PoseTimeSampleTracker>();
     ts_pose_tracker->initialize();
 
-    auto controller = std::make_shared<gmTrack::Controller>();
-    controller->setSinglePoseTracker(ts_pose_tracker);
-    controller->setButtonsTracker(ts_buttons_tracker);
-    controller->initialize();
+    auto tracker_set = std::make_shared<gmTrack::TrackerSet>();
+    tracker_set->setPoseTracker(ts_pose_tracker);
+    tracker_set->setBinaryTracker(ts_buttons_tracker);
+    tracker_set->initialize();
 
     auto registrator = std::make_shared<gmTrack::TrackerRegistrationEstimator>();
-    registrator->setController(controller);
+    registrator->setTrackerSet(tracker_set);
     registrator->initialize();
 
     Eigen::Matrix4f RegA;
@@ -84,8 +87,10 @@ TEST(gmTrackBaseEstimation, FullSamplesByInverse) {
     for (int idx = 0; idx < 4; ++idx) {
       auto p =
           Eigen::Vector3f(samples(0, idx), samples(1, idx), samples(2, idx));
-      ts_pose_tracker->addPosition(p);
-      ts_pose_tracker->addPosition(p);
+      ts_pose_tracker->addKeyValue(gmTrack::StdKey::PRIMARY_WAND,
+                                   {.position = p});
+      ts_pose_tracker->addKeyValue(gmTrack::StdKey::PRIMARY_WAND,
+                                   {.position = p});
     }
 
     for (int idx = 1; idx <= 9; ++idx) {
@@ -119,29 +124,30 @@ TEST(gmTrackBaseEstimation, OverDeterminedSamplesByQR) {
 #endif
 
   {
+    const auto MAIN_BUTTON = gmTrack::StdKey::MAIN_BUTTON;
 
-    auto ts_buttons_tracker = std::make_shared<gmTrack::TimeSampleButtonsTracker>();
-    ts_buttons_tracker->addButtons(0);
-    ts_buttons_tracker->addButtons(1);
-    ts_buttons_tracker->addButtons(0);
-    ts_buttons_tracker->addButtons(1);
-    ts_buttons_tracker->addButtons(0);
-    ts_buttons_tracker->addButtons(1);
-    ts_buttons_tracker->addButtons(0);
-    ts_buttons_tracker->addButtons(1);
-    ts_buttons_tracker->addButtons(0);
+    auto ts_buttons_tracker = std::make_shared<gmTrack::BinaryTimeSampleTracker>();
+    ts_buttons_tracker->addKeyValue(MAIN_BUTTON, false);
+    ts_buttons_tracker->addKeyValue(MAIN_BUTTON, true);
+    ts_buttons_tracker->addKeyValue(MAIN_BUTTON, false);
+    ts_buttons_tracker->addKeyValue(MAIN_BUTTON, true);
+    ts_buttons_tracker->addKeyValue(MAIN_BUTTON, false);
+    ts_buttons_tracker->addKeyValue(MAIN_BUTTON, true);
+    ts_buttons_tracker->addKeyValue(MAIN_BUTTON, false);
+    ts_buttons_tracker->addKeyValue(MAIN_BUTTON, true);
+    ts_buttons_tracker->addKeyValue(MAIN_BUTTON, false);
     ts_buttons_tracker->initialize();
 
-    auto ts_pose_tracker = std::make_shared<gmTrack::TimeSamplePoseTracker>();
+    auto ts_pose_tracker = std::make_shared<gmTrack::PoseTimeSampleTracker>();
     ts_pose_tracker->initialize();
 
-    auto controller = std::make_shared<gmTrack::Controller>();
-    controller->setSinglePoseTracker(ts_pose_tracker);
-    controller->setButtonsTracker(ts_buttons_tracker);
-    controller->initialize();
+    auto tracker_set = std::make_shared<gmTrack::TrackerSet>();
+    tracker_set->setPoseTracker(ts_pose_tracker);
+    tracker_set->setBinaryTracker(ts_buttons_tracker);
+    tracker_set->initialize();
 
     auto registrator = std::make_shared<gmTrack::TrackerRegistrationEstimator>();
-    registrator->setController(controller);
+    registrator->setTrackerSet(tracker_set);
     registrator->initialize();
 
     Eigen::Matrix4f RegA;
@@ -175,8 +181,10 @@ TEST(gmTrackBaseEstimation, OverDeterminedSamplesByQR) {
     for (int idx = 0; idx < 4; ++idx) {
       auto p =
           Eigen::Vector3f {samples(0, idx), samples(1, idx), samples(2, idx)};
-      ts_pose_tracker->addPosition(p);
-      ts_pose_tracker->addPosition(p);
+      ts_pose_tracker->addKeyValue(gmTrack::StdKey::PRIMARY_WAND,
+                                   {.position = p});
+      ts_pose_tracker->addKeyValue(gmTrack::StdKey::PRIMARY_WAND,
+                                   {.position = p});
     }
 
     for (int idx = 1; idx <= 9; ++idx) {

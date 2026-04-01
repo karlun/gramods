@@ -41,6 +41,11 @@ IF (NOT gramods_ENABLE_TinyXML2)
   RETURN()
 ENDIF ()
 
+IF (NOT gramods_ENABLE_nlohmann_json)
+  SET(gramods_REQ_app_gm_demo_osg "Json (Nlohmann)" PARENT_SCOPE)
+  RETURN()
+ENDIF ()
+
 FIND_PACKAGE(OpenSceneGraph COMPONENTS osgGA osgViewer osgDB QUIET)
 IF (NOT OPENSCENEGRAPH_FOUND)
   SET(gramods_REQ_app_gm_demo_osg "OpenSceneGraph" PARENT_SCOPE)

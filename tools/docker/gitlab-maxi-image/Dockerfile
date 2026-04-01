@@ -26,6 +26,7 @@ RUN \
     libtclap-dev \
     libtinyxml2-dev \
     libuvc-dev \
+    nlohmann-json3-dev \
     pipenv \
     ;
 

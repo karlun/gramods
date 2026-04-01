@@ -1,7 +1,7 @@
 
 #include <gmCore/Updateable.hh>
 #include <gmGraphics/OsgRenderer.hh>
-#include <gmTrack/Controller.hh>
+#include <gmTrack/TrackerSet.hh>
 #include <gmNetwork/SyncNode.hh>
 
 using namespace gramods;
@@ -20,8 +20,7 @@ public:
    * Called from main() to create the app.
    */
   MyApp(std::vector<std::shared_ptr<gmNetwork::SyncNode>> sync_nodes,
-        std::vector<std::shared_ptr<gmTrack::Controller>> controllers,
-        std::shared_ptr<gmTrack::SinglePoseTracker> head);
+        std::shared_ptr<gmTrack::TrackerSet> trackers);
 
   /**
    * For pimpl to work with std::unique_ptr the destructor must be

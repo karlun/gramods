@@ -189,8 +189,8 @@ def main(argv):
   <td>C</td>
   <td>{attr_name}</td>
   <td>\\link {fulltype} {type_name} \\endlink</td>
-  <td>\\link gramods::{mod}::{clas}::{method_name}(std::shared_ptr<{type_name}>) {cleanmethod} \\endlink </td>
-  <td> \\copybrief gramods::{mod}::{clas}::{method_name}(std::shared_ptr<{type_name}>) </td>
+  <td>\\link gramods::{mod}::{clas}::{method_name} {cleanmethod} \\endlink </td>
+  <td> \\copybrief gramods::{mod}::{clas}::{method_name} </td>
 </tr>
 """
         else:

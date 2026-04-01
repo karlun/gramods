@@ -1,9 +1,9 @@
 
 #include <gmTrack/PoseSampleCollector.hh>
-#include <gmTrack/RegisteredSinglePoseTracker.hh>
-#include <gmTrack/RegisteredMultiPoseTracker.hh>
-#include <gmTrack/SingleToMultiPoseTracker.hh>
-#include <gmTrack/TimeSamplePoseTracker.hh>
+#include <gmTrack/RegisteredPoseTracker.hh>
+#include <gmTrack/PoseTimeSampleTracker.hh>
+#include <gmTrack/TrackerBase.hh>
+#include <gmTrack/StdKey.hh>
 
 #include <gmCore/Updateable.hh>
 
@@ -63,58 +63,65 @@ TEST(gmTrackRegisteredPose, SinglePose) {
   nullsink->initialize();
 #endif
 
-  auto pose_tracker = std::make_shared<gmTrack::TimeSamplePoseTracker>();
-  pose_tracker->addPosition(Eigen::Vector3f(0, 0, 0));
-  pose_tracker->addOrientation(
-      Eigen::Quaternionf(Eigen::AngleAxisf(0, Eigen::Vector3f::UnitX())));
-  pose_tracker->addPosition(Eigen::Vector3f(3, 0, 0));
-  pose_tracker->addOrientation(
-      Eigen::Quaternionf(Eigen::AngleAxisf(GM_PI_2, Eigen::Vector3f::UnitX())));
-  pose_tracker->addPosition(Eigen::Vector3f(0, 3, 0));
-  pose_tracker->addOrientation(
-      Eigen::Quaternionf(Eigen::AngleAxisf(GM_PI_2, Eigen::Vector3f::UnitX())));
+  auto pose_tracker = std::make_shared<gmTrack::PoseTimeSampleTracker>();
+  pose_tracker->addKeyValue( //
+      gmTrack::StdKey::PRIMARY_WAND,
+      {Eigen::Vector3f(0, 0, 0),
+       Eigen::Quaternionf(Eigen::AngleAxisf(0, Eigen::Vector3f::UnitX()))});
+  pose_tracker->addKeyValue( //
+      gmTrack::StdKey::PRIMARY_WAND,
+      {Eigen::Vector3f(3, 0, 0),
+       Eigen::Quaternionf(
+           Eigen::AngleAxisf(GM_PI_2, Eigen::Vector3f::UnitX()))});
+  pose_tracker->addKeyValue( //
+      gmTrack::StdKey::PRIMARY_WAND,
+      {Eigen::Vector3f(0, 3, 0),
+       Eigen::Quaternionf(
+           Eigen::AngleAxisf(GM_PI_2, Eigen::Vector3f::UnitX()))});
   pose_tracker->initialize();
 
-  auto reg_tracker = std::make_shared<gmTrack::RegisteredSinglePoseTracker>();
-  reg_tracker->setSinglePoseTracker(pose_tracker);
+  auto reg_tracker = std::make_shared<gmTrack::RegisteredPoseTracker>();
+  reg_tracker->setPoseTracker(pose_tracker);
   reg_tracker->initialize();
 
-  gmTrack::PoseTracker::PoseSample pose;
+  std::optional<gmTrack::PoseTracker::State> state;
+  gmCore::Pose pose;
 
-  gmCore::Updateable::updateAll();
-  EXPECT_TRUE(reg_tracker->getPose(pose));
+#define GET_NEXT                                                               \
+  gmCore::Updateable::updateAll();                                             \
+  state = reg_tracker->get();                                                  \
+  ASSERT_TRUE(state);                                                          \
+  ASSERT_EQ(state->size(), 1);                                                 \
+  pose = state->begin()->second.value;
+
+  GET_NEXT;
   EXPECT_EQ_EIGEN_VECTOR(pose.position, Eigen::Vector3f(0, 0, 0));
   EXPECT_EQ_EIGEN_ORIENT(pose.orientation,
                          Eigen::AngleAxisf(0, Eigen::Vector3f::UnitX()));
 
-  gmCore::Updateable::updateAll();
-  EXPECT_TRUE(reg_tracker->getPose(pose));
+  GET_NEXT;
   EXPECT_EQ_EIGEN_VECTOR(pose.position, Eigen::Vector3f(3, 0, 0));
   EXPECT_EQ_EIGEN_ORIENT(pose.orientation,
                          Eigen::AngleAxisf(GM_PI_2, Eigen::Vector3f::UnitX()));
 
-  gmCore::Updateable::updateAll();
-  EXPECT_TRUE(reg_tracker->getPose(pose));
+  GET_NEXT;
   EXPECT_EQ_EIGEN_VECTOR(pose.position, Eigen::Vector3f(0, 3, 0));
   EXPECT_EQ_EIGEN_ORIENT(pose.orientation,
                          Eigen::AngleAxisf(GM_PI_2, Eigen::Vector3f::UnitX()));
 
   reg_tracker->setPositionBias(Eigen::Vector3f(0, 1, 2));
 
-  gmCore::Updateable::updateAll();
-  EXPECT_TRUE(reg_tracker->getPose(pose));
+  GET_NEXT;
   EXPECT_EQ_EIGEN_VECTOR(pose.position, Eigen::Vector3f(0, 1, 2));
   EXPECT_EQ_EIGEN_ORIENT(pose.orientation,
                          Eigen::AngleAxisf(0, Eigen::Vector3f::UnitX()));
 
-  gmCore::Updateable::updateAll();
-  EXPECT_TRUE(reg_tracker->getPose(pose));
+  GET_NEXT;
   EXPECT_EQ_EIGEN_VECTOR(pose.position, Eigen::Vector3f(3, -2, 1));
   EXPECT_EQ_EIGEN_ORIENT(pose.orientation,
                          Eigen::AngleAxisf(GM_PI_2, Eigen::Vector3f::UnitX()));
 
-  gmCore::Updateable::updateAll();
-  EXPECT_TRUE(reg_tracker->getPose(pose));
+  GET_NEXT;
   EXPECT_EQ_EIGEN_VECTOR(pose.position, Eigen::Vector3f(0, 1, 1));
   EXPECT_EQ_EIGEN_ORIENT(pose.orientation,
                          Eigen::AngleAxisf(GM_PI_2, Eigen::Vector3f::UnitX()));
@@ -123,20 +130,17 @@ TEST(gmTrackRegisteredPose, SinglePose) {
   reg_tracker->setOrientationBias(
       Eigen::Quaternionf(Eigen::AngleAxisf(GM_PI_2, Eigen::Vector3f::UnitX())));
 
-  gmCore::Updateable::updateAll();
-  EXPECT_TRUE(reg_tracker->getPose(pose));
+  GET_NEXT;
   EXPECT_EQ_EIGEN_VECTOR(pose.position, Eigen::Vector3f(1, 2, 3));
   EXPECT_EQ_EIGEN_ORIENT(pose.orientation,
                          Eigen::AngleAxisf(GM_PI_2, Eigen::Vector3f::UnitX()));
 
-  gmCore::Updateable::updateAll();
-  EXPECT_TRUE(reg_tracker->getPose(pose));
+  GET_NEXT;
   EXPECT_EQ_EIGEN_VECTOR(pose.position, Eigen::Vector3f(4, -3, 2));
   EXPECT_EQ_EIGEN_ORIENT(pose.orientation,
                          Eigen::AngleAxisf(GM_PI, Eigen::Vector3f::UnitX()));
 
-  gmCore::Updateable::updateAll();
-  EXPECT_TRUE(reg_tracker->getPose(pose));
+  GET_NEXT;
   EXPECT_EQ_EIGEN_VECTOR(pose.position, Eigen::Vector3f(1, 0, 2));
   EXPECT_EQ_EIGEN_ORIENT(pose.orientation,
                          Eigen::AngleAxisf(GM_PI, Eigen::Vector3f::UnitX()));
@@ -155,34 +159,36 @@ TEST(gmTrackRegisteredPose, MultiPose) {
   nullsink->initialize();
 #endif
 
-  auto pose_tracker = std::make_shared<gmTrack::TimeSamplePoseTracker>();
-  pose_tracker->addPosition(Eigen::Vector3f(0, 0, 0));
-  pose_tracker->addOrientation(
-      Eigen::Quaternionf(Eigen::AngleAxisf(0, Eigen::Vector3f::UnitX())));
-  pose_tracker->addPosition(Eigen::Vector3f(3, 0, 0));
-  pose_tracker->addOrientation(
-      Eigen::Quaternionf(Eigen::AngleAxisf(GM_PI_2, Eigen::Vector3f::UnitX())));
-  pose_tracker->addPosition(Eigen::Vector3f(0, 3, 0));
-  pose_tracker->addOrientation(
-      Eigen::Quaternionf(Eigen::AngleAxisf(GM_PI_2, Eigen::Vector3f::UnitX())));
+  auto pose_tracker = std::make_shared<gmTrack::PoseTimeSampleTracker>();
+  pose_tracker->addKeyValue( //
+      gmTrack::StdKey::PRIMARY_WAND,
+      {Eigen::Vector3f(0, 0, 0),
+       Eigen::Quaternionf(Eigen::AngleAxisf(0, Eigen::Vector3f::UnitX()))});
+  pose_tracker->addKeyValue( //
+      gmTrack::StdKey::PRIMARY_WAND,
+      {Eigen::Vector3f(3, 0, 0),
+       Eigen::Quaternionf(
+           Eigen::AngleAxisf(GM_PI_2, Eigen::Vector3f::UnitX()))});
+  pose_tracker->addKeyValue( //
+      gmTrack::StdKey::PRIMARY_WAND,
+      {Eigen::Vector3f(0, 3, 0),
+       Eigen::Quaternionf(
+           Eigen::AngleAxisf(GM_PI_2, Eigen::Vector3f::UnitX()))});
   pose_tracker->initialize();
 
-  auto multi_tracker = std::make_shared<gmTrack::SingleToMultiPoseTracker>();
-  multi_tracker->addSinglePoseTracker(pose_tracker);
-  multi_tracker->initialize();
-
-  auto reg_tracker = std::make_shared<gmTrack::RegisteredMultiPoseTracker>();
-  reg_tracker->setMultiPoseTracker(multi_tracker);
+  auto reg_tracker = std::make_shared<gmTrack::RegisteredPoseTracker>();
+  reg_tracker->setPoseTracker(pose_tracker);
   reg_tracker->initialize();
 
-  std::map<int, gmTrack::PoseTracker::PoseSample> poses;
-  gmTrack::PoseTracker::PoseSample pose;
+  std::optional<gmTrack::PoseTracker::State> state;
+  gmCore::Pose pose;
 
 #define GET_POSE                                                               \
   gmCore::Updateable::updateAll();                                             \
-  EXPECT_TRUE(reg_tracker->getPose(poses));                                    \
-  ASSERT_EQ(poses.size(), 1);                                                  \
-  pose = poses.begin()->second;
+  state = reg_tracker->get();                                                  \
+  EXPECT_TRUE(state);                                                          \
+  ASSERT_EQ(state->size(), 1);                                                 \
+  pose = state->begin()->second.value;
 
   GET_POSE;
   EXPECT_EQ_EIGEN_VECTOR(pose.position, Eigen::Vector3f(0, 0, 0));

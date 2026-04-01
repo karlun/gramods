@@ -2,7 +2,7 @@
 #ifndef GRAMODS_TRACK_OPENVRPOSETRACKER
 #define GRAMODS_TRACK_OPENVRPOSETRACKER
 
-#include <gmTrack/SinglePoseTracker.hh>
+#include <gmTrack/TrackerBase.hh>
 
 #ifdef gramods_ENABLE_OpenVR
 
@@ -14,46 +14,43 @@ BEGIN_NAMESPACE_GMTRACK;
 /**
    The base of OpenVRPoseTrackers
  */
-class OpenVRPoseTracker
-  : public SinglePoseTracker {
+class OpenVRPoseTracker : public PoseTracker {
 
 public:
   OpenVRPoseTracker();
   ~OpenVRPoseTracker();
 
   /**
-     Set the device type (class) to track. When the specified type, role
+     Adds a device type (class) to track. When the specified type, role
      and/or serial number does not match an available tracker, no data
      will be returned.
 
      \gmXmlTag{gmTrack,OpenVRPoseTracker,type}
   */
-  void setType(std::string);
+  void addType(std::string);
 
   /**
-     Set the device role to track. When the specified type, role
+     Adds a device role to track. When the specified type, role
      and/or serial number does not match an available tracker, no data
      will be returned.
 
      \gmXmlTag{gmTrack,OpenVRPoseTracker,role}
   */
-  void setRole(std::string);
+  void addRole(std::string);
 
   /**
-     Set the serial number of the device to track. When the specified
+     Adds a serial number of the device to track. When the specified
      type, role and/or serial number does not match an available
      tracker, no data will be returned.
 
      \gmXmlTag{gmTrack,OpenVRPoseTracker,serial}
   */
-  void setSerial(std::string);
+  void addSerial(std::string);
 
   /**
-     Replaces the contents of p with pose data from the specified
-     OpenVR pose source. Returns true if data could be read, false
-     otherwise. Use sample time to check that the data are fresh.
+     @see PoseTracker::get
   */
-  bool getPose(PoseSample &p);
+  std::optional<State> get() override;
 
   /**
      Set the OpenVR instance.

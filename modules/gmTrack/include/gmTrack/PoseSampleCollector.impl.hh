@@ -24,7 +24,7 @@ struct PoseSampleCollector::Impl {
 
   virtual void update(clock::time_point time);
 
-  std::shared_ptr<gramods::gmTrack::Controller> controller;
+  std::shared_ptr<gramods::gmTrack::TrackerSet> tracker_set;
 };
 
 END_NAMESPACE_GMTRACK;

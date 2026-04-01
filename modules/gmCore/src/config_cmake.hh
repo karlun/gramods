@@ -51,6 +51,11 @@ namespace gramods {
 #cmakedefine gramods_ENABLE_FreeImage
 #endif
 
+#cmakedefine HAVE_nlohmann_json
+#ifdef HAVE_nlohmann_json
+#cmakedefine gramods_ENABLE_nlohmann_json
+#endif
+
 #cmakedefine SDL2_FOUND
 #ifdef SDL2_FOUND
 #cmakedefine gramods_ENABLE_SDL2

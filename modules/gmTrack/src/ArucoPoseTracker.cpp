@@ -4,9 +4,10 @@
 #ifdef gramods_ENABLE_OpenCV_objdetect
 
 #include <gmCore/Console.hh>
+#include <gmCore/FileResolver.hh>
 #include <gmCore/RunLimited.hh>
 #include <gmCore/RunOnce.hh>
-#include <gmCore/FileResolver.hh>
+#include <gmCore/Updateable.hh>
 
 #include <opencv2/objdetect.hpp>
 
@@ -14,16 +15,25 @@ BEGIN_NAMESPACE_GMTRACK;
 
 GM_OFI_DEFINE(ArucoPoseTracker);
 GM_OFI_PARAM2(ArucoPoseTracker, cameraConfigurationFile, std::filesystem::path, setCameraConfigurationFile);
-GM_OFI_PARAM2(ArucoPoseTracker, inverted, bool, setInverted);
+GM_OFI_PARAM2(ArucoPoseTracker, trackCamera, bool, setTrackCamera);
+GM_OFI_PARAM2(ArucoPoseTracker, key, std::string, setKey);
 GM_OFI_PARAM2(ArucoPoseTracker, refindMarkers, bool, setRefindMarkers);
 GM_OFI_POINTER2(ArucoPoseTracker, arucoBoard, gmTrack::ArucoBoard, addArucoBoard);
 GM_OFI_POINTER2(ArucoPoseTracker, videoSource, gmTrack::OpenCvVideoCapture, setVideoSource);
 GM_OFI_PARAM2(ArucoPoseTracker, showDebug, bool, setShowDebug);
 
-struct ArucoPoseTracker::Impl {
+namespace {
+size_t getTrackerIdx() {
+  static size_t idx = 0;
+  return idx++;
+}
+}
 
-  void update(gmCore::Updateable::clock::time_point t);
-  bool getPose(std::map<int, PoseSample> &p);
+struct ArucoPoseTracker::Impl : public gmCore::Updateable {
+
+  Impl() : tracker_idx(getTrackerIdx()) {}
+
+  void update(gmCore::Updateable::clock::time_point time, size_t frame);
 
   static bool readCameraParameters(std::filesystem::path filename,
                                    cv::Mat &camMatrix, cv::Mat &distCoeffs,
@@ -31,27 +41,24 @@ struct ArucoPoseTracker::Impl {
 
   std::vector<std::shared_ptr<ArucoBoard>> boards;
   std::shared_ptr<OpenCvVideoCapture> video_source;
+  std::optional<std::string> key;
 
   int camera_width;
   int camera_height;
   cv::Mat camMatrix;
   cv::Mat distCoeffs;
 
-  std::map<int, PoseSample> samples;
+  std::optional<State> state;
 
-  bool inverted = false;
+  bool track_camera = false;
   bool refind_markers = false;
 
   bool show_debug_output = false;
+  const size_t tracker_idx;
 };
 
 ArucoPoseTracker::ArucoPoseTracker()
   : _impl(std::make_unique<Impl>()) {}
-
-void ArucoPoseTracker::update(gmCore::Updateable::clock::time_point time,
-                              size_t frame) {
-  _impl->update(time);
-}
 
 void ArucoPoseTracker::addArucoBoard(std::shared_ptr<ArucoBoard> board) {
   _impl->boards.push_back(board);
@@ -61,8 +68,12 @@ void ArucoPoseTracker::setVideoSource(std::shared_ptr<OpenCvVideoCapture> vs) {
   _impl->video_source = vs;
 }
 
-void ArucoPoseTracker::setInverted(bool on) {
-  _impl->inverted = on;
+void ArucoPoseTracker::setTrackCamera(bool on) {
+  _impl->track_camera = on;
+}
+
+void ArucoPoseTracker::setKey(std::string key) {
+  _impl->key = key;
 }
 
 void ArucoPoseTracker::setShowDebug(bool on) {
@@ -73,34 +84,31 @@ void ArucoPoseTracker::setRefindMarkers(bool on) {
   _impl->refind_markers = on;
 }
 
-bool ArucoPoseTracker::getPose(std::map<int, PoseSample> &p) {
-  return _impl->getPose(p);
-}
-
-void ArucoPoseTracker::Impl::update(gmCore::Updateable::clock::time_point time_now) {
+void ArucoPoseTracker::Impl::update(
+    gmCore::Updateable::clock::time_point time_now, size_t frame) {
 
   if (boards.empty()) {
     GM_RUNONCE(GM_ERR("ArucoPoseTracker", "No board to track."));
-    samples.clear();
+    state = std::nullopt;
     return;
   }
 
   if (!video_source) {
     GM_RUNONCE(GM_ERR("ArucoPoseTracker", "No video source."));
-    samples.clear();
+    state = std::nullopt;
     return;
   }
 
   if (!camMatrix.total()) {
     GM_RUNONCE(GM_ERR("ArucoPoseTracker", "Camera parameters not set."));
-    samples.clear();
+    state = std::nullopt;
     return;
   }
 
   cv::Mat image;
   if (!video_source->retrieve(image)) {
     GM_RUNLIMITED(GM_WRN("ArucoPoseTracker", "Video source did not provide image."), 1);
-    samples.clear();
+    state = std::nullopt;
     return;
   }
 
@@ -139,6 +147,8 @@ void ArucoPoseTracker::Impl::update(gmCore::Updateable::clock::time_point time_n
     std::vector<std::vector<cv::Point2f>> corners, rejected;
   };
   std::vector<DetectionCache> detection_cache;
+
+  state = State {};
 
   for (size_t idx = 0; idx < boards.size(); ++idx) {
 
@@ -215,20 +225,19 @@ void ArucoPoseTracker::Impl::update(gmCore::Updateable::clock::time_point time_n
     Eigen::Map<Eigen::Matrix3d> R(cv::Mat(rotm).ptr<double>());
     Eigen::Quaterniond Q(R);
 
-    PoseSample sample;
-    if (inverted) {
-      sample.orientation = Eigen::Quaternionf(Q.conjugate());
-      sample.position =
-          (samples[idx].orientation *
-           Eigen::Vector3d(-tvec[0], -tvec[1], -tvec[2]).cast<float>());
-    } else {
-      sample.orientation = Eigen::Quaternionf(Q);
-      sample.position =
-          Eigen::Vector3d(tvec[0], tvec[1], tvec[2]).cast<float>();
-    }
-    sample.time = time_now;
+    auto pose = gmCore::Pose {
+        .position =
+            track_camera
+                ? (Q.conjugate() *
+                   Eigen::Vector3d(-tvec[0], -tvec[1], -tvec[2]))
+                      .cast<float>()
+                : Eigen::Vector3d(tvec[0], tvec[1], tvec[2]).cast<float>(),
+        .orientation =
+            track_camera ? Q.conjugate().cast<float>() : Q.cast<float>()};
 
-    samples[idx] = sample;
+    const auto key_base = key.value_or(GM_STR("/aruco/" << tracker_idx));
+    state.value()[GM_STR(key_base << "/" << idx)] = {.time = time_now,
+                                                     .value = pose};
 
     if (show_debug_output) {
       std::vector<std::vector<cv::Point2f>> imagePoints;
@@ -253,11 +262,8 @@ void ArucoPoseTracker::Impl::update(gmCore::Updateable::clock::time_point time_n
   }
 }
 
-bool ArucoPoseTracker::Impl::getPose(std::map<int, PoseSample> &p) {
-  if (samples.empty()) return false;
-
-  p = samples;
-  return true;
+std::optional<PoseTracker::State> ArucoPoseTracker::get() {
+  return _impl->state;
 }
 
 void ArucoPoseTracker::setCameraConfigurationFile(std::filesystem::path file) {

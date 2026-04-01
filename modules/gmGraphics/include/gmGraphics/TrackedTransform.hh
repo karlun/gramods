@@ -4,8 +4,7 @@
 
 #include <gmGraphics/Group.hh>
 
-#include <gmTrack/SinglePoseTracker.hh>
-#include <gmTrack/MultiPoseTracker.hh>
+#include <gmTrack/TrackerBase.hh>
 
 BEGIN_NAMESPACE_GMGRAPHICS;
 
@@ -25,14 +24,17 @@ public:
   void setHysteresis(float t);
 
   /**
-     Adds a tracker to read pose data from.
+     Adds a key to use from the tracker. If not set then all
+     available keys are used.
+
+     \gmXmlTag{gmGraphics,TrackedTransform,key}
   */
-  void addSinglePoseTracker(std::shared_ptr<gmTrack::SinglePoseTracker> t);
+  void addKey(std::string key);
 
   /**
      Adds a tracker to read pose data from.
   */
-  void addMultiPoseTracker(std::shared_ptr<gmTrack::MultiPoseTracker> t);
+  void addPoseTracker(std::shared_ptr<gmTrack::PoseTracker> t);
 
   void accept(Visitor *visitor) override;
 

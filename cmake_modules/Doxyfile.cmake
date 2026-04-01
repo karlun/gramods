@@ -283,7 +283,8 @@ TAB_SIZE               = 4
 # with the commands \{ and \} for these it is advised to use the version @{ and
 # @} or use a double escape (\\{ and \\})
 
-ALIASES                = "gmXmlTag{3}=\b XML-attribute: \link xml-\1-\2 \3 \endlink"
+ALIASES                = "gmXmlTag{3}=\b XML-attribute: \link xml-\1-\2 \3 \endlink\n"
+ALIASES               += "gmXmlNodeAttr{3}=\b XML-attribute: \link xml-\1-\2 <\2 \3 \endlink\n"
 
 # Set the OPTIMIZE_OUTPUT_FOR_C tag to YES if your project consists of C sources
 # only. Doxygen will then generate output that is more tailored for C. For

@@ -2,10 +2,11 @@
 #ifndef GRAMODS_GRAPHICS_PATHVIEWPOINT
 #define GRAMODS_GRAPHICS_PATHVIEWPOINT
 
+#include <gmCore/Pose.hh>
+#include <gmCore/io_eigen.hh>
+
 #include <gmGraphics/Viewpoint.hh>
 #include <gmCore/Updateable.hh>
-
-#include <gmCore/io_eigen.hh>
 
 BEGIN_NAMESPACE_GMGRAPHICS;
 
@@ -26,18 +27,18 @@ public:
 
      \gmXmlTag{gmGraphics,PathViewpoint,path}
 
-     \sa gramods::operator>>(std::istream &, std::vector<Pose> &)
+     \sa gramods::operator>>(std::istream &, std::vector<gmCore::Pose> &)
   */
-  void setPath(std::vector<Pose> path);
+  void setPath(std::vector<gmCore::Pose> path);
 
   /**
      Adds a single node to the path of the viewpoint.
 
      \gmXmlTag{gmGraphics,PathViewpoint,node}
 
-     \sa gramods::operator>>(std::istream &, Pose &)
+     \sa gramods::operator>>(std::istream &, gmCore::Pose &)
   */
-  void addNode(const Pose &node);
+  void addNode(const gmCore::Pose &node);
 
   /**
      Sets whether the viewpoint should loop over the path or not. Default is true.

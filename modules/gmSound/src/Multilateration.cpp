@@ -16,14 +16,16 @@ GM_OFI_PARAM2(Multilateration, point, Eigen::Vector3f, addPoint);
 GM_OFI_PARAM2(Multilateration, speedOfSound, float, setSpeedOfSound);
 GM_OFI_POINTER2(Multilateration, soundDetector, gmSound::SoundDetector, setSoundDetector);
 
-struct Multilateration::Impl {
-  void update(clock::time_point t);
+struct Multilateration::Impl : public gmCore::Updateable {
+  Impl() : gmCore::Updateable(10) {}
+
+  void update(clock::time_point t, size_t frame);
   void initialize();
 
   void estimatePose(std::vector<float> &offsets,
                     clock::time_point time);
 
-  std::optional<PoseSample> pose;
+  std::optional<State> state;
 
   std::vector<Eigen::Vector3f> points;
   float max_mic_dist = 0;
@@ -32,8 +34,7 @@ struct Multilateration::Impl {
   std::shared_ptr<SoundDetector> sound_detector;
 };
 
-Multilateration::Multilateration()
-  : gmCore::Updateable(10), _impl(std::make_unique<Impl>()) {}
+Multilateration::Multilateration() : _impl(std::make_unique<Impl>()) {}
 Multilateration::~Multilateration() {}
 
 void Multilateration::addPoint(Eigen::Vector3f pt) {
@@ -46,19 +47,12 @@ void Multilateration::setSoundDetector(std::shared_ptr<SoundDetector> sd) {
   _impl->sound_detector = sd;
 }
 
-bool Multilateration::getPose(PoseSample &p) {
-  if (!_impl->pose) return false;
-
-  p = *_impl->pose;
-  return true;
-}
-
-void Multilateration::update(clock::time_point t, size_t frame) {
-  _impl->update(t);
+std::optional<gmTrack::PoseTracker::State> Multilateration::get() {
+  return _impl->state;
 }
 
 void Multilateration::initialize() {
-  gmTrack::SinglePoseTracker::initialize();
+  gmTrack::PoseTracker::initialize();
   _impl->initialize();
 }
 
@@ -69,7 +63,7 @@ void Multilateration::Impl::initialize() {
       max_mic_dist = std::max(max_mic_dist, (pt1 - pt2).norm());
 }
 
-void Multilateration::Impl::update(clock::time_point time) {
+void Multilateration::Impl::update(clock::time_point time, size_t frame) {
   if (!sound_detector) {
     GM_RUNONCE(GM_ERR(
         "Multilateration",
@@ -149,9 +143,10 @@ void Multilateration::Impl::estimatePose(std::vector<float> &offsets,
   GM_DBG2("Multilateration",
          "Time offset: t0=" << t0 << ", d0=" << d0 << " -> " << dt << " seconds ");
 
-  pose = {pt,
-          Eigen::Quaternionf::Identity(),
-          time - gmCore::TimeTools::secondsToDuration(dt)};
+  if (!state) state = State {};
+  state.value()["/multilateration/pose"] = Sample {
+      .time = time - gmCore::TimeTools::secondsToDuration(dt),
+      .value = {.position = pt, .orientation = Eigen::Quaternionf::Identity()}};
 }
 
 void Multilateration::traverse(Visitor *visitor) {

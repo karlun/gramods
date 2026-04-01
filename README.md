@@ -49,7 +49,7 @@ Use CMake to find dependencies and to set up the build environment. Every module
 
 Observe that CMake cannot automatically deactivate dependent modules when a modules is made unavailable, by a missing dependency or by deactivation, so this will result in a build error.
 
-Most dependencies can be automatically installed and handled, with *vcpkg* through `vcpkg install asio eigen3 freeimage glew sdl2 tclap tinyobjloader tinyxml2`, or with *apt* through `apt install libasio-dev libeigen3-dev libfreeimage-dev libglew-dev libsdl2-dev libtclap-dev libtinyobjloader-dev libtinyxml2-dev`.
+Most dependencies can be automatically installed and handled, with *vcpkg* through `vcpkg install asio eigen3 freeimage glew nlohmann-json openvr sdl2 tclap tinyobjloader tinyxml2`, or with *apt* through `apt install libasio-dev libeigen3-dev libfreeimage-dev libglew-dev nlohmann-json3-dev libopenvr-dev libsdl2-dev libtclap-dev libtinyobjloader-dev libtinyxml2-dev`.
 
 If CMake config files are missing in your installation but needed by Gramods, then the `*_DIR` can be pointed to a backup CMake config folder in the `Gramods/cmake_modules` folder. This will expose variables in CMake to manually point at include and lib folders for the library.
 
@@ -99,7 +99,7 @@ This app will not be built if these required dependencies are not configured for
 
 The `gm-tracker-registration` app does not open any graphical interface, but instead silently (depending on output verbosity) registers tracker positions, and subsequently calculates and outputs tracker registration data. It uses the top-most `Controller` in the specified configuration for reading off tracker position data and registers these against real world position data specified on the command line.
 
-Whenever the main button (`ButtonsMapper::MAIN`) is pressed, the app samples data. If more than one data sample was captured during the button press, an average is calculated (IQM) and used. The app then estimates sphericity of the data and if three dimensions are considere linearly independent a full registration is automatically either solved or estimated, using least-squares estimation. If the data only span two dimensions the registered points are automatically expanded into the third dimension, assuming uniformity of both the tracker and real world coordinates, before estimating the registration.
+Whenever the main button is pressed, the app samples data. If more than one data sample was captured during the button press, an average is calculated (IQM) and used. The app then estimates sphericity of the data and if three dimensions are considere linearly independent a full registration is automatically either solved or estimated, using least-squares estimation. If the data only span two dimensions the registered points are automatically expanded into the third dimension, assuming uniformity of both the tracker and real world coordinates, before estimating the registration.
 
 The estimated registration data are written to a specified output file, `output.xml` per default, based on an output template. This template can be in any text-based format and the following keys are replaced by their corresponding registration data:
 
@@ -151,8 +151,9 @@ The module also provides types and operators for use in the other modules. In pa
 Optional dependencies:
 
  - Eigen3 (at least version 3.3), for types and operators for vectors, quaternion and matrix types
- - TinyXML2, for XML-based configuration
+ - Nlohmann Json, for Json support (e.g. gmNetwork::SyncJData serializer)
  - SDL2, for initialization of the SDL2 library
+ - TinyXML2, for XML-based configuration
 
 
 ### Module Program Design Principles
@@ -197,7 +198,7 @@ int main(int argc, char *argv[]) {
 
 ## gmTrack
 
-The gmTrack module provides primarily pose tracking clients, servers and filters.
+The gmTrack module provides primarily functionality for tracking, both pose data, buttons and floats, such as trigger and joystick. A _tracker_ is in this module an object that provides a _tracker state_. The tracker state may contain any number of tracker samples, each associated with a key. There are some standard keys for head or wand pose, or main button, for example, and the keys can be changed using a _KeyChangeTracker_.
 
 Required dependencies:
 
@@ -207,13 +208,14 @@ Required dependencies:
 
 Optional dependencies:
 
- - VRPN, for VRPN support
  - OpenCV (version 4) with aruco module, for marker-based tracking
+ - OpenVR, for reading off tracker data using OpenVR
+ - VRPN, for VRPN support
 
 
 ### Module Program Design Principles
 
-Abstraction of tracking using Decorator design pattern for flexible filtering, calibration and registration with minimal code duplication.
+Code duplication is minimized by two strategies: _decorator_ design pattern and _template abstractions_. At application level, the decorator patterns allows for a flexible structuring of collaborating object to build the desired functionality. For example, any pose tracker can be "decorated" with `RegisteredPoseTracker` to change its basis, or with `RelativePoseTracker` to turn its absolute poses into relative. At library implementation level, tracker classes that have similar functionality with multiple data types are implemented as templates. For example, `TrackerBase` sets up the same state structure regardless of type, and `TimeSampleTracker` creates a simulated tracker of any type from specified samples. These templates are then instantiated with the types `bool` (binary), `float`, `float2` (for joystick or touchpad) and `pose`.
 
 
 ## gmNetwork

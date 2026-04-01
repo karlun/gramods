@@ -9,7 +9,7 @@
 BEGIN_NAMESPACE_GMGRAPHICS;
 
 GM_OFI_DEFINE_SUB(PathViewpoint, Viewpoint);
-GM_OFI_PARAM2(PathViewpoint, path, std::vector<Pose>, setPath);
+GM_OFI_PARAM2(PathViewpoint, path, std::vector<gmCore::Pose>, setPath);
 GM_OFI_PARAM2(PathViewpoint, loop, bool, setLoop);
 GM_OFI_PARAM2(PathViewpoint, exit, bool, setExit);
 GM_OFI_PARAM2(PathViewpoint, velocity, float, setVelocity);
@@ -19,7 +19,7 @@ struct PathViewpoint::Impl {
   typedef gmCore::Updateable::clock clock;
   typedef std::chrono::duration<double, std::ratio<1>> d_seconds;
 
-  std::vector<Pose> path;
+  std::vector<gmCore::Pose> path;
   std::vector<std::unique_ptr<gmMisc::PolyFit>> interpolators;
   bool do_loop = true;
   bool do_exit = false;
@@ -104,12 +104,12 @@ void PathViewpoint::Impl::update(Eigen::Vector3f &position,
   last_time = time;
 }
 
-void PathViewpoint::setPath(std::vector<Pose> path) {
+void PathViewpoint::setPath(std::vector<gmCore::Pose> path) {
   _impl->interpolators.clear();
   _impl->path = path;
 }
 
-void PathViewpoint::addNode(const Pose &node) {
+void PathViewpoint::addNode(const gmCore::Pose &node) {
   _impl->interpolators.clear();
   _impl->path.push_back(node);
 }

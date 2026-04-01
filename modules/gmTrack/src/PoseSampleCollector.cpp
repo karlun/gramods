@@ -1,8 +1,7 @@
 
 #include <gmTrack/PoseSampleCollector.hh>
 #include <gmTrack/PoseSampleCollector.impl.hh>
-
-#include <gmTrack/ButtonsMapper.hh>
+#include <gmTrack/StdKey.hh>
 
 #include <gmCore/RunOnce.hh>
 #include <gmCore/Console.hh>
@@ -20,7 +19,7 @@ GM_OFI_PARAM(PoseSampleCollector, warningThreshold, float, PoseSampleCollector::
 GM_OFI_PARAM(PoseSampleCollector, orientationWarningThreshold, float, PoseSampleCollector::setOrientationWarningThreshold);
 GM_OFI_PARAM(PoseSampleCollector, trackerPosition, Eigen::Vector3f, PoseSampleCollector::addTrackerPosition);
 GM_OFI_PARAM(PoseSampleCollector, trackerOrientation, Eigen::Quaternionf, PoseSampleCollector::addTrackerOrientation);
-GM_OFI_POINTER(PoseSampleCollector, controller, Controller, PoseSampleCollector::setController);
+GM_OFI_POINTER(PoseSampleCollector, trackerSet, TrackerSet, PoseSampleCollector::setTrackerSet);
 
 
 PoseSampleCollector::PoseSampleCollector(Impl *_impl)
@@ -34,8 +33,9 @@ void PoseSampleCollector::update(clock::time_point time, size_t frame) {
   _impl->update(time);
 }
 
-void PoseSampleCollector::setController(std::shared_ptr<gramods::gmTrack::Controller> controller) {
-  _impl->controller = controller;
+void PoseSampleCollector::setTrackerSet(
+    std::shared_ptr<gramods::gmTrack::TrackerSet> t) {
+  _impl->tracker_set = t;
 }
 
 void PoseSampleCollector::addTrackerPosition(Eigen::Vector3f p) {
@@ -68,18 +68,29 @@ void PoseSampleCollector::setOrientationInlierThreshold(float d) {
 
 void PoseSampleCollector::Impl::update(clock::time_point now) {
 
-  if (!controller && tracker_positions.empty() && tracker_orientations.empty()) {
-    GM_RUNONCE(GM_ERR("PoseSampleCollector", "No tracker positions or orientations specified and no controller to read tracker data from"));
+  if (!tracker_set && tracker_positions.empty() && tracker_orientations.empty()) {
+    GM_RUNONCE(GM_ERR("PoseSampleCollector", "No tracker positions or orientations specified and no tracker set to read tracker data from"));
     return;
   }
 
-  if (!controller) return;
+  if (!tracker_set) return;
 
-  gramods::gmTrack::ButtonsTracker::ButtonsSample buttons;
-  controller->getButtons(buttons);
+  auto buttons = tracker_set->getBinary();
+  auto poses = tracker_set->getPose();
+
+  if (!buttons || !poses) {
+    GM_RUNONCE(GM_ERR("PoseSampleCollector", "Cannot read tracker data"));
+    return;
+  }
+
+  if (!buttons->contains(StdKey::MAIN_BUTTON) ||
+      !poses->contains(StdKey::PRIMARY_WAND)) {
+    GM_RUNONCE(GM_ERR("PoseSampleCollector", "Tracker data incomplete"));
+    return;
+  }
 
   if (!collecting) {
-    if (buttons.buttons[ButtonsMapper::ButtonIdx::MAIN]) {
+    if (buttons.value()[StdKey::MAIN_BUTTON].value) {
       collecting = true;
       GM_INF("PoseSampleCollector", "going into collect mode");
     } else {
@@ -87,13 +98,8 @@ void PoseSampleCollector::Impl::update(clock::time_point now) {
     }
   }
 
-  if (buttons.buttons[ButtonsMapper::ButtonIdx::MAIN]){
-    gramods::gmTrack::PoseTracker::PoseSample pose;
-    if (! controller->getPose(pose)) {
-      GM_RUNONCE(GM_ERR("PoseSampleCollector", "Cannot read controller pose"));
-      return;
-    }
-
+  if (buttons.value()[StdKey::MAIN_BUTTON].value){
+    auto pose = poses.value()[StdKey::PRIMARY_WAND].value;
     // Zero or less samples per second results in taking only one sample per click
     if (samples_per_second < std::numeric_limits<float>::epsilon()) {
       if (last_sample_time == clock::time_point::min()) {
@@ -348,7 +354,7 @@ PoseSampleCollector::getTrackerOrientations() const {
 }
 
 void PoseSampleCollector::traverse(Visitor *visitor) {
-  if (_impl->controller) _impl->controller->accept(visitor);
+  if (_impl->tracker_set) _impl->tracker_set->accept(visitor);
 }
 
 END_NAMESPACE_GMTRACK;
