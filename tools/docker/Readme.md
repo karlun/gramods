@@ -20,19 +20,19 @@ docker run -v $(pwd .):/host -it [IMAGE ID]
 To build:
 
 ```{bash}
-docker build -t gitlab.liu.se:5000/karlu20/gramods/22.04-maxi .
+docker build -t gitlab.liu.se:5000/karlu20/gramods/gitlab-maxi-image gitlab-maxi-image
 ```
 
 To login:
 
 ```{bash}
-docker login gitlab.liu.se
+docker login gitlab.liu.se:5000
 ```
 
 To push:
 
 ```{bash}
-docker push gitlab.liu.se:5000/karlu20/gramods/22.04-maxi
+docker push gitlab.liu.se:5000/karlu20/gramods/gitlab-maxi-image
 ```
 
 ## Other Commands
