@@ -150,12 +150,15 @@ void ArucoPoseTracker::Impl::update(
 
   state = State {};
 
-  for (size_t idx = 0; idx < boards.size(); ++idx) {
+  for (size_t board_idx = 0; board_idx < boards.size(); ++board_idx) {
 
-    auto board = this->boards[idx]->getBoard();
+    auto board = this->boards[board_idx]->getBoard();
 
     if (!board) {
-      GM_RUNLIMITED(GM_WRN("ArucoPoseTracker", "Board " << idx << " did not return aruco board."), 1);
+      GM_RUNLIMITED(
+          GM_WRN("ArucoPoseTracker",
+                 "Board " << board_idx << " did not return aruco board."),
+          1);
       continue;
     }
 
@@ -236,8 +239,9 @@ void ArucoPoseTracker::Impl::update(
             track_camera ? Q.conjugate().cast<float>() : Q.cast<float>()};
 
     const auto key_base = key.value_or(GM_STR("/aruco/" << tracker_idx));
-    state.value()[GM_STR(key_base << "/" << idx)] = {.time = time_now,
-                                                     .value = pose};
+    const auto key = GM_STR(key_base << "/" << board_idx);
+    state.value()[key] = {.time = time_now, .value = pose};
+    GM_DBG3("ArucoPoseTracker", "Pose " << key);
 
     if (show_debug_output) {
       std::vector<std::vector<cv::Point2f>> imagePoints;
