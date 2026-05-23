@@ -225,7 +225,8 @@ void ArucoPoseTracker::Impl::update(
 
     cv::Matx33d rotm;
     cv::Rodrigues(rvec, rotm);
-    Eigen::Map<Eigen::Matrix3d> R(cv::Mat(rotm).ptr<double>());
+    cv::Mat M(rotm);
+    Eigen::Map<Eigen::Matrix3d> R(M.ptr<double>());
     Eigen::Quaterniond Q(R);
 
     auto pose = gmCore::Pose {
