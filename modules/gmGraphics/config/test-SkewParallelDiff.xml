@@ -19,7 +19,7 @@
     <Viewpoint
         position="0.03 0 10"/>
 
-    <ViewMixView
+    <MixingView
         mixType="difference">
 
       <SpatialPlanarView
@@ -31,7 +31,7 @@
           fieldOfView="1.57079632679489661923132169163975144209858469968755
                        1.57079632679489661923132169163975144209858469968755"/>
 
-    </ViewMixView>
+    </MixingView>
   </SdlWindow>
 
 </config>

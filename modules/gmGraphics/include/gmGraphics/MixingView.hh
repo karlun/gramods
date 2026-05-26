@@ -11,13 +11,11 @@ BEGIN_NAMESPACE_GMGRAPHICS;
 /**
    This view mixes the graphics from two or more other views.
 */
-class ViewMixView
-  : public View {
+class MixingView : public View {
 
 public:
-
-  ViewMixView();
-  virtual ~ViewMixView();
+  MixingView();
+  virtual ~MixingView();
 
   /**
      Appends local renderers to the view settings, forwards rendering
@@ -43,21 +41,20 @@ public:
      - distance, showing the per pixel color distance between the
        first and the second added view.
 
-     \gmXmlTag{gmGraphics,ViewMixView,mixType}
+     \gmXmlTag{gmGraphics,MixingView,mixType}
   */
   void setMixType(std::string);
 
   /**
      Add a view to mix.
 
-     \gmXmlTag{gmGraphics,ViewMixView,view}
+     \gmXmlTag{gmGraphics,MixingView,view}
   */
   void addView(std::shared_ptr<View>);
 
   GM_OFI_DECLARE;
 
 private:
-
   struct Impl;
   std::unique_ptr<Impl> _impl;
 };
