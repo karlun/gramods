@@ -42,6 +42,7 @@ struct UvcTexture::Impl {
   static std::string formatToString(uvc_frame_format f);
 
   bool initialize_context();
+  void list_devices();
   bool locate_device(int vendor, int product, std::string serial);
   bool open_device();
   bool negotiate_format();
@@ -129,6 +130,7 @@ bool UvcTexture::Impl::retrieve(cv::Mat &image) {
 
 void UvcTexture::Impl::startAll(int vendor, int product, std::string serial) {
   if (!initialize_context()) return;
+  list_devices();
   if (!locate_device(vendor, product, serial)) return;
   if (!open_device()) return;
   if (!negotiate_format()) return;
@@ -257,7 +259,41 @@ bool UvcTexture::Impl::initialize_context() {
   return true;
 }
 
+void UvcTexture::Impl::list_devices() {
+  uvc_device_t **list;
+  uvc_error_t res = uvc_get_device_list(context, &list);
+  if (res != UVC_SUCCESS) {
+    GM_WRN("UvcTexture", "Could not find list of UVC devices");
+    return;
+  }
+
+  std::stringstream log;
+  log << std::hex;
+  for (uvc_device_t **dev = list; *dev != nullptr; ++dev) {
+    uvc_device_descriptor_t *desc;
+    uvc_error_t res = uvc_get_device_descriptor(*dev, &desc);
+    if (res != UVC_SUCCESS) continue;
+
+    if (!log.str().empty()) [[unlikely]]
+      log << "; ";
+    log << std::format(
+        "Vendor#: {:#06x} Product#: {:#06x}", desc->idVendor, desc->idProduct);
+    if (desc->bcdUVC) log << " UVC compl. level: " << desc->bcdUVC;
+    if (desc->serialNumber) log << " Serial#: " << desc->serialNumber;
+    if (desc->manufacturer) log << " Manufacturer: " << desc->manufacturer;
+    if (desc->product) log << " Product: " << desc->product;
+
+    uvc_free_device_descriptor(desc);
+  }
+
+  if (!log.str().empty())
+    GM_DBG2("UvcTexture", "Available devices: " << log.str());
+
+  uvc_free_device_list(list, 1);
+}
+
 bool UvcTexture::Impl::locate_device(int vendor, int product, std::string serial) {
+
   const char *serial_cstr = serial.size() == 0 ? NULL : &serial[0];
   uvc_error_t res = uvc_find_device(context, &device, vendor, product, serial_cstr);
   if (res < 0) {
