@@ -4,6 +4,7 @@
 #include <gmGraphics/GLUtils.hh>
 #include <gmCore/RunOnce.hh>
 
+#include <gmGraphics/MixingShaders.hh>
 #include <gmGraphics/OffscreenRenderTargets.hh>
 #include <gmGraphics/RasterProcessor.hh>
 
@@ -17,8 +18,7 @@ GM_OFI_POINTER2(MixingView, view, View, addView);
 
 struct MixingView::Impl {
 
-  static const std::string fragment_code[];
-  size_t type = 0;
+  std::string mix_type = "average";
 
   OffscreenRenderTargets render_target;
   RasterProcessor raster_processor;
@@ -31,73 +31,6 @@ struct MixingView::Impl {
   std::vector<std::shared_ptr<View>> views;
 };
 
-const std::string MixingView::Impl::fragment_code[] = { //
-    R"lang=glsl(
-#version 330 core
-
-uniform sampler2D tex[];
-uniform int tex_count;
-
-in vec2 position;
-
-out vec4 fragColor;
-
-void main() {
-
-  float mix = 1.0 / tex_count;
-
-  vec3 rgb = mix * texture(tex[0], position * 0.5 + 0.5).rgb;
-  if (tex_count > 1)
-    rgb += mix * texture(tex[1], position * 0.5 + 0.5).rgb;
-  if (tex_count > 2)
-    rgb += mix * texture(tex[2], position * 0.5 + 0.5).rgb;
-  if (tex_count > 3)
-    rgb += mix * texture(tex[3], position * 0.5 + 0.5).rgb;
-  if (tex_count > 4)
-    rgb += mix * texture(tex[4], position * 0.5 + 0.5).rgb;
-  if (tex_count > 5)
-    rgb += mix * texture(tex[5], position * 0.5 + 0.5).rgb;
-  if (tex_count > 6)
-    rgb += mix * texture(tex[6], position * 0.5 + 0.5).rgb;
-  if (tex_count > 7)
-    rgb += mix * texture(tex[7], position * 0.5 + 0.5).rgb;
-
-  fragColor = vec4(rgb, 1);
-}
-)lang=glsl",
-    R"lang=glsl(
-#version 330 core
-
-uniform sampler2D tex[];
-uniform int tex_count;
-
-in vec2 position;
-
-out vec4 fragColor;
-
-void main() {
-  vec3 rgb = texture(tex[0], position * 0.5 + 0.5).rgb - texture(tex[1], position * 0.5 + 0.5).rgb;
-  fragColor = vec4(abs(rgb), 1);
-}
-)lang=glsl",
-    R"lang=glsl(
-#version 330 core
-
-uniform sampler2D tex[];
-uniform int tex_count;
-
-in vec2 position;
-
-out vec4 fragColor;
-
-void main() {
-  vec3 rgb0 = texture(tex[0], position * 0.5 + 0.5).rgb;
-  vec3 rgb1 = texture(tex[1], position * 0.5 + 0.5).rgb;
-  float dist = length(rgb1 - rgb0);
-  fragColor = vec4(dist, dist, dist, 1);
-}
-)lang=glsl"};
-
 MixingView::MixingView() : _impl(std::make_unique<Impl>()) {}
 
 MixingView::~MixingView() {}
@@ -107,34 +40,14 @@ void MixingView::addView(std::shared_ptr<View> v) {
   _impl->views.push_back(v);
 }
 
-/**
-     Set type of mixing. Valid values are
-
-     - average, showing the per pixel average value of all the views,
-
-     - difference, showing the per pixel difference between the first
-       and the second added view.
-
-     - distance, showing the per pixel color distance between the
-       first and the second added view.
-  */
-void MixingView::setMixType(std::string s) {
+void MixingView::setMixType(std::string str) {
 
   if (_impl->is_setup)
     GM_WRN("MixingView",
            "Settings mix type after initialization will have no effect.");
 
-  if (s == "average") {
-    _impl->type = 0;
-  } else if (s == "difference") {
-    _impl->type = 1;
-  } else if (s == "distance") {
-    _impl->type = 2;
-  } else {
-    GM_WRN("MixingView",
-           "Unrecognized mix type '" << s << "' - applying average instead.");
-    _impl->type = 0;
-  }
+  if (MixingShaders::checkMixTypeValid(str, "MixingView"))
+    _impl->mix_type = str;
 }
 
 void MixingView::renderFullPipeline(ViewSettings settings) {
@@ -149,21 +62,12 @@ void MixingView::Impl::renderFullPipeline(ViewSettings settings) {
     return;
   }
 
-  if (type > 0 && views.size() < 2) {
-    GM_RUNONCE(
-        GM_ERR("MixingView", "Too few views to mix for the current operator."));
+  if (!MixingShaders::checkCount(mix_type, views.size(), "MixingView", "views"))
     return;
-  }
-
-  if (type > 0 && views.size() > 2) {
-    GM_RUNONCE(GM_WRN(
-        "MixingView",
-        "Too many views to mix for the current operator - residual view will be ignored."));
-  }
 
   if (!is_setup) {
     is_setup = true;
-    raster_processor.setFragmentCode(fragment_code[type]);
+    raster_processor.setFragmentCode(MixingShaders::getFragmentCode(mix_type));
     render_target.setPixelFormat(settings.pixel_format);
     if (render_target.init(views.size()) && raster_processor.init())
       is_functional = true;

@@ -1,9 +1,10 @@
 
-#ifndef GRAMODS_GRAPHICS_VIEWMIXVIEW
-#define GRAMODS_GRAPHICS_VIEWMIXVIEW
+#ifndef GRAMODS_GRAPHICS_MIXINGVIEW
+#define GRAMODS_GRAPHICS_MIXINGVIEW
+
+#include <gmCore/OFactory.hh>
 
 #include <gmGraphics/View.hh>
-
 #include <gmGraphics/Geometry.hh>
 
 BEGIN_NAMESPACE_GMGRAPHICS;
@@ -18,8 +19,7 @@ public:
   virtual ~MixingView();
 
   /**
-     Appends local renderers to the view settings, forwards rendering
-     to the sub views and mixes the results.
+     @see ViewBase::renderFullPipeline.
   */
   void renderFullPipeline(ViewSettings settings) override;
 
@@ -31,17 +31,11 @@ public:
   void traverse(Visitor *visitor) override;
 
   /**
-     Set type of mixing. Default is average. Valid values are
-
-     - average, showing the per pixel average value of all the views,
-
-     - difference, showing the per pixel difference between the first
-       and the second added view.
-
-     - distance, showing the per pixel color distance between the
-       first and the second added view.
+     Set type of mixing. Default is average.
 
      \gmXmlTag{gmGraphics,MixingView,mixType}
+
+     @see MixingShaders
   */
   void setMixType(std::string);
 

@@ -1,0 +1,34 @@
+<config>
+
+  <ImportLibrary library="gmGraphics"/>
+
+  <SdlWindow
+      size="640 480"
+      title="Mixing Textures"
+      GLMajor="3" GLMinor="3">
+
+    <SdlContext
+        DEF="SDLContext"
+        useVideo="1"/>
+
+    <PosedPlanarView
+        fieldOfView="1 -1">
+
+      <Viewpoint/>
+
+      <TextureRenderer>
+        <ImageTexture
+            file="urn:gramods:gmGraphics/resources/gray_fur_texture.png"/>
+      </TextureRenderer>
+
+      <TextureRenderer>
+        <MixingTexture mixType="red mask">
+          <UvcTexture DEF="camera"/> <!-- This is the alpha (mask)  -->
+          <UvcTexture USE="camera"/> <!-- This is the RGB -->
+        </MixingTexture>
+      </TextureRenderer>
+
+    </PosedPlanarView>
+  </SdlWindow>
+
+</config>
