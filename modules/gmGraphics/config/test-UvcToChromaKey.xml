@@ -3,7 +3,7 @@
   <ImportLibrary library="gmGraphics"/>
 
   <SdlWindow
-      size="900 900"
+      size="640 480"
       title="ChromaKey"
       GLMajor="3" GLMinor="3">
 
@@ -18,7 +18,7 @@
 
       <TextureRenderer>
         <ImageTexture
-            file="urn:gramods:gmGraphics/resources/color_cubes_texture.png"/>
+            file="urn:gramods:gmGraphics/resources/gray_fur_texture.png"/>
       </TextureRenderer>
 
       <TextureRenderer>

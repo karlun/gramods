@@ -91,8 +91,7 @@ void ChromaKeyTexture::Impl::update(size_t frame_number, Eye eye) {
     is_setup = true;
     raster_processor.setFragmentCode(fragment_code);
     render_target.setLinearInterpolation(false);
-    if (render_target.init(1) &&
-        raster_processor.init()) {
+    if (render_target.init(1) && raster_processor.init()) {
       is_functional = true;
       texture_id = render_target.getTexId(0);
     }
@@ -110,7 +109,8 @@ void ChromaKeyTexture::Impl::update(size_t frame_number, Eye eye) {
   glGetTextureLevelParameteriv(tex_id, 0, GL_TEXTURE_HEIGHT, &height);
 
   if (width <= 0 || height <= 0) {
-    GM_RUNONCE(GM_ERR("ChromaKeyTexture", "Invalid texture size " << width << "x" << height));
+    GM_RUNONCE(GM_ERR("ChromaKeyTexture",
+                      "Invalid texture size " << width << "x" << height));
     return;
   }
 
