@@ -18,7 +18,6 @@ GM_OFI_PARAM2(ChromaKeyTexture, tolerance, gmCore::float2, setTolerance);
 struct ChromaKeyTexture::Impl {
 
   void update(size_t frame_number, Eye e);
-  GLuint getGLTextureID() { return texture_id; }
 
   static const std::string fragment_code;
 
@@ -115,7 +114,7 @@ void ChromaKeyTexture::Impl::update(size_t frame_number, Eye eye) {
   }
 
   render_target.push();
-  render_target.bind(2 * width, height);
+  render_target.bind(width, height);
 
   glActiveTexture(GL_TEXTURE0);
   glBindTexture(GL_TEXTURE_2D, tex_id);
@@ -136,7 +135,7 @@ void ChromaKeyTexture::Impl::update(size_t frame_number, Eye eye) {
 
 GLuint ChromaKeyTexture::updateTexture(size_t frame_number, Eye eye) {
   _impl->update(frame_number, eye);
-  return _impl->getGLTextureID();
+  return _impl->texture_id;
 }
 
 void ChromaKeyTexture::setTexture(std::shared_ptr<TextureInterface> texture) {
