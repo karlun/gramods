@@ -8,6 +8,8 @@
 #include <gmCore/ExitException.hh>
 #include <gmCore/FileResolver.hh>
 
+#include <gmGraphics/GLUtils.hh>
+
 #include <FreeImage.h>
 
 #include <regex>
@@ -398,7 +400,7 @@ bool ImageTexture::Impl::setTexture(FIBITMAP *image, std::string filename) {
     GM_DBG2("ImageTexture", "BPP = " << bpp);
     switch (bpp) {
     case 8:
-      gl_format = GL_LUMINANCE;
+      gl_format = GL_RED;
       gl_type = GL_UNSIGNED_BYTE;
       str_format = "u8 gray";
       break;
@@ -424,31 +426,31 @@ bool ImageTexture::Impl::setTexture(FIBITMAP *image, std::string filename) {
   }
   case FIT_UINT16:
     GM_DBG2("ImageTexture", "image_type = FIT_UINT16");
-    gl_format = GL_LUMINANCE;
+    gl_format = GL_RED;
     gl_type = GL_UNSIGNED_SHORT;
     str_format = "u16 gray";
     break;
   case FIT_INT16:
     GM_DBG2("ImageTexture", "image_type = FIT_INT16");
-    gl_format = GL_LUMINANCE;
+    gl_format = GL_RED;
     gl_type = GL_SHORT;
     str_format = "s16 gray";
     break;
   case FIT_UINT32:
     GM_DBG2("ImageTexture", "image_type = FIT_UINT32");
-    gl_format = GL_LUMINANCE;
+    gl_format = GL_RED;
     gl_type = GL_UNSIGNED_INT;
     str_format = "u32 gray";
     break;
   case FIT_INT32:
     GM_DBG2("ImageTexture", "image_type = FIT_INT32");
-    gl_format = GL_LUMINANCE;
+    gl_format = GL_RED;
     gl_type = GL_INT;
     str_format = "s32 gray";
     break;
   case FIT_FLOAT:
     GM_DBG2("ImageTexture", "image_type = FIT_FLOAT");
-    gl_format = GL_LUMINANCE;
+    gl_format = GL_RED;
     gl_type = GL_FLOAT;
     str_format = "f32 gray";
     break;
@@ -496,9 +498,13 @@ bool ImageTexture::Impl::setTexture(FIBITMAP *image, std::string filename) {
 
   if (!texture_id) { glGenTextures(1, &texture_id); }
 
+  GM_DBG2("ImageTexture",
+          "Uploading to GPU: " << image_width << " x " << image_height
+                               << ", format = " << GLUtils::toString(gl_format)
+                               << ", type = " << GLUtils::toString(gl_type));
   glBindTexture(GL_TEXTURE_2D, texture_id);
   glTexImage2D(GL_TEXTURE_2D,
-               0, GL_RGBA, image_width, image_height,
+               0, gl_format, image_width, image_height,
                0, gl_format, gl_type, image_data);
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
   if (do_create_mipmaps) {
