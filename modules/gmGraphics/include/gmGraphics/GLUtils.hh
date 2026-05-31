@@ -7,6 +7,8 @@
 #include <GL/glew.h>
 #include <GL/gl.h>
 
+#include <string>
+
 BEGIN_NAMESPACE_GMGRAPHICS;
 
 /**
@@ -30,6 +32,8 @@ struct GLUtils {
      Quickly calculates the next power of two.
   */
   static int nextPowerOfTwo(int v);
+
+  static std::string toString(GLenum v);
 
 };
 

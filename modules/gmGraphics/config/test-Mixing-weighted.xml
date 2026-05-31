@@ -1,0 +1,39 @@
+<config>
+
+  <ImportLibrary library="gmGraphics"/>
+
+  <SdlWindow
+      size="640 480"
+      title="Mixing Textures"
+      GLMajor="3" GLMinor="3">
+
+    <SdlContext
+        DEF="SDLContext"
+        useVideo="1"/>
+
+    <Viewpoint/>
+
+    <MixingView mixType="red weighted average">
+
+      <View><!-- Weight (r)-->
+        <TextureRenderer>
+          <ImageTexture file="urn:gramods:gmGraphics/resources/marble.png"/>
+        </TextureRenderer>
+      </View>
+
+      <View><!-- ( r ) * RGB -->
+        <TextureRenderer>
+          <ImageTexture file="urn:gramods:gmGraphics/resources/gray_fur_texture.png"/>
+        </TextureRenderer>
+      </View>
+
+      <View><!-- (1-r) * RGB -->
+        <TextureRenderer>
+          <ImageTexture file="urn:gramods:gmGraphics/resources/marble.png"/>
+        </TextureRenderer>
+      </View>
+    </MixingView>
+
+  </SdlWindow>
+
+</config>

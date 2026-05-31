@@ -20,7 +20,7 @@
         position="-1 0 0"
         velocity="0.1 0 0"/>
 
-    <ViewMixView
+    <MixingView
         mixType="difference">
 
       <SpatialPlanarView
@@ -44,7 +44,7 @@
 
       </GeometryCorrectedProjectorView>
 
-    </ViewMixView>
+    </MixingView>
   </SdlWindow>
 
 </config>

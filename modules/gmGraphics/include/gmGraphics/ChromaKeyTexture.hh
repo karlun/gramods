@@ -16,7 +16,9 @@
 BEGIN_NAMESPACE_GMGRAPHICS;
 
 /**
-   Decoder of Yuv encoded texture into a new texture.
+   The ChromaKeyTexture filters another texture making it transparent
+   where the chroma key is matched within the CbCr color space within
+   a specified tolerance.
 */
 class ChromaKeyTexture
   : public gmGraphics::Texture {

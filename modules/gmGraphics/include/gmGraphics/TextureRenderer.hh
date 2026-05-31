@@ -60,6 +60,13 @@ public:
   */
   void setFlip(bool on);
 
+  /**
+     Set the rendering to gray-scale.
+
+     \gmXmlTag{gmGraphics,TextureRenderer,gray}
+  */
+  void setGray(bool on);
+
   GM_OFI_DECLARE;
 
 private:

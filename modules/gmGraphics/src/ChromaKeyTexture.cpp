@@ -18,7 +18,6 @@ GM_OFI_PARAM2(ChromaKeyTexture, tolerance, gmCore::float2, setTolerance);
 struct ChromaKeyTexture::Impl {
 
   void update(size_t frame_number, Eye e);
-  GLuint getGLTextureID() { return texture_id; }
 
   static const std::string fragment_code;
 
@@ -91,8 +90,7 @@ void ChromaKeyTexture::Impl::update(size_t frame_number, Eye eye) {
     is_setup = true;
     raster_processor.setFragmentCode(fragment_code);
     render_target.setLinearInterpolation(false);
-    if (render_target.init(1) &&
-        raster_processor.init()) {
+    if (render_target.init(1) && raster_processor.init()) {
       is_functional = true;
       texture_id = render_target.getTexId(0);
     }
@@ -110,12 +108,13 @@ void ChromaKeyTexture::Impl::update(size_t frame_number, Eye eye) {
   glGetTextureLevelParameteriv(tex_id, 0, GL_TEXTURE_HEIGHT, &height);
 
   if (width <= 0 || height <= 0) {
-    GM_RUNONCE(GM_ERR("ChromaKeyTexture", "Invalid texture size " << width << "x" << height));
+    GM_RUNONCE(GM_ERR("ChromaKeyTexture",
+                      "Invalid texture size " << width << "x" << height));
     return;
   }
 
   render_target.push();
-  render_target.bind(2 * width, height);
+  render_target.bind(width, height);
 
   glActiveTexture(GL_TEXTURE0);
   glBindTexture(GL_TEXTURE_2D, tex_id);
@@ -136,7 +135,7 @@ void ChromaKeyTexture::Impl::update(size_t frame_number, Eye eye) {
 
 GLuint ChromaKeyTexture::updateTexture(size_t frame_number, Eye eye) {
   _impl->update(frame_number, eye);
-  return _impl->getGLTextureID();
+  return _impl->texture_id;
 }
 
 void ChromaKeyTexture::setTexture(std::shared_ptr<TextureInterface> texture) {

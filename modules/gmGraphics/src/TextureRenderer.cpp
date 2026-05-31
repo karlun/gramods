@@ -4,6 +4,8 @@
 #include <gmCore/Console.hh>
 #include <gmCore/RunOnce.hh>
 
+#include <gmGraphics/GLUtils.hh>
+
 #define TEXTURE_IDX 0
 
 BEGIN_NAMESPACE_GMGRAPHICS;
@@ -32,12 +34,17 @@ void main() {
 #version 330 core
 
 uniform sampler2D tex;
+uniform bool gray;
 
 in vec2 v_uv;
 out vec4 fragColor;
 
 void main() {
-  fragColor = texture(tex, v_uv);
+  if (gray) {
+    fragColor = vec4(texture(tex, v_uv).rrr, 1);
+  } else {
+    fragColor = texture(tex, v_uv);
+  }
 }
 )lang=glsl";
 }
@@ -58,6 +65,7 @@ struct TextureRenderer::Impl {
   bool has_been_setup = false;
 
   bool flip = false;
+  std::optional<bool> gray;
 };
 
 TextureRenderer::TextureRenderer()
@@ -94,8 +102,18 @@ void TextureRenderer::Impl::render(const Camera &cam,
 
   glActiveTexture(GL_TEXTURE0 + TEXTURE_IDX);
   glBindTexture(GL_TEXTURE_2D, tex_id);
+
+  if (!gray) {
+    GLint format = 0;
+    glGetTexLevelParameteriv(
+        GL_TEXTURE_2D, 0, GL_TEXTURE_INTERNAL_FORMAT, &format);
+    gray = format == GL_RED;
+  }
+
   glUseProgram(program_id);
   glUniform1i(glGetUniformLocation(program_id, "flip"), flip ? 1 : 0);
+  glUniform1i(glGetUniformLocation(program_id, "gray"),
+              gray.value_or(false) ? 1 : 0);
   glUniform1i(glGetUniformLocation(program_id, "tex"), TEXTURE_IDX);
 
   glBindVertexArray(vao_id);
@@ -167,6 +185,10 @@ TextureRenderer::Impl::~Impl() {
 
 void TextureRenderer::setFlip(bool flip) {
   _impl->flip = flip;
+}
+
+void TextureRenderer::setGray(bool gray) {
+  _impl->gray = gray;
 }
 
 void TextureRenderer::traverse(Visitor *visitor) {
