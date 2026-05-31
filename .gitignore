@@ -1,0 +1,15 @@
+
+# Visual Code Specific
+
+.vscode
+.vs
+
+# Clion specific
+.idea
+
+# Build and install
+
+/build*
+/install
+*.pyc
+Pipfile.lock
