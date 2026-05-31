@@ -215,14 +215,14 @@ bool UvcTexture::Impl::update_rgb_cache() {
     return false;
   }
 
-  uvc_error_t ret = frm_cache->frame_format == UVC_FRAME_FORMAT_MJPEG
+  uvc_error_t res = frm_cache->frame_format == UVC_FRAME_FORMAT_MJPEG
                         ? uvc_mjpeg2rgb(frm_cache, rgb_cache)
                         : uvc_any2rgb(frm_cache, rgb_cache);
-  if (ret) {
-    GM_ERR("UvcTexture",
-           "Cannot convert incoming data "
-               << "(" << formatToString(frm_cache->frame_format)
-               << "): " << uvc_strerror(ret));
+  if (res) {
+    GM_ERR("UvcTexture", "Cannot convert incoming data "
+                             << "(" << formatToString(frm_cache->frame_format)
+                             << "): " << uvc_strerror(res) //
+                             << " (" << res << ")");
     uvc_free_frame(rgb_cache);
     rgb_cache = nullptr;
     return false;
@@ -252,7 +252,9 @@ bool UvcTexture::Impl::initialize_context() {
   if (res < 0) {
     closeAll();
 
-    GM_ERR("UvcTexture", "Cannot initialize UVC context: " << uvc_strerror(res));
+    GM_ERR("UvcTexture",
+           "Cannot initialize UVC context: " << uvc_strerror(res) //
+                                             << " (" << res << ")");
     return false;
   }
   GM_DBG1("UvcTexture", "UVC context successfully initialized");
@@ -274,8 +276,7 @@ void UvcTexture::Impl::list_devices() {
     uvc_error_t res = uvc_get_device_descriptor(*dev, &desc);
     if (res != UVC_SUCCESS) continue;
 
-    if (!log.str().empty()) [[unlikely]]
-      log << "; ";
+    log << "\n - ";
     log << std::format(
         "Vendor#: {:#06x} Product#: {:#06x}", desc->idVendor, desc->idProduct);
     if (desc->bcdUVC) log << " UVC compl. level: " << desc->bcdUVC;
@@ -299,7 +300,11 @@ bool UvcTexture::Impl::locate_device(int vendor, int product, std::string serial
   if (res < 0) {
     closeAll();
 
-    GM_ERR("UvcTexture", "Cannot find UVC device (vendor=" << vendor << ", product=" << product << ", serial=" << serial << "): " << uvc_strerror(res));
+    GM_ERR("UvcTexture",
+           "Cannot find UVC device (vendor=" << vendor << ", product="
+                                             << product << ", serial=" << serial
+                                             << "): " << uvc_strerror(res) //
+                                             << " (" << res << ")");
     return false;
   }
   GM_DBG1("UvcTexture", "Found UVC device (vendor=" << vendor << ", product=" << product << ", serial=" << serial << ")");
@@ -312,7 +317,9 @@ bool UvcTexture::Impl::open_device() {
   if (res < 0) {
     closeAll();
 
-    GM_ERR("UvcTexture", "Unable to open UVC device: " << uvc_strerror(res));
+    GM_ERR("UvcTexture",
+           "Unable to open UVC device: " << uvc_strerror(res) //
+                                         << " (" << res << ")");
     return false;
   }
   GM_DBG1("UvcTexture", "Opened UVC device");
@@ -325,6 +332,7 @@ bool UvcTexture::Impl::negotiate_format() {
    * knows about the device */
   gmCore::StringFile string_file;
   uvc_print_diag(device_handle, string_file.getFilePtr());
+  GM_DBG2("UvcTexture", "Device formats:");
   GM_DBG2("UvcTexture", string_file.finalize());
 
   uvc_error_t res = uvc_get_stream_ctrl_format_size
@@ -333,12 +341,18 @@ bool UvcTexture::Impl::negotiate_format() {
 
   /* Print out the result */
   uvc_print_stream_ctrl(&stream_control, string_file.getFilePtr());
+  GM_DBG2("UvcTexture", "Stream control:");
   GM_DBG2("UvcTexture", string_file.finalize());
 
   if (res < 0) {
     closeAll();
 
-    GM_ERR("UvcTexture", "Unable to negotiate UVC format: " << uvc_strerror(res));
+    GM_ERR("UvcTexture",
+           "Unable to negotiate UVC format ("          //
+               << "format: " << formatToString(format) //
+               << ", resolution: " << resolution[0] << "x" << resolution[1]
+               << ", framerate: " << framerate << "): " << uvc_strerror(res) //
+               << " (" << res << ")");
     return false;
   }
   GM_DBG1("UvcTexture", "Successful UVC format negotiation");
@@ -351,7 +365,9 @@ bool UvcTexture::Impl::start_streaming() {
   if (res < 0) {
     closeAll();
 
-    GM_ERR("UvcTexture", "Unable to start stream: " << uvc_strerror(res));
+    GM_ERR("UvcTexture",
+           "Unable to start stream: " << uvc_strerror(res) //
+                                      << " (" << res << ")");
     return false;
   }
   GM_DBG1("UvcTexture", "Started UVC streaming");
@@ -446,7 +462,8 @@ bool UvcTexture::Impl::triggerStill(gmCore::size2 size) {
   if (res < 0) {
     GM_ERR("UvcTexture",
            "Could not find format for still image size "
-               << size[0] << "x" << size[1] << "): " << uvc_strerror(res));
+               << size[0] << "x" << size[1] << "): " //
+               << uvc_strerror(res) << " (" << res << ")");
     return false;
   }
 
@@ -454,13 +471,13 @@ bool UvcTexture::Impl::triggerStill(gmCore::size2 size) {
 
   if (res < 0) {
     GM_ERR("UvcTexture",
-           "Could not trigger still image capture: " << uvc_strerror(res));
+           "Could not trigger still image capture: " << uvc_strerror(res) //
+                                                     << " (" << res << ")");
     return false;
   }
 
-  GM_DBG2("UvcTexture",
-          "Triggered still image capture (" << size[0] << "x" << size[1]
-                                            << ")");
+  GM_DBG2("UvcTexture", "Triggered still image capture (" << size[0] << "x"
+                                                          << size[1] << ")");
   return true;
 #endif
 }
