@@ -335,9 +335,13 @@ bool UvcTexture::Impl::negotiate_format() {
   GM_DBG2("UvcTexture", "Device formats:");
   GM_DBG2("UvcTexture", string_file.finalize());
 
-  uvc_error_t res = uvc_get_stream_ctrl_format_size
-    (device_handle, &stream_control,
-     format, resolution[0], resolution[1], framerate);
+  uvc_error_t res =
+      uvc_get_stream_ctrl_format_size(device_handle, &stream_control, format,
+                                      resolution[0], resolution[1], framerate);
+  if (res < 0) // Retrying seems to work sometimes
+    res = uvc_get_stream_ctrl_format_size(device_handle, &stream_control,
+                                          format, resolution[0], resolution[1],
+                                          framerate);
 
   /* Print out the result */
   uvc_print_stream_ctrl(&stream_control, string_file.getFilePtr());
