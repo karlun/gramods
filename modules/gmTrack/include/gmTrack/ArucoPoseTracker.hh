@@ -16,7 +16,7 @@
 BEGIN_NAMESPACE_GMTRACK;
 
 /**
-   Pose tracker that tracks pose using feducial markers.
+   Pose tracker that tracks pose using fiducial markers.
 
    This class configures as an Updateable with a priority of
    10. Either Updateable::updateAll or update must be called at even
