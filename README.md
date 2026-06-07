@@ -19,6 +19,7 @@
      4. gmGraphics
      5. gmTouch
      6. gmMisc
+5. Common Issues
 
 
 # Introduction
@@ -330,3 +331,23 @@ The miscellaneous module (*misc*) contains functionality that cannot be categori
 Optional dependencies:
 
  - Eigen3 (at least version 3.3), for end-fitting estimators (EFFOAW and EFHOAW)
+
+
+# Common Issues
+
+Even through Gramods can be used to create complex setups, it is designed to be easy to build and execute. Even so there are some pitfalls that can be hard to avoid, so here are some common issues and how to solve them.
+
+
+## Basic functionality missing
+
+Gramods can be built with a varying set of features and functionality. If you are missing functionality, please make sure that you have installed the correct dependencies. The easiest way is to run CMake configuration `cmake build/` and check the feature list at the end of the output.
+
+
+## Does not find dependencies
+
+The easiest way to build Gramods is against `vcpkg` with the required dependencies installed. If your Gramods CMake configuration does not find these dependencies, chech that you have correctly linked the correct `vcpkg` folder and did this when the Gramods CMake configuration _was initialized_. Trying to add `vcpkg` after CMake initialization does not work, so if this happens remove your build folder and re-initialize the Gramods CMake configuration specifying your `vcpkg` folder as "toolchain" (see _Standard Build Procedure_ for instructions).
+
+
+## Link error: `Undefined symbol`
+
+CMake is supposed to solve all dependencies or give error or warning, however sometimes everything seems to be set up correctly up until linking the executable apps, upon which you get some `Undefined symbol` message. This is likely caused by incorrect recursive dependencies, i.e. a library is used that depends on another library that is not correctly linked against. This is common with VRPN since this library does not provide a CMake config file, and can be linked against other third party libraries for additional functionality. Test if VRPN and libusb is your culprit by executing `nm -u path.to.vrpn.lib/libvrpnserver.a | grep libusb`. If your output is non-empty, then either recompile VRPN without libusb support or change the Gramods CMakeLists.txt files to link gmTrack against libusb.

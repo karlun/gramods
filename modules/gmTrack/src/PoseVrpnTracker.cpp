@@ -4,6 +4,8 @@
 #include <gmTrack/PoseVrpnTracker.hh>
 #include <gmTrack/VrpnTracker.impl.hh>
 
+#ifdef gramods_ENABLE_VRPN
+
 BEGIN_NAMESPACE_GMTRACK;
 
 GM_OFI_DEFINE(PoseVrpnTracker);
@@ -33,3 +35,5 @@ void VrpnTracker<gmCore::Pose, vrpn_Tracker_Remote, vrpn_TRACKERCB>::Impl::
 template class VrpnTracker<gmCore::Pose, vrpn_Tracker_Remote, vrpn_TRACKERCB>;
 
 END_NAMESPACE_GMTRACK;
+
+#endif

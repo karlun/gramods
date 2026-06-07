@@ -4,6 +4,8 @@
 #include <gmTrack/BinaryVrpnTracker.hh>
 #include <gmTrack/VrpnTracker.impl.hh>
 
+#ifdef gramods_ENABLE_VRPN
+
 BEGIN_NAMESPACE_GMTRACK;
 
 GM_OFI_DEFINE(BinaryVrpnTracker);
@@ -25,3 +27,5 @@ void VrpnTracker<bool, vrpn_Button_Remote, vrpn_BUTTONCB>::Impl::setState(
 template class VrpnTracker<bool, vrpn_Button_Remote, vrpn_BUTTONCB>;
 
 END_NAMESPACE_GMTRACK;
+
+#endif

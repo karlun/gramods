@@ -1,6 +1,8 @@
 
 #include <gmTrack/VrpnTracker.hh>
 
+#ifdef gramods_ENABLE_VRPN
+
 #include <gmCore/Console.hh>
 #include <gmCore/io_typeid.hh>
 #include <gmCore/PreConditionViolation.hh>
@@ -148,3 +150,5 @@ VrpnTracker<TYPE, vrpn_TRACKER, vrpn_CB>::get() {
 }
 
 END_NAMESPACE_GMTRACK;
+
+#endif

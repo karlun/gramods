@@ -4,6 +4,8 @@
 #include <gmTrack/Float2VrpnTracker.hh>
 #include <gmTrack/VrpnTracker.impl.hh>
 
+#ifdef gramods_ENABLE_VRPN
+
 BEGIN_NAMESPACE_GMTRACK;
 
 GM_OFI_DEFINE(Float2VrpnTracker);
@@ -38,3 +40,5 @@ void VrpnTracker<gmCore::float2, vrpn_Analog_Remote, vrpn_ANALOGCB>::Impl::
 template class VrpnTracker<gmCore::float2, vrpn_Analog_Remote, vrpn_ANALOGCB>;
 
 END_NAMESPACE_GMTRACK;
+
+#endif
