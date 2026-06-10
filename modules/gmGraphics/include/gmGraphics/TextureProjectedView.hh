@@ -56,7 +56,10 @@ public:
   void traverse(Visitor *visitor) override;
 
   /**
-     Sets the Texture to use for warping coordinates.
+     Sets the Texture to use for warping coordinates. This texture
+     should provide raster position X, Y, Z coordinates in its RGB
+     values, typically but not necessarily with floating point
+     precision.
 
      \gmXmlTag{gmGraphics,TextureProjectedView,texture}
   */
