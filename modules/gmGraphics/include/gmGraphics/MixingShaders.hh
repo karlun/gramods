@@ -18,6 +18,10 @@ BEGIN_NAMESPACE_GMGRAPHICS;
 
    - average, showing the per pixel average value of all the sources
 
+   - min, showing the per pixel minimum value of all the sources
+
+   - max, showing the per pixel maximum value of all the sources
+
    - difference, showing the per pixel difference between the first
      and the second added source
 

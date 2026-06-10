@@ -4,7 +4,7 @@
 #include <gmCore/Console.hh>
 #include <gmCore/RunOnce.hh>
 
-#include <unordered_map>
+#include <map>
 #include <string>
 #include <sstream>
 
@@ -15,7 +15,7 @@ struct MixData {
   const std::string fragment_code;
 };
 
-const std::unordered_map<std::string, MixData> mix_type_data = {
+const std::map<std::string, MixData> mix_type_data = {
     {"average",
      MixData {.min_tex_count = 1,
               .max_tex_count = 8,
@@ -49,6 +49,78 @@ void main() {
     rgb += mix * texture(tex[6], position * 0.5 + 0.5).rgb;
   if (tex_count > 7)
     rgb += mix * texture(tex[7], position * 0.5 + 0.5).rgb;
+
+  fragColor = vec4(rgb, 1);
+}
+)lang=glsl"}},
+
+    {"min",
+     MixData {.min_tex_count = 1,
+              .max_tex_count = 8,
+              .fragment_code =
+                  R"lang=glsl(
+#version 330 core
+
+uniform sampler2D tex[];
+uniform int tex_count;
+
+in vec2 position;
+
+out vec4 fragColor;
+
+void main() {
+
+  vec3 rgb = texture(tex[0], position * 0.5 + 0.5).rgb;
+  if (tex_count > 1)
+    rgb = min(rgb, texture(tex[1], position * 0.5 + 0.5).rgb);
+  if (tex_count > 2)
+    rgb = min(rgb, texture(tex[2], position * 0.5 + 0.5).rgb);
+  if (tex_count > 3)
+    rgb = min(rgb, texture(tex[3], position * 0.5 + 0.5).rgb);
+  if (tex_count > 4)
+    rgb = min(rgb, texture(tex[4], position * 0.5 + 0.5).rgb);
+  if (tex_count > 5)
+    rgb = min(rgb, texture(tex[5], position * 0.5 + 0.5).rgb);
+  if (tex_count > 6)
+    rgb = min(rgb, texture(tex[6], position * 0.5 + 0.5).rgb);
+  if (tex_count > 7)
+    rgb = min(rgb, texture(tex[7], position * 0.5 + 0.5).rgb);
+
+  fragColor = vec4(rgb, 1);
+}
+)lang=glsl"}},
+
+    {"max",
+     MixData {.min_tex_count = 1,
+              .max_tex_count = 8,
+              .fragment_code =
+                  R"lang=glsl(
+#version 330 core
+
+uniform sampler2D tex[];
+uniform int tex_count;
+
+in vec2 position;
+
+out vec4 fragColor;
+
+void main() {
+
+  vec3 rgb = texture(tex[0], position * 0.5 + 0.5).rgb;
+  if (tex_count > 1)
+    rgb = max(rgb, texture(tex[1], position * 0.5 + 0.5).rgb);
+  if (tex_count > 2)
+    rgb = max(rgb, texture(tex[2], position * 0.5 + 0.5).rgb);
+  if (tex_count > 3)
+    rgb = max(rgb, texture(tex[3], position * 0.5 + 0.5).rgb);
+  if (tex_count > 4)
+    rgb = max(rgb, texture(tex[4], position * 0.5 + 0.5).rgb);
+  if (tex_count > 5)
+    rgb = max(rgb, texture(tex[5], position * 0.5 + 0.5).rgb);
+  if (tex_count > 6)
+    rgb = max(rgb, texture(tex[6], position * 0.5 + 0.5).rgb);
+  if (tex_count > 7)
+    rgb = max(rgb, texture(tex[7], position * 0.5 + 0.5).rgb);
 
   fragColor = vec4(rgb, 1);
 }
