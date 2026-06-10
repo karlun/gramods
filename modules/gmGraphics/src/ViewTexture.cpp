@@ -164,16 +164,21 @@ void ViewTexture::addView(std::shared_ptr<View> view) {
   _impl->views.push_back(view);
 }
 
-GLuint ViewTexture::updateTexture(size_t frame_number, Eye eye) {
-  if (!_impl->setup()) return 0;
+std::optional<TextureInterface::TextureData>
+ViewTexture::updateTexture(size_t frame_number, Eye eye) {
+  if (!_impl->setup()) return std::nullopt;
   if (_impl->cache_frame == frame_number)
-    return _impl->render_target.getTexId();
+    return TextureData{.id = _impl->render_target.getTexId(),
+                       .color = RGB,
+                       .frame_number = frame_number};
 
   ViewSettings settings(frame_number, viewpoints);
   populateViewSettings(settings);
   _impl->update(settings);
 
-  return _impl->render_target.getTexId();
+  return TextureData{.id = _impl->render_target.getTexId(),
+                     .color = RGB,
+                     .frame_number = frame_number};
 }
 
 void ViewTexture::traverse(Visitor *visitor) {

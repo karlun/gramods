@@ -67,7 +67,8 @@ void MixingView::Impl::renderFullPipeline(ViewSettings settings) {
 
   if (!is_setup) {
     is_setup = true;
-    raster_processor.setFragmentCode(MixingShaders::getFragmentCode(mix_type));
+    raster_processor.setFragmentCode(MixingShaders::getFragmentCode(
+        mix_type, {"rgb", "rgb", "rgb", "rgb", "rgb", "rgb", "rgb", "rgb"}));
     render_target.setPixelFormat(settings.pixel_format);
     if (render_target.init(views.size()) && raster_processor.init())
       is_functional = true;

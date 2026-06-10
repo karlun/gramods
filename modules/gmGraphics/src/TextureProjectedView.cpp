@@ -65,7 +65,7 @@ void main() {
     pos = pos * (1 - pix_w) + 0.5 * pix_w;
   }
 
-  vec3 warp_coord = texture(warp_id, pos).xyz;
+  vec3 warp_coord = texture(warp_id, pos).RGB;
   warp_coord = warp_coord * scale + offset;
 
   // projection point to render raster coordinate
@@ -146,8 +146,14 @@ void TextureProjectedView::Impl::renderFullPipeline(ViewSettings settings,
 
   camera.setEye(eye);
 
+  auto warp_data = texture->updateTexture(settings.frame_number, Eye::MONO);
+  if (!warp_data) return;
+
   if (!is_setup) {
     is_setup = true;
+    std::string frag_code = fragment_code;
+    frag_code.replace(frag_code.find("RGB"), 3,
+                      TextureInterface::getRgbSwizzle(warp_data->color));
     raster_processor.setFragmentCode(fragment_code);
     render_target.setPixelFormat(settings.pixel_format);
     if (render_target.init() && raster_processor.init()) is_functional = true;
@@ -178,12 +184,10 @@ void TextureProjectedView::Impl::renderFullPipeline(ViewSettings settings,
 
   glDisable(GL_DEPTH_TEST);
 
-  GLuint warp_id = texture->updateTexture(settings.frame_number, Eye::MONO);
-
   glActiveTexture(GL_TEXTURE0);
   glBindTexture(GL_TEXTURE_2D, render_target.getTexId());
   glActiveTexture(GL_TEXTURE1);
-  glBindTexture(GL_TEXTURE_2D, warp_id);
+  glBindTexture(GL_TEXTURE_2D, warp_data ? warp_data->id : 0);
 
   GLuint program_id = raster_processor.getProgramId();
   glUseProgram(program_id);

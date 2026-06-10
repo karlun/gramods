@@ -23,8 +23,8 @@ struct SphereRenderer::Impl {
 
   ~Impl();
 
-  void setup();
-  std::string createFragmentCode();
+  void setup(TextureInterface::TextureColor color);
+  std::string createFragmentCode(TextureInterface::TextureColor color);
   void render(const Camera &camera, const Eigen::Affine3f &Mm);
   void getNearFar(const Camera &camera,
                   const Eigen::Affine3f &Mm,
@@ -115,13 +115,13 @@ void main() {
   vec2 v_uv;
   bool good = mapTo2D(tex_pos, v_uv);
   if (good)
-    fragColor = texture(tex, 0.5 + 0.5 * v_uv);
+    fragColor = texture(tex, 0.5 + 0.5 * v_uv).RGBA;
   else
     discard;
 }
 )lang=glsl";
 
-void SphereRenderer::Impl::setup() {
+void SphereRenderer::Impl::setup(TextureInterface::TextureColor color) {
   is_setup = true;
 
   if (!mapper) {
@@ -192,7 +192,7 @@ void SphereRenderer::Impl::setup() {
 
   GM_DBG2("SphereRenderer", "Creating fragment shader");
   fragment_shader_id = glCreateShader(GL_FRAGMENT_SHADER);
-  std::string frag_str = createFragmentCode();
+  std::string frag_str = createFragmentCode(color);
   const char *frag_strs[] = { frag_str.c_str() };
   glShaderSource(fragment_shader_id, 1, frag_strs, nullptr);
   glCompileShader(fragment_shader_id);
@@ -234,7 +234,8 @@ void SphereRenderer::Impl::setup() {
   is_functional = true;
 }
 
-std::string SphereRenderer::Impl::createFragmentCode() {
+std::string
+SphereRenderer::Impl::createFragmentCode(TextureInterface::TextureColor color) {
   assert(mapper);
   assert(fragment_template_code.find(mapper_pattern) != std::string::npos);
 
@@ -245,6 +246,8 @@ std::string SphereRenderer::Impl::createFragmentCode() {
   fragment_code.replace(fragment_code.find(mapper_pattern),
                         mapper_pattern.length(),
                         mapper_code);
+  fragment_code.replace(fragment_code.find("RGBA"), 4,
+                        TextureInterface::getRgbaSwizzle(color));
 
   return fragment_code;
 }
@@ -252,18 +255,16 @@ std::string SphereRenderer::Impl::createFragmentCode() {
 void SphereRenderer::Impl::render(const Camera &camera,
                                   const Eigen::Affine3f &Mm) {
 
-  if (!texture)
-    GM_RUNONCE(GM_WRN("SphereRenderer", "No texture to render"));
-
-  if (!is_setup)
-    setup();
-  if (!is_functional)
+  if (!texture) {
+    GM_RUNONCE(GM_ERR("SphereRenderer", "No texture to render"));
     return;
-
-  GLuint tex_id = 0;
-  if (texture) {
-    tex_id = texture->updateTexture(camera.frame_number, camera.getEye());
   }
+
+  auto tex_data = texture->updateTexture(camera.frame_number, camera.getEye());
+  if (!tex_data) return;
+
+  if (!is_setup) setup(tex_data->color);
+  if (!is_functional) return;
 
   GM_DBG2("SphereRenderer", "rendering");
 
@@ -271,7 +272,7 @@ void SphereRenderer::Impl::render(const Camera &camera,
   Eigen::Matrix4f Mp = camera.getProjectionMatrix();
 
   glActiveTexture(GL_TEXTURE0);
-  glBindTexture(GL_TEXTURE_2D, tex_id);
+  glBindTexture(GL_TEXTURE_2D, tex_data->id);
 
   glUseProgram(program_id);
   glUniformMatrix4fv(glGetUniformLocation(program_id, "Mp"),  1, false, Mp.data());

@@ -11,7 +11,8 @@ GM_OFI_POINTER2(MultiscopicTextureMultiplexer, texture, TextureInterface, addTex
 
 struct MultiscopicTextureMultiplexer::Impl {
 
-  GLuint updateTexture(size_t frame_number, Eye eye);
+  std::optional<TextureInterface::TextureData>
+  updateTexture(size_t frame_number, Eye eye);
   std::vector<std::shared_ptr<TextureInterface>> textures;
 
 };
@@ -19,12 +20,14 @@ struct MultiscopicTextureMultiplexer::Impl {
 MultiscopicTextureMultiplexer::MultiscopicTextureMultiplexer()
   : _impl(std::make_unique<Impl>()) {}
 
-
-GLuint MultiscopicTextureMultiplexer::updateTexture(size_t frame_number, Eye eye) {
+std::optional<TextureInterface::TextureData>
+MultiscopicTextureMultiplexer::updateTexture(size_t frame_number, Eye eye) {
   return _impl->updateTexture(frame_number, eye);
 }
 
-GLuint MultiscopicTextureMultiplexer::Impl::updateTexture(size_t frame_number, Eye eye) {
+std::optional<TextureInterface::TextureData>
+MultiscopicTextureMultiplexer::Impl::updateTexture(size_t frame_number,
+                                                   Eye eye) {
   if (eye.count != textures.size()) {
     GM_RUNONCE(GM_ERR("MultiscopicTextureMultiplexer",
                       "Number of multiscopic views ("
@@ -36,7 +39,7 @@ GLuint MultiscopicTextureMultiplexer::Impl::updateTexture(size_t frame_number, E
                       "No texture available for multiscopic view "
                           << eye.idx << " (" << textures.size()
                           << " available)"));
-    return 0;
+    return std::nullopt;
   }
 
   return textures[eye.idx]->updateTexture(frame_number, eye);

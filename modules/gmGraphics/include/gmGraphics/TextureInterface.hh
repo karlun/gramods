@@ -9,6 +9,8 @@
 #include <GL/glew.h>
 #include <GL/gl.h>
 
+#include <optional>
+
 BEGIN_NAMESPACE_GMGRAPHICS;
 
 /**
@@ -17,6 +19,42 @@ BEGIN_NAMESPACE_GMGRAPHICS;
 class TextureInterface {
 
 public:
+  /**
+     Type of color in the texture.
+  */
+  enum TextureColor { GRAY, RGB, BGR };
+
+  /**
+     Returns the GLSL swizzling required to get RGB from the specified
+     color type.
+   */
+  static std::string getRgbSwizzle(TextureColor c);
+
+  /**
+     Returns the GLSL swizzling required to get RGBA from the
+     specified color type.
+   */
+  static std::string getRgbaSwizzle(TextureColor c);
+
+  /**
+     Information associated with the produced texture.
+  */
+  struct TextureData {
+    /**
+       OpenGL texture ID.
+    */
+    GLuint id;
+
+    /**
+       Color data in the texture.
+    */
+    TextureColor color;
+
+    /**
+       The frame number when the texture was last updated.
+    */
+    size_t frame_number;
+  };
 
   /**
      Updates the texture and returns the ID of the associated GL
@@ -31,10 +69,11 @@ public:
      implementation may use different textures for different eyes or
      may reuse the same texture for all eyes.
 
-     @returns OpenGL texture ID of the updated texture
+     @returns Data about the texture or nullopt if the texture was
+     invalid.
   */
-  virtual GLuint updateTexture(size_t frame_number, Eye eye) = 0;
-
+  virtual std::optional<TextureData> updateTexture(size_t frame_number,
+                                                   Eye eye) = 0;
 };
 
 END_NAMESPACE_GMGRAPHICS;

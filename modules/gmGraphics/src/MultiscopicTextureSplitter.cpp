@@ -16,8 +16,8 @@ GM_OFI_PARAM2(MultiscopicTextureSplitter, splitType, size_t, setSplitType);
 
 struct MultiscopicTextureSplitter::Impl {
 
-  void update(size_t frame_number, Eye eye);
-  GLuint getGLTextureID() { return texture_id; }
+  std::optional<TextureInterface::TextureData>
+  updateTexture(size_t frame_number, Eye eye);
 
   static const std::string fragment_code;
 
@@ -27,6 +27,7 @@ struct MultiscopicTextureSplitter::Impl {
   GLuint texture_id = 0;
   bool is_setup = false;
   bool is_functional = false;
+  size_t last_update_frame = std::numeric_limits<size_t>::max();
 
   std::shared_ptr<TextureInterface> texture;
 
@@ -58,16 +59,17 @@ void main() {
 MultiscopicTextureSplitter::MultiscopicTextureSplitter()
   : _impl(std::make_unique<Impl>()) {}
 
-void MultiscopicTextureSplitter::Impl::update(size_t frame_number, Eye eye) {
+std::optional<TextureInterface::TextureData>
+MultiscopicTextureSplitter::Impl::updateTexture(size_t frame_number, Eye eye) {
 
   if (!texture) {
     GM_RUNONCE(GM_ERR("MultiscopicTextureSplitter", "No texture to process."));
-    return;
+    return std::nullopt;
   }
 
   if (split_type > 1) {
     GM_RUNONCE(GM_ERR("MultiscopicTextureSplitter", "Unknown split type " << split_type));
-    return;
+    return std::nullopt;
   }
 
   if (!is_setup) {
@@ -83,18 +85,26 @@ void MultiscopicTextureSplitter::Impl::update(size_t frame_number, Eye eye) {
 
   if (!is_functional) {
     GM_RUNONCE(GM_ERR("MultiscopicTextureSplitter", "Dysfunctional internal GL workings."));
-    return;
+    return std::nullopt;
   }
+  
+  const auto t_data = texture->updateTexture(frame_number, eye);
+  if (!t_data) return std::nullopt;
 
-  GLuint tex_id = texture->updateTexture(frame_number, eye);
+  if (t_data->frame_number == last_update_frame)
+    return TextureData{.id = texture_id, //
+                        .color = RGB,
+                        .frame_number = last_update_frame};
+  last_update_frame = frame_number;
 
   GLint width, height;
-  glGetTextureLevelParameteriv(tex_id, 0, GL_TEXTURE_WIDTH, &width);
-  glGetTextureLevelParameteriv(tex_id, 0, GL_TEXTURE_HEIGHT, &height);
+  glGetTextureLevelParameteriv(t_data->id, 0, GL_TEXTURE_WIDTH, &width);
+  glGetTextureLevelParameteriv(t_data->id, 0, GL_TEXTURE_HEIGHT, &height);
 
   if (width <= 0 || height <= 0) {
-    GM_RUNONCE(GM_ERR("MultiscopicTextureSplitter", "Invalid texture size " << width << "x" << height));
-    return;
+    GM_RUNONCE(GM_ERR("MultiscopicTextureSplitter",
+                      "Invalid texture size " << width << "x" << height));
+    return std::nullopt;
   }
 
   switch(split_type) {
@@ -112,7 +122,7 @@ void MultiscopicTextureSplitter::Impl::update(size_t frame_number, Eye eye) {
   }
 
   glActiveTexture(GL_TEXTURE0);
-  glBindTexture(GL_TEXTURE_2D, tex_id);
+  glBindTexture(GL_TEXTURE_2D, t_data->id);
 
   eye.validate();
   GLuint program_id = raster_processor.getProgramId();
@@ -141,11 +151,15 @@ void MultiscopicTextureSplitter::Impl::update(size_t frame_number, Eye eye) {
   glBindTexture(GL_TEXTURE_2D, 0);
 
   render_target.pop();
+
+  return TextureData{.id = texture_id, //
+                     .color = RGB,
+                     .frame_number = last_update_frame};
 }
 
-GLuint MultiscopicTextureSplitter::updateTexture(size_t frame_number, Eye eye) {
-  _impl->update(frame_number, eye);
-  return _impl->getGLTextureID();
+std::optional<TextureInterface::TextureData>
+MultiscopicTextureSplitter::updateTexture(size_t frame_number, Eye eye) {
+  return _impl->updateTexture(frame_number, eye);
 }
 
 void MultiscopicTextureSplitter::setTexture(std::shared_ptr<TextureInterface> texture) {

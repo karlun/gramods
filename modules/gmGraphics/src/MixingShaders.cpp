@@ -2,6 +2,7 @@
 #include <gmGraphics/MixingShaders.hh>
 
 #include <gmCore/Console.hh>
+#include <gmCore/InvalidArgument.hh>
 #include <gmCore/RunOnce.hh>
 
 #include <map>
@@ -34,21 +35,21 @@ void main() {
 
   float mix = 1.0 / tex_count;
 
-  vec3 rgb = mix * texture(tex[0], position * 0.5 + 0.5).rgb;
+  vec3 rgb = mix * texture(tex[0], position * 0.5 + 0.5).RGB0;
   if (tex_count > 1)
-    rgb += mix * texture(tex[1], position * 0.5 + 0.5).rgb;
+    rgb += mix * texture(tex[1], position * 0.5 + 0.5).RGB1;
   if (tex_count > 2)
-    rgb += mix * texture(tex[2], position * 0.5 + 0.5).rgb;
+    rgb += mix * texture(tex[2], position * 0.5 + 0.5).RGB2;
   if (tex_count > 3)
-    rgb += mix * texture(tex[3], position * 0.5 + 0.5).rgb;
+    rgb += mix * texture(tex[3], position * 0.5 + 0.5).RGB3;
   if (tex_count > 4)
-    rgb += mix * texture(tex[4], position * 0.5 + 0.5).rgb;
+    rgb += mix * texture(tex[4], position * 0.5 + 0.5).RGB4;
   if (tex_count > 5)
-    rgb += mix * texture(tex[5], position * 0.5 + 0.5).rgb;
+    rgb += mix * texture(tex[5], position * 0.5 + 0.5).RGB5;
   if (tex_count > 6)
-    rgb += mix * texture(tex[6], position * 0.5 + 0.5).rgb;
+    rgb += mix * texture(tex[6], position * 0.5 + 0.5).RGB6;
   if (tex_count > 7)
-    rgb += mix * texture(tex[7], position * 0.5 + 0.5).rgb;
+    rgb += mix * texture(tex[7], position * 0.5 + 0.5).RGB7;
 
   fragColor = vec4(rgb, 1);
 }
@@ -70,21 +71,21 @@ out vec4 fragColor;
 
 void main() {
 
-  vec3 rgb = texture(tex[0], position * 0.5 + 0.5).rgb;
+  vec3 rgb = texture(tex[0], position * 0.5 + 0.5).RGB0;
   if (tex_count > 1)
-    rgb = min(rgb, texture(tex[1], position * 0.5 + 0.5).rgb);
+    rgb = min(rgb, texture(tex[1], position * 0.5 + 0.5).RGB1);
   if (tex_count > 2)
-    rgb = min(rgb, texture(tex[2], position * 0.5 + 0.5).rgb);
+    rgb = min(rgb, texture(tex[2], position * 0.5 + 0.5).RGB2);
   if (tex_count > 3)
-    rgb = min(rgb, texture(tex[3], position * 0.5 + 0.5).rgb);
+    rgb = min(rgb, texture(tex[3], position * 0.5 + 0.5).RGB3);
   if (tex_count > 4)
-    rgb = min(rgb, texture(tex[4], position * 0.5 + 0.5).rgb);
+    rgb = min(rgb, texture(tex[4], position * 0.5 + 0.5).RGB4);
   if (tex_count > 5)
-    rgb = min(rgb, texture(tex[5], position * 0.5 + 0.5).rgb);
+    rgb = min(rgb, texture(tex[5], position * 0.5 + 0.5).RGB5);
   if (tex_count > 6)
-    rgb = min(rgb, texture(tex[6], position * 0.5 + 0.5).rgb);
+    rgb = min(rgb, texture(tex[6], position * 0.5 + 0.5).RGB6);
   if (tex_count > 7)
-    rgb = min(rgb, texture(tex[7], position * 0.5 + 0.5).rgb);
+    rgb = min(rgb, texture(tex[7], position * 0.5 + 0.5).RGB7);
 
   fragColor = vec4(rgb, 1);
 }
@@ -106,21 +107,21 @@ out vec4 fragColor;
 
 void main() {
 
-  vec3 rgb = texture(tex[0], position * 0.5 + 0.5).rgb;
+  vec3 rgb = texture(tex[0], position * 0.5 + 0.5).RGB0;
   if (tex_count > 1)
-    rgb = max(rgb, texture(tex[1], position * 0.5 + 0.5).rgb);
+    rgb = max(rgb, texture(tex[1], position * 0.5 + 0.5).RGB1);
   if (tex_count > 2)
-    rgb = max(rgb, texture(tex[2], position * 0.5 + 0.5).rgb);
+    rgb = max(rgb, texture(tex[2], position * 0.5 + 0.5).RGB2);
   if (tex_count > 3)
-    rgb = max(rgb, texture(tex[3], position * 0.5 + 0.5).rgb);
+    rgb = max(rgb, texture(tex[3], position * 0.5 + 0.5).RGB3);
   if (tex_count > 4)
-    rgb = max(rgb, texture(tex[4], position * 0.5 + 0.5).rgb);
+    rgb = max(rgb, texture(tex[4], position * 0.5 + 0.5).RGB4);
   if (tex_count > 5)
-    rgb = max(rgb, texture(tex[5], position * 0.5 + 0.5).rgb);
+    rgb = max(rgb, texture(tex[5], position * 0.5 + 0.5).RGB5);
   if (tex_count > 6)
-    rgb = max(rgb, texture(tex[6], position * 0.5 + 0.5).rgb);
+    rgb = max(rgb, texture(tex[6], position * 0.5 + 0.5).RGB6);
   if (tex_count > 7)
-    rgb = max(rgb, texture(tex[7], position * 0.5 + 0.5).rgb);
+    rgb = max(rgb, texture(tex[7], position * 0.5 + 0.5).RGB7);
 
   fragColor = vec4(rgb, 1);
 }
@@ -141,7 +142,8 @@ in vec2 position;
 out vec4 fragColor;
 
 void main() {
-  vec3 rgb = texture(tex[0], position * 0.5 + 0.5).rgb - texture(tex[1], position * 0.5 + 0.5).rgb;
+  vec3 rgb = texture(tex[0], position * 0.5 + 0.5).RGB0 -
+             texture(tex[1], position * 0.5 + 0.5).RGB1;
   fragColor = vec4(abs(rgb), 1);
 }
 )lang=glsl"}},
@@ -161,8 +163,8 @@ in vec2 position;
 out vec4 fragColor;
 
 void main() {
-  vec3 rgb0 = texture(tex[0], position * 0.5 + 0.5).rgb;
-  vec3 rgb1 = texture(tex[1], position * 0.5 + 0.5).rgb;
+  vec3 rgb0 = texture(tex[0], position * 0.5 + 0.5).RGB0;
+  vec3 rgb1 = texture(tex[1], position * 0.5 + 0.5).RGB1;
   float dist = length(rgb1 - rgb0);
   fragColor = vec4(dist, dist, dist, 1);
 }
@@ -184,7 +186,7 @@ out vec4 fragColor;
 
 void main() {
   float A0 = texture(tex[0], position * 0.5 + 0.5).a;
-  vec3 rgb1 = texture(tex[1], position * 0.5 + 0.5).rgb;
+  vec3 rgb1 = texture(tex[1], position * 0.5 + 0.5).RGB1;
   fragColor = vec4(rgb1, A0);
 }
 )lang=glsl"}},
@@ -205,7 +207,7 @@ out vec4 fragColor;
 
 void main() {
   float A0 = texture(tex[0], position * 0.5 + 0.5).r;
-  vec3 rgb1 = texture(tex[1], position * 0.5 + 0.5).rgb;
+  vec3 rgb1 = texture(tex[1], position * 0.5 + 0.5).RGB1;
   fragColor = vec4(rgb1, A0);
 }
 )lang=glsl"}},
@@ -227,8 +229,8 @@ out vec4 fragColor;
 void main() {
   float A0 = texture(tex[0], position * 0.5 + 0.5).a;
 
-  vec3 rgb = ( A0 ) * texture(tex[1], position * 0.5 + 0.5).rgb +
-             (1-A0) * texture(tex[2], position * 0.5 + 0.5).rgb;
+  vec3 rgb = ( A0 ) * texture(tex[1], position * 0.5 + 0.5).RGB1 +
+             (1-A0) * texture(tex[2], position * 0.5 + 0.5).RGB2;
   fragColor = vec4(rgb, 1);
 }
 )lang=glsl"}},
@@ -250,8 +252,8 @@ out vec4 fragColor;
 void main() {
   float A0 = texture(tex[0], position * 0.5 + 0.5).r;
 
-  vec3 rgb = ( A0 ) * texture(tex[1], position * 0.5 + 0.5).rgb +
-             (1-A0) * texture(tex[2], position * 0.5 + 0.5).rgb;
+  vec3 rgb = ( A0 ) * texture(tex[1], position * 0.5 + 0.5).RGB1 +
+             (1-A0) * texture(tex[2], position * 0.5 + 0.5).RGB2;
   fragColor = vec4(rgb, 1);
 }
 )lang=glsl"}}};
@@ -301,8 +303,21 @@ bool MixingShaders::checkCount(const std::string &mix_type,
   return true;
 }
 
-std::string MixingShaders::getFragmentCode(const std::string &type) {
-  return mix_type_data.at(type).fragment_code;
+std::string
+MixingShaders::getFragmentCode(const std::string &type,
+                               const std::vector<std::string> &tex_swizz) {
+  if (tex_swizz.size() != 8)
+    throw gmCore::InvalidArgument(GM_STR("tex_swizz.size() != 8"));
+
+  auto code = mix_type_data.at(type).fragment_code;
+  for (size_t idx = 0; idx < tex_swizz.size(); ++idx) {
+    const auto key = GM_STR("RGB" << idx);
+    for (auto pos = code.find(key); pos != std::string::npos;
+         pos = code.find(key))
+      code.replace(pos, key.size(), tex_swizz[idx]);
+  }
+
+  return code;
 }
 
 END_NAMESPACE_GMGRAPHICS;

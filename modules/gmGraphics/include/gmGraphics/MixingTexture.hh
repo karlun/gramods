@@ -22,7 +22,8 @@ public:
   /**
      @see Texture::updateTexture
   */
-  GLuint updateTexture(size_t frame_number, Eye eye) override;
+  std::optional<TextureData> updateTexture(size_t frame_number,
+                                           Eye eye) override;
 
   /**
      Propagates the specified visitor.
