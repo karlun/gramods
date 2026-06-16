@@ -18,6 +18,7 @@ GM_OFI_DEFINE_SUB(PosedSphericalView, View);
 GM_OFI_PARAM2(PosedSphericalView, cubeMapResolution, int, setCubeMapResolution);
 GM_OFI_PARAM2(PosedSphericalView, linearInterpolation, bool, setLinearInterpolation);
 GM_OFI_PARAM2(PosedSphericalView, makeSquare, bool, setMakeSquare);
+GM_OFI_PARAM2(PosedSphericalView, inverseDepth, bool, setInverseDepth);
 GM_OFI_POINTER2(PosedSphericalView, coordinatesMapper, gmGraphics::CoordinatesMapper, setCoordinatesMapper);
 
 struct PosedSphericalView::Impl {
@@ -30,6 +31,7 @@ struct PosedSphericalView::Impl {
   void renderFullPipeline(ViewSettings settings, Viewpoint *vp);
 
   bool make_square = false;
+  bool inverse_depth = false;
 
   std::unique_ptr<CubeMapRasterProcessor> cubemap;
   std::shared_ptr<CoordinatesMapper> mapper;
@@ -132,6 +134,7 @@ void PosedSphericalView::Impl::renderFullPipeline(ViewSettings settings,
   if (!program_id) {
 
     cubemap->setFragmentCode(createFragmentCode());
+    cubemap->setInverseDepth(inverse_depth);
 
     ViewSettings empty_settings(settings.frame_number);
     cubemap->renderFullPipeline(
@@ -191,6 +194,14 @@ void PosedSphericalView::setCubeMapResolution(int res) {
 
 void PosedSphericalView::setLinearInterpolation(bool on) {
   _impl->cubemap->setLinearInterpolation(on);
+}
+
+void PosedSphericalView::setInverseDepth(bool on) {
+  _impl->inverse_depth = on;
+}
+
+bool PosedSphericalView::getInverseDepth() { //
+  return _impl->inverse_depth;
 }
 
 void PosedSphericalView::traverse(Visitor *visitor) {

@@ -67,6 +67,7 @@ struct CubeMapRasterProcessor::Impl {
                   size_t side);
 
   bool spatial_cubemap = false;
+  bool inverse_depth = false;
   Eigen::Vector3f cubemap_position = Eigen::Vector3f::Zero();
   float cubemap_side = 1.0;
 };
@@ -239,6 +240,11 @@ void CubeMapRasterProcessor::Impl::renderFullPipeline(
   if (settings.nodes.empty())
     return;
 
+  if (inverse_depth) {
+    glDepthFunc(GL_GREATER);
+    glClearDepth(0.0);
+  }
+
   glEnable(GL_DEPTH_TEST);
   glEnable(GL_BLEND);
   glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
@@ -297,6 +303,11 @@ void CubeMapRasterProcessor::Impl::renderFullPipeline(
   for (size_t idx = 0; idx < SIDE_COUNT; ++idx) {
     glActiveTexture(GLenum(GL_TEXTURE0 + idx));
     glBindTexture( GL_TEXTURE_2D, 0);
+  }
+
+  if (inverse_depth) {
+    glDepthFunc(GL_LESS);
+    glClearDepth(1.0);
   }
 
   if (make_square)
@@ -385,6 +396,14 @@ void CubeMapRasterProcessor::setPixelFormat(GLenum format) {
 
 GLenum CubeMapRasterProcessor::getPixelFormat() {
   return _impl->pixel_format;
+}
+
+void CubeMapRasterProcessor::setInverseDepth(bool on) {
+  _impl->inverse_depth = on;
+}
+
+bool CubeMapRasterProcessor::getInverseDepth() { //
+  return _impl->inverse_depth;
 }
 
 void CubeMapRasterProcessor::setLinearInterpolation(bool on) {

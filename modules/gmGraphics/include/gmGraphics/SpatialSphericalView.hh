@@ -69,6 +69,17 @@ public:
   void setMakeSquare(bool on);
 
   /**
+     Set to true to inverse the depth test so that behind becomes in
+     front, for omni directional globe projection.
+  */
+  void setInverseDepth(bool on);
+
+  /**
+     @see setInverseDepth
+  */
+  bool getInverseDepth();
+
+  /**
      Sets the location of the center of the spherical projection
      surface, in meters. Default is zero.
 

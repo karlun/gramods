@@ -17,6 +17,7 @@ GM_OFI_DEFINE_SUB(SpatialSphericalView, MultiscopicView);
 GM_OFI_PARAM2(SpatialSphericalView, cubeMapResolution, int, setCubeMapResolution);
 GM_OFI_PARAM2(SpatialSphericalView, linearInterpolation, bool, setLinearInterpolation);
 GM_OFI_PARAM2(SpatialSphericalView, makeSquare, bool, setMakeSquare);
+GM_OFI_PARAM2(SpatialSphericalView, inverseDepth, bool, setInverseDepth);
 GM_OFI_POINTER2(SpatialSphericalView, coordinatesMapper, gmGraphics::CoordinatesMapper, setCoordinatesMapper);
 GM_OFI_PARAM2(SpatialSphericalView, position, Eigen::Vector3f, setPosition);
 GM_OFI_PARAM2(SpatialSphericalView, radius, float, setRadius);
@@ -28,6 +29,7 @@ struct SpatialSphericalView::Impl {
   static const std::string mapper_pattern;
 
   bool make_square = false;
+  bool inverse_depth = false;
   Eigen::Vector3f position = Eigen::Vector3f::Zero();
   float radius = 10;
   Eigen::Quaternionf orientation = Eigen::Quaternionf::Identity();
@@ -164,6 +166,7 @@ void SpatialSphericalView::Impl::renderFullPipeline(ViewSettings settings,
   if (!program_id) {
 
     cubemap->setFragmentCode(createFragmentCode());
+    cubemap->setInverseDepth(inverse_depth);
 
     ViewSettings empty_settings(settings.frame_number);
     cubemap->renderFullPipeline(
@@ -241,6 +244,14 @@ void SpatialSphericalView::setRadius(float r) {
 
 void SpatialSphericalView::setOrientation(Eigen::Quaternionf q) {
   _impl->orientation = q;
+}
+
+void SpatialSphericalView::setInverseDepth(bool on) {
+  _impl->inverse_depth = on;
+}
+
+bool SpatialSphericalView::getInverseDepth() { //
+  return _impl->inverse_depth;
 }
 
 void SpatialSphericalView::traverse(Visitor *visitor) {

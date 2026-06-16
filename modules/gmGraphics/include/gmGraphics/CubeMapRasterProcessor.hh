@@ -69,6 +69,17 @@ public:
   GLenum getPixelFormat();
 
   /**
+     Set to true to inverse the depth test so that behind becomes in
+     front, for omni directional globe projection.
+  */
+  void setInverseDepth(bool on);
+
+  /**
+     @see setInverseDepth
+  */
+  bool getInverseDepth();
+
+  /**
      Sets the position and dimensions of a spatial cube map, for
      example for a spatial dome rendering.
   */

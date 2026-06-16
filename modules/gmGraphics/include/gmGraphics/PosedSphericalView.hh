@@ -65,6 +65,17 @@ public:
   */
   void setMakeSquare(bool on);
 
+  /**
+     Set to true to inverse the depth test so that behind becomes in
+     front, for omni directional globe projection.
+  */
+  void setInverseDepth(bool on);
+
+  /**
+     @see setInverseDepth
+  */
+  bool getInverseDepth();
+
   GM_OFI_DECLARE;
 
 private:
