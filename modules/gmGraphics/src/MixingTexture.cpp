@@ -114,7 +114,7 @@ std::optional<TextureInterface::TextureData> MixingTexture::Impl::updateTexture(
   glGetTextureLevelParameteriv(tex_data.back().id, 0, GL_TEXTURE_HEIGHT, &height);
 
   if (width <= 0 || height <= 0) {
-    GM_RUNONCE(GM_ERR("ChromaKeyTexture",
+    GM_RUNONCE(GM_ERR("MixingTexture",
                       "Invalid texture size " << width << "x" << height));
     return std::nullopt;
   }
