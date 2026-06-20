@@ -35,7 +35,8 @@ struct ImageTexture::Impl {
   Impl();
   ~Impl();
 
-  GLuint update(size_t frame_number, Eye eye);
+  std::optional<TextureInterface::TextureData>
+  updateTexture(size_t frame_number, Eye eye);
   void update();
   void findRange();
   static std::string getFrameFilename(std::string file, long int frame);
@@ -43,6 +44,7 @@ struct ImageTexture::Impl {
   bool setTexture(FIBITMAP *image, std::string filename);
 
   GLuint texture_id = 0;
+  TextureColor texture_color;
   size_t texture_frame = std::numeric_limits<size_t>::max();
   bool fail = false;
 
@@ -150,32 +152,42 @@ ImageTexture::Impl::~Impl() {
   }
 }
 
-GLuint ImageTexture::updateTexture(size_t frame_number, Eye eye) {
-  return _impl->update(frame_number, eye);
+std::optional<TextureInterface::TextureData>
+ImageTexture::updateTexture(size_t frame_number, Eye eye) {
+  return _impl->updateTexture(frame_number, eye);
 }
 
-GLuint ImageTexture::Impl::update(size_t frame_number, Eye eye) {
+std::optional<TextureInterface::TextureData>
+ImageTexture::Impl::updateTexture(size_t frame_number, Eye eye) {
 
-  if (fail) return 0;
+  if (fail) return std::nullopt;
 
   if (!animate) {
-    if (texture_id) return texture_id;
+    if (texture_id)
+      return TextureData{.id = texture_id,
+                         .color = texture_color,
+                         .frame_number = texture_frame};
 
     GM_DBG2("ImageTexture", "Loading image");
     auto filename = file.string();
     FIBITMAP *image = loadImage(filename);
     if (!image) {
       fail = true;
-      return 0;
+      return std::nullopt;
     }
 
     fail = !setTexture(image, filename);
 
-    if (fail) return 0;
-    return texture_id;
+    if (fail) return std::nullopt;
+    return TextureData{.id = texture_id,
+                       .color = texture_color,
+                       .frame_number = texture_frame};
   }
 
-  if (texture_frame == frame_number) return texture_id;
+  if (texture_frame == frame_number)
+    return TextureData{.id = texture_id,
+                       .color = texture_color,
+                       .frame_number = texture_frame};
 
   GM_DBG2("ImageTexture",
           "Loading animation frame " << animation_frame << ".");
@@ -190,7 +202,7 @@ GLuint ImageTexture::Impl::update(size_t frame_number, Eye eye) {
     load_condition.notify_all();
     while (load_image == nullptr) {
       load_condition.wait_for(guard, std::chrono::seconds(1));
-      if (!load_process_alive) return 0;
+      if (!load_process_alive) return std::nullopt;
     }
   }
 
@@ -214,8 +226,10 @@ GLuint ImageTexture::Impl::update(size_t frame_number, Eye eye) {
     load_condition.notify_all();
   }
 
-  if (fail) return 0;
-  return texture_id;
+  if (fail) return std::nullopt;
+  return TextureData{.id = texture_id, //
+                     .color = texture_color,
+                     .frame_number = texture_frame};
 }
 
 void ImageTexture::update(clock::time_point, size_t) {
@@ -402,16 +416,19 @@ bool ImageTexture::Impl::setTexture(FIBITMAP *image, std::string filename) {
     case 8:
       gl_format = GL_RED;
       gl_type = GL_UNSIGNED_BYTE;
+      texture_color = GRAY;
       str_format = "u8 gray";
       break;
     case 24:
-      gl_format = GL_BGR;
+      gl_format = GL_RGB; 
       gl_type = GL_UNSIGNED_BYTE;
+      texture_color = std::endian::native == std::endian::little ? BGR : RGB;
       str_format = "u8 RGB";
       break;
     case 32:
-      gl_format = GL_BGRA;
+      gl_format = GL_RGBA;
       gl_type = GL_UNSIGNED_BYTE;
+      texture_color = std::endian::native == std::endian::little ? BGR : RGB;
       str_format = "u8 RGBA";
       break;
     default:
@@ -428,54 +445,63 @@ bool ImageTexture::Impl::setTexture(FIBITMAP *image, std::string filename) {
     GM_DBG2("ImageTexture", "image_type = FIT_UINT16");
     gl_format = GL_RED;
     gl_type = GL_UNSIGNED_SHORT;
+    texture_color = GRAY;
     str_format = "u16 gray";
     break;
   case FIT_INT16:
     GM_DBG2("ImageTexture", "image_type = FIT_INT16");
     gl_format = GL_RED;
     gl_type = GL_SHORT;
+    texture_color = GRAY;
     str_format = "s16 gray";
     break;
   case FIT_UINT32:
     GM_DBG2("ImageTexture", "image_type = FIT_UINT32");
     gl_format = GL_RED;
     gl_type = GL_UNSIGNED_INT;
+    texture_color = GRAY;
     str_format = "u32 gray";
     break;
   case FIT_INT32:
     GM_DBG2("ImageTexture", "image_type = FIT_INT32");
     gl_format = GL_RED;
     gl_type = GL_INT;
+    texture_color = GRAY;
     str_format = "s32 gray";
     break;
   case FIT_FLOAT:
     GM_DBG2("ImageTexture", "image_type = FIT_FLOAT");
     gl_format = GL_RED;
     gl_type = GL_FLOAT;
+    texture_color = GRAY;
     str_format = "f32 gray";
     break;
   case FIT_RGB16:
     GM_DBG2("ImageTexture", "image_type = FIT_RGB16");
     gl_format = GL_RGB;
     gl_type = GL_UNSIGNED_SHORT;
+    texture_color = std::endian::native == std::endian::little ? BGR : RGB;
     str_format = "s16 RGB";
     break;
   case FIT_RGBA16:
     GM_DBG2("ImageTexture", "image_type = FIT_RGBA16");
     gl_format = GL_RGBA;
     gl_type = GL_UNSIGNED_SHORT;
+    texture_color = std::endian::native == std::endian::little ? BGR : RGB;
     str_format = "s16 RGBA";
     break;
   case FIT_RGBF:
     GM_DBG2("ImageTexture", "image_type = FIT_RGBF");
     gl_format = GL_RGB;
     gl_type = GL_FLOAT;
+    texture_color = std::endian::native == std::endian::little ? BGR : RGB;
     str_format = "f32 RGB";
     break;
   case FIT_RGBAF:
     GM_DBG2("ImageTexture", "image_type = FIT_RGBAF");
     gl_format = GL_RGBA;
     gl_type = GL_FLOAT;
+    texture_color = std::endian::native == std::endian::little ? BGR : RGB;
     str_format = "f32 RGBA";
     break;
   default:

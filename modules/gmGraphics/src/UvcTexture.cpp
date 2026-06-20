@@ -56,8 +56,8 @@ struct UvcTexture::Impl {
 
   bool triggerStill(gmCore::size2 res);
 
-  void update();
-  GLuint getGLTextureID() { return texture_id; }
+  std::optional<TextureInterface::TextureData>
+  updateTexture(size_t frame_number);
 
   uvc_context_t *context = nullptr;
   uvc_device_t *device = nullptr;
@@ -75,6 +75,7 @@ struct UvcTexture::Impl {
   bool texture_up_to_date = false;
 
   GLuint texture_id = 0;
+  size_t texture_frame;
   bool started = false;
 };
 
@@ -92,14 +93,14 @@ UvcTexture::Impl::~Impl() {
   closeAll();
 }
 
-GLuint UvcTexture::updateTexture(size_t frame_number, Eye eye) {
+std::optional<TextureInterface::TextureData>
+UvcTexture::updateTexture(size_t frame_number, Eye eye) {
   if (!_impl->started) {
     _impl->startAll(vendor, product, serial);
     _impl->started = true;
   }
 
-  _impl->update();
-  return _impl->getGLTextureID();
+  return _impl->updateTexture(frame_number);
 }
 
 #ifdef gramods_ENABLE_OpenCV
@@ -137,7 +138,8 @@ void UvcTexture::Impl::startAll(int vendor, int product, std::string serial) {
   if (!start_streaming()) return;
 }
 
-void UvcTexture::Impl::update() {
+std::optional<TextureInterface::TextureData>
+UvcTexture::Impl::updateTexture(size_t frame_number) {
 
   if (!texture_id) {
     std::vector<GLubyte> data;
@@ -160,14 +162,17 @@ void UvcTexture::Impl::update() {
 
   std::lock_guard<std::mutex> guard(data_lock);
 
-  if (texture_up_to_date) return;
+  if (texture_up_to_date)
+    return TextureData{.id = texture_id, //
+                       .color = RGB,
+                       .frame_number = texture_frame};
 
-  if (!frm_cache) return;
+  if (!frm_cache) return std::nullopt;
 
   if (decode_to_rgb) {
 
     GM_DBG2("UvcTexture", "Decoding frame cache to RGB.");
-    if (!update_rgb_cache()) return;
+    if (!update_rgb_cache()) return std::nullopt;
 
     glBindTexture(GL_TEXTURE_2D, texture_id);
     glTexImage2D(GL_TEXTURE_2D,
@@ -175,6 +180,11 @@ void UvcTexture::Impl::update() {
                  0, GL_RGB, GL_UNSIGNED_BYTE, rgb_cache->data);
     glBindTexture(GL_TEXTURE_2D, 0);
     texture_up_to_date = true;
+
+    texture_frame = frame_number;
+    return TextureData{.id = texture_id, //
+                       .color = RGB,
+                       .frame_number = texture_frame};
 
   } else if (frm_cache->frame_format == UVC_FRAME_FORMAT_YUYV ||
              frm_cache->frame_format == UVC_FRAME_FORMAT_UYVY) {
@@ -186,7 +196,7 @@ void UvcTexture::Impl::update() {
 
     if (frm_cache->data_bytes < frm_cache->width * frm_cache->height * 2) {
       GM_ERR("UvcTexture", "Too little data in frame");
-      return;
+      return std::nullopt;
     }
 
     glBindTexture(GL_TEXTURE_2D, texture_id);
@@ -198,11 +208,16 @@ void UvcTexture::Impl::update() {
 
     uvc_free_frame(frm_cache);
     frm_cache = nullptr;
-    
+
+    texture_frame = frame_number;
+    return TextureData{.id = texture_id, //
+                       .color = RGB,
+                       .frame_number = texture_frame};
+
   } else {
     GM_RUNONCE(GM_ERR("UvcTexture", "Unsupported format " << formatToString(frm_cache->frame_format) << " to make texture of unconverted - consider setting ConvertToRgb to true."));
+    return std::nullopt;
   }
-
 }
 
 bool UvcTexture::Impl::update_rgb_cache() {

@@ -17,8 +17,8 @@ GM_OFI_PARAM2(YuvDecodeTexture, uvRange, gmCore::float2, setUvRange);
 
 struct YuvDecodeTexture::Impl {
 
-  void update(size_t frame_number, Eye eye);
-  GLuint getGLTextureID() { return texture_id; }
+  std::optional<TextureInterface::TextureData>
+  updateTexture(size_t frame_number, Eye eye);
 
   static const std::string fragment_code;
 
@@ -26,6 +26,7 @@ struct YuvDecodeTexture::Impl {
   RasterProcessor raster_processor;
 
   GLuint texture_id = 0;
+  size_t texture_frame = std::numeric_limits<size_t>::max();
   bool is_setup = false;
   bool is_functional = false;
 
@@ -71,12 +72,22 @@ void main() {
 YuvDecodeTexture::YuvDecodeTexture()
   : _impl(std::make_unique<Impl>()) {}
 
-void YuvDecodeTexture::Impl::update(size_t frame_number, Eye eye) {
+std::optional<TextureInterface::TextureData>
+YuvDecodeTexture::Impl::updateTexture(size_t frame_number, Eye eye) {
 
   if (!texture) {
     GM_RUNONCE(GM_ERR("YuvDecodeTexture", "No texture to decode."));
-    return;
+    return std::nullopt;
   }
+
+  auto tex_data = texture->updateTexture(frame_number, eye);
+  if (!tex_data) return std::nullopt;
+
+  if (texture_frame == tex_data->frame_number)
+    return TextureData{.id = texture_id, //
+                       .color = RGB,
+                       .frame_number = texture_frame};
+  texture_frame = tex_data->frame_number;
 
   if (!is_setup) {
     is_setup = true;
@@ -91,25 +102,23 @@ void YuvDecodeTexture::Impl::update(size_t frame_number, Eye eye) {
 
   if (!is_functional) {
     GM_RUNONCE(GM_ERR("YuvDecodeTexture", "Dysfunctional internal GL workings."));
-    return;
+    return std::nullopt;
   }
 
-  GLuint tex_id = texture->updateTexture(frame_number, eye);
-
   GLint width, height;
-  glGetTextureLevelParameteriv(tex_id, 0, GL_TEXTURE_WIDTH, &width);
-  glGetTextureLevelParameteriv(tex_id, 0, GL_TEXTURE_HEIGHT, &height);
+  glGetTextureLevelParameteriv(tex_data->id, 0, GL_TEXTURE_WIDTH, &width);
+  glGetTextureLevelParameteriv(tex_data->id, 0, GL_TEXTURE_HEIGHT, &height);
 
   if (width <= 0 || height <= 0) {
     GM_RUNONCE(GM_ERR("YuvDecodeTexture", "Invalid texture size " << width << "x" << height));
-    return;
+    return std::nullopt;
   }
 
   render_target.push();
   render_target.bind(2 * width, height);
 
   glActiveTexture(GL_TEXTURE0);
-  glBindTexture(GL_TEXTURE_2D, tex_id);
+  glBindTexture(GL_TEXTURE_2D, tex_data->id);
 
   GLuint program_id = raster_processor.getProgramId();
   glUseProgram(program_id);
@@ -122,11 +131,15 @@ void YuvDecodeTexture::Impl::update(size_t frame_number, Eye eye) {
   glBindTexture(GL_TEXTURE_2D, 0);
 
   render_target.pop();
+
+  return TextureData{.id = texture_id, //
+                     .color = RGB,
+                     .frame_number = texture_frame};
 }
 
-GLuint YuvDecodeTexture::updateTexture(size_t frame_number, Eye eye) {
-  _impl->update(frame_number, eye);
-  return _impl->getGLTextureID();
+std::optional<TextureInterface::TextureData>
+YuvDecodeTexture::updateTexture(size_t frame_number, Eye eye) {
+  return _impl->updateTexture(frame_number, eye);
 }
 
 void YuvDecodeTexture::setTexture(std::shared_ptr<Texture> texture) {

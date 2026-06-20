@@ -18,7 +18,7 @@ GM_OFI_POINTER2(MixingTexture, texture, TextureInterface, addTexture);
 
 struct MixingTexture::Impl {
 
-  void update(size_t frame_number, Eye e);
+  std::optional<TextureInterface::TextureData> updateTexture(size_t frame_number, Eye eye);
 
   std::string mix_type = "average";
 
@@ -26,6 +26,7 @@ struct MixingTexture::Impl {
   RasterProcessor raster_processor;
 
   GLuint texture_id = 0;
+  size_t texture_frame = std::numeric_limits<size_t>::max();
   bool is_setup = false;
   bool is_functional = false;
 
@@ -51,30 +52,45 @@ void MixingTexture::setMixType(std::string str) {
     _impl->mix_type = str;
 }
 
-GLuint MixingTexture::updateTexture(size_t frame_number, Eye eye) {
-  _impl->update(frame_number, eye);
-  return _impl->texture_id;
+std::optional<TextureInterface::TextureData>
+MixingTexture::updateTexture(size_t frame_number, Eye eye) {
+  return _impl->updateTexture(frame_number, eye);
 }
 
-void MixingTexture::Impl::update(size_t frame_number, Eye eye) {
+std::optional<TextureInterface::TextureData> MixingTexture::Impl::updateTexture(size_t frame_number, Eye eye) {
 
   if (textures.empty()) {
     GM_RUNONCE(GM_ERR("MixingTexture", "Missing textures to mix."));
-    return;
+    return std::nullopt;
   }
 
   if (!MixingShaders::checkCount(
           mix_type, textures.size(), "MixingTexture", "textures"))
-    return;
+    return std::nullopt;
+
+  GM_DBG2("MixingTexture", "Render " << textures.size() << " textures.");
+  std::vector<TextureData> tex_data;
+  tex_data.reserve(textures.size());
+  for (auto texture : textures) {
+    auto data = texture->updateTexture(frame_number, eye);
+    if (!data) return std::nullopt;
+    tex_data.push_back(data.value());
+  }
 
   if (!is_setup) {
     is_setup = true;
-    raster_processor.setFragmentCode(MixingShaders::getFragmentCode(mix_type));
+
+    std::vector<std::string> tex_swizz;
+    tex_swizz.reserve(textures.size());
+    for (auto data : tex_data)
+      tex_swizz.push_back(TextureInterface::getRgbaSwizzle(data.color));
+    while (tex_swizz.size() < 8) tex_swizz.push_back("rgba");
+
+    raster_processor.setFragmentCode(
+        MixingShaders::getFragmentCode(mix_type, tex_swizz));
     render_target.setLinearInterpolation(false);
 
-    auto tex_id = textures.back()->updateTexture(frame_number, eye);
-
-    glBindTexture(GL_TEXTURE_2D, tex_id);
+    glBindTexture(GL_TEXTURE_2D, tex_data.back().id);
     GLint format = 0;
     glGetTexLevelParameteriv(
         GL_TEXTURE_2D, 0, GL_TEXTURE_INTERNAL_FORMAT, &format);
@@ -90,24 +106,17 @@ void MixingTexture::Impl::update(size_t frame_number, Eye eye) {
 
   if (!is_functional) {
     GM_RUNONCE(GM_ERR("MixingTexture", "Dysfunctional internal GL workings."));
-    return;
+    return std::nullopt;
   }
 
-  GM_DBG2("MixingTexture", "Render " << textures.size() << " textures.");
-  std::vector<GLuint> tex_id;
-  tex_id.reserve(textures.size());
-
-  for (auto texture : textures)
-    tex_id.push_back(texture->updateTexture(frame_number, eye));
-
   GLint width, height;
-  glGetTextureLevelParameteriv(tex_id.back(), 0, GL_TEXTURE_WIDTH, &width);
-  glGetTextureLevelParameteriv(tex_id.back(), 0, GL_TEXTURE_HEIGHT, &height);
+  glGetTextureLevelParameteriv(tex_data.back().id, 0, GL_TEXTURE_WIDTH, &width);
+  glGetTextureLevelParameteriv(tex_data.back().id, 0, GL_TEXTURE_HEIGHT, &height);
 
   if (width <= 0 || height <= 0) {
     GM_RUNONCE(GM_ERR("ChromaKeyTexture",
                       "Invalid texture size " << width << "x" << height));
-    return;
+    return std::nullopt;
   }
 
   // Render offscreen buffer to active render target
@@ -119,7 +128,7 @@ void MixingTexture::Impl::update(size_t frame_number, Eye eye) {
 
   for (size_t idx = 0; idx < textures.size(); ++idx) {
     glActiveTexture(GL_TEXTURE0 + idx);
-    glBindTexture(GL_TEXTURE_2D, tex_id[idx]);
+    glBindTexture(GL_TEXTURE_2D, tex_data[idx].id);
   }
 
   GLuint program_id = raster_processor.getProgramId();
@@ -136,6 +145,10 @@ void MixingTexture::Impl::update(size_t frame_number, Eye eye) {
   }
 
   render_target.pop();
+
+  return TextureData{.id = texture_id, //
+                     .color = RGB,
+                     .frame_number = texture_frame};
 }
 
 void MixingTexture::traverse(Visitor *visitor) {

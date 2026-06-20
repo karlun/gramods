@@ -22,6 +22,8 @@
 
 BEGIN_NAMESPACE_GMGRAPHICS;
 
+typedef TextureInterface::TextureData TextureData;
+
 GM_OFI_DEFINE_SUB(ObjRenderer, Renderer);
 GM_OFI_PARAM2(ObjRenderer, file, std::filesystem::path, setFile);
 GM_OFI_PARAM2(ObjRenderer, recenter, bool, setRecenter);
@@ -40,7 +42,10 @@ struct ObjRenderer::Impl {
   ~Impl();
 
   void load_data();
-  void setup();
+  void setup(const std::optional<TextureData> &tex_data_ambient,
+             const std::optional<TextureData> &tex_data_diffuse,
+             const std::optional<TextureData> &tex_data_specular,
+             const std::optional<TextureData> &tex_data_emissive);
   bool read_obj(std::vector<GLfloat> &vertices,
                 std::vector<GLfloat> &normals,
                 std::vector<GLfloat> &tcoords,
@@ -260,7 +265,7 @@ vec3 ambient() {
 
   vec3 rgb = color_ambient;
   if (!isnan(frag_tcoord.s) && (0 != (texture_active & 0x01)))
-    rgb *= texture(texture_ambient, frag_tcoord).rgb;
+    rgb *= texture(texture_ambient, frag_tcoord).RGB_ambient;
 
   return 0.3 * rgb;
 }
@@ -269,7 +274,7 @@ vec3 diffuse() {
 
   vec3 rgb = color_diffuse;
   if (!isnan(frag_tcoord.s) && (0 != (texture_active & 0x02)))
-    rgb *= texture(texture_diffuse, frag_tcoord).rgb;
+    rgb *= texture(texture_diffuse, frag_tcoord).RGB_diffuse;
 
   if (!isnan(frag_normal.x))
     rgb *= 0.3 +
@@ -286,7 +291,7 @@ vec3 specular() {
 
   vec3 rgb = color_specular;
   if (!isnan(frag_tcoord.s) && (0 != (texture_active & 0x04)))
-    rgb *= texture(texture_diffuse, frag_tcoord).rgb;
+    rgb *= texture(texture_diffuse, frag_tcoord).RGB_specular;
 
   vec3 light1_refl = reflect(-local_light1, frag_normal);
   vec3 light2_refl = reflect(-local_light2, frag_normal);
@@ -302,7 +307,7 @@ vec3 emission() {
 
   vec3 rgb = color_emissive;
   if (!isnan(frag_tcoord.s) && (0 != (texture_active & 0x08)))
-    rgb *= texture(texture_emissive, frag_tcoord).rgb;
+    rgb *= texture(texture_emissive, frag_tcoord).RGB_emission;
 
   return rgb;
 }
@@ -324,7 +329,20 @@ void main() {
 }
 )lang=glsl";
 
-void ObjRenderer::Impl::setup() {
+namespace {
+void replace(std::string &code,      //
+             const std::string &key, //
+             std::optional<TextureData> data) {
+  std::string swl = data ? TextureInterface::getRgbSwizzle(data->color) : "rgb";
+  code.replace(code.find(key), key.size(), swl);
+}
+}
+
+void ObjRenderer::Impl::setup(
+    const std::optional<TextureData> &tex_data_ambient,
+    const std::optional<TextureData> &tex_data_diffuse,
+    const std::optional<TextureData> &tex_data_specular,
+    const std::optional<TextureData> &tex_data_emissive) {
   is_setup = true;
 
   GM_DBG2("ObjRenderer", "Creating vertex shader");
@@ -333,9 +351,16 @@ void ObjRenderer::Impl::setup() {
   glShaderSource(vertex_shader_id, 1, vert_strs, nullptr);
   glCompileShader(vertex_shader_id);
 
+  GM_DBG2("ObjRenderer", "Creating fragment code");
+  auto frag_code = fragment_shader_code;
+  replace(frag_code, "RGB_ambient", tex_data_ambient);
+  replace(frag_code, "RGB_diffuse", tex_data_diffuse);
+  replace(frag_code, "RGB_specular", tex_data_specular);
+  replace(frag_code, "RGB_emission", tex_data_emissive);
+
   GM_DBG2("ObjRenderer", "Creating fragment shader");
   fragment_shader_id = glCreateShader(GL_FRAGMENT_SHADER);
-  const char *frag_strs[] = { fragment_shader_code.c_str() };
+  const char *frag_strs[] = { frag_code.c_str() };
   glShaderSource(fragment_shader_id, 1, frag_strs, nullptr);
   glCompileShader(fragment_shader_id);
 
@@ -640,10 +665,25 @@ ObjRenderer::Impl::makeMaterial(const tinyobj::material_t &mat) {
 
 void ObjRenderer::Impl::render(const Camera &camera, const Eigen::Affine3f &Mm) {
 
+#define GET_TEXTURE(XXX)                                                       \
+  auto tex_data_##XXX = !materials.empty() && materials.front().texture_##XXX  \
+                            ? materials.front().texture_##XXX->updateTexture(  \
+                                  camera.frame_number, camera.getEye())        \
+                            : std::nullopt;                                    \
+  if (!materials.empty() && materials.front().texture_##XXX &&                 \
+      !tex_data_##XXX)                                                         \
+    return; // Wait until we have data from all required textures
+
+  GET_TEXTURE(ambient);
+  GET_TEXTURE(diffuse);
+  GET_TEXTURE(specular);
+  GET_TEXTURE(emissive);
+  GET_TEXTURE(alpha);
+
   if (!is_setup)
-    setup();
-  if (!is_functional)
-    return;
+    setup(tex_data_ambient, tex_data_diffuse, //
+          tex_data_specular, tex_data_emissive);
+  if (!is_functional) return;
 
   GM_DBG2("ObjRenderer", "rendering");
 
@@ -681,37 +721,27 @@ void ObjRenderer::Impl::render(const Camera &camera, const Eigen::Affine3f &Mm) 
     if (mat.texture_ambient) {
       texture_active |= 0x1;
       glActiveTexture(GL_TEXTURE0);
-      glBindTexture(GL_TEXTURE_2D,
-                    mat.texture_ambient->updateTexture(camera.frame_number,
-                                                       camera.getEye()));
+      glBindTexture(GL_TEXTURE_2D, tex_data_ambient->id);
     }
     if (mat.texture_diffuse) {
       texture_active |= 0x1 << 1;
       glActiveTexture(GL_TEXTURE1);
-      glBindTexture(GL_TEXTURE_2D,
-                    mat.texture_diffuse->updateTexture(camera.frame_number,
-                                                       camera.getEye()));
+      glBindTexture(GL_TEXTURE_2D, tex_data_diffuse->id);
     }
     if (mat.texture_specular) {
       texture_active |= 0x1 << 2;
       glActiveTexture(GL_TEXTURE2);
-      glBindTexture(GL_TEXTURE_2D,
-                    mat.texture_specular->updateTexture(camera.frame_number,
-                                                        camera.getEye()));
+      glBindTexture(GL_TEXTURE_2D, tex_data_specular->id);
     }
     if (mat.texture_emissive) {
       texture_active |= 0x1 << 3;
       glActiveTexture(GL_TEXTURE3);
-      glBindTexture(GL_TEXTURE_2D,
-                    mat.texture_emissive->updateTexture(camera.frame_number,
-                                                        camera.getEye()));
+      glBindTexture(GL_TEXTURE_2D, tex_data_emissive->id);
     }
     if (mat.texture_alpha) {
       texture_active |= 0x1 << 4;
       glActiveTexture(GL_TEXTURE4);
-      glBindTexture(GL_TEXTURE_2D,
-                    mat.texture_alpha->updateTexture(camera.frame_number,
-                                                     camera.getEye()));
+      glBindTexture(GL_TEXTURE_2D, tex_data_alpha->id);
     }
   } else {
     static Eigen::Vector3f black = Eigen::Vector3f::Zero();

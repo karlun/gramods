@@ -26,21 +26,10 @@ public:
   MultiscopicTextureSplitter();
 
   /**
-     Updates the texture and returns the ID of the associated GL
-     texture object. Must be called with GL context. This method will
-     perform off-screen rendering.
-
-     @param frame_number The current frame being rendered. This number
-     should increment by one for each frame, however it may wrap
-     around and start over at zero.
-
-     @param eye Eye for which the texture is requested. An
-     implementation may use different textures for different eyes or
-     may reuse the same texture for all eyes.
-
-     @returns OpenGL texture ID of the updated texture
+     @see TextureInterface::updateTexture
   */
-  GLuint updateTexture(size_t frame_number, Eye eye) override;
+  std::optional<TextureData> updateTexture(size_t frame_number,
+                                           Eye eye) override;
 
   /**
      Set the texture to split.

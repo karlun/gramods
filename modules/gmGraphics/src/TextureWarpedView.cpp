@@ -133,12 +133,13 @@ void TextureWarpedView::Impl::renderFullPipeline(ViewSettings settings) {
 
   glDisable(GL_DEPTH_TEST);
 
-  GLuint warp_id = texture->updateTexture(settings.frame_number, Eye::MONO);
+  auto tex_data = texture->updateTexture(settings.frame_number, Eye::MONO);
+  if (!tex_data) return;
 
   glActiveTexture(GL_TEXTURE0);
   glBindTexture(GL_TEXTURE_2D, render_target.getTexId());
   glActiveTexture(GL_TEXTURE1);
-  glBindTexture(GL_TEXTURE_2D, warp_id);
+  glBindTexture(GL_TEXTURE_2D, tex_data->id);
 
   GLuint program_id = raster_processor.getProgramId();
   glUseProgram(program_id);

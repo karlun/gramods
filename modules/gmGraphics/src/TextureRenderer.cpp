@@ -34,17 +34,12 @@ void main() {
 #version 330 core
 
 uniform sampler2D tex;
-uniform bool gray;
 
 in vec2 v_uv;
 out vec4 fragColor;
 
 void main() {
-  if (gray) {
-    fragColor = vec4(texture(tex, v_uv).rrr, 1);
-  } else {
-    fragColor = texture(tex, v_uv);
-  }
+  fragColor = vec4(texture(tex, v_uv).RGB, 1);
 }
 )lang=glsl";
 }
@@ -54,18 +49,21 @@ struct TextureRenderer::Impl {
   ~Impl();
 
   void render(const Camera &cam, TextureInterface *tex);
-  void setup();
+  void setup(TextureInterface::TextureColor color);
 
   GLuint vertex_shader_id = 0;
   GLuint fragment_shader_id = 0;
+
   GLuint program_id = 0;
   GLuint vao_id = 0;
   GLuint vbo_id = 0;
 
+  GLuint uloc_flip = 0;
+  GLuint uloc_tex = 0;
+
   bool has_been_setup = false;
 
   bool flip = false;
-  std::optional<bool> gray;
 };
 
 TextureRenderer::TextureRenderer()
@@ -92,29 +90,20 @@ void TextureRenderer::Impl::render(const Camera &cam,
     return;
   }
 
-  if (!has_been_setup) setup();
-  GM_DBG2("TextureRenderer", "rendering");
+  auto tex_data = texture->updateTexture(cam.frame_number, cam.getEye());
+  if (!tex_data) return;
 
-  GLuint tex_id = texture->updateTexture(cam.frame_number, cam.getEye());
-  if (!tex_id) return;
+  if (!has_been_setup) setup(tex_data->color);
+  GM_DBG2("TextureRenderer", "rendering");
 
   glDisable(GL_DEPTH_TEST);
 
   glActiveTexture(GL_TEXTURE0 + TEXTURE_IDX);
-  glBindTexture(GL_TEXTURE_2D, tex_id);
-
-  if (!gray) {
-    GLint format = 0;
-    glGetTexLevelParameteriv(
-        GL_TEXTURE_2D, 0, GL_TEXTURE_INTERNAL_FORMAT, &format);
-    gray = format == GL_RED;
-  }
+  glBindTexture(GL_TEXTURE_2D, tex_data->id);
 
   glUseProgram(program_id);
-  glUniform1i(glGetUniformLocation(program_id, "flip"), flip ? 1 : 0);
-  glUniform1i(glGetUniformLocation(program_id, "gray"),
-              gray.value_or(false) ? 1 : 0);
-  glUniform1i(glGetUniformLocation(program_id, "tex"), TEXTURE_IDX);
+  glUniform1i(uloc_flip, flip ? 1 : 0);
+  glUniform1i(uloc_tex, TEXTURE_IDX);
 
   glBindVertexArray(vao_id);
   glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
@@ -128,7 +117,7 @@ void TextureRenderer::Impl::render(const Camera &cam,
   glEnable(GL_DEPTH_TEST);
 }
 
-void TextureRenderer::Impl::setup() {
+void TextureRenderer::Impl::setup(TextureInterface::TextureColor color) {
 
   GM_DBG2("TextureRenderer", "Creating vertex shader");
   vertex_shader_id = glCreateShader(GL_VERTEX_SHADER);
@@ -136,8 +125,12 @@ void TextureRenderer::Impl::setup() {
   glCompileShader(vertex_shader_id);
 
   GM_DBG2("TextureRenderer", "Creating fragment shader");
+  std::string frag_code = fragment_shader_code;
+  frag_code.replace(frag_code.find("RGB"), 3,
+                    TextureInterface::getRgbSwizzle(color));
   fragment_shader_id = glCreateShader(GL_FRAGMENT_SHADER);
-  glShaderSource(fragment_shader_id, 1, &fragment_shader_code, nullptr);
+  const char *frag_code_c_str = frag_code.c_str();
+  glShaderSource(fragment_shader_id, 1, &frag_code_c_str, nullptr);
   glCompileShader(fragment_shader_id);
 
   GM_DBG2("TextureRenderer", "Creating and linking program");
@@ -146,7 +139,10 @@ void TextureRenderer::Impl::setup() {
   glAttachShader(program_id, fragment_shader_id);
   glLinkProgram(program_id);
   glBindAttribLocation(program_id, 0, "in_Position");
-    
+
+  uloc_flip = glGetUniformLocation(program_id, "flip");
+  uloc_tex = glGetUniformLocation(program_id, "tex");
+
   GM_DBG2("TextureRenderer", "Creating vertex array");
   glGenVertexArrays(1, &vao_id);
   glBindVertexArray(vao_id);
@@ -185,10 +181,6 @@ TextureRenderer::Impl::~Impl() {
 
 void TextureRenderer::setFlip(bool flip) {
   _impl->flip = flip;
-}
-
-void TextureRenderer::setGray(bool gray) {
-  _impl->gray = gray;
 }
 
 void TextureRenderer::traverse(Visitor *visitor) {
