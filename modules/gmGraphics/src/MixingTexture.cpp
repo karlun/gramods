@@ -83,8 +83,8 @@ std::optional<TextureInterface::TextureData> MixingTexture::Impl::updateTexture(
     std::vector<std::string> tex_swizz;
     tex_swizz.reserve(textures.size());
     for (auto data : tex_data)
-      tex_swizz.push_back(TextureInterface::getRgbaSwizzle(data.color));
-    while (tex_swizz.size() < 8) tex_swizz.push_back("rgba");
+      tex_swizz.push_back(TextureInterface::getRgbSwizzle(data.color));
+    while (tex_swizz.size() < 8) tex_swizz.push_back("rgb");
 
     raster_processor.setFragmentCode(
         MixingShaders::getFragmentCode(mix_type, tex_swizz));
