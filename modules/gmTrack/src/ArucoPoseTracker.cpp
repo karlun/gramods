@@ -10,6 +10,7 @@
 #include <gmCore/Updateable.hh>
 
 #include <opencv2/objdetect.hpp>
+#include <opencv2/geometry/3d.hpp>
 
 BEGIN_NAMESPACE_GMTRACK;
 
