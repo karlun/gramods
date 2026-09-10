@@ -8,7 +8,7 @@ BEGIN_NAMESPACE_GMTRACK;
 
 GM_OFI_DEFINE(FloatKeyChangeTracker);
 GM_OFI_PARAM2(FloatKeyChangeTracker, mapping, gmCore::string2, addMapping);
-GM_OFI_POINTER2(FloatKeyChangeTracker, FloatTracker, gmTrack::FloatTracker, addTracker);
+GM_OFI_POINTER2(FloatKeyChangeTracker, floatTracker, gmTrack::FloatTracker, addTracker);
 
 template class KeyChangeTracker<float>;
 
