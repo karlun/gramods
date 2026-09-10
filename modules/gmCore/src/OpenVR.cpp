@@ -275,7 +275,7 @@ void OpenVR::Impl::update(clock::time_point time, size_t frame) {
       consumed |= s_ptr->processEvent(&event, consumed);
     }
 
-    GM_DBG1("OpenVR",
+    GM_DBG3("OpenVR", //
             "Event " << event.eventType << " ("
                      << vr->GetEventTypeNameFromEnum(
                             vr::EVREventType(event.eventType))
