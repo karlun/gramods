@@ -78,16 +78,38 @@ void PoseSampleCollector::Impl::update(clock::time_point now) {
   auto buttons = tracker_set->getBinary();
   auto poses = tracker_set->getPose();
 
-  if (!buttons || !poses) {
-    GM_RUNONCE(GM_ERR("PoseSampleCollector", "Cannot read tracker data"));
-    return;
+  bool have_required_tracker = true;
+  if (!buttons) {
+    GM_RUNONCE(
+        GM_ERR("PoseSampleCollector", "Cannot read button tracker data"));
+    have_required_tracker = false;
   }
+  if (!poses) {
+    GM_RUNONCE(GM_ERR("PoseSampleCollector", "Cannot read pose tracker data"));
+    have_required_tracker = false;
+  }
+  if (!have_required_tracker) return;
 
-  if (!buttons->contains(StdKey::MAIN_BUTTON) ||
-      !poses->contains(StdKey::PRIMARY_WAND)) {
-    GM_RUNONCE(GM_ERR("PoseSampleCollector", "Tracker data incomplete"));
-    return;
+  bool have_required_states = true;
+  if (!buttons->contains(StdKey::MAIN_BUTTON)) {
+    std::stringstream ss;
+    for (auto btn : *buttons) ss << " " << btn.first;
+    GM_RUNONCE(GM_ERR("PoseSampleCollector",
+                      "Tracker data incomplete; requires binary "
+                          << StdKey::MAIN_BUTTON << " (available:" << ss.str()
+                          << ")"));
+    have_required_states = false;
   }
+  if (!poses->contains(StdKey::PRIMARY_WAND)) {
+    std::stringstream ss;
+    for (auto pose : *poses) ss << " " << pose.first;
+    GM_RUNONCE(GM_ERR("PoseSampleCollector",
+                      "Tracker data incomplete; requires pose "
+                          << StdKey::PRIMARY_WAND << " (available:" << ss.str()
+                          << ")"));
+    have_required_states = false;
+  }
+  if (!have_required_states) return;
 
   if (!collecting) {
     if (buttons.value()[StdKey::MAIN_BUTTON].value) {
