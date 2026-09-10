@@ -76,6 +76,7 @@ void VrpnServer::initialize() {
   if (isInitialized())
     throw std::logic_error("Initialized called more than once");
   _impl->initialize();
+  gmCore::Object::initialize();
 }
 
 void VrpnServer::Impl::initialize() {
