@@ -23,6 +23,27 @@ struct Pose {
   Eigen::Vector3f position = Eigen::Vector3f::Zero();
   Eigen::Quaternionf orientation = Eigen::Quaternionf::Identity();
 
+  Pose operator*(const Pose &other) const {
+    return {.position = position + orientation * other.position,
+            .orientation = orientation * other.orientation};
+  }
+
+  Pose operator*(float scale) const {
+    return {.position = position * scale,
+            .orientation =
+                Eigen::Quaternionf::Identity().slerp(scale, orientation)};
+  }
+
+  Pose conjugate() const {
+    return {.position = orientation.conjugate() * -position,
+            .orientation = orientation.conjugate()};
+  }
+
+  Pose slerp(float r, const Pose &other) const {
+    return {.position = (1.f - r) * position + r * other.position,
+            .orientation = orientation.slerp(r, other.orientation)};
+  }
+
   Eigen::Affine3f asMatrix() const {
     return Eigen::Translation3f(position) * orientation;
   }

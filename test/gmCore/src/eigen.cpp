@@ -3,8 +3,9 @@
 
 #ifdef gramods_ENABLE_Eigen3
 
-#include <gmCore/io_eigen.hh>
 #include <gmCore/io_angle.hh>
+#include <gmCore/io_eigen.hh>
+#include <gmCore/Pose.hh>
 
 #include <sstream>
 
@@ -139,6 +140,29 @@ angleaxis d10 1 2 3
                       Eigen::Vector3f(1, 2, 3).normalized());
   Eigen::Quaternionf Q(A);
   EXPECT_EQ_EIGEN_QUAT(Q, q);
+}
+
+TEST(gmCoreEigen, Pose) {
+  const auto A =
+      gmCore::Pose{.position = {7.5, -1.2, -2.0},
+                   .orientation = Eigen::Quaternionf(
+                       Eigen::AngleAxisf(0.5, Eigen::Vector3f::UnitX()))};
+  const auto B =
+      gmCore::Pose{.position = {-0.5, 0.1, 0.99},
+                   .orientation = Eigen::Quaternionf(
+                       Eigen::AngleAxisf(0.5, Eigen::Vector3f::UnitX()))};
+
+  const Eigen::Matrix4f M_C_P = (A * B).asMatrix().matrix();
+  const Eigen::Matrix4f M_C_M = (A.asMatrix() * B.asMatrix()).matrix();
+  EXPECT_LE(std::abs((M_C_P - M_C_M).sum()), 1e-10);
+
+  const Eigen::Matrix4f M_D_P = A.conjugate().asMatrix().matrix();
+  const Eigen::Matrix4f M_D_M = A.asMatrix().inverse().matrix();
+  EXPECT_LE(std::abs((M_D_P - M_D_M).sum()), 1e-10);
+
+  const Eigen::Matrix4f M_E_P = (A.conjugate() * B).asMatrix().matrix();
+  const Eigen::Matrix4f M_E_M = (A.asMatrix().inverse() * B.asMatrix()).matrix();
+  EXPECT_LE(std::abs((M_E_P - M_E_M).sum()), 1e-10);
 }
 
 #endif
