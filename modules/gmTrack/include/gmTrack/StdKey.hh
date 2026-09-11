@@ -3,6 +3,7 @@
 #define GRAMODS_TRACK_STDKEY
 
 #include <gmTrack/config.hh>
+#include <gmTrack/export.hh>
 
 #include <string>
 
@@ -16,24 +17,24 @@ struct StdKey {
 public:
 
   /// trigger
-  static const std::string TRIGGER;
+  static gmTrack_API const std::string TRIGGER;
 
   /// joy
-  static const std::string JOY;
+  static gmTrack_API const std::string JOY;
 
   /// head_pose
-  static const std::string HEAD_POSE;
+  static gmTrack_API const std::string HEAD_POSE;
   /// primary_wand_pose
-  static const std::string PRIMARY_WAND;
+  static gmTrack_API const std::string PRIMARY_WAND;
   /// secondary_wand_pose
-  static const std::string SECONDARY_WAND;
+  static gmTrack_API const std::string SECONDARY_WAND;
 
   /// main_button
-  static const std::string MAIN_BUTTON;
+  static gmTrack_API const std::string MAIN_BUTTON;
   /// second_button
-  static const std::string SECOND_BUTTON;
+  static gmTrack_API const std::string SECOND_BUTTON;
   /// menu_button
-  static const std::string MENU_BUTTON;
+  static gmTrack_API const std::string MENU_BUTTON;
 };
 
 END_NAMESPACE_GMTRACK;
