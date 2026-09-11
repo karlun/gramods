@@ -310,12 +310,13 @@ vr::IVRSystem *OpenVR::ptr() { return _impl->vr; }
 
 vr::ETrackedDeviceClass OpenVR::getType(size_t idx) {
   if (!_impl->vr) return vr::TrackedDeviceClass_Invalid;
-  return _impl->vr->GetTrackedDeviceClass(idx);
+  return _impl->vr->GetTrackedDeviceClass(vr::TrackedDeviceIndex_t(idx));
 }
 
 vr::ETrackedControllerRole OpenVR::getRole(size_t idx) {
   if (!_impl->vr) return vr::TrackedControllerRole_Invalid;
-  return _impl->vr->GetControllerRoleForTrackedDeviceIndex(idx);
+  return _impl->vr->GetControllerRoleForTrackedDeviceIndex(
+      vr::TrackedDeviceIndex_t(idx));
 }
 
 std::string OpenVR::getSerial(size_t idx) {
@@ -328,7 +329,8 @@ std::string OpenVR::Impl::getSerial(size_t idx) {
   vr::ETrackedPropertyError err;
   std::vector<char> serial_buffer(512);
   uint32_t len = vr::VRSystem()->GetStringTrackedDeviceProperty(
-      idx, vr::Prop_SerialNumber_String, serial_buffer.data(), 512, &err);
+      vr::TrackedDeviceIndex_t(idx), vr::Prop_SerialNumber_String,
+      serial_buffer.data(), 512, &err);
 
   if (err != vr::TrackedProp_Success) {
     GM_ERR(

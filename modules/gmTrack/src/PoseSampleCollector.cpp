@@ -222,14 +222,14 @@ PoseSampleCollector::getAverage(std::vector<Eigen::Vector3f> samples,
   if (inlier_dist <= 0.f || inlier_dist == std::numeric_limits<float>::max()) {
     x = Eigen::Vector3f::Zero();
     for (auto p : samples) x += p;
-    x *= (1.0 / samples.size());
+    x *= (1.f / samples.size());
   } else {
 
     float inl_d2 = inlier_dist * inlier_dist;
     while (true) {
       x = Eigen::Vector3f::Zero();
       for (auto p : samples) x += p;
-      x *= (1.0 / samples.size());
+      x *= (1.f / samples.size());
 
       if (samples.size() == 1) break;
 
