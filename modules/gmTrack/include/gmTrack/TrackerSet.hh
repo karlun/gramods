@@ -46,32 +46,32 @@ public:
   std::optional<Float2Tracker::State> getFloat2();
 
   /**
-     Sets the pose tracker associated with this TrackerSet.
+     Adds a pose tracker associated with this TrackerSet.
 
      \gmXmlTag{gmTrack,TrackerSet,poseTracker}
   */
-  void setPoseTracker(std::shared_ptr<PoseTracker> t);
+  void addPoseTracker(std::shared_ptr<PoseTracker> t);
 
   /**
-     Sets the binary (bool) tracker associated with this TrackerSet.
+     Adds a binary (bool) tracker associated with this TrackerSet.
 
      \gmXmlTag{gmTrack,TrackerSet,binaryTracker}
   */
-  void setBinaryTracker(std::shared_ptr<BinaryTracker> t);
+  void addBinaryTracker(std::shared_ptr<BinaryTracker> t);
 
   /**
-     Sets the float tracker associated with this TrackerSet.
+     Adds a float tracker associated with this TrackerSet.
 
      \gmXmlTag{gmTrack,TrackerSet,floatTracker}
   */
-  void setFloatTracker(std::shared_ptr<FloatTracker> t);
+  void addFloatTracker(std::shared_ptr<FloatTracker> t);
 
   /**
-     Sets the float2 tracker associated with this TrackerSet.
+     Adds a float2 tracker associated with this TrackerSet.
 
      \gmXmlTag{gmTrack,TrackerSet,float2Tracker}
   */
-  void setFloat2Tracker(std::shared_ptr<Float2Tracker> t);
+  void addFloat2Tracker(std::shared_ptr<Float2Tracker> t);
 
   /**
      Returns the default key, in Configuration, for the
@@ -89,11 +89,10 @@ public:
   GM_OFI_DECLARE;
 
 private:
-
-  std::shared_ptr<PoseTracker> pose_tracker;
-  std::shared_ptr<BinaryTracker> binary_tracker;
-  std::shared_ptr<FloatTracker> float_tracker;
-  std::shared_ptr<Float2Tracker> float2_tracker;
+  std::vector<std::shared_ptr<PoseTracker>> pose_tracker;
+  std::vector<std::shared_ptr<BinaryTracker>> binary_tracker;
+  std::vector<std::shared_ptr<FloatTracker>> float_tracker;
+  std::vector<std::shared_ptr<Float2Tracker>> float2_tracker;
 };
 
 END_NAMESPACE_GMTRACK;

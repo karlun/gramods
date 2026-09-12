@@ -68,11 +68,7 @@ KeyChangeTracker<TYPE>::Impl::get() {
       }
     }
 
-    if (!acc) [[unlikely]] {
-      acc = rstate;
-    } else {
-      acc->merge(rstate);
-    }
+    TrackerBase<TYPE>::merge(acc, rstate);
   }
 
   return acc;

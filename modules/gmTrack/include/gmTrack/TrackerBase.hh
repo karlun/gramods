@@ -62,6 +62,23 @@ public:
      @see gmCore::Object::getDefaultKey
   */
   std::string getDefaultKey() override;
+
+  /**
+     Merges the two specified states.
+
+     @param[in,out] A The accumulative tracker state.
+     @param[in] B the state to include into A.
+
+     @see std::unordered_map::merge
+  */
+  static void merge(std::optional<State> &A, std::optional<State> B) {
+    if (!B) return;
+    if (!A) {
+      A = B;
+    } else {
+      A->merge(B.value());
+    }
+  }
 };
 
 typedef TrackerBase<gmCore::Pose> PoseTracker;
