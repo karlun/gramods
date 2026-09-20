@@ -97,6 +97,11 @@ int main(int argc, char *argv[]) {
       "t", "show-time",
       "Log timing information every second second.",
       cmd, false);
+  TCLAP::ValueArg<float> frame_time(
+      "f", "frame-time",
+      "Least allowed time for each frame, in seconds. Default is 10 ms, i.e. 0.01.",
+      false, 0.01f, "seconds");
+  cmd.add(frame_time);
 
   TCLAP::SwitchArg sync_start("","sync-start","Wait for the other nodes specified in the configuration, to start at the same time.", cmd, false);
   TCLAP::SwitchArg sync_swap("","sync-swap","Synchronize swap buffers with the other nodes specified in the configuration.", cmd, false);
@@ -151,6 +156,9 @@ int main(int argc, char *argv[]) {
     is_primary_and_sync_time =
         sync_time.getValue() && sync_node->getLocalPeerIdx() == 0;
   }
+
+  auto max_frame_time =
+      std::chrono::milliseconds((long int)(1000 * frame_time.getValue()));
 
   if (sync_start.getValue() && run_sync == nullptr)
     std::cerr << "Cannot synchronize start of execution"
@@ -209,6 +217,7 @@ int main(int argc, char *argv[]) {
 #endif
 
   try {
+    auto last_time = clock::now();
     while (alive) {
 
       alive = windows.empty();
@@ -286,6 +295,14 @@ int main(int argc, char *argv[]) {
       }
 
       auto current_time = clock::now();
+      if (current_time - last_time < max_frame_time) {
+        std::this_thread::sleep_for(max_frame_time -
+                                    (current_time - last_time));
+        last_time = last_time + max_frame_time;
+      } else {
+        last_time = current_time;
+      }
+
       auto dt = std::chrono::duration_cast<d_seconds>(current_time - last_print_time);
 
       if (output_time.getValue() && dt.count() > 2) {

@@ -14,7 +14,7 @@ struct PoseSampleCollector::Impl {
   std::vector<Eigen::Quaternionf> sample_orientations;
 
   clock::time_point last_sample_time = clock::time_point::min();
-  float samples_per_second = 1;
+  float samples_per_second = 10;
   float warning_threshold = 0.01f;
   float orientation_warning_threshold = GM_PI_4;
   bool collecting = false;

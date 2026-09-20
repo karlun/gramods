@@ -1,0 +1,53 @@
+<config>
+  <![CDATA[
+
+    Controller configuration for use on LiU MIT Vortex computer to
+    read tracker data directly from the head-mounted display system
+    (HMD).
+
+  ]]>
+
+  <OpenVR
+      DEF="OPENVR"
+      manifestPath="urn:gramods:config/openvr_manifest/standard_actionset.json"
+      actionSet="/actions/std"/>
+
+  <TrackerSet>
+
+    <RelativePoseTracker
+	    originKey="/in/pose/serial/LHR-03D3A5F2">
+      <PoseKeyChangeTracker
+          mapping="/in/pose/serial/LHR-06CD3CBB primary_wand_pose">
+        <OffsetPoseTracker
+            positionOffset="0 0 0.1">
+          <OpenVRPoseTracker serial="LHR-06CD3CBB">
+            <OpenVR USE="OPENVR"/>
+          </OpenVRPoseTracker>
+        </OffsetPoseTracker>
+      </PoseKeyChangeTracker>
+      <OpenVRPoseTracker serial="LHR-03D3A5F2">
+        <OpenVR USE="OPENVR"/>
+      </OpenVRPoseTracker>
+    </RelativePoseTracker>
+
+    <FloatKeyChangeTracker mapping="/actions/std/in/AnalogInput joy">
+      <OpenVRFloatTracker key="/actions/std/in/AnalogInput">
+        <OpenVR USE="OPENVR"/>
+      </OpenVRFloatTracker>
+    </FloatKeyChangeTracker>
+
+    <BinaryKeyChangeTracker>
+      <param name="mapping" value="/actions/std/in/MainButton   main_button"/>
+      <param name="mapping" value="/actions/std/in/SecondButton second_button"/>
+      <param name="mapping" value="/actions/std/in/MenuButton   menu_button"/>
+
+      <OpenVRBinaryTracker>
+        <OpenVR USE="OPENVR"/>
+        <param name="key" value="/actions/std/in/MainButton"/>
+        <param name="key" value="/actions/std/in/SecondButton"/>
+        <param name="key" value="/actions/std/in/MenuButton"/>
+      </OpenVRBinaryTracker>
+    </BinaryKeyChangeTracker>
+  </TrackerSet>
+
+</config>

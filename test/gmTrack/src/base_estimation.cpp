@@ -48,8 +48,8 @@ TEST(gmTrackBaseEstimation, FullSamplesByInverse) {
     ts_pose_tracker->initialize();
 
     auto tracker_set = std::make_shared<gmTrack::TrackerSet>();
-    tracker_set->setPoseTracker(ts_pose_tracker);
-    tracker_set->setBinaryTracker(ts_buttons_tracker);
+    tracker_set->addPoseTracker(ts_pose_tracker);
+    tracker_set->addBinaryTracker(ts_buttons_tracker);
     tracker_set->initialize();
 
     auto registrator = std::make_shared<gmTrack::TrackerRegistrationEstimator>();
@@ -142,8 +142,8 @@ TEST(gmTrackBaseEstimation, OverDeterminedSamplesByQR) {
     ts_pose_tracker->initialize();
 
     auto tracker_set = std::make_shared<gmTrack::TrackerSet>();
-    tracker_set->setPoseTracker(ts_pose_tracker);
-    tracker_set->setBinaryTracker(ts_buttons_tracker);
+    tracker_set->addPoseTracker(ts_pose_tracker);
+    tracker_set->addBinaryTracker(ts_buttons_tracker);
     tracker_set->initialize();
 
     auto registrator = std::make_shared<gmTrack::TrackerRegistrationEstimator>();

@@ -47,8 +47,8 @@ TEST(gmTrackProjectionTexture, SimpleFlat) {
   ts_pose_tracker->initialize();
 
   auto tracker_set = std::make_shared<gmTrack::TrackerSet>();
-  tracker_set->setPoseTracker(ts_pose_tracker);
-  tracker_set->setBinaryTracker(ts_buttons_tracker);
+  tracker_set->addPoseTracker(ts_pose_tracker);
+  tracker_set->addBinaryTracker(ts_buttons_tracker);
   tracker_set->initialize();
 
   auto file = std::filesystem::temp_directory_path() /
@@ -157,8 +157,8 @@ TEST(gmTrackProjectionTexture, CurvatureWRegions) {
   generator->addHullPosition({0.5f, 1.0f});
 
   auto tracker_set = std::make_shared<gmTrack::TrackerSet>();
-  tracker_set->setPoseTracker(ts_pose_tracker);
-  tracker_set->setBinaryTracker(ts_buttons_tracker);
+  tracker_set->addPoseTracker(ts_pose_tracker);
+  tracker_set->addBinaryTracker(ts_buttons_tracker);
   tracker_set->initialize();
   generator->setTrackerSet(tracker_set);
 

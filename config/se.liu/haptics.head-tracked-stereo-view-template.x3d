@@ -21,8 +21,8 @@
       --output-file se.liu.haptics.head-tracked-mono-view-template-step2.x3d \
       --output-template urn:gramods:config/se.liu/haptics.head-tracked-stereo-view-template.x3d \
       --output-file se.liu.haptics.head-tracked-stereo-view-template-step2.x3d \
-      --config urn:gramods:config/output-normal-to-console.xml \
-      --config urn:gramods:config/se.liu/workbench.calibration-tracker-vrpn-relative.xml \
+      --config urn:gramods:config/output-debug-to-file.xml \
+      --config urn:gramods:config/se.liu/vr-lab.calibration-tracker-openvr-relative.xml \
       --a-point -0.05,0,0 \
       --a-point +0.05,0,0 \
       --a-point 0,-0.12,0
@@ -36,7 +36,7 @@
       --output-template se.liu.haptics.head-tracked-stereo-view-template-step2.x3d \
       --output-file se.liu.haptics.head-tracked-stereo-view.x3d \
       --config urn:gramods:config/output-normal-to-console.xml \
-      --config urn:gramods:config/se.liu/workbench.calibration-tracker-vrpn.xml \
+      --config urn:gramods:config/se.liu/vr-lab.calibration-tracker-openvr.xml \
       --a-point -0.267,0.276,0.125 \
       --a-point -0.267,0.276,0.427 \
       --a-point +0.267,0.276,0.427 \

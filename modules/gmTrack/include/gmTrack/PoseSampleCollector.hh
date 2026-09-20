@@ -55,7 +55,7 @@ public:
 
   /**
      Sets the frequency at which samples are collected when the button
-     is pressed. Default is 1. At most one sample per frame will be
+     is pressed. Default is 10. At most one sample per frame will be
      used regardless of this value.
 
      \gmXmlTag{gmTrack,PoseSampleCollector,samplesPerSecond}

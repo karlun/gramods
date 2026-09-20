@@ -1,0 +1,29 @@
+<config>
+  <![CDATA[
+
+    Controller configuration for use on LiU MIT Vortex computer to
+    read tracker data directly from the head-mounted display system
+    (HMD).
+
+  ]]>
+  
+  <ImportLibrary library="gmTrack"/>
+
+  <OpenVR
+      DEF="OPENVR"
+      manifestPath="urn:gramods:config/openvr_manifest/standard_actionset.json"
+      actionSet="/actions/std"/>
+
+  <VrpnServer>
+    <PoseKeyChangeTracker
+        mapping="/in/pose/serial/LHR-03D3A5F2 openvr/device/LHR-03D3A5F2">
+      <OffsetPoseTracker
+          positionOffset="0 0 0.098">
+        <OpenVRPoseTracker serial="LHR-03D3A5F2">
+          <OpenVR USE="OPENVR"/>
+        </OpenVRPoseTracker>
+      </OffsetPoseTracker>
+    </PoseKeyChangeTracker>
+  </VrpnServer>
+
+</config>

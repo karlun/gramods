@@ -55,7 +55,7 @@ std::optional<PoseTracker::State> OffsetPoseTracker::Impl::get() {
   State reg_state;
 
   for (const auto as : raw_state.value())
-    if (keys.contains(as.first)) {
+    if (keys.empty() || keys.contains(as.first)) {
       reg_state[as.first] = {
           .time = as.second.time,
           .value = {.position = as.second.value.position +
