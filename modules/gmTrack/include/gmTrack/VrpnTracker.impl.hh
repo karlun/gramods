@@ -107,7 +107,6 @@ VrpnTracker<TYPE, vrpn_TRACKER, vrpn_CB>::Impl::RemoteData::RemoteData(
     remote(std::make_unique<vrpn_TRACKER>(id.c_str())),
     connection_str(id) {
   key = id.substr(0, id.find("@"));
-  if (key.empty() || key[0] != '/') key = "/"s + key;
   remote->register_change_handler(
       this,
       VrpnTracker<TYPE, vrpn_TRACKER, vrpn_CB>::Impl::RemoteData::handler);

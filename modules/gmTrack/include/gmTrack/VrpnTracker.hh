@@ -18,8 +18,8 @@ BEGIN_NAMESPACE_GMTRACK;
    `connectionString="phasespace/device@127.0.0.1"` you may get the
    following keys:
 
-   - /phasespace/device/0
-   - /phasespace/device/1
+   - phasespace/device/0
+   - phasespace/device/1
    - ...
 
    This class configures as an Updateable with a priority of
