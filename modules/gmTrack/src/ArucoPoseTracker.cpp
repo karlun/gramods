@@ -10,7 +10,9 @@
 #include <gmCore/Updateable.hh>
 
 #include <opencv2/objdetect.hpp>
+#if CV_VERSION_MAJOR >= 5
 #include <opencv2/geometry/3d.hpp>
+#endif
 
 BEGIN_NAMESPACE_GMTRACK;
 
