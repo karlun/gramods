@@ -1,0 +1,67 @@
+<config>
+
+  <ImportLibrary library="gmTrack"/>
+
+  <VrpnServer>
+    <PoseTimeSampleTracker
+        DEF="POSE_TRACKER">
+
+      <param name="key" value="head_pose"/>
+      <param name="value" value="0 0.5 2;ypr 0 0 0"/>
+      <param name="key" value="primary_wand_pose"/>
+      <param name="value" value="0 0 2;ypr 0 0 0"/>
+      <param name="time" value="0"/>
+
+      <param name="key" value="head_pose"/>
+      <param name="value" value="0 0.5 2;ypr 0 0 0"/>
+      <param name="key" value="primary_wand_pose"/>
+      <param name="value" value="1 0 2;ypr d10 0 0"/>
+      <param name="time" value="2"/>
+
+      <param name="key" value="head_pose"/>
+      <param name="value" value="0 0.5 2;ypr 0 0 0"/>
+      <param name="key" value="primary_wand_pose"/>
+      <param name="value" value="0 0 2;ypr 0 0 0"/>
+      <param name="time" value="4"/>
+
+      <param name="key" value="head_pose"/>
+      <param name="value" value="0 0.5 2;ypr 0 0 0"/>
+      <param name="key" value="primary_wand_pose"/>
+      <param name="value" value="-1 0 2;ypr d60 0 0"/>
+      <param name="time" value="6"/>
+
+      <param name="key" value="head_pose"/>
+      <param name="value" value="0 0.5 2;ypr 0 0 0"/>
+      <param name="key" value="primary_wand_pose"/>
+      <param name="value" value="0 0 2;ypr 0 0 0"/>
+      <param name="time" value="8"/>
+
+      <param name="key" value="head_pose"/>
+      <param name="value" value="0 0.5 2;ypr 0 0 0"/>
+      <param name="key" value="primary_wand_pose"/>
+      <param name="value" value="0 0 1.6;ypr d120 0 0"/>
+      <param name="time" value="12"/>
+
+      <param name="key" value="head_pose"/>
+      <param name="value" value="0 0.5 2;ypr 0 0 0"/>
+      <param name="key" value="primary_wand_pose"/>
+      <param name="value" value="0 0 1.6;ypr d-120 0 0"/>
+      <param name="time" value="16"/>
+
+      <param name="key" value="head_pose"/>
+      <param name="value" value="0 0.5 2;ypr 0 0 0"/>
+      <param name="key" value="primary_wand_pose"/>
+      <param name="value" value="0 0 2;ypr 0 0 0"/>
+      <param name="time" value="20"/>
+
+    </PoseTimeSampleTracker>
+  </VrpnServer>
+
+  <TrackerSet>
+    <PoseTimeSampleTracker
+        USE="POSE_TRACKER"/>
+    <PoseVrpnTracker connectionString="head_pose@localhost"/>
+    <PoseVrpnTracker connectionString="primary_wand_pose@localhost"/>
+  </TrackerSet>
+
+</config>
