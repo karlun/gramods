@@ -12,73 +12,51 @@
         DEF="SDLContext"
         useVideo="1"/>
 
-    <TiledView>
+    <HmdView DEF="HMD" showEye="0">
+      <OpenVR
+          DEF="OPENVR"
+          useVideo="true"
+          manifestPath="urn:gramods:config/openvr_manifest/standard_actionset.json"
+          actionSet="/actions/std"/>
 
-      <param name="tileLocation" value="0 0 1 1"/>
-      <HmdView DEF="HMD" showEye="0">
-        <OpenVR
-            DEF="OPENVR"
-            useVideo="true"
-            manifestPath="urn:gramods:config/openvr_manifest/standard_actionset.json"
-            actionSet="/actions/std"/>
+      <TrackedTransform DEF="TT">
 
-        <TrackedTransform>
-          <OpenVRPoseTracker type="TrackingReference">
+        <!-- All Non-HMD Trackers -->
+        <OpenVRPoseTracker type="TrackingReference">
+          <OpenVR USE="OPENVR"/>
+        </OpenVRPoseTracker>
+        <OpenVRPoseTracker type="GenericTracker">
+          <OpenVR USE="OPENVR"/>
+        </OpenVRPoseTracker>
+        <OpenVRPoseTracker type="Controller">
+          <OpenVR USE="OPENVR"/>
+        </OpenVRPoseTracker>
+
+        <OffsetPoseTracker
+            DEF="PIKE"
+            positionOffset="0 0 0.1">
+          <OpenVRPoseTracker serial="LHR-06CD3CBB">
             <OpenVR USE="OPENVR"/>
           </OpenVRPoseTracker>
+        </OffsetPoseTracker>
 
-		      <RelativePoseTracker
-	            originKey="/in/pose/serial/LHR-03D3A5F2">
-            <OffsetPoseTracker
-                positionOffset="0 0 0.1">
-              <OpenVRPoseTracker serial="LHR-06CD3CBB">
-                <OpenVR USE="OPENVR"/>
-              </OpenVRPoseTracker>
-            </OffsetPoseTracker>
-            <OpenVRPoseTracker serial="LHR-03D3A5F2">
-              <OpenVR USE="OPENVR"/>
-            </OpenVRPoseTracker>
-          </RelativePoseTracker>
-
+        <!-- Pike Relative to Helmet Tracker -->
+        <RelativePoseTracker
+            originKey="/in/pose/serial/LHR-03D3A5F2">
+          <OffsetPoseTracker USE="PIKE"/>
           <OpenVRPoseTracker serial="LHR-03D3A5F2">
             <OpenVR USE="OPENVR"/>
           </OpenVRPoseTracker>
+        </RelativePoseTracker>
 
-          <OffsetPoseTracker
-              positionOffset="0 0 0.1">
-            <OpenVRPoseTracker serial="LHR-06CD3CBB">
-              <OpenVR USE="OPENVR"/>
-            </OpenVRPoseTracker>
-          </OffsetPoseTracker>
+        <PoseTransform scale="0.1 0.1 0.1">
+          <ObjRenderer file="urn:gramods:gmGraphics/resources/axes.obj"/>
+        </PoseTransform>
+      </TrackedTransform>
 
-          <PoseTransform scale="0.1 0.1 0.1">
-            <ObjRenderer file="urn:gramods:gmGraphics/resources/axes.obj"/>
-		      </PoseTransform>
-        </TrackedTransform>
+      <ObjRenderer file="urn:gramods:gmGraphics/resources/floor-coordinates.obj"/>
 
-        <ObjRenderer file="urn:gramods:gmGraphics/resources/floor-coordinates.obj"/>
-
-      </HmdView>
-
-      <param name="tileLocation" value="0 1 1 1"/>
-      <PosedSphericalView>
-        <EquirectangularCoordinatesMapper/>
-
-        <TrackedTransform>
-          <OpenVRPoseTracker type="HMD">
-            <OpenVR USE="OPENVR"/>
-          </OpenVRPoseTracker>
-
-          <SphereRenderer>
-            <RectilinearCameraModel focalDistance="0.6 1.0"/>
-            <ViewTexture>
-              <View USE="HMD"/>
-            </ViewTexture>
-          </SphereRenderer>
-        </TrackedTransform>
-      </PosedSphericalView>
-
-    </TiledView>
+    </HmdView>
 
   </SdlWindow>
 

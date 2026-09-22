@@ -89,19 +89,19 @@ bool OpenVRPoseTracker::Impl::checkParamFit(size_t idx) {
   auto dev_type = openvr->getType(idx);
   auto dev_role = openvr->getRole(idx);
 
-  if (!serial.empty() && serial.contains(dev_serial)) {
+  if (!serial.empty() && !serial.contains(dev_serial)) {
     GM_DBG3("OpenVRPoseTracker", //
             "checkParamFit fail for device " << idx << ", serial "
                                              << dev_serial);
     return false;
   }
-  if (!type.empty() && type.contains(dev_type)) {
+  if (!type.empty() && !type.contains(dev_type)) {
     GM_DBG3("OpenVRPoseTracker", //
             "checkParamFit fail for device "
                 << idx << ", type " << gmCore::OpenVR::typeToString(dev_type));
     return false;
   }
-  if (!role.empty() && role.contains(dev_role)) {
+  if (!role.empty() && !role.contains(dev_role)) {
     GM_DBG3("OpenVRPoseTracker", //
             "checkParamFit fail for device "
                 << idx << ", role " << gmCore::OpenVR::roleToString(dev_role));
