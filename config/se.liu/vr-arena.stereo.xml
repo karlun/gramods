@@ -1,0 +1,32 @@
+<config>
+
+  <ImportLibrary library="gmGraphics"/>
+
+  <SdlWindow
+      size="1920 1080"
+      title="Spatial"
+      GLMajor="3" GLMinor="3">
+
+    <SdlContext
+        DEF="SDLContext"
+        useVideo="1"/>
+
+    <Viewpoint
+        position="0.0 0.0 3.0"/>
+
+    <CubeSceneRenderer
+        cubeSize="0.1"
+        cubeSetSize="2.0"/>
+
+    <!-- 5592 x 2x1600 (Top/bottom) -->
+    <NdiView resolution="5592 3200">
+      <SpatialPlanarView
+          topLeftCorner="-3.467 1.0 0.0"
+          bottomRightCorner="3.467 -1.0 0.0"
+          upDirection="0.0 1.0 0.0">
+        <SideBySideMultiplexer pattern="1"/>
+      </SpatialPlanarView>
+    </NdiView>
+  </SdlWindow>
+
+</config>
