@@ -194,6 +194,8 @@ void SaveView::Impl::renderFullPipeline(ViewSettings settings) {
     return;
   }
 
+  auto t0 = std::chrono::steady_clock::now();
+
   render_target.push();
   render_target.bind(*resolution);
 
@@ -201,7 +203,7 @@ void SaveView::Impl::renderFullPipeline(ViewSettings settings) {
   for (auto view : views)
     view->renderFullPipeline(settings);
 
-  auto t0 = std::chrono::steady_clock::now();
+  auto t1 = std::chrono::steady_clock::now();
 
   GLint size[4];
   glGetIntegerv( GL_VIEWPORT, size );
@@ -252,8 +254,6 @@ void SaveView::Impl::renderFullPipeline(ViewSettings settings) {
                                    height,
                                    bits_per_channel * number_of_channels);
 
-  auto t1 = std::chrono::steady_clock::now();
-
   glReadPixels(size[0], size[1], width, height,
                use_alpha ? GL_BGRA : GL_BGR,
                channel_type, image->getBytes());
@@ -269,11 +269,11 @@ void SaveView::Impl::renderFullPipeline(ViewSettings settings) {
   auto dt2 = std::chrono::duration_cast<d_seconds>(t2 - t1);
   auto dt3 = std::chrono::duration_cast<d_seconds>(t3 - t2);
 
-  GM_DBG2("SaveView",
-          "Captured image for saving: "
-              << filename << " in " << int(1e3 * dt1.count() + 0.8) << " + "
-              << int(1e3 * dt2.count() + 0.8) << " + "
-              << int(1e3 * dt3.count() + 0.8) << " ms");
+  GM_DBG2("SaveView", "Rendered ("
+                          << int(1e3 * dt1.count() + 0.8) << " ms), read ("
+                          << int(1e3 * dt2.count() + 0.8) << " ms) and saved ("
+                          << int(1e3 * dt3.count() + 0.8)
+                          << " ms) image: " << filename);
 
   render_target.pop();
 
