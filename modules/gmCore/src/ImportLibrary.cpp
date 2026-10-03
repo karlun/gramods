@@ -111,10 +111,10 @@ void ImportLibrary::Impl::initialize() {
     handle = LoadLibrary(library_file.string().c_str());
 
   if (!handle) {
-    TCHAR buffer[255];
+    TCHAR buff[255];
     DWORD dw = GetLastError();
-    FormatMessage(FORMAT_MESSAGE_FROM_SYSTEM, NULL, dw, 0, buffer, 255, NULL);
-    GM_ERR("ImportLibrary", "While importing '" << library_file << "': " << buffer);
+    FormatMessage(FORMAT_MESSAGE_FROM_SYSTEM, NULL, dw, 0, buff, 255, NULL);
+    GM_ERR("ImportLibrary", "While importing " << library_file << ": " << buff);
   } else {
     library_loaded = true;
   }
