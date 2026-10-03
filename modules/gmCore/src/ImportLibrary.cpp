@@ -126,9 +126,17 @@ void ImportLibrary::Impl::initialize() {
     library_loaded = true;
   } else {
     char *msg = dlerror();
-    GM_ERR("ImportLibrary", "While importing '" << library_file << "': " << msg);
+    GM_ERR("ImportLibrary", "While importing " << library_file << ": " << msg);
   }
 
+#endif
+}
+
+void *ImportLibrary::getSymbol(std::string name) {
+#ifdef WIN32
+  return GetProcAddress(_impl->handle, name.c_str());
+#else
+  return dlsym(_impl->handle, name.c_str());
 #endif
 }
 
