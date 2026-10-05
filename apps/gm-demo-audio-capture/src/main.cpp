@@ -51,7 +51,7 @@ int main(int argc, char *argv[]) {
   gmSound::OpenALCapture capture;
   if (arg_device_idx.isSet()) {
     capture.setDeviceName(devices[arg_device_idx.getValue()]);
-  } else if (arg_device_idx.isSet()) {
+  } else if (arg_device_name.isSet()) {
     capture.setDeviceName(arg_device_name.getValue());
   }
 
