@@ -46,6 +46,17 @@ public:
   void addTracker(std::shared_ptr<TrackerBase<TYPE>> ptr);
 
   /**
+     Sets if the old key should also be retained when mapped. Default
+     is false.
+
+     \gmXmlNodeAttr{gmTrack,BinaryKeyChangeTracker,retainMapped}
+     \gmXmlNodeAttr{gmTrack,FloatKeyChangeTracker,retainMapped}
+     \gmXmlNodeAttr{gmTrack,Float2KeyChangeTracker,retainMapped}
+     \gmXmlNodeAttr{gmTrack,PoseKeyChangeTracker,retainMapped}
+  */
+  void setRetainMapped(bool on);
+
+  /**
      @see TrackerBase::get
   */
   std::optional<typename TrackerBase<TYPE>::State> get() override;

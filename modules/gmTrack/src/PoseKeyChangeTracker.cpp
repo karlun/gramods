@@ -8,6 +8,7 @@ BEGIN_NAMESPACE_GMTRACK;
 
 GM_OFI_DEFINE(PoseKeyChangeTracker);
 GM_OFI_PARAM2(PoseKeyChangeTracker, mapping, gmCore::string2, addMapping);
+GM_OFI_PARAM2(PoseKeyChangeTracker, retainMapped, bool, setRetainMapped);
 GM_OFI_POINTER2(PoseKeyChangeTracker, poseTracker, gmTrack::PoseTracker, addTracker);
 
 template class KeyChangeTracker<gmCore::Pose>;

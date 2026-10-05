@@ -8,6 +8,7 @@ BEGIN_NAMESPACE_GMTRACK;
 
 GM_OFI_DEFINE(BinaryKeyChangeTracker);
 GM_OFI_PARAM2(BinaryKeyChangeTracker, mapping, gmCore::string2, addMapping);
+GM_OFI_PARAM2(BinaryKeyChangeTracker, retainMapped, bool, setRetainMapped);
 GM_OFI_POINTER2(BinaryKeyChangeTracker, binaryTracker, gmTrack::BinaryTracker, addTracker);
 
 template class KeyChangeTracker<bool>;

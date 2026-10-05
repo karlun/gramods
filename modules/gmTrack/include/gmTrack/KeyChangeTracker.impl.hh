@@ -12,42 +12,47 @@
 
 BEGIN_NAMESPACE_GMTRACK;
 
-template<class TYPE> struct KeyChangeTracker<TYPE>::Impl {
+template <class TYPE> struct KeyChangeTracker<TYPE>::Impl {
 
   Impl() {}
 
   std::optional<typename TrackerBase<TYPE>::State> get();
 
-  typedef std::unordered_map<std::string, std::string> mappings_t;
+  typedef std::unordered_multimap<std::string, std::string> mappings_t;
   mappings_t mappings;
 
   std::vector<std::shared_ptr<TrackerBase<TYPE>>> trackers;
+
+  bool retain = false;
 };
 
-template<class TYPE>
+template <class TYPE>
 KeyChangeTracker<TYPE>::KeyChangeTracker()
-  : _impl(std::make_unique<KeyChangeTracker<TYPE>::Impl>()) {}
+    : _impl(std::make_unique<KeyChangeTracker<TYPE>::Impl>()) {}
 
-template<class TYPE> KeyChangeTracker<TYPE>::~KeyChangeTracker() {}
+template <class TYPE> KeyChangeTracker<TYPE>::~KeyChangeTracker() {}
 
-template<class TYPE>
+template <class TYPE>
 void KeyChangeTracker<TYPE>::addMapping(gmCore::string2 m) {
-  _impl->mappings[m[0]] = m[1];
+  _impl->mappings.insert({m[0], m[1]});
 }
 
-template<class TYPE>
+template <class TYPE>
 void KeyChangeTracker<TYPE>::addTracker(
     std::shared_ptr<TrackerBase<TYPE>> ptr) {
   _impl->trackers.push_back(ptr);
 }
 
-template<class TYPE>
-std::optional<typename TrackerBase<TYPE>::State>
-KeyChangeTracker<TYPE>::get() {
+template <class TYPE> void KeyChangeTracker<TYPE>::setRetainMapped(bool on) {
+  _impl->retain = on;
+}
+
+template <class TYPE>
+std::optional<typename TrackerBase<TYPE>::State> KeyChangeTracker<TYPE>::get() {
   return _impl->get();
 }
 
-template<class TYPE>
+template <class TYPE>
 std::optional<typename TrackerBase<TYPE>::State>
 KeyChangeTracker<TYPE>::Impl::get() {
 
@@ -61,11 +66,9 @@ KeyChangeTracker<TYPE>::Impl::get() {
     typename TrackerBase<TYPE>::State rstate;
 
     for (const auto &s : state.value()) {
-      if (mappings.contains(s.first)) {
-        rstate[mappings.at(s.first)] = s.second;
-      } else {
-        rstate[s.first] = s.second;
-      }
+      if (!mappings.contains(s.first) || retain) rstate[s.first] = s.second;
+      for (auto it = mappings.find(s.first); it != mappings.end(); ++it)
+        rstate[it->second] = s.second;
     }
 
     TrackerBase<TYPE>::merge(acc, rstate);
