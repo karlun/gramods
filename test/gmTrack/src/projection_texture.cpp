@@ -94,7 +94,7 @@ TEST(gmTrackProjectionTexture, CurvatureWRegions) {
 #endif
 
   auto file = std::filesystem::temp_directory_path() /
-              "dbg.tif"; //(std::string(tmpnam(nullptr)) + ".tif");
+              (std::string(tmpnam(nullptr)) + ".tif");
   auto generator = std::make_shared<gmTrack::ProjectionTextureGenerator>(); 
   generator->setResolution({64, 64});
   generator->setFile(file);
@@ -237,5 +237,5 @@ TEST(gmTrackProjectionTexture, CurvatureWRegions) {
 
   FreeImage_Unload(image);
 
-  //std::filesystem::remove(file);
+  std::filesystem::remove(file);
 }
