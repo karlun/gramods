@@ -229,6 +229,7 @@ TEST(gmTrackProjectionTexture, CurvatureWRegions) {
                              FUN2_Z(idx_x / (float)image_width,
                                     idx_y / (float)image_height)));
     }
+#undef data
 
   float magn =
       (std::fabs(offset[0]) + std::fabs(offset[1]) + std::fabs(offset[2])) +
