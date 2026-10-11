@@ -10,6 +10,7 @@
 #include <gmCore/FileResolver.hh>
 
 #include <gmGraphics/OffscreenRenderTargets.hh>
+#include <gmGraphics/PixelPacker.hh>
 #include <gmGraphics/RasterProcessor.hh>
 
 #include <FreeImage.h>
@@ -51,10 +52,12 @@ struct SaveView::Impl {
 
   OffscreenRenderTargets render_target;
   RasterProcessor raster_processor;
+  PixelPacker pixel_packer;
   GLenum pixel_format;
 
   std::vector<std::shared_ptr<View>> views;
   int frame = 0;
+  size_t render_target_idx = 0;
 
   std::shared_ptr<gmCore::FreeImage> free_image;
 
@@ -65,25 +68,31 @@ struct SaveView::Impl {
 
   struct FileBuffer {
 
-    FileBuffer(std::string filename,
-               FREE_IMAGE_TYPE image_type,
-               int width,
-               int height,
-               int bits_per_pixel)
-      : filename(filename) {
-      bitmap = FreeImage_AllocateT(image_type, width, height, bits_per_pixel);
+    FileBuffer(std::string filename, FREE_IMAGE_TYPE image_type, int width,
+               int height, int bytes_per_pixel,
+               std::shared_ptr<PixelPacker::DataTransfer> tr)
+        : filename(filename), data_transfer(tr) {
+      bitmap = FreeImage_ConvertFromRawBitsEx(
+          false, tr->data, image_type, width, height, width * bytes_per_pixel,
+          0, 0, 0, true);
     }
 
-    ~FileBuffer() { FreeImage_Unload(bitmap); }
+    ~FileBuffer() {
+      FreeImage_Unload(bitmap);
+      data_transfer->is_in_use = false;
+      data_transfer->is_in_use.notify_all();
+    }
 
     BYTE *getBytes() { return FreeImage_GetBits(bitmap); }
 
     FIBITMAP *bitmap;
+    std::shared_ptr<PixelPacker::DataTransfer> data_transfer;
     std::string filename;
   };
 
-  void saveImage(std::unique_ptr<FileBuffer> image);
+  void setImage(std::unique_ptr<FileBuffer> image);
   void save_process();
+  void saveImage();
 
   bool save_process_alive = true;
   std::thread save_thread;
@@ -184,8 +193,9 @@ void SaveView::Impl::renderFullPipeline(ViewSettings settings) {
       GL_RGBA32F : GL_RGBA8;
     render_target.setPixelFormat(pixel_format);
     raster_processor.setFragmentCode(fragment_code);
-    if (render_target.init(1) &&
-        raster_processor.init())
+    if (render_target.init(2) &&   //
+        raster_processor.init() && //
+        pixel_packer.init(2))
       is_functional = true;
   }
 
@@ -196,8 +206,9 @@ void SaveView::Impl::renderFullPipeline(ViewSettings settings) {
 
   auto t0 = std::chrono::steady_clock::now();
 
+  render_target_idx = (render_target_idx + 1) % 2;
   render_target.push();
-  render_target.bind(*resolution);
+  render_target.bind(*resolution, render_target_idx);
 
   settings.pixel_format = pixel_format;
   for (auto view : views)
@@ -226,7 +237,7 @@ void SaveView::Impl::renderFullPipeline(ViewSettings settings) {
           "Saving viewport of size " << width << "x" << height << " to file "
                                      << filename);
 
-  int bits_per_channel = -1;
+  int bytes_per_channel = -1;
   int number_of_channels = use_alpha ? 4 : 3;
   GLenum channel_type;
   FREE_IMAGE_TYPE fi_image_type;
@@ -234,11 +245,11 @@ void SaveView::Impl::renderFullPipeline(ViewSettings settings) {
   if (use_float) {
     fi_image_type = use_alpha ? FIT_RGBAF : FIT_RGBF;
     channel_type = GL_FLOAT;
-    bits_per_channel = 32;
+    bytes_per_channel = 4;
   } else {
     fi_image_type = FIT_BITMAP;
     channel_type = GL_UNSIGNED_BYTE;
-    bits_per_channel = 8;
+    bytes_per_channel = 1;
   }
 
   {
@@ -247,33 +258,31 @@ void SaveView::Impl::renderFullPipeline(ViewSettings settings) {
     glReadBuffer(current);
   }
 
-  std::unique_ptr<FileBuffer> image =
-      std::make_unique<FileBuffer>(filename,
-                                   fi_image_type,
-                                   width,
-                                   height,
-                                   bits_per_channel * number_of_channels);
-
-  glReadPixels(size[0], size[1], width, height,
-               use_alpha ? GL_BGRA : GL_BGR,
-               channel_type, image->getBytes());
+  pixel_packer.execute();
+  pixel_packer.bind(width * height * bytes_per_channel * number_of_channels,
+                    [this, filename, fi_image_type, width, height,
+                     bytes_per_channel, number_of_channels](
+                        std::shared_ptr<PixelPacker::DataTransfer> tr) {
+                      tr->is_in_use = true;
+                      auto image = std::make_unique<FileBuffer>(
+                          filename, fi_image_type, width, height,
+                          bytes_per_channel * number_of_channels, tr);
+                      setImage(std::move(image));
+                    });
+  glReadPixels(size[0], size[1], width, height, //
+               use_alpha ? GL_BGRA : GL_BGR, channel_type, 0);
+  pixel_packer.unbind();
 
   auto t2 = std::chrono::steady_clock::now();
-
-  saveImage(std::move(image));
-
-  auto t3 = std::chrono::steady_clock::now();
 
   typedef std::chrono::duration<double, std::ratio<1>> d_seconds;
   auto dt1 = std::chrono::duration_cast<d_seconds>(t1 - t0);
   auto dt2 = std::chrono::duration_cast<d_seconds>(t2 - t1);
-  auto dt3 = std::chrono::duration_cast<d_seconds>(t3 - t2);
 
-  GM_DBG2("SaveView", "Rendered ("
-                          << int(1e3 * dt1.count() + 0.8) << " ms), read ("
-                          << int(1e3 * dt2.count() + 0.8) << " ms) and saved ("
-                          << int(1e3 * dt3.count() + 0.8)
-                          << " ms) image: " << filename);
+  GM_DBG2("SaveView", "Rendered (" << int(1e3 * dt1.count() + 0.8)
+                                   << " ms) and moved ("
+                                   << int(1e3 * dt2.count() + 0.8)
+                                   << " ms) image: " << filename);
 
   render_target.pop();
 
@@ -282,7 +291,7 @@ void SaveView::Impl::renderFullPipeline(ViewSettings settings) {
   GM_DBG2("SaveView", "Render offscreen buffers to active render target");
 
   glActiveTexture(GL_TEXTURE0);
-  glBindTexture(GL_TEXTURE_2D, render_target.getTexId());
+  glBindTexture(GL_TEXTURE_2D, render_target.getTexId(render_target_idx));
 
   GLuint program_id = raster_processor.getProgramId();
   glUseProgram(program_id);
@@ -397,11 +406,15 @@ void SaveView::addView(std::shared_ptr<View> view) {
   _impl->views.push_back(view);
 }
 
-void SaveView::Impl::saveImage(std::unique_ptr<FileBuffer> image) {
+void SaveView::Impl::setImage(std::unique_ptr<FileBuffer> image) {
   std::lock_guard<std::mutex> guard(save_lock);
   assert(!save_image);
   save_image = std::move(image);
-  save_condition.notify_all();
+  if (save_process_alive) {
+    save_condition.notify_all();
+  } else {
+    saveImage();
+  }
 }
 
 void SaveView::Impl::save_process() {
@@ -411,37 +424,41 @@ void SaveView::Impl::save_process() {
 
     if (!save_image) continue;
 
-    try {
-      auto path = gmCore::FileResolver::getDefault()->resolve(
-          save_image->filename, gmCore::FileResolver::Check::WritableFile);
-      save_image->filename = path.string();
-    } catch (gmCore::InvalidArgument &err) {
-      GM_ERR("SaveView", err.what);
-      save_image.reset();
-      continue;
-    }
-
-    auto t0 = std::chrono::steady_clock::now();
-
-    bool success = FreeImage_Save(
-        fi_format, save_image->bitmap, save_image->filename.data(), fi_options);
-
-    auto t1 = std::chrono::steady_clock::now();
-
-    typedef std::chrono::duration<double, std::ratio<1>> d_seconds;
-    auto dt1 = std::chrono::duration_cast<d_seconds>(t1 - t0);
-
-    if (success) {
-      GM_DBG2("SaveView",
-              "Asynchroneous image save '" << save_image->filename << "' in "
-                                           << int(1e3 * dt1.count() + 0.8)
-                                           << " ms");
-    } else {
-      GM_ERR("SaveView", "Could not save image '" << save_image->filename << "'");
-    }
-
-    save_image.reset();
+    saveImage();
   }
+  GM_DBG1("SaveView", "Save thread stopped");
+}
+
+void SaveView::Impl::saveImage() {
+  try {
+    auto path = gmCore::FileResolver::getDefault()->resolve(
+        save_image->filename, gmCore::FileResolver::Check::WritableFile);
+    save_image->filename = path.string();
+  } catch (gmCore::InvalidArgument &err) {
+    GM_ERR("SaveView", err.what);
+    save_image.reset();
+    return;
+  }
+
+  auto t0 = std::chrono::steady_clock::now();
+
+  bool success = FreeImage_Save(fi_format, save_image->bitmap,
+                                save_image->filename.data(), fi_options);
+
+  auto t1 = std::chrono::steady_clock::now();
+
+  typedef std::chrono::duration<double, std::ratio<1>> d_seconds;
+  auto dt1 = std::chrono::duration_cast<d_seconds>(t1 - t0);
+
+  if (success) {
+    GM_DBG2("SaveView", "Asynchroneous image save '"
+                            << save_image->filename << "' in "
+                            << int(1e3 * dt1.count() + 0.8) << " ms");
+  } else {
+    GM_ERR("SaveView", "Could not save image '" << save_image->filename << "'");
+  }
+
+  save_image.reset();
 }
 
 void SaveView::traverse(Visitor *visitor) {
