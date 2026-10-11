@@ -62,14 +62,8 @@ public:
   virtual std::string getDefaultKey() override { return "context"; }
 
 private:
-
-  static bool has_video;
-  static bool has_audio;
-  static bool has_instance;
-
   bool use_video = false;
   bool use_audio = false;
-  
 };
 
 
