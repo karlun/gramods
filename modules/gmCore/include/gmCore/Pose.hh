@@ -23,9 +23,30 @@ struct Pose {
   Eigen::Vector3f position = Eigen::Vector3f::Zero();
   Eigen::Quaternionf orientation = Eigen::Quaternionf::Identity();
 
+  /**
+     Pose accumulation, i.e. one pose within the other's space.
+  */
   Pose operator*(const Pose &other) const {
     return {.position = position + orientation * other.position,
             .orientation = orientation * other.orientation};
+  }
+
+  /**
+     Component-wise difference. For pose difference between two Pose,
+     A and B, use B.conjugate() * A.
+  */
+  Pose operator-(const Pose &other) const {
+    return {.position = position - other.position,
+            .orientation = other.orientation.conjugate() * orientation};
+  }
+
+  /**
+     Component-wise accumulation. For pose accumulation between Pose A
+     and B, use A * B.
+  */
+  Pose operator+(const Pose &other) const {
+    return {.position = position + other.position,
+            .orientation = other.orientation * orientation};
   }
 
   Pose operator*(float scale) const {

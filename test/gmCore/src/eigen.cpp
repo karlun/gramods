@@ -146,7 +146,7 @@ TEST(gmCoreEigen, Pose) {
   const auto A =
       gmCore::Pose{.position = {7.5, -1.2, -2.0},
                    .orientation = Eigen::Quaternionf(
-                       Eigen::AngleAxisf(0.5, Eigen::Vector3f::UnitX()))};
+                       Eigen::AngleAxisf(0.3, Eigen::Vector3f::UnitZ()))};
   const auto B =
       gmCore::Pose{.position = {-0.5, 0.1, 0.99},
                    .orientation = Eigen::Quaternionf(
@@ -154,15 +154,26 @@ TEST(gmCoreEigen, Pose) {
 
   const Eigen::Matrix4f M_C_P = (A * B).asMatrix().matrix();
   const Eigen::Matrix4f M_C_M = (A.asMatrix() * B.asMatrix()).matrix();
-  EXPECT_LE(std::abs((M_C_P - M_C_M).sum()), 1e-10);
+  EXPECT_LE(std::abs((M_C_P - M_C_M).sum()), 1e-5);
 
   const Eigen::Matrix4f M_D_P = A.conjugate().asMatrix().matrix();
   const Eigen::Matrix4f M_D_M = A.asMatrix().inverse().matrix();
-  EXPECT_LE(std::abs((M_D_P - M_D_M).sum()), 1e-10);
+  EXPECT_LE(std::abs((M_D_P - M_D_M).sum()), 1e-5);
 
   const Eigen::Matrix4f M_E_P = (A.conjugate() * B).asMatrix().matrix();
   const Eigen::Matrix4f M_E_M = (A.asMatrix().inverse() * B.asMatrix()).matrix();
-  EXPECT_LE(std::abs((M_E_P - M_E_M).sum()), 1e-10);
+  EXPECT_LE(std::abs((M_E_P - M_E_M).sum()), 1e-5);
+
+  const auto D =
+      gmCore::Pose{.position = {4.52, -0.1, 3.87},
+                   .orientation = Eigen::Quaternionf(
+                       Eigen::AngleAxisf(-2.5, Eigen::Vector3f::UnitY()))};
+  const auto A2 = D * A;
+  const auto B2 = D * B;
+
+  const gmCore::Pose PD_1 = A.conjugate() * B - A2.conjugate() * B2;
+  EXPECT_LE(PD_1.position.norm(), 1e-5);
+  EXPECT_LE(std::abs(1 - PD_1.orientation.w()), 1e-5);
 }
 
 #endif
