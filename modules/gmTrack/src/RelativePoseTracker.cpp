@@ -86,7 +86,7 @@ std::optional<PoseTracker::State> RelativePoseTracker::Impl::get() {
       for (const auto as : relative_state.value()) {
         state[as.first] = //
             {.time = std::max(o_sample.time, as.second.time),
-             .value = o_sample.value.conjugate() * as.second.value};
+             .value = o_sample.value.inverse() * as.second.value};
       }
     } else {
       // Transform only keys listed in relative_keys
@@ -96,7 +96,7 @@ std::optional<PoseTracker::State> RelativePoseTracker::Impl::get() {
         else
           state[as.first] = //
               {.time = std::max(o_sample.time, as.second.time),
-               .value = o_sample.value.conjugate() * as.second.value};
+               .value = o_sample.value.inverse() * as.second.value};
     }
   } else /* (!origin_key) */ {
     for (const auto as : relative_state.value())
@@ -105,7 +105,7 @@ std::optional<PoseTracker::State> RelativePoseTracker::Impl::get() {
         const auto o_sample = origin_state.value()[as.first];
         state[as.first] = //
             {.time = std::max(o_sample.time, as.second.time),
-             .value = o_sample.value.conjugate() * as.second.value};
+             .value = o_sample.value.inverse() * as.second.value};
       } else {
         state[as.first] = as.second;
       }

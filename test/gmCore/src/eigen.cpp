@@ -156,11 +156,11 @@ TEST(gmCoreEigen, Pose) {
   const Eigen::Matrix4f M_C_M = (A.asMatrix() * B.asMatrix()).matrix();
   EXPECT_LE(std::abs((M_C_P - M_C_M).sum()), 1e-5);
 
-  const Eigen::Matrix4f M_D_P = A.conjugate().asMatrix().matrix();
+  const Eigen::Matrix4f M_D_P = A.inverse().asMatrix().matrix();
   const Eigen::Matrix4f M_D_M = A.asMatrix().inverse().matrix();
   EXPECT_LE(std::abs((M_D_P - M_D_M).sum()), 1e-5);
 
-  const Eigen::Matrix4f M_E_P = (A.conjugate() * B).asMatrix().matrix();
+  const Eigen::Matrix4f M_E_P = (A.inverse() * B).asMatrix().matrix();
   const Eigen::Matrix4f M_E_M = (A.asMatrix().inverse() * B.asMatrix()).matrix();
   EXPECT_LE(std::abs((M_E_P - M_E_M).sum()), 1e-5);
 
@@ -171,7 +171,7 @@ TEST(gmCoreEigen, Pose) {
   const auto A2 = D * A;
   const auto B2 = D * B;
 
-  const gmCore::Pose PD_1 = A.conjugate() * B - A2.conjugate() * B2;
+  const gmCore::Pose PD_1 = A.inverse() * B - A2.inverse() * B2;
   EXPECT_LE(PD_1.position.norm(), 1e-5);
   EXPECT_LE(std::abs(1 - PD_1.orientation.w()), 1e-5);
 }

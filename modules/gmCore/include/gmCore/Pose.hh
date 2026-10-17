@@ -33,7 +33,7 @@ struct Pose {
 
   /**
      Component-wise difference. For pose difference between two Pose,
-     A and B, use B.conjugate() * A.
+     A and B, use B.inverse() * A.
   */
   Pose operator-(const Pose &other) const {
     return {.position = position - other.position,
@@ -55,7 +55,7 @@ struct Pose {
                 Eigen::Quaternionf::Identity().slerp(scale, orientation)};
   }
 
-  Pose conjugate() const {
+  Pose inverse() const {
     return {.position = orientation.conjugate() * -position,
             .orientation = orientation.conjugate()};
   }
