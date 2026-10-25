@@ -22,7 +22,7 @@ TEST(gmCoreConsole, PathStripping) {
 
 TEST(gmCoreConsole, OStreamMessageSink_sstream) {
 
-  gmCore::Console::removeAllSinks();
+  gmCore::Console::pushSinks();
 
   std::stringstream ss;
 
@@ -62,12 +62,12 @@ TEST(gmCoreConsole, OStreamMessageSink_sstream) {
 
   EXPECT_EQ(result.str(), ss.str());
 
-  gmCore::Console::removeAllSinks();
+  gmCore::Console::popSinks();
 }
 
 TEST(gmCoreConsole, OStreamMessageSink_autoout) {
 
-  gmCore::Console::removeAllSinks();
+  gmCore::Console::pushSinks();
 
   std::shared_ptr<gmCore::OStreamMessageSink> osms =
     std::make_shared<gmCore::OStreamMessageSink>();
@@ -116,14 +116,14 @@ TEST(gmCoreConsole, OStreamMessageSink_autoout) {
   EXPECT_EQ(result_out.str(), ss_out.str());
   EXPECT_EQ(result_err.str(), ss_err.str());
 
-  gmCore::Console::removeAllSinks();
+  gmCore::Console::popSinks();
 }
 
 #ifdef gramods_ENABLE_TinyXML2
 
 TEST(gmCoreConsole, OStreamMessageSink_stdcout) {
 
-  gmCore::Console::removeAllSinks();
+  gmCore::Console::pushSinks();
 
   std::string xml = R"lang=xml(
   <config>
@@ -150,7 +150,7 @@ TEST(gmCoreConsole, OStreamMessageSink_stdcout) {
 
   EXPECT_EQ(result.str(), ss.str());
 
-  gmCore::Console::removeAllSinks();
+  gmCore::Console::popSinks();
 
 }
 

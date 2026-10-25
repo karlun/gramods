@@ -10,9 +10,11 @@
 #include "load_empty_lib_config_file.cpp"
 #include "console.cpp"
 
+#include <test/config.hh>
 
 int main(int argc, char **argv) {
+  gramods::test::addConsoleMessageSinks();
+
   ::testing::InitGoogleTest(&argc, argv);
-  int ret = RUN_ALL_TESTS();
-  return ret;
+  return RUN_ALL_TESTS();
 }

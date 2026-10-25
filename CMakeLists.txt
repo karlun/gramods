@@ -139,6 +139,12 @@ FIND_PACKAGE(GTest QUIET)
 IF (GTest_FOUND)
   ENABLE_TESTING()
 
+  OPTION(gramods_TEST_DEBUG_OUTPUT_TO_CONSOLE "Activate sending debug output to the console for tests" OFF)
+  OPTION(gramods_TEST_DEBUG_OUTPUT_TO_FILE "Activate sending debug output to a file for tests" OFF)
+  CONFIGURE_FILE(
+    ${CMAKE_CURRENT_SOURCE_DIR}/test/config_cmake.hh
+    ${CMAKE_CURRENT_BINARY_DIR}/include/test/config.hh)
+
   SUBDIRLIST(SUBDIRS ${gramods_SOURCE_DIR}/test)
   
   FOREACH (TEST ${SUBDIRS})

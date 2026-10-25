@@ -7,26 +7,11 @@
 
 #include <gmCore/Updateable.hh>
 
-#include <gmCore/Console.hh>
-#include <gmCore/OStreamMessageSink.hh>
-#include <gmCore/NullMessageSink.hh>
-
 #include <random>
 
 using namespace gramods;
 
 TEST(gmTrackBaseEstimation, FullSamplesByInverse) {
-
-  gmCore::Console::removeAllSinks();
-#if 0
-  std::shared_ptr<gmCore::OStreamMessageSink> osms =
-    std::make_shared<gmCore::OStreamMessageSink>();
-  osms->initialize();
-#else
-  std::shared_ptr<gmCore::NullMessageSink> nullsink =
-    std::make_shared<gmCore::NullMessageSink>();
-  nullsink->initialize();
-#endif
 
   {
 
@@ -111,17 +96,6 @@ TEST(gmTrackBaseEstimation, FullSamplesByInverse) {
 }
 
 TEST(gmTrackBaseEstimation, OverDeterminedSamplesByQR) {
-
-  gmCore::Console::removeAllSinks();
-#if 0
-  std::shared_ptr<gmCore::OStreamMessageSink> osms =
-    std::make_shared<gmCore::OStreamMessageSink>();
-  osms->initialize();
-#else
-  std::shared_ptr<gmCore::NullMessageSink> nullsink =
-    std::make_shared<gmCore::NullMessageSink>();
-  nullsink->initialize();
-#endif
 
   {
     const auto MAIN_BUTTON = gmTrack::StdKey::MAIN_BUTTON;
@@ -208,17 +182,6 @@ TEST(gmTrackBaseEstimation, OverDeterminedSamplesByQR) {
 #define MAX_POSITION_COUNT 20
 
 TEST(gmTrackBaseEstimation, RandomTesting) {
-
-  gmCore::Console::removeAllSinks();
-#if 0
-  std::shared_ptr<gmCore::OStreamMessageSink> osms =
-    std::make_shared<gmCore::OStreamMessageSink>();
-  osms->initialize();
-#else
-  std::shared_ptr<gmCore::NullMessageSink> nullsink =
-    std::make_shared<gmCore::NullMessageSink>();
-  nullsink->initialize();
-#endif
 
   std::default_random_engine random_engine;
   std::uniform_real_distribution<float> real_random =

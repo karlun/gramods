@@ -9,6 +9,7 @@ SET(gramods_PARTS
   ${gramods_PARTS} "test_gmMisc" PARENT_SCOPE)
 
 LIST (APPEND TEST_INCLUDE_DIRS ${CMAKE_CURRENT_SOURCE_DIR}/include)
+LIST (APPEND TEST_INCLUDE_DIRS ${CMAKE_BINARY_DIR}/include)
 
 IF (NOT TARGET gmMisc)
   SET(gramods_REQ_test_gmMisc "gmMisc" PARENT_SCOPE)

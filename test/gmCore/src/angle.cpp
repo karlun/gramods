@@ -15,8 +15,9 @@ using namespace gramods;
 
 TEST(gmCoreAngle, ReadFloat) {
 
-  std::stringstream out;
+  gmCore::Console::pushSinks();
 
+  std::stringstream out;
   std::shared_ptr<gmCore::OStreamMessageSink> osms =
     std::make_shared<gmCore::OStreamMessageSink>();
   osms->setStream(&out);
@@ -35,13 +36,14 @@ TEST(gmCoreAngle, ReadFloat) {
     EXPECT_FALSE(out.str().find("'r180'") == std::string::npos);
   }
 
-  gmCore::Console::removeAllSinks();
+  gmCore::Console::popSinks();
 }
 
 TEST(gmCoreAngle, ReadRadians) {
 
-  std::stringstream out;
+  gmCore::Console::pushSinks();
 
+  std::stringstream out;
   std::shared_ptr<gmCore::OStreamMessageSink> osms =
     std::make_shared<gmCore::OStreamMessageSink>();
   osms->setStream(&out);
@@ -58,13 +60,14 @@ TEST(gmCoreAngle, ReadRadians) {
     EXPECT_TRUE(out.str().empty());
   }
 
-  gmCore::Console::removeAllSinks();
+  gmCore::Console::popSinks();
 }
 
 TEST(gmCoreAngle, ReadDegrees) {
 
-  std::stringstream out;
+  gmCore::Console::pushSinks();
 
+  std::stringstream out;
   std::shared_ptr<gmCore::OStreamMessageSink> osms =
     std::make_shared<gmCore::OStreamMessageSink>();
   osms->setStream(&out);
@@ -81,7 +84,7 @@ TEST(gmCoreAngle, ReadDegrees) {
     EXPECT_TRUE(out.str().empty());
   }
 
-  gmCore::Console::removeAllSinks();
+  gmCore::Console::popSinks();
 }
 
 TEST(gmCoreAngle, ReadNegativeDegrees) {
@@ -97,8 +100,9 @@ TEST(gmCoreAngle, ReadNegativeDegrees) {
 
 TEST(gmCoreAngle, ReadWrongKey) {
 
-  std::stringstream out;
+  gmCore::Console::pushSinks();
 
+  std::stringstream out;
   std::shared_ptr<gmCore::OStreamMessageSink> osms =
     std::make_shared<gmCore::OStreamMessageSink>();
   osms->setStream(&out);
@@ -114,13 +118,14 @@ TEST(gmCoreAngle, ReadWrongKey) {
     EXPECT_FALSE(out.str().find("'q180'") == std::string::npos);
   }
 
-  gmCore::Console::removeAllSinks();
+  gmCore::Console::popSinks();
 }
 
 TEST(gmCoreAngle, ReadMultiple) {
 
-  std::stringstream out;
+  gmCore::Console::pushSinks();
 
+  std::stringstream out;
   std::shared_ptr<gmCore::OStreamMessageSink> osms =
     std::make_shared<gmCore::OStreamMessageSink>();
   osms->setStream(&out);
@@ -139,5 +144,5 @@ TEST(gmCoreAngle, ReadMultiple) {
     EXPECT_TRUE(out.str().empty());
   }
 
-  gmCore::Console::removeAllSinks();
+  gmCore::Console::popSinks();
 }

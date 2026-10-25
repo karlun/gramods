@@ -1,26 +1,12 @@
 
 #include <gmTrack/BinaryKeyChangeTracker.hh>
 
-#include <gmCore/Console.hh>
-#include <gmCore/OStreamMessageSink.hh>
 #include <gmCore/MathConstants.hh>
-#include <gmCore/NullMessageSink.hh>
 
 using namespace gramods;
 
 
 TEST(gmTrackKeyChangeTracker, Simple) {
-
-  gmCore::Console::removeAllSinks();
-#if 0
-  std::shared_ptr<gmCore::OStreamMessageSink> osms =
-    std::make_shared<gmCore::OStreamMessageSink>();
-  osms->initialize();
-#else
-  std::shared_ptr<gmCore::NullMessageSink> nullsink =
-    std::make_shared<gmCore::NullMessageSink>();
-  nullsink->initialize();
-#endif
 
   auto bin_tracker = std::make_shared<gmTrack::BinaryTimeSampleTracker>();
   bin_tracker->addKeyValue("A", false);

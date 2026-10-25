@@ -281,6 +281,9 @@ public:
 
   static MessageSink *getDefaultSink();
 
+  static void pushSinks();
+  static void popSinks();
+
 private:
 
   class ConsoleBuffer

@@ -1,7 +1,5 @@
 
 #include <gmCore/Configuration.hh>
-#include <gmCore/Console.hh>
-#include <gmCore/OStreamMessageSink.hh>
 #include <gmCore/ImportLibrary.hh>
 #include <gmCore/SdlContext.hh>
 #include <gmGraphics/SdlWindow.hh>

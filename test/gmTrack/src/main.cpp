@@ -8,8 +8,11 @@
 #include "registered_tracker.cpp"
 #include "vrpn.cpp"
 
+#include <test/config.hh>
+
 int main(int argc, char **argv) {
+  gramods::test::addConsoleMessageSinks();
+
   ::testing::InitGoogleTest(&argc, argv);
-  int ret = RUN_ALL_TESTS();
-  return ret;
+  return RUN_ALL_TESTS();
 }

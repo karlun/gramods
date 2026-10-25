@@ -8,25 +8,11 @@
 #include <gmCore/Updateable.hh>
 #include <gmCore/FreeImage.hh>
 
-#include <gmCore/Console.hh>
-#include <gmCore/OStreamMessageSink.hh>
-
 #include <FreeImage.h>
 
 using namespace gramods;
 
 TEST(gmTrackProjectionTexture, SimpleFlat) {
-
-  gmCore::Console::removeAllSinks();
-#if 0
-  std::shared_ptr<gmCore::OStreamMessageSink> osms =
-    std::make_shared<gmCore::OStreamMessageSink>();
-  osms->initialize();
-#else
-  std::shared_ptr<gmCore::NullMessageSink> nullsink =
-    std::make_shared<gmCore::NullMessageSink>();
-  nullsink->initialize();
-#endif
 
   const std::string ACTION_MAIN = "/actions/std/in/MainButton";
 
@@ -81,17 +67,6 @@ TEST(gmTrackProjectionTexture, SimpleFlat) {
 }
 
 TEST(gmTrackProjectionTexture, CurvatureWRegions) {
-
-  gmCore::Console::removeAllSinks();
-#if 0
-  std::shared_ptr<gmCore::OStreamMessageSink> osms =
-    std::make_shared<gmCore::OStreamMessageSink>();
-  osms->initialize();
-#else
-  std::shared_ptr<gmCore::NullMessageSink> nullsink =
-    std::make_shared<gmCore::NullMessageSink>();
-  nullsink->initialize();
-#endif
 
   auto file = std::filesystem::temp_directory_path() /
               (std::string(tmpnam(nullptr)) + ".tif");

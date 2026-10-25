@@ -4,8 +4,6 @@
 
 #include <gmCore/Console.hh>
 #include <gmCore/OStreamMessageSink.hh>
-#include <gmCore/NullMessageSink.hh>
-#include <gmCore/LogFileMessageSink.hh>
 
 #include <atomic>
 #include <memory>
@@ -19,19 +17,6 @@
 using namespace gramods;
 
 TEST(gmNetwork, SyncNode_createdestroy) {
-
-  gmCore::Console::removeAllSinks();
-#if 0
-  std::shared_ptr<gmCore::OStreamMessageSink> osms =
-    std::make_shared<gmCore::OStreamMessageSink>();
-  osms->setUseAnsiColor(true);
-  osms->setLevel(2);
-  osms->initialize();
-#else
-  std::shared_ptr<gmCore::NullMessageSink> nullsink =
-    std::make_shared<gmCore::NullMessageSink>();
-  nullsink->initialize();
-#endif
 
   std::shared_ptr<gmNetwork::SyncNode> node =
     std::make_shared<gmNetwork::SyncNode>();
@@ -94,24 +79,6 @@ namespace {
 }
 
 TEST(gmNetwork, RunSync_wait) {
-
-  gmCore::Console::removeAllSinks();
-#if 0
-  std::shared_ptr<gmCore::OStreamMessageSink> osms =
-    std::make_shared<gmCore::OStreamMessageSink>();
-  osms->setUseAnsiColor(true);
-  osms->setLevel(20);
-  osms->initialize();
-
-  std::shared_ptr<gmCore::LogFileMessageSink> lfms =
-    std::make_shared<gmCore::LogFileMessageSink>();
-  lfms->setLogFilePath("gramods.log");
-  lfms->initialize();
-#else
-  std::shared_ptr<gmCore::NullMessageSink> nullsink =
-    std::make_shared<gmCore::NullMessageSink>();
-  nullsink->initialize();
-#endif
 
   size_t peer_count = 2;
 
@@ -189,21 +156,9 @@ namespace {
 
 TEST(gmNetwork, SyncNode_pingpong) {
 
-  gmCore::Console::removeAllSinks();
-#if 0
-  std::shared_ptr<gmCore::OStreamMessageSink> osms =
-    std::make_shared<gmCore::OStreamMessageSink>();
-  osms->setUseAnsiColor(true);
-  osms->setLevel(3);
-  osms->initialize();
-#else
-  std::shared_ptr<gmCore::NullMessageSink> nullsink =
-    std::make_shared<gmCore::NullMessageSink>();
-  nullsink->initialize();
-#endif
+  gmCore::Console::pushSinks();
 
   std::stringstream ss;
-
   std::shared_ptr<gmCore::OStreamMessageSink> ssms =
     std::make_shared<gmCore::OStreamMessageSink>();
   ssms->setStream(&ss);
@@ -231,4 +186,6 @@ TEST(gmNetwork, SyncNode_pingpong) {
   EXPECT_TRUE(ss.str().find(" 1 Sending pong to 0") != std::string::npos);
   EXPECT_TRUE(ss.str().find(" 0 Sending ping to 1") != std::string::npos);
   EXPECT_TRUE(ss.str().find(" 1 Sending pong to 0") != std::string::npos);
+
+  gmCore::Console::popSinks();
 }

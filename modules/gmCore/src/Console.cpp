@@ -2,6 +2,8 @@
 #include <gmCore/Console.hh>
 #include <gmCore/OStreamMessageSink.hh>
 
+#include <stack>
+
 BEGIN_NAMESPACE_GMCORE;
 
 std::vector<std::shared_ptr<MessageSink>> Console::message_sinks;
@@ -42,6 +44,26 @@ MessageSink *Console::getDefaultSink() {
   static std::shared_ptr<OStreamMessageSink> sink =
       std::make_shared<OStreamMessageSink>();
   return sink.get();
+}
+
+namespace {
+std::stack<std::vector<std::shared_ptr<MessageSink>>> message_sink_stack;
+}
+
+void Console::pushSinks() {
+  GM_DBG1("Console", "Output suspended because of stack push");
+  std::lock_guard<std::mutex> guard(lock);
+  message_sink_stack.push({});
+  message_sink_stack.top().swap(message_sinks);
+}
+
+void Console::popSinks() {
+  {
+    std::lock_guard<std::mutex> guard(lock);
+    message_sink_stack.top().swap(message_sinks);
+    message_sink_stack.pop();
+  }
+  GM_DBG1("Console", "Output back online because of stack pop");
 }
 
 END_NAMESPACE_GMCORE;

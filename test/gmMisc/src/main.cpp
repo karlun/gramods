@@ -8,34 +8,11 @@
 #include "neldermead.cpp"
 #include "delaunay.cpp"
 
-#include <gmCore/Console.hh>
-#include <gmCore/OStreamMessageSink.hh>
-#include <gmCore/LogFileMessageSink.hh>
-#include <gmCore/NullMessageSink.hh>
-
-using namespace gramods;
+#include <test/config.hh>
 
 int main(int argc, char **argv) {
-  gmCore::Console::removeAllSinks();
-#if 0
-  std::shared_ptr<gmCore::OStreamMessageSink> osms =
-    std::make_shared<gmCore::OStreamMessageSink>();
-  osms->setUseAnsiColor(true);
-  osms->setLevel(4);
-  osms->initialize();
-
-  std::shared_ptr<gmCore::LogFileMessageSink> lfms =
-    std::make_shared<gmCore::LogFileMessageSink>();
-  lfms->setLogFilePath("gramods.log");
-  lfms->setLevel(6);
-  lfms->initialize();
-#else
-  std::shared_ptr<gmCore::NullMessageSink> nullsink =
-    std::make_shared<gmCore::NullMessageSink>();
-  nullsink->initialize();
-#endif
+  gramods::test::addConsoleMessageSinks();
 
   ::testing::InitGoogleTest(&argc, argv);
-  int ret = RUN_ALL_TESTS();
-  return ret;
+  return RUN_ALL_TESTS();
 }

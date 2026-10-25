@@ -1,7 +1,4 @@
 
-#include <gmCore/Console.hh>
-#include <gmCore/LogFileMessageSink.hh>
-#include <gmCore/OStreamMessageSink.hh>
 #include <gmCore/Pose.hh>
 
 #include <gmNetwork/SyncNode.hh>
@@ -164,24 +161,6 @@ namespace {
 }
 
 TEST(gmNetwork, DataSync_singles) {
-
-  gmCore::Console::removeAllSinks();
-#if 0
-  std::shared_ptr<gmCore::OStreamMessageSink> osms =
-    std::make_shared<gmCore::OStreamMessageSink>();
-  osms->setUseAnsiColor(true);
-  osms->setLevel(20);
-  osms->initialize();
-
-  std::shared_ptr<gmCore::LogFileMessageSink> lfms =
-    std::make_shared<gmCore::LogFileMessageSink>();
-  lfms->setLogFilePath("gramods.log");
-  lfms->initialize();
-#else
-  std::shared_ptr<gmCore::NullMessageSink> nullsink =
-    std::make_shared<gmCore::NullMessageSink>();
-  nullsink->initialize();
-#endif
 
 #if 0
   // Simple type

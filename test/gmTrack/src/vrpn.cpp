@@ -3,9 +3,6 @@
 
 #ifdef gramods_ENABLE_VRPN
 
-#include <gmCore/Console.hh>
-#include <gmCore/OStreamMessageSink.hh>
-#include <gmCore/NullMessageSink.hh>
 #include <gmCore/Updateable.hh>
 
 #include <memory>
@@ -21,17 +18,6 @@
 using namespace gramods;
 
 TEST(gmTrackVrpn, VrpnTracker) {
-
-  gmCore::Console::removeAllSinks();
-#if 0
-  std::shared_ptr<gmCore::OStreamMessageSink> osms =
-    std::make_shared<gmCore::OStreamMessageSink>();
-  osms->initialize();
-#else
-  std::shared_ptr<gmCore::NullMessageSink> nullsink =
-    std::make_shared<gmCore::NullMessageSink>();
-  nullsink->initialize();
-#endif
 
   {
     vrpn_ConnectionPtr conn = vrpn_ConnectionPtr::create_server_connection(3883);

@@ -3,7 +3,6 @@
 #include <gmSound/SoundBurstDetector.hh>
 
 #include <gmCore/Console.hh>
-#include <gmCore/OStreamMessageSink.hh>
 #include <gmCore/TimeTools.hh>
 
 using namespace gramods;
@@ -58,19 +57,6 @@ struct TestCapture : gmSound::Capture {
 };
 
 TEST(gmSoundMultilateration, Positioning) {
-
-  gmCore::Console::removeAllSinks();
-#if 0
-  std::shared_ptr<gmCore::OStreamMessageSink> osms =
-    std::make_shared<gmCore::OStreamMessageSink>();
-  osms->setUseAnsiColor(true);
-  osms->setLevel(4);
-  osms->initialize();
-#elif 0
-  std::shared_ptr<gmCore::NullMessageSink> nullsink =
-    std::make_shared<gmCore::NullMessageSink>();
-  nullsink->initialize();
-#endif
 
   Eigen::Vector3f p1(-10, -10, -10);
   Eigen::Vector3f p2(+10, +10, -10);
