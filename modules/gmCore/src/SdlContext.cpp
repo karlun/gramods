@@ -9,9 +9,12 @@ GM_OFI_DEFINE(SdlContext);
 GM_OFI_PARAM2(SdlContext, useVideo, bool, setUseVideo);
 GM_OFI_PARAM2(SdlContext, useAudio, bool, setUseAudio);
 
-bool SdlContext::has_audio = false;
-bool SdlContext::has_video = false;
-bool SdlContext::has_instance = false;
+namespace {
+bool has_audio = false;
+bool has_video = false;
+bool has_instance = false;
+Uint32 sdl_flags = 0;
+}
 
 bool SdlContext::hasVideo() { return has_video; }
 bool SdlContext::hasAudio() { return has_audio; }
@@ -20,10 +23,12 @@ SdlContext::SdlContext() {
   if (has_instance)
     throw RuntimeException("Cannot instantiate SdlContext - SDL already initialized");
   has_instance = true;
+  sdl_flags = 0;
 }
 
 SdlContext::~SdlContext() {
   has_instance = false;
+  SDL_QuitSubSystem(sdl_flags);
   SDL_Quit();
 }
 
@@ -32,7 +37,7 @@ void SdlContext::initialize() {
   if (isInitialized()) return;
   Object::initialize();
 
-  Uint32 sdl_flags = 0;
+  sdl_flags = 0;
 
   if (use_audio)
     sdl_flags |= SDL_INIT_AUDIO;

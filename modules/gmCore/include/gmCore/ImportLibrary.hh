@@ -67,6 +67,11 @@ public:
   */
   void setDbgSuffix(std::string str);
 
+  /**
+     Retrieves the symbol/procedure address from the loaded library.
+  */
+  void *getSymbol(std::string name);
+
   GM_OFI_DECLARE;
 
 private:

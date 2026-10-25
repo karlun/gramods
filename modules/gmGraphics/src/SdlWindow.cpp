@@ -70,20 +70,20 @@ void GLAPIENTRY MessageCallback
 
   switch(severity) {
   case GL_DEBUG_SEVERITY_HIGH:
-    GM_ERR("OpenGL", "OpenGL " << type_str
-           << ", severity = " << severity_str
-           << ", message = " << message );
+    GM_ERR("OpenGL", "OpenGL " << type_str <<               //
+                         ", severity = " << severity_str << //
+                         ", message = " << message);
     break;
   case GL_DEBUG_SEVERITY_MEDIUM:
-    GM_WRN("OpenGL", "OpenGL " << type_str
-           << ", severity = " << severity_str
-           << ", message = " << message );
+    GM_WRN("OpenGL", "OpenGL " << type_str <<               //
+                         ", severity = " << severity_str << //
+                         ", message = " << message);
     break;
   case GL_DEBUG_SEVERITY_LOW:
   case GL_DEBUG_SEVERITY_NOTIFICATION:
-    GM_DBG1("OpenGL", "OpenGL " << type_str
-           << ", severity = " << severity_str
-           << ", message = " << message );
+    GM_DBG2("OpenGL", "OpenGL " << type_str <<               //
+                          ", severity = " << severity_str << //
+                          ", message = " << message);
   }
 }
 
@@ -217,10 +217,12 @@ void SdlWindow::swap() {
 }
 
 void SdlWindow::close() {
-  GM_DBG1("SdlWindow", "Closing window " << title);
-
   alive = false;
 
+  GM_DBG1("SdlWindow", "Removing views for " << title << " because it is closing");
+  views.clear();
+
+  GM_DBG1("SdlWindow", "Closing GL context and destroying for " << title);
   if (gl_context){
     SDL_GL_DeleteContext(gl_context);
     gl_context = nullptr;

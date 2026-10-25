@@ -250,12 +250,14 @@ Required dependencies:
 
 Optional dependencies:
 
- - SDL2, for SDL-based window
  - FreeImage, for reading and writing images
  - Gimp (binaries), for generating textures using Python-fu
  - Inkscape (binaries), for generating textures from SVG
  - libuvc, for UVC support, reading image data from video class USB devices.
+ - NDI SDK, for sending graphics over Network Device Interface (NDI)
  - OpenVR, for HMD and OpenVR tracking support
+ - Python, for generating textures
+ - SDL2, for SDL-based window
  - TinyObjLoader, for loading Wavefront files
 
 

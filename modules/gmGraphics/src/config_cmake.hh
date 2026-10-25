@@ -40,6 +40,11 @@ namespace gramods {
 #endif
 #endif
 
+#cmakedefine HAVE_NDI
+#ifdef HAVE_NDI
+#cmakedefine gramods_ENABLE_NDI
+#endif
+
 #cmakedefine HAVE_tinyobjloader
 #ifdef HAVE_tinyobjloader
 #cmakedefine gramods_ENABLE_tinyobjloader
