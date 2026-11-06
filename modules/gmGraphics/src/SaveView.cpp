@@ -84,8 +84,6 @@ struct SaveView::Impl {
       data_transfer->is_in_use.notify_all();
     }
 
-    BYTE *getBytes() { return FreeImage_GetBits(bitmap); }
-
     FIBITMAP *bitmap;
     std::shared_ptr<PixelPacker::DataTransfer> data_transfer;
     std::string filename;
