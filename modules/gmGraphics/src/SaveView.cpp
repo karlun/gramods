@@ -75,7 +75,7 @@ struct SaveView::Impl {
       data_transfer->is_in_use = true;
       bitmap = FreeImage_ConvertFromRawBitsEx(
           false, tr->data, image_type, width, height, width * bytes_per_pixel,
-          0, 0, 0, true);
+          8 * bytes_per_pixel, 0, 0, 0, true);
     }
 
     ~FileBuffer() {
