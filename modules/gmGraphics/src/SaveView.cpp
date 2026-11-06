@@ -72,9 +72,10 @@ struct SaveView::Impl {
                int height, int bytes_per_pixel,
                std::shared_ptr<PixelPacker::DataTransfer> tr)
         : filename(filename), data_transfer(tr) {
+      data_transfer->is_in_use = true;
       bitmap = FreeImage_ConvertFromRawBitsEx(
           false, tr->data, image_type, width, height, width * bytes_per_pixel,
-          0, 0, 0, true);
+          8 * bytes_per_pixel, 0, 0, 0, true);
     }
 
     ~FileBuffer() {
@@ -82,8 +83,6 @@ struct SaveView::Impl {
       data_transfer->is_in_use = false;
       data_transfer->is_in_use.notify_all();
     }
-
-    BYTE *getBytes() { return FreeImage_GetBits(bitmap); }
 
     FIBITMAP *bitmap;
     std::shared_ptr<PixelPacker::DataTransfer> data_transfer;
@@ -263,7 +262,6 @@ void SaveView::Impl::renderFullPipeline(ViewSettings settings) {
                     [this, filename, fi_image_type, width, height,
                      bytes_per_channel, number_of_channels](
                         std::shared_ptr<PixelPacker::DataTransfer> tr) {
-                      tr->is_in_use = true;
                       auto image = std::make_unique<FileBuffer>(
                           filename, fi_image_type, width, height,
                           bytes_per_channel * number_of_channels, tr);

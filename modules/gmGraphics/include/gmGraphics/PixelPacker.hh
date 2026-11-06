@@ -34,8 +34,8 @@ public:
 
     /**
        Flag for thread synchronization. Set this to true before
-       handing over the data to another thread and set it back to
-       false when that thread is done with the data.
+       handing over the data to another thread and when that thread is
+       done with the data, then set it back to false and call notify.
     */
     std::atomic<bool> is_in_use = false;
   };
