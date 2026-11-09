@@ -1,6 +1,8 @@
 
 #include <gmTrack/TrackerBase.hh>
 
+#include <gmCore/TimeTools.hh>
+
 #ifdef gramods_ENABLE_nlohmann_json
 #include <nlohmann/json.hpp>
 #endif
@@ -43,32 +45,40 @@ void _from_json(const nlohmann::json &j,
 
 #endif
 
-void to_json(nlohmann::json &j, const PoseTracker::State &o) {
-  j = nlohmann::json {o};
+void to_json(nlohmann::json &j, const PoseTracker::Sample &o) {
+  j = nlohmann::json{{"time", gmCore::TimeTools::timePointToSeconds(o.time)},
+                     {"value", o.value}};
 }
-void from_json(const nlohmann::json &j, PoseTracker::State &o) {
-  o = j.get<std::unordered_map<std::string, PoseTracker::Sample>>();
-}
-
-void to_json(nlohmann::json &j, const BinaryTracker::State &o) {
-  j = nlohmann::json {o};
-}
-void from_json(const nlohmann::json &j, BinaryTracker::State &o) {
-  o = j.get<std::unordered_map<std::string, BinaryTracker::Sample>>();
+void from_json(const nlohmann::json &j, PoseTracker::Sample &o) {
+  o.time = gmCore::TimeTools::secondsToTimePoint(j.get<double>());
+  o.value = j.get<gmCore::Pose>();
 }
 
-void to_json(nlohmann::json &j, const FloatTracker::State &o) {
-  j = nlohmann::json {o};
+void to_json(nlohmann::json &j, const BinaryTracker::Sample &o) {
+  j = nlohmann::json{{"time", gmCore::TimeTools::timePointToSeconds(o.time)},
+                     {"value", o.value}};
 }
-void from_json(const nlohmann::json &j, FloatTracker::State &o) {
-  o = j.get<std::unordered_map<std::string, FloatTracker::Sample>>();
+void from_json(const nlohmann::json &j, BinaryTracker::Sample &o) {
+  o.time = gmCore::TimeTools::secondsToTimePoint(j.get<double>());
+  o.value = j.get<bool>();
 }
 
-void to_json(nlohmann::json &j, const Float2Tracker::State &o) {
-  j = nlohmann::json {o};
+void to_json(nlohmann::json &j, const FloatTracker::Sample &o) {
+  j = nlohmann::json{{"time", gmCore::TimeTools::timePointToSeconds(o.time)},
+                     {"value", o.value}};
 }
-void from_json(const nlohmann::json &j, Float2Tracker::State &o) {
-  o = j.get<std::unordered_map<std::string, Float2Tracker::Sample>>();
+void from_json(const nlohmann::json &j, FloatTracker::Sample &o) {
+  o.time = gmCore::TimeTools::secondsToTimePoint(j.get<double>());
+  o.value = j.get<float>();
+}
+
+void to_json(nlohmann::json &j, const Float2Tracker::Sample &o) {
+  j = nlohmann::json{{"time", gmCore::TimeTools::timePointToSeconds(o.time)},
+                     {"value", o.value}};
+}
+void from_json(const nlohmann::json &j, Float2Tracker::Sample &o) {
+  o.time = gmCore::TimeTools::secondsToTimePoint(j.get<double>());
+  o.value = j.get<gmCore::float2>();
 }
 
 #endif

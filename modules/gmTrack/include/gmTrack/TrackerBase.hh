@@ -94,17 +94,17 @@ template<> std::string Float2Tracker::getDefaultKey();
 #ifdef gramods_ENABLE_nlohmann_json
 // Should be template but nested type could not be deduced
 
-void to_json(nlohmann::json &j, const PoseTracker::State &o);
-void from_json(const nlohmann::json &j, PoseTracker::State &o);
+void to_json(nlohmann::json &j, const PoseTracker::Sample &o);
+void from_json(const nlohmann::json &j, PoseTracker::Sample &o);
 
-void to_json(nlohmann::json &j, const BinaryTracker::State &o);
-void from_json(const nlohmann::json &j, BinaryTracker::State &o);
+void to_json(nlohmann::json &j, const BinaryTracker::Sample &o);
+void from_json(const nlohmann::json &j, BinaryTracker::Sample &o);
 
-void to_json(nlohmann::json &j, const FloatTracker::State &o);
-void from_json(const nlohmann::json &j, FloatTracker::State &o);
+void to_json(nlohmann::json &j, const FloatTracker::Sample &o);
+void from_json(const nlohmann::json &j, FloatTracker::Sample &o);
 
-void to_json(nlohmann::json &j, const Float2Tracker::State &o);
-void from_json(const nlohmann::json &j, Float2Tracker::State &o);
+void to_json(nlohmann::json &j, const Float2Tracker::Sample &o);
+void from_json(const nlohmann::json &j, Float2Tracker::Sample &o);
 
 #endif
 
