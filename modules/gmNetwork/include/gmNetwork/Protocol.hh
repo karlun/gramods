@@ -34,7 +34,7 @@ public:
      are reserved for internal protocols while values 128-255 may be
      used by application specific protocols.
   */
-  virtual char getProtocolFlag() { return 0; }
+  virtual uint8_t getProtocolFlag() { return 0; }
 
   /**
      Data entity communicated by the connection to the designated
@@ -51,18 +51,18 @@ public:
        Create an incoming message initialized with the specified
        header data.
     */
-    Message(std::vector<char> hdr);
+    Message(std::vector<uint8_t> hdr);
 
     /**
        Create an outgoing message template with protocol id and data.
     */
-    Message(char protocol, std::vector<char> data);
+    Message(uint8_t protocol, std::vector<uint8_t> data);
 
     /**
        Returns a vector filled with header data for this message. The
        length of the header is HEADER_LENGTH.
     */
-    std::vector<char> getHeader();
+    std::vector<uint8_t> getHeader();
 
     /**
        The index of the peer from which this message originated, or
@@ -79,19 +79,19 @@ public:
     /**
        Flag indicating which protocol this message is encoded for.
     */
-    char protocol = 0;
+    uint8_t protocol = 0;
 
     /**
        Expected length of the message as expressed in the message
        header. A complete message will satisfy the expression
        `data.length() == message_length`.
     */
-    size_t length = 0;
+    uint32_t length = 0;
 
     /**
        The complete set of data sent by the peer.
     */
-    std::vector<char> data;
+    std::vector<uint8_t> data;
   };
 
   /**
@@ -118,7 +118,7 @@ protected:
      Convenience method for creating a message and sending this to all
      peers.
   */
-  void sendMessage(std::vector<char> data);
+  void sendMessage(std::vector<uint8_t> data);
 
   /**
      Convenience method for quering the SyncNode for the local peer idx.

@@ -17,29 +17,15 @@
 BEGIN_NAMESPACE_GMCORE;
 
 void to_json(nlohmann::json &j, const gramods::gmCore::Pose &o) {
-  j = nlohmann::json {
-      {"position",
-       std::vector<float> {o.position.x(), //
-                           o.position.y(),
-                           o.position.z()}},
-      {"orientation",
-       std::vector<float> {o.orientation.w(),
-                           o.orientation.x(),
-                           o.orientation.y(),
-                           o.orientation.z()}},
+  j = nlohmann::json{
+      {"position", o.position},
+      {"orientation", o.orientation},
   };
 }
 
 void from_json(const nlohmann::json &j, gramods::gmCore::Pose &o) {
-  const auto pos = j.at("position");
-  const auto ori = j.at("orientation");
-  o.position = Eigen::Vector3f(pos[0].get<float>(), //
-                               pos[1].get<float>(),
-                               pos[2].get<float>());
-  o.orientation = Eigen::Quaternionf(ori[0].get<float>(),
-                                     ori[1].get<float>(),
-                                     ori[2].get<float>(),
-                                     ori[3].get<float>());
+  o.position = j.at("position").get<Eigen::Vector3f>();
+  o.orientation = j.at("orientation").get<Eigen::Quaternionf>();
 }
 
 END_NAMESPACE_GMCORE;

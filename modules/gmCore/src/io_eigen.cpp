@@ -7,7 +7,30 @@
 
 #include <gmCore/Console.hh>
 
+#ifdef gramods_ENABLE_nlohmann_json
+#include <nlohmann/json.hpp>
+#endif
+
 #include <cctype>
+
+namespace Eigen {
+void to_json(nlohmann::json &j, const Eigen::Vector3f &o) {
+  j = std::vector<float>{o.x(), o.y(), o.z()};
+}
+
+void from_json(const nlohmann::json &j, Eigen::Vector3f &o) {
+  o = Eigen::Vector3f(j[0].get<float>(), j[1].get<float>(), j[2].get<float>());
+}
+
+void to_json(nlohmann::json &j, const Eigen::Quaternionf &o) {
+  j = std::vector<float>{o.w(), o.x(), o.y(), o.z()};
+}
+
+void from_json(const nlohmann::json &j, Eigen::Quaternionf &o) {
+  o = Eigen::Quaternionf(j[0].get<float>(), j[1].get<float>(),
+                         j[2].get<float>(), j[3].get<float>());
+}
+} // namespace Eigen
 
 BEGIN_NAMESPACE_GRAMODS;
 

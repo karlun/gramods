@@ -20,9 +20,6 @@ using namespace gramods;
 typedef gmNetwork::SyncJData<float> SyncJFloat;
 typedef std::unordered_map<std::string, gmCore::Pose> PoseMap;
 typedef gmNetwork::SyncJData<PoseMap> SyncJPose;
-
-void to_json(nlohmann::json &j, const PoseMap &o) {}
-void from_json(const nlohmann::json &j, PoseMap &o) {}
 #endif
 
 #define PORT2 27040
@@ -151,8 +148,8 @@ namespace {
     EXPECT_FALSE(pose_map3.contains("b"));
     EXPECT_TRUE(pose_map3.contains("c"));
     EXPECT_TRUE(pose_map3.contains("d"));
-    if (pose_map2.contains("d"))
-      EXPECT_EQ_EIGEN_VECTOR(pose_map2["d"].position, -Eigen::Vector3f::UnitZ())
+    if (pose_map3.contains("d"))
+      EXPECT_EQ_EIGEN_VECTOR(pose_map3["d"].position, -Eigen::Vector3f::UnitZ())
           << " @ node " << idx;
 #endif
 
@@ -166,13 +163,11 @@ TEST(gmNetwork, DataSync_singles) {
   // Simple type
   auto test1 = std::make_shared<gmNetwork::SyncJData<float>>(0.5);
   *test1 = 1.0;
-  std::cerr << *test1 << std::endl;
 
   // Complex structure with simple types
   auto test2 = std::make_shared<
       gmNetwork::SyncJData<std::map<std::string, std::string>>>(
       std::map<std::string, std::string> {{"a", "b"}, {"b", "a"}});
-  std::cerr << (**test2).at("a") << std::endl;
 
   // Non-simple type
   auto test3 = std::make_shared<gmNetwork::SyncJData<gmCore::Pose>>(
@@ -186,7 +181,6 @@ TEST(gmNetwork, DataSync_singles) {
       std::map<std::string, gmCore::Pose> {
           {"a", {.position = Eigen::Vector3f::UnitX()}},
           {"b", {.position = Eigen::Vector3f::UnitY()}}});
-  std::cerr << (**test4).at("a") << std::endl;
 #endif
 
   size_t peer_count = 2;

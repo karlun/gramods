@@ -164,7 +164,7 @@ public:
      Returns the protocol instance associated with the specified
      protocol id, or nullptr if there is no protocol with that id.
   */
-  Protocol * getProtocol(char id);
+  Protocol *getProtocol(uint8_t id);
 
   /**
      Associates the specified protocol with the specified name. An

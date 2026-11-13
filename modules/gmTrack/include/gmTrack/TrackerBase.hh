@@ -92,8 +92,6 @@ template<> std::string FloatTracker::getDefaultKey();
 template<> std::string Float2Tracker::getDefaultKey();
 
 #ifdef gramods_ENABLE_nlohmann_json
-// Should be template but nested type could not be deduced
-
 void to_json(nlohmann::json &j, const PoseTracker::Sample &o);
 void from_json(const nlohmann::json &j, PoseTracker::Sample &o);
 
@@ -105,7 +103,6 @@ void from_json(const nlohmann::json &j, FloatTracker::Sample &o);
 
 void to_json(nlohmann::json &j, const Float2Tracker::Sample &o);
 void from_json(const nlohmann::json &j, Float2Tracker::Sample &o);
-
 #endif
 
 END_NAMESPACE_GMTRACK;

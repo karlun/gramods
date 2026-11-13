@@ -62,8 +62,8 @@ void RunSync::Impl::wait(RunSync * run_sync) {
   GM_DBG2("RunSync", local_peer_idx << " Initializing waiting; notifying all peers about waiting in frame " << waiting_frame_odd << ".");
 
   guard.unlock();
-  run_sync->sendMessage({ (char)local_peer_idx,
-                          waiting_frame_odd ? (char)1 : (char)0 });
+  run_sync->sendMessage(
+      {(uint8_t)local_peer_idx, waiting_frame_odd ? (uint8_t)1 : (uint8_t)0});
   guard.lock();
 
   auto & waiting_peers = waiting_frame_odd ?
@@ -97,8 +97,8 @@ void RunSync::Impl::processMessage(size_t local_peer_idx,
     return;
   }
 
-  char peer_idx = m.data[0];
-  char frame_odd = m.data[1];
+  uint8_t peer_idx = m.data[0];
+  uint8_t frame_odd = m.data[1];
 
   GM_DBG2("RunSync", local_peer_idx << " Got message of size " << m.data.size()
           << " (" << (int)peer_idx << ", " << (int)frame_odd << ")");

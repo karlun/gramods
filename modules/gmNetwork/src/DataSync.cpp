@@ -15,7 +15,7 @@ struct DataSync::Impl {
 
   void update();
 
-  void encode(SyncData * d, std::vector<char> &data, size_t local_peer_idx);
+  void encode(SyncData *d, std::vector<uint8_t> &data, size_t local_peer_idx);
   void processMessage(Message m, size_t local_peer_idx);
 
   bool closing = false;
@@ -109,14 +109,13 @@ void DataSync::Impl::processMessage(Message m, size_t local_peer_idx) {
 
 void DataSync::send(SyncData * d) {
 
-  std::vector<char> data;
+  std::vector<uint8_t> data;
   _impl->encode(d, data, getLocalPeerIdx());
 
   sendMessage(data);
 }
 
-void DataSync::Impl::encode(SyncData * d,
-                            std::vector<char> &data,
+void DataSync::Impl::encode(SyncData *d, std::vector<uint8_t> &data,
                             size_t local_peer_idx) {
   d->encode(data);
 
@@ -125,7 +124,7 @@ void DataSync::Impl::encode(SyncData * d,
   for (size_t idx = 0; idx < ptr_data.size(); ++idx)
     if (ptr_data[idx].get() == d) {
       assert(idx < 256);
-      data[0] = (char)idx;
+      data[0] = (uint8_t)idx;
 
       GM_DBG3("DataSync",
                "Sending data (" << local_peer_idx
@@ -136,7 +135,7 @@ void DataSync::Impl::encode(SyncData * d,
   for (size_t idx = 0; idx < raw_data.size(); ++idx)
     if (raw_data[idx] == d) {
       assert(idx + ptr_data.size() < 256);
-      data[0] = (char)(idx + ptr_data.size());
+      data[0] = (uint8_t)(idx + ptr_data.size());
 
       GM_DBG3("DataSync",
                "Sending data (" << local_peer_idx

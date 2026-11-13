@@ -124,7 +124,7 @@ public:
      header of messages to indicate which protocol instance to call
      for interpretation and processing.
   */
-  char getProtocolFlag() override { return 11; }
+  uint8_t getProtocolFlag() override { return 11; }
 
 private:
 

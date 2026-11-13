@@ -75,12 +75,12 @@ protected:
      Encodes the back data of the container into the specified vector,
      using vector indices 1-N and leaving the zeroth cell empty.
   */
-  void encode(std::vector<char> &d) override {
+  void encode(std::vector<uint8_t> &d) override {
     std::lock_guard<std::mutex> guard(lock);
 
     d.resize(1 + sizeof(TYPE));
 
-    char * m = reinterpret_cast<char*>(&back);
+    uint8_t *m = reinterpret_cast<uint8_t *>(&back);
 
     for (size_t idx = 0; idx < sizeof(TYPE); ++idx) {
       d[idx + 1] = m[idx];
@@ -91,14 +91,14 @@ protected:
      Decodes the specified vector into the back data of the container,
      using vector indices 1-N.
   */
-  void decode(std::vector<char> d) override {
+  void decode(std::vector<uint8_t> d) override {
     std::lock_guard<std::mutex> guard(lock);
 
     if (d.size() != 1 + sizeof(TYPE))
       throw gmCore::InvalidArgument("incorrect data size for decoding");
 
     TYPE value;
-    char * m = reinterpret_cast<char*>(&value);
+    uint8_t *m = reinterpret_cast<uint8_t *>(&value);
 
     for (size_t idx = 0; idx < sizeof(TYPE); ++idx)
       m[idx] = d[idx + 1];

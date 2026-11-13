@@ -79,7 +79,7 @@ struct SyncNode::Impl : public std::enable_shared_from_this<SyncNode::Impl> {
     void connect();
     void on_connect(std::error_code ec, asio::ip::tcp::endpoint end);
     void on_data(std::error_code ec,
-                 std::shared_ptr<std::vector<char>> read_buffer,
+                 std::shared_ptr<std::vector<uint8_t>> read_buffer,
                  std::size_t length);
     void on_write(std::error_code ec, std::size_t length);
     void setup_pingpong_timer();
@@ -154,8 +154,8 @@ struct SyncNode::Impl : public std::enable_shared_from_this<SyncNode::Impl> {
   std::unique_ptr<asio::ip::tcp::acceptor> server_acceptor;
 
   std::vector<Protocol::Message> unprocessed_messages;
-  std::unordered_map<char, std::shared_ptr<Protocol>> protocols;
-  std::unordered_map<std::string, char> protocol_id_by_name;
+  std::unordered_map<uint8_t, std::shared_ptr<Protocol>> protocols;
+  std::unordered_map<std::string, uint8_t> protocol_id_by_name;
 
   std::condition_variable waiting_condition;
 };
@@ -374,9 +374,9 @@ void SyncNode::Impl::Peer::on_connect(std::error_code ec,
   reset_timers();
 
   // Handshake
-  sendMessage(Protocol::Message(PROTOCOL_ID_HANDSHAKE,
-                                { (char)parent->getLocalPeerIdx(),
-                                  (char)GRAMODS_NETWORK_VERSION }));
+  sendMessage(Protocol::Message(PROTOCOL_ID_HANDSHAKE,               //
+                                {(uint8_t)parent->getLocalPeerIdx(), //
+                                 (uint8_t)GRAMODS_NETWORK_VERSION}));
 
   readData();
 }
@@ -389,8 +389,8 @@ void SyncNode::Impl::Peer::readData() {
   std::size_t to_read = message.length ?
     message.length - message.data.size() : message.getHeader().size();
 
-  std::shared_ptr<std::vector<char>> read_buffer =
-    std::make_shared<std::vector<char>>(to_read, 0);
+  std::shared_ptr<std::vector<uint8_t>> read_buffer =
+      std::make_shared<std::vector<uint8_t>>(to_read, 0);
 
   asio::async_read(socket,
                    asio::buffer(read_buffer->data(),
@@ -401,10 +401,9 @@ void SyncNode::Impl::Peer::readData() {
                    });
 }
 
-void SyncNode::Impl::Peer::on_data
-(std::error_code ec,
- std::shared_ptr<std::vector<char>> read_buffer,
- std::size_t length) {
+void SyncNode::Impl::Peer::on_data(
+    std::error_code ec, std::shared_ptr<std::vector<uint8_t>> read_buffer,
+    std::size_t length) {
 
   if (ec) {
 
@@ -457,7 +456,7 @@ void SyncNode::Impl::Peer::on_data
         }
 
         peer_idx = message.data[0];
-        char comm_ver = message.data[1];
+        uint8_t comm_ver = message.data[1];
 
         if (comm_ver != GRAMODS_NETWORK_VERSION) {
           GM_ERR("SyncNode", local_peer_idx << " Incompatible networking versions");
@@ -492,7 +491,7 @@ void SyncNode::Impl::Peer::on_data
 
         // Pong
         Protocol::Message msg(PROTOCOL_ID_PONG,
-                              { (char)parent->getLocalPeerIdx() });
+                              {(uint8_t)parent->getLocalPeerIdx()});
         msg.to_peer_idx = peer_idx;
         sendMessage(msg);
 
@@ -543,11 +542,10 @@ void SyncNode::sendMessage(Protocol::Message mess) {
 
 void SyncNode::Impl::sendMessage(Protocol::Message mess) {
 
-  GM_DBG3("SyncNode", local_peer_idx << " Sending message "
-           "(from = " << local_peer_idx <<
-           ", type = " << (int)mess.protocol <<
-           ", len = " << mess.data.size() << ")");
-
+  GM_DBG3("SyncNode", local_peer_idx
+                          << " Sending message (from = " << local_peer_idx
+                          << ", protocol = " << (int)mess.protocol
+                          << ", len = " << mess.data.size() << ")");
 
   std::unique_lock<std::mutex> guard(impl_lock);
 
@@ -605,8 +603,8 @@ void SyncNode::Impl::Peer::sendMessage(Protocol::Message mess) {
 
   std::weak_ptr<Peer> weak_this(shared_from_this());
 
-  std::shared_ptr<std::vector<char>> buffer =
-    std::make_shared<std::vector<char>>();
+  std::shared_ptr<std::vector<uint8_t>> buffer =
+      std::make_shared<std::vector<uint8_t>>();
   buffer->reserve(Protocol::HEADER_LENGTH + mess.data.size());
   *buffer = mess.getHeader();
   buffer->insert(buffer->end(), mess.data.begin(), mess.data.end());
@@ -710,7 +708,7 @@ void SyncNode::Impl::Peer::on_pingpong_timeout() {
 
   // Ping
   sendMessage(Protocol::Message(PROTOCOL_ID_PING,
-                                { (char)parent->getLocalPeerIdx() }));
+                                {(uint8_t)parent->getLocalPeerIdx()}));
 }
 
 void SyncNode::Impl::Peer::on_timeout_timeout() {
@@ -988,7 +986,7 @@ Protocol * SyncNode::getProtocol(std::string name) {
   }
 }
 
-Protocol * SyncNode::getProtocol(char id) {
+Protocol *SyncNode::getProtocol(uint8_t id) {
   if (_impl->protocols.count(id) > 0) {
     return _impl->protocols[id].get();
   } else {
@@ -1012,7 +1010,7 @@ void SyncNode::Impl::addProtocol(std::string name, std::shared_ptr<Protocol> pro
     throw gmCore::PreConditionViolation
       (GM_STR("There is already a protocol named " << name));
 
-  char id = prot->getProtocolFlag();
+  uint8_t id = prot->getProtocolFlag();
   if (id < 10)
     throw gmCore::PreConditionViolation
       (GM_STR("Protocol id " << id << " is reserved for internal protocols"));

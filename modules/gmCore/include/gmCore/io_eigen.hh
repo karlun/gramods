@@ -6,9 +6,23 @@
 
 #ifdef gramods_ENABLE_Eigen3
 
+#ifdef gramods_ENABLE_nlohmann_json
+#include <nlohmann/json_fwd.hpp>
+#endif
+
 #include <Eigen/Eigen>
 
 #include <iostream>
+
+#ifdef gramods_ENABLE_nlohmann_json
+namespace Eigen {
+void to_json(nlohmann::json &j, const Eigen::Vector3f &o);
+void from_json(const nlohmann::json &j, Eigen::Vector3f &o);
+
+void to_json(nlohmann::json &j, const Eigen::Quaternionf &o);
+void from_json(const nlohmann::json &j, Eigen::Quaternionf &o);
+} // namespace Eigen
+#endif
 
 BEGIN_NAMESPACE_GRAMODS;
 

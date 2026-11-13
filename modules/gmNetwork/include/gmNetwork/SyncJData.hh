@@ -79,7 +79,7 @@ protected:
      Encodes the back data of the container into the specified vector,
      using vector indices 1-N and leaving the zeroth cell empty.
   */
-  void encode(std::vector<char> &d) override {
+  void encode(std::vector<uint8_t> &d) override {
     std::lock_guard<std::mutex> guard(lock);
 
     nlohmann::json j;
@@ -95,12 +95,11 @@ protected:
      Decodes the specified vector into the back data of the container,
      using vector indices 1-N.
   */
-  void decode(std::vector<char> d) override {
+  void decode(std::vector<uint8_t> d) override {
     std::lock_guard<std::mutex> guard(lock);
 
     const auto j = nlohmann::json::from_msgpack(d.begin() + 1, d.end());
     back = j.get<TYPE>();
-    from_json(j, back);
   }
 
   /**

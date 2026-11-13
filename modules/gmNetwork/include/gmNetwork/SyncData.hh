@@ -28,8 +28,8 @@ protected:
   */
   void pushValue();
 
-  virtual void encode(std::vector<char> &d) = 0;
-  virtual void decode(std::vector<char> d) = 0;
+  virtual void encode(std::vector<uint8_t> &d) = 0;
+  virtual void decode(std::vector<uint8_t> d) = 0;
 
   virtual void update() = 0;
 
