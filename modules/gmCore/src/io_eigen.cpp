@@ -6,6 +6,7 @@
 #include <gmCore/io_angle.hh>
 
 #include <gmCore/Console.hh>
+#include <gmCore/InvalidArgument.hh>
 
 #ifdef gramods_ENABLE_nlohmann_json
 #include <nlohmann/json.hpp>
@@ -19,6 +20,8 @@ void to_json(nlohmann::json &j, const Eigen::Vector3f &o) {
 }
 
 void from_json(const nlohmann::json &j, Eigen::Vector3f &o) {
+  if (!j.is_array() || j.size() != 3)
+    throw gramods::gmCore::InvalidArgument("Json is not an Eigen::Vector3f");
   o = Eigen::Vector3f(j[0].get<float>(), j[1].get<float>(), j[2].get<float>());
 }
 
@@ -27,6 +30,8 @@ void to_json(nlohmann::json &j, const Eigen::Quaternionf &o) {
 }
 
 void from_json(const nlohmann::json &j, Eigen::Quaternionf &o) {
+  if (!j.is_array() || j.size() != 4)
+    throw gramods::gmCore::InvalidArgument("Json is not an Eigen::Quaternionf");
   o = Eigen::Quaternionf(j[0].get<float>(), j[1].get<float>(),
                          j[2].get<float>(), j[3].get<float>());
 }

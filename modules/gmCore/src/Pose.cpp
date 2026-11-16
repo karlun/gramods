@@ -6,6 +6,7 @@
 #include <gmCore/io_eigen.hh>
 
 #include <gmCore/Console.hh>
+#include <gmCore/InvalidArgument.hh>
 
 #ifdef gramods_ENABLE_nlohmann_json
 #include <nlohmann/json.hpp>
@@ -24,6 +25,8 @@ void to_json(nlohmann::json &j, const gramods::gmCore::Pose &o) {
 }
 
 void from_json(const nlohmann::json &j, gramods::gmCore::Pose &o) {
+  if (!j.contains("position") || !j.contains("orientation"))
+    throw gmCore::InvalidArgument("Json is not a Pose");
   o.position = j.at("position").get<Eigen::Vector3f>();
   o.orientation = j.at("orientation").get<Eigen::Quaternionf>();
 }

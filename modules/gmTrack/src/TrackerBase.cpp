@@ -1,6 +1,7 @@
 
 #include <gmTrack/TrackerBase.hh>
 
+#include <gmCore/InvalidArgument.hh>
 #include <gmCore/TimeTools.hh>
 
 #ifdef gramods_ENABLE_nlohmann_json
@@ -32,6 +33,8 @@ void to_json(nlohmann::json &j, const PoseTracker::Sample &o) {
                      {"value", o.value}};
 }
 void from_json(const nlohmann::json &j, PoseTracker::Sample &o) {
+  if (!j.contains("time") || !j.contains("value"))
+    throw gmCore::InvalidArgument("Json is not a Sample");
   o.time = gmCore::TimeTools::secondsToTimePoint(j.at("time").get<double>());
   o.value = j.at("value").get<gmCore::Pose>();
 }
@@ -41,6 +44,8 @@ void to_json(nlohmann::json &j, const BinaryTracker::Sample &o) {
                      {"value", o.value}};
 }
 void from_json(const nlohmann::json &j, BinaryTracker::Sample &o) {
+  if (!j.contains("time") || !j.contains("value"))
+    throw gmCore::InvalidArgument("Json is not a Sample");
   o.time = gmCore::TimeTools::secondsToTimePoint(j.at("time").get<double>());
   o.value = j.at("value").get<bool>();
 }
@@ -50,6 +55,8 @@ void to_json(nlohmann::json &j, const FloatTracker::Sample &o) {
                      {"value", o.value}};
 }
 void from_json(const nlohmann::json &j, FloatTracker::Sample &o) {
+  if (!j.contains("time") || !j.contains("value"))
+    throw gmCore::InvalidArgument("Json is not a Sample");
   o.time = gmCore::TimeTools::secondsToTimePoint(j.at("time").get<double>());
   o.value = j.at("value").get<float>();
 }
@@ -59,6 +66,8 @@ void to_json(nlohmann::json &j, const Float2Tracker::Sample &o) {
                      {"value", o.value}};
 }
 void from_json(const nlohmann::json &j, Float2Tracker::Sample &o) {
+  if (!j.contains("time") || !j.contains("value"))
+    throw gmCore::InvalidArgument("Json is not a Sample");
   o.time = gmCore::TimeTools::secondsToTimePoint(j.at("time").get<double>());
   o.value = j.at("value").get<gmCore::float2>();
 }
