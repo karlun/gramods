@@ -33,7 +33,7 @@ void to_json(nlohmann::json &j, const PoseTracker::Sample &o) {
 }
 void from_json(const nlohmann::json &j, PoseTracker::Sample &o) {
   o.time = gmCore::TimeTools::secondsToTimePoint(j.at("time").get<double>());
-  o.value = j.at("time").get<gmCore::Pose>();
+  o.value = j.at("value").get<gmCore::Pose>();
 }
 
 void to_json(nlohmann::json &j, const BinaryTracker::Sample &o) {
