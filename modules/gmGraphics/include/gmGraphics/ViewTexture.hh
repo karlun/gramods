@@ -15,9 +15,9 @@ BEGIN_NAMESPACE_GMGRAPHICS;
    The ViewTexture is a View implements the TextureInterface to
    provide a texture of what is drawn by another view.
 
-   As with any other hierarchy of views or renderers, cyclic graph are
-   not allowed, e.g. to let a ViewTexture create a texture of the view
-   containing the renderer using this texture.
+   As with any other hierarchy of views, nodes, or renderers, cyclic
+   graph are not allowed, e.g. to let a ViewTexture create a texture
+   of the view containing the renderer using this texture.
 */
 class ViewTexture
   : public View,

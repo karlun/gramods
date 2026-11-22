@@ -35,8 +35,8 @@ public:
   TiledView();
 
   /**
-     Appends local renderers to the view settings and forwards
-     rendering to the sub views of this tiled view.
+     Appends local scene graph nodes to the provided settings and
+     forwards rendering to the sub views of this tiled view.
   */
   void renderFullPipeline(ViewSettings settings) override;
 

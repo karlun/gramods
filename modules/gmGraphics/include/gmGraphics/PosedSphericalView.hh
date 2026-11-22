@@ -8,12 +8,12 @@
 BEGIN_NAMESPACE_GMGRAPHICS;
 
 /**
-   This view provides a symmetrical projection of the renderers, on a
+   This view provides a symmetrical projection of the 3D scene, on a
    spherical projection surface.
 
-   The PosedSphericalView maps the renderers' graphics into a
-   spherical projection surface, centered on the viewpoint's position,
-   from the viewpoint's position and orientation.
+   The PosedSphericalView maps the 3D graphics into a spherical
+   projection surface, centered on the viewpoint's position, from the
+   viewpoint's position and orientation.
 */
 class PosedSphericalView
   : public View {
@@ -23,7 +23,9 @@ public:
   PosedSphericalView();
 
   /**
-     Dispatches renderers.
+     Appends local scene graph nodes to the provided settings,
+     dispatches Node::RenderVisitor, and projects the result using the
+     CoordinatesMapper.
   */
   void renderFullPipeline(ViewSettings settings) override;
 

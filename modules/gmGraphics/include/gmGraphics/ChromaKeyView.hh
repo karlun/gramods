@@ -23,8 +23,9 @@ public:
   virtual ~ChromaKeyView();
 
   /**
-     Appends local renderers to the view settings, forwards rendering
-     to the sub views and mixes the results.
+     Appends local scene graph nodes to the view settings, forwards
+     rendering to the sub views, and applies chroma key to the alpha
+     of the results.
   */
   void renderFullPipeline(ViewSettings settings) override;
 

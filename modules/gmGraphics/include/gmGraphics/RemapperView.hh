@@ -23,8 +23,8 @@ public:
   virtual ~RemapperView();
 
   /**
-     Appends local renderers to the view settings, forwards rendering
-     to the sub views and mixes the results.
+     Appends local scene graph nodes to the provided settings,
+     forwards rendering to the sub views, and remaps the results.
   */
   void renderFullPipeline(ViewSettings settings) override;
 
@@ -36,7 +36,7 @@ public:
   void traverse(Visitor *visitor) override;
 
   /**
-     Adds a view to mask with chroma key.
+     Adds a view to remap.
 
      \gmXmlTag{gmGraphics,RemapperView,view}
   */

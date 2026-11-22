@@ -10,14 +10,14 @@
 BEGIN_NAMESPACE_GMGRAPHICS;
 
 /**
-   This view provides skewed frustum projection of the renderers, on a
-   spherical projection surface.
+   This view provides skewed frustum projection of the 3D graphics, on
+   a spherical projection surface.
 
-   The SpatialSphericalView maps the renderers' graphics onto a
-   spherical projection surface, a dome at a fixed position, in a
-   selected representation of spherical projection, from the
-   viewpoint's position and orientation. This skews the view from the
-   viewpoint position relative the dome surface, to compensate for the
+   The SpatialSphericalView maps the 3D graphics onto a spherical
+   projection surface, a dome at a fixed position, in a selected
+   representation of spherical projection, from the viewpoint's
+   position and orientation. This skews the view from the viewpoint
+   position relative the dome surface, to compensate for the
    distortion due to the curved surface.
 */
 class SpatialSphericalView
@@ -28,7 +28,9 @@ public:
   SpatialSphericalView();
 
   /**
-     Dispatches renderers.
+     Appends local scene graph nodes to the provided settings,
+     dispatches Node::RenderVisitor, and projects the result using the
+     CoordinatesMapper.
   */
   void renderFullPipeline(ViewSettings settings, Eye eye) override;
 

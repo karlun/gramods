@@ -19,7 +19,10 @@ class MultiscopicView
   : public View {
 
 public:
-
+  /**
+     Queries number of eyes in the current MultiscopicMultiplexer, and
+     calls renderFullPipeline(ViewSettings,Eye) once for each eye.
+  */
   void renderFullPipeline(ViewSettings settings) override final;
 
   /**

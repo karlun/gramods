@@ -15,9 +15,9 @@ BEGIN_NAMESPACE_GMGRAPHICS;
 /**
    The CubeMapRasterProcessor is a helper class for views that map the
    surrounding to a flat format. One call to renderFullPipeline will
-   make up to six cube map side rendering calls to the renderers
-   specified in the ViewSettings, as well as a final rendering through
-   the specified fragment shader code.
+   make up to six cube map side rendering calls according to the
+   specified ViewSettings, as well as a final rendering through the
+   specified fragment shader code.
 */
 class CubeMapRasterProcessor {
 

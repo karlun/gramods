@@ -21,7 +21,9 @@ public:
   SaveView();
 
   /**
-     Forwards rendering to the sub view and saves the result.
+     Appends local scene graph nodes to the provided settings,
+     forwards rendering to the sub views, and saves the result to
+     file.
   */
   void renderFullPipeline(ViewSettings settings) override;
 

@@ -12,13 +12,16 @@
 BEGIN_NAMESPACE_GMGRAPHICS;
 
 /**
-   This view provides skewed frustum projection of the renderers.
+   This view provides skewed frustum projection of the 3D scene.
 */
 class FovPlanarView
   : public View {
 
 public:
-
+  /**
+     Appends local scene graph nodes to the provided settings, and
+     dispatches Node::RenderVisitor.
+  */
   void renderFullPipeline(ViewSettings settings) override;
 
   /**

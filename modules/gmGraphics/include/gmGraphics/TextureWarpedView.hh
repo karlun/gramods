@@ -23,8 +23,9 @@ public:
   virtual ~TextureWarpedView();
 
   /**
-     Appends local renderers to the view settings, renders the views
-     and warps the result using the specified texture.
+     Appends local scene graph nodes to the provided settings,
+     forwards rendering to the sub views, and warps the result using
+     the warp texture.
   */
   void renderFullPipeline(ViewSettings settings) override;
 

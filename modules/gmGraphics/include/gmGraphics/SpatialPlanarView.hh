@@ -12,7 +12,7 @@
 BEGIN_NAMESPACE_GMGRAPHICS;
 
 /**
-   This view provides skewed frustum projection of the renderers, on a
+   This view provides skewed frustum projection of the 3D scene, on a
    planar projection surface.
 
    The projection plane can be specified in two ways. The primary way
@@ -106,7 +106,10 @@ public:
   GM_OFI_DECLARE;
 
 private:
-
+  /**
+     Appends local renderers to the provided settings, and dispatches
+     Node::RenderVisitor.
+  */
   void renderFullPipeline(ViewSettings settings, Eye eye) override;
 
   struct Impl;

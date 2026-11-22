@@ -10,8 +10,8 @@
 BEGIN_NAMESPACE_GMGRAPHICS;
 
 /**
-   This view provides a projection of the renderers using the
-   specified frustum projection from the viewpoint's point of view.
+   This view provides a projection of the 3D scene using the specified
+   frustum projection from the viewpoint's point of view.
 */
 class PosedPlanarView
   : public View {
@@ -20,6 +20,10 @@ public:
 
   PosedPlanarView();
 
+  /**
+     Appends local scene graph nodes to the provided settings, and
+     dispatches Node::RenderVisitor.
+  */
   void renderFullPipeline(ViewSettings settings) override;
 
   /**

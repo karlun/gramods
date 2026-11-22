@@ -19,7 +19,8 @@ public:
   virtual ~MixingView();
 
   /**
-     @see ViewBase::renderFullPipeline.
+     Appends local scene graph nodes to the view settings, forwards
+     rendering to the sub views, and mixes the results.
   */
   void renderFullPipeline(ViewSettings settings) override;
 

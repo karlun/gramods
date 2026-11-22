@@ -16,8 +16,12 @@
 BEGIN_NAMESPACE_GMGRAPHICS;
 
 /**
-   The common base for nodes taking renderers for dispatching
-   rendering jobs.
+   The common base for nodes that dispatch rendering jobs.
+
+   The ViewBase typically provides a 2D representation, either by
+   modifying another view's 2D representations, or by generating a
+   projection of a 3D scene represented by scene graph(s) added
+   through addNode.
 */
 class ViewBase
   : public gmCore::Object {
@@ -65,14 +69,14 @@ public:
 
   /**
      Dispatches specified renders, both method argument and class
-     members. The default implementation calls the renderers but with
-     a default Camera, and should be overloaded by sub classes to
-     implement their respective effects.
+     members. The default implementation calls
+     ViewSettings::renderNodes with a default Camera, and should be
+     overloaded by sub classes to implement their respective effects.
   */
   virtual void renderFullPipeline(ViewSettings settings);
 
   /**
-     Adds a scenegraph to the view.
+     Adds a scene graph to the view.
   */
   void addNode(std::shared_ptr<Node> node) {
     nodes.push_back(node);

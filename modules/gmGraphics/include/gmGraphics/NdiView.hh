@@ -30,7 +30,8 @@ public:
   NdiView();
 
   /**
-     Forwards rendering to the sub view and saves the result.
+     Forwards rendering to the sub view, and publishes the result over
+     NDI.
   */
   void renderFullPipeline(ViewSettings settings) override;
 

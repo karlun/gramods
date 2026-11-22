@@ -13,8 +13,8 @@ BEGIN_NAMESPACE_GMGRAPHICS;
 
 /**
    The TextureProjectedView uses a texture to define the 3D position
-   of each render target buffer pixel, and then projects the specified
-   renderers onto this "surface", from the viewpoint. This is useful
+   of each render target buffer pixel, and then projects the 3D
+   graphics onto this "surface", from the viewpoint. This is useful
    for rendering a dynamic view on a static projection surface.
 */
 class TextureProjectedView
@@ -42,9 +42,9 @@ public:
   void setLinearInterpolation(bool on);
 
   /**
-     Appends local renderers to the view settings, renders the views
-     and projects the result onto the texture's "surface", from the
-     viewpoint.
+     Appends local scene graph nodes to the provided settings,
+     dispatches Node::RenderVisitor, and projects the result onto the
+     texture's "surface", from the viewpoint.
   */
   void renderFullPipeline(ViewSettings settings, Eye eye) override;
 
